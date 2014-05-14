@@ -126,7 +126,7 @@ public class Status extends javax.swing.JFrame {
   }
   
   public void setLastCheckedText(int seconds) {
-    setLastCheckedText("Time since last checked: " + seconds + " seconds");
+    setLastCheckedText("Time since last checked: " + seconds + " seconds ago");
   }
   
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -137,6 +137,7 @@ public class Status extends javax.swing.JFrame {
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
     Browser.openLinkInBrowser("https://www.google.com");
+    setButtonStatusText("Webpage opened.");
   }//GEN-LAST:event_jButton2ActionPerformed
 
   /**

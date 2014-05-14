@@ -15,7 +15,7 @@ public class PAXChecker {
   public static Tickets tickets;
   public static String textEmail;
   public static boolean forceUpdate;
-  
+
   public static void setCellnum(String num) {
     if (!num.contains("@")) {
       num += "@mms.att.net";
@@ -23,14 +23,18 @@ public class PAXChecker {
     textEmail = num;
     System.out.println("textEmail = " + textEmail);
   }
-  
+
   public static void forceUpdate() {
     forceUpdate = true;
     status.setButtonStatusText("Forced update!");
   }
-  
+
   public static void testEmail() {
-    Email.sendMessage(textEmail, "Test", "The test is successful!");
+    if (Email.sendMessage(textEmail, "Test", "The test is successful!")) {
+      status.setButtonStatusText("Text message successfully sent!");
+    } else {
+      status.setButtonStatusText("There was an error sending your text message.");
+    }
   }
 
   /**
@@ -56,6 +60,7 @@ public class PAXChecker {
         tickets.setAlwaysOnTop(true);
         tickets.setVisible(true);
         tickets.requestFocus();
+        Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Only the best.
         break;
       }
       while (System.currentTimeMillis() - startMS < 10000) {
@@ -64,6 +69,7 @@ public class PAXChecker {
           break;
         }
         Thread.sleep(100);
+        status.setLastCheckedText((int)((System.currentTimeMillis() - startMS) / 1000));
       }
     }
   }

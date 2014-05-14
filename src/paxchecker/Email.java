@@ -39,7 +39,7 @@ public class Email {
       return;
     }
     if (pass.length() < 8) {
-      System.out.println("Password seems weak, >=8 characters is reocmmended.");
+      System.out.println("Password seems weak, >=8 characters is recommended.");
     }
     password = pass;
     props.put("mail.smtp.password", password);
@@ -72,8 +72,10 @@ public class Email {
       System.out.println("Message Sent");
     } catch (MessagingException mex) {
       mex.printStackTrace();
+      return false;
     } catch (Exception e) {
       e.printStackTrace();
+      return false;
     }//end catch block
     return true;
   }
