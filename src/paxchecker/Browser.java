@@ -13,16 +13,19 @@ public class Browser {
   public static boolean isUpdated() {
     String lineText = getCurrentButtonLinkLine();
     if (lineText == null) {
-      System.out.println("ERROR retrieving updated status; the website has probably been updated!");
-      return true;
-    }
-    if (!lineText.contains("\"http://prime.paxsite.com\"")) {
+      PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX Prime website!");
+      return false;
+    } else if (lineText.equals("IOException")) {
+      PAXChecker.status.setWebsiteLink("Unable to connect to the PAX Prime website!");
+      return false;
+    } else if (!lineText.contains("\"http://prime.paxsite.com\"")) {
       System.out.println("OMG IT'S UPDATED: " + lineText);
       return true;
+    } else {
+      PAXChecker.status.setWebsiteLink(parseHRef(lineText));
+      System.out.println("Not yet!");
+      return false;
     }
-    PAXChecker.status.setWebsiteLink(parseHRef(lineText));
-    System.out.println("Not yet!");
-    return false;
   }
 
   public static String parseHRef(String parse) {
@@ -65,6 +68,7 @@ public class Browser {
       mue.printStackTrace();
     } catch (IOException ioe) {
       ioe.printStackTrace();
+      return "IOException";
     } finally {
       try {
         if (is != null) {

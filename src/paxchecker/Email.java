@@ -24,13 +24,23 @@ public class Email {
   public static void setUsername(String user) {
     if (!user.contains("@")) {
       user += "@yahoo.com";
-    } else if (!user.contains("@yahoo.com")) {
+    } else if (user.toLowerCase().contains("@gmail.com")) {
+      setHost("smtp.gmail.com");
+    } else if (!user.toLowerCase().contains("@yahoo.com")) {
       System.out.println("ERROR: Yahoo email required!");
       System.exit(0);
     }
     System.out.println("Username = " + user);
     username = user;
     props.put("mail.smtp.user", username);
+  }
+  
+  public static String getUsername() {
+    return username;
+  }
+  
+  public static void setHost(String h) {
+    host = h;
   }
 
   public static void setPassword(String pass) {

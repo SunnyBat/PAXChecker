@@ -136,8 +136,8 @@ public class Status extends javax.swing.JFrame {
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
-    Browser.openLinkInBrowser("https://www.google.com");
-    setButtonStatusText("Webpage opened.");
+    Browser.openLinkInBrowser("http://prime.paxsite.com");
+    setButtonStatusText("PAX Prime site opened.");
   }//GEN-LAST:event_jButton2ActionPerformed
 
   /**
