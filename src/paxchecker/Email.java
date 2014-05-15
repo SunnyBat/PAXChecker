@@ -82,8 +82,10 @@ public class Email {
       System.out.println("Message Sent");
     } catch (MessagingException mex) {
       mex.printStackTrace();
+      ErrorManagement.showErrorWindow("ERROR", "The message was unable to be sent.", mex);
       return false;
     } catch (Exception e) {
+      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
       e.printStackTrace();
       return false;
     }//end catch block

@@ -32,8 +32,12 @@ public class Setup extends javax.swing.JFrame {
     jButton1 = new javax.swing.JButton();
     jLabel4 = new javax.swing.JLabel();
     jTextField2 = new javax.swing.JTextField();
+    jSlider1 = new javax.swing.JSlider();
+    jLabel6 = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setTitle("PAX Checker Setup");
+    setResizable(false);
 
     jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
     jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -52,6 +56,18 @@ public class Setup extends javax.swing.JFrame {
 
     jLabel4.setText("Cell Num");
 
+    jSlider1.setMajorTickSpacing(10);
+    jSlider1.setMaximum(60);
+    jSlider1.setMinimum(5);
+    jSlider1.setMinorTickSpacing(2);
+    jSlider1.setPaintLabels(true);
+    jSlider1.setPaintTicks(true);
+    jSlider1.setPaintTrack(false);
+    jSlider1.setValue(10);
+
+    jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    jLabel6.setText("Seconds Between Website Update");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -61,6 +77,7 @@ public class Setup extends javax.swing.JFrame {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
               .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -68,9 +85,10 @@ public class Setup extends javax.swing.JFrame {
               .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(jTextField1)
               .addComponent(jPasswordField1)
-              .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))))
+              .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+              .addComponent(jTextField1)))
+          .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -90,9 +108,13 @@ public class Setup extends javax.swing.JFrame {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel4)
           .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addGap(18, 18, 18)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(jLabel6)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton1)
-        .addContainerGap(42, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     pack();
@@ -103,6 +125,7 @@ public class Setup extends javax.swing.JFrame {
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));
     PAXChecker.setCellnum(jTextField2.getText());
+    PAXChecker.setUpdateTime(jSlider1.getValue());
     this.dispose();
   }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -112,7 +135,9 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel6;
   private javax.swing.JPasswordField jPasswordField1;
+  private javax.swing.JSlider jSlider1;
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   // End of variables declaration//GEN-END:variables

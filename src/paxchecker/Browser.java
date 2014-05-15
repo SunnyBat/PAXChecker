@@ -23,17 +23,15 @@ public class Browser {
       return true;
     } else {
       PAXChecker.status.setWebsiteLink(parseHRef(lineText));
-      System.out.println("Not yet!");
       return false;
     }
   }
 
   public static String parseHRef(String parse) {
     try {
-      parse = parse.trim();
-      parse = parse.substring(parse.indexOf("href=") + 6);
-      System.out.println(parse);
-      parse = parse.substring(0, parse.indexOf("\""));
+      parse = parse.trim(); // Remove white space
+      parse = parse.substring(parse.indexOf("href=") + 6); // Get index of link
+      parse = parse.substring(0, parse.indexOf("\"")); // Remove everything after the link (hopefully this works for the Showclix link)
       if (parse.startsWith("\"") && parse.endsWith("\"")) {
         parse = parse.substring(1, parse.length() - 1);
       } else if (parse == null || parse.length() < 10) {
@@ -57,7 +55,6 @@ public class Browser {
       url = new URL("http://prime.paxsite.com/registration");
       is = url.openStream();
       br = new BufferedReader(new InputStreamReader(is));
-
       while ((line = br.readLine()) != null) {
         line = line.trim();
         if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
@@ -69,6 +66,8 @@ public class Browser {
     } catch (IOException ioe) {
       ioe.printStackTrace();
       return "IOException";
+    } catch (Exception e) {
+      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
     } finally {
       try {
         if (is != null) {
@@ -91,6 +90,7 @@ public class Browser {
       }
     } else {
       System.out.println("Unable to open " + link + " in default browser.");
+      ErrorManagement.showErrorWindow("ERROR", "Unable to open the requested link: " + link, null);
     }
   }
 }
