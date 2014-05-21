@@ -19,7 +19,6 @@ public class Setup extends javax.swing.JFrame {
   }
 
   private void customComponents() {
-
   }
 
   /** This method is called from within the constructor to
@@ -94,8 +93,18 @@ public class Setup extends javax.swing.JFrame {
 
     jCheckBox1.setSelected(true);
     jCheckBox1.setText("Scan PAX Registration website");
+    jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jCheckBox1ActionPerformed(evt);
+      }
+    });
 
     jCheckBox2.setText("Scan Showclix website");
+    jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jCheckBox2ActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -241,6 +250,24 @@ public class Setup extends javax.swing.JFrame {
     PAXChecker.setUpdateTime(jSlider1.getValue());
     this.dispose();
   }//GEN-LAST:event_jButton1ActionPerformed
+
+  private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    // TODO add your handling code here:
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+      jButton1.setEnabled(false);
+    } else {
+      jButton1.setEnabled(true);
+    }
+  }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+  private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    // TODO add your handling code here:
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+      jButton1.setEnabled(false);
+    } else {
+      jButton1.setEnabled(true);
+    }
+  }//GEN-LAST:event_jCheckBox2ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
   private javax.swing.JCheckBox jCheckBox1;

@@ -4,9 +4,11 @@
  */
 package paxchecker;
 
+import java.awt.Color;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import javax.sound.sampled.*;
 import paxchecker.GUI.*;
 
 /**
@@ -28,7 +30,6 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) throws Exception {
-    Browser.getShowclixInfo();
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     if (args.length > 0) {
       System.out.println("Args!");
@@ -61,7 +62,10 @@ public class PAXChecker {
     }
     setup.dispose();
     status = new Status();
-    if (Email.getTextEmail() != null) {
+    if (Email.getUsername().indexOf("@") == 0) {
+      status.setInfoText("[TEXTING DISABLED]");
+      status.setTextButtonState(false);
+    } else if (Email.getTextEmail() != null) {
       status.setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
     } else if (!Email.getEmailList().isEmpty()) {
       status.setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
@@ -89,6 +93,7 @@ public class PAXChecker {
     while (true) {
       startMS = System.currentTimeMillis();
       if (Browser.isPAXWebsiteUpdated()) {
+        playAlarm();
         status.setVisible(false);
         status.dispose();
         showTicketsWindow();
@@ -97,7 +102,9 @@ public class PAXChecker {
           Email.sendMessage("PAX Tickets ON SALE!", "The PAX website has been updated!");
         }
         break;
-      } else if (Browser.isShowclixUpdated()) {
+      }
+      if (Browser.isShowclixUpdated()) {
+        playAlarm();
         status.setVisible(false);
         status.dispose();
         showTicketsWindow();
@@ -119,16 +126,18 @@ public class PAXChecker {
   }
 
   public static void showTicketsWindow() {
-        tickets = new Tickets();
-        tickets.setAlwaysOnTop(true);
-        try {
-          tickets.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/alert.png")));
-        } catch (Exception e) {
-          System.out.println("Unable to set IconImage!");
-          e.printStackTrace();
-        }
-        tickets.setVisible(true);
-        tickets.requestFocus();
+    tickets = new Tickets();
+    tickets.setAlwaysOnTop(true);
+    try {
+      tickets.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/alert.png")));
+      tickets.setBackground(Color.RED);
+    } catch (Exception e) {
+      System.out.println("Unable to set IconImage!");
+      e.printStackTrace();
+    }
+    tickets.setVisible(true);
+    tickets.toFront();
+    tickets.requestFocus();
   }
 
   /**
@@ -166,6 +175,22 @@ public class PAXChecker {
     }
   }
 
+  public static boolean playAlarm() {
+    try {
+      Clip clip = AudioSystem.getClip();
+      InputStream audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
+      InputStream bufferedIn = new BufferedInputStream(audioSrc);
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
+//      AudioInputStream inputStream = AudioSystem.getAudioInputStream(PAXChecker.class.getResourceAsStream("/resources/Alarm.wav"));
+      clip.open(inputStream);
+      clip.start();
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
   /**
    * Checks whether or not an update to the program is available. Note that this compares the file
    * sizes between the current file and the file on the Dropbox server. This means that if ANY
@@ -182,7 +207,10 @@ public class PAXChecker {
       File mF = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
       long fileSize = mF.length();
       System.out.println("Updatesize = " + updateSize + " -- Filesize = " + fileSize);
-      if (updateSize != fileSize) {
+      if (updateSize == -1) {
+        ErrorManagement.showErrorWindow("ERROR checking for updates!", "PAX Checker was unable to check for updates.", null);
+        return false;
+      } else if (updateSize != fileSize) {
         System.out.println("Update available!");
         return true;
       }

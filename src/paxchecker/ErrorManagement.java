@@ -18,7 +18,7 @@ public class ErrorManagement {
    * @param message The error message to display to the user
    */
   public static void showErrorWindow(String message) {
-    showErrorWindow("Attendance: Error", "ERROR", message, null);
+    showErrorWindow("PAXChecker: Error", "ERROR", message, null);
   }
 
   /**
@@ -29,7 +29,7 @@ public class ErrorManagement {
    * @param t       The error to display
    */
   public static void showErrorWindow(String message, Throwable t) {
-    showErrorWindow("Attendance: Error", "ERROR", message, t);
+    showErrorWindow("PAXChecker: Error", "ERROR", message, t);
   }
 
   /**
@@ -41,7 +41,7 @@ public class ErrorManagement {
    * @param t       The error to display
    */
   public static void showErrorWindow(String title, String message, Throwable t) {
-    showErrorWindow("Attendance: Error", title, message, t);
+    showErrorWindow("PAXChecker: Error", title, message, t);
   }
 
   /**
@@ -87,6 +87,8 @@ public class ErrorManagement {
     errorWindow.JTAError.setText(message);
     errorWindow.setVisible(true);
     errorWindowCount++;
+    System.out.println(t.getMessage());
+    t.printStackTrace();
   }
 
   /**

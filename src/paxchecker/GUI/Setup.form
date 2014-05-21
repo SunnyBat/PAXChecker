@@ -206,11 +206,17 @@
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Scan PAX Registration website"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Scan Showclix website"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox2ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -16,10 +16,12 @@ public class Status extends javax.swing.JFrame {
   /** Creates new form Status */
   public Status() {
     initComponents();
-  }
-
-  public void setWebsiteLink(String link) {
-    JLWebsiteLink.setText("Current Website Link: " + link);
+    if (!Browser.isCheckingPaxWebsite()) {
+      hideWebsiteText();
+    }
+    if (!Browser.isCheckingShowclix()) {
+      hideShowclixText();
+    }
   }
 
   /** This method is called from within the constructor to
@@ -39,6 +41,7 @@ public class Status extends javax.swing.JFrame {
     JLLastChecked = new javax.swing.JLabel();
     JLButtonStatus = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
+    JLShowclixLink = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Website Status");
@@ -57,7 +60,7 @@ public class Status extends javax.swing.JFrame {
       }
     });
 
-    jButton2.setText("Test Open Website");
+    jButton2.setText("Test Alarm Sound");
     jButton2.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jButton2ActionPerformed(evt);
@@ -79,6 +82,8 @@ public class Status extends javax.swing.JFrame {
     jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel2.setText("Email -- Phone");
 
+    JLShowclixLink.setText("Current Showclix Link:");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -97,7 +102,8 @@ public class Status extends javax.swing.JFrame {
           .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLLastChecked)
-            .addGap(0, 0, Short.MAX_VALUE)))
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addComponent(JLShowclixLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -110,8 +116,10 @@ public class Status extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLWebsiteLink)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JLShowclixLink)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLLastChecked)
-        .addGap(18, 18, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(JLButtonStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -150,8 +158,26 @@ public class Status extends javax.swing.JFrame {
     jButton1.setEnabled(enabled);
   }
 
+  public void hideShowclixText() {
+    JLShowclixLink.setVisible(false);
+    pack();
+  }
+
+  public void hideWebsiteText() {
+    JLWebsiteLink.setVisible(false);
+    pack();
+  }
+
   public void setLabelTooltipText(String s) {
     jLabel2.setToolTipText(s);
+  }
+
+  public void setWebsiteLink(String link) {
+    JLWebsiteLink.setText("Current Website Link: " + link);
+  }
+
+  public void setShowclixLink(String link) {
+    JLShowclixLink.setText("Current Showclix Link: " + link);
   }
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -161,13 +187,18 @@ public class Status extends javax.swing.JFrame {
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
-    Browser.openLinkInBrowser("http://prime.paxsite.com");
-    setButtonStatusText("PAX Prime site opened.");
+//    Browser.openLinkInBrowser("http://prime.paxsite.com");
+//    setButtonStatusText("PAX Prime site opened.");
+    if (PAXChecker.playAlarm()) {
+      setButtonStatusText("Alarm started.");
+    } else {
+      setButtonStatusText("Unable to play alarm.");
+    }
   }//GEN-LAST:event_jButton2ActionPerformed
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLButtonStatus;
   private javax.swing.JLabel JLLastChecked;
+  private javax.swing.JLabel JLShowclixLink;
   private javax.swing.JLabel JLWebsiteLink;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;

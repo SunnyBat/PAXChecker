@@ -24,7 +24,7 @@ public class Browser {
     if (lineText == null) {
       PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX Prime website!");
       return false;
-    } else if (lineText.equals("IOException")) {
+    } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
       PAXChecker.status.setWebsiteLink("Unable to connect to the PAX Prime website!");
       return false;
     } else if (!lineText.contains("\"http://prime.paxsite.com\"")) {
@@ -36,36 +36,41 @@ public class Browser {
     }
   }
 
-  public static boolean isShowclixUpdated() {
-    if (!checkShowclix) {
-      return false;
-    }
-    int currEvent = getShowclixInfo();
-    if (currEvent == -1) {
-      return false;
-    }
-    if (currEvent != lastShowclixEventID) {
-//      JSONObject eventObj = (JSONObject) obj.get(Integer.toString(currEvent));
-//      status.setLatestEvent(eventObj.getString("event"));
-      String eventUrl = "http://showclix.com/event/" + currEvent;
-//      status.setLatestURL(eventUrl);
-      System.out.println("Current ID = " + lastShowclixEventID);
-      try {
-        Desktop.getDesktop().browse(new URI(eventUrl));
-      } catch (IOException | URISyntaxException e) {
-        e.printStackTrace();
+  public static String getCurrentButtonLinkLine() {
+    URL url;
+    InputStream is = null;
+    BufferedReader br;
+    String line;
+    try {
+      url = new URL("http://prime.paxsite.com/registration");
+      is = url.openStream();
+      br = new BufferedReader(new InputStreamReader(is));
+      while ((line = br.readLine()) != null) {
+        line = line.trim();
+        if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
+          return line;
+        }
       }
-      return true;
+    } catch (UnknownHostException | MalformedURLException uhe) {
+      return "NoConnection";
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      return "IOException";
+    } catch (Exception e) {
+      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
+      System.out.println("ERROR");
+      return null;
+    } finally {
+      try {
+        if (is != null) {
+          is.close();
+        }
+      } catch (IOException ioe) {
+        // nothing to see here
+      }
     }
-    return false;
-  }
-
-  public static void enablePaxWebsiteChecking() {
-    checkPAXWebsite = true;
-  }
-
-  public static void enableShowclixWebsiteChecking() {
-    checkShowclix = true;
+    System.out.println("NULL");
+    return null;
   }
 
   public static String parseHRef(String parse) {
@@ -87,38 +92,21 @@ public class Browser {
     }
   }
 
-  public static String getCurrentButtonLinkLine() {
-    URL url;
-    InputStream is = null;
-    BufferedReader br;
-    String line;
-    try {
-      url = new URL("http://prime.paxsite.com/registration");
-      is = url.openStream();
-      br = new BufferedReader(new InputStreamReader(is));
-      while ((line = br.readLine()) != null) {
-        line = line.trim();
-        if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
-          return line.trim();
-        }
-      }
-    } catch (MalformedURLException mue) {
-      mue.printStackTrace();
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      return "IOException";
-    } catch (Exception e) {
-      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
-    } finally {
-      try {
-        if (is != null) {
-          is.close();
-        }
-      } catch (IOException ioe) {
-        // nothing to see here
-      }
+  public static boolean isShowclixUpdated() {
+    if (!checkShowclix) {
+      return false;
     }
-    return null;
+    int currEvent = getShowclixInfo();
+    if (currEvent == -1) {
+      PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website");
+      return false;
+    }
+    String eventUrl = "http://showclix.com/event/" + currEvent;
+    PAXChecker.status.setShowclixLink(eventUrl);
+    if (currEvent != lastShowclixEventID) {
+      return true;
+    }
+    return false;
   }
 
   public static int getShowclixInfo() {
@@ -142,6 +130,7 @@ public class Browser {
       return maxId;
     } catch (Exception e) {
 //      ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
+      e.printStackTrace();
       return -1;
     }
   }
@@ -167,5 +156,21 @@ public class Browser {
       System.out.println("Unable to open " + link + " in default browser.");
       ErrorManagement.showErrorWindow("ERROR", "Unable to open the requested link: " + link, null);
     }
+  }
+
+  public static void enablePaxWebsiteChecking() {
+    checkPAXWebsite = true;
+  }
+
+  public static void enableShowclixWebsiteChecking() {
+    checkShowclix = true;
+  }
+
+  public static boolean isCheckingPaxWebsite() {
+    return checkPAXWebsite;
+  }
+
+  public static boolean isCheckingShowclix() {
+    return checkShowclix;
   }
 }
