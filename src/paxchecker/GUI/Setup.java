@@ -162,11 +162,13 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Setup", jPanel1);
 
+    jTextArea1.setEditable(false);
     jTextArea1.setColumns(20);
     jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
-    jTextArea1.setText("To receive text messages, you must specify the ");
+    jTextArea1.setText("->To receive text messages, you must specify the GMail or Yahoo email and password you want to use. If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon, NO SPACES) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number in.\nFor example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com");
     jTextArea1.setWrapStyleWord(true);
+    jTextArea1.setFocusable(false);
     jScrollPane1.setViewportView(jTextArea1);
 
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -185,7 +187,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("Credit to /u/GrahamAnthonyBlair for the Showclix website checker code.\n");
+    jTextArea2.setText("Credit to /u/GrahamArthurBlair for the Showclix website checker code.\n");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 
