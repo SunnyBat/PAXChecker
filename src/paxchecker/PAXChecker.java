@@ -7,6 +7,7 @@ package paxchecker;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import paxchecker.GUI.*;
 
 /**
  *
@@ -18,7 +19,6 @@ public class PAXChecker {
   public static Status status;
   public static Tickets tickets;
   public static Update update;
-  public static String textEmail;
   public static boolean forceUpdate;
   public static int secondsBetweenUpdate;
   public static URL updateURL;
@@ -28,27 +28,30 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) throws Exception {
+    Browser.getShowclixInfo();
+    javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     if (args.length > 0) {
       System.out.println("Args!");
     }
     System.out.println(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
     try {
-    updateURL = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
-    if (updateAvailable()) {
-      update = new Update();
-      update.setVisible(true);
-      while (update.isVisible() && !updateProgram) {
-        Thread.sleep(100);
+      updateURL = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
+      if (updateAvailable()) {
+        update = new Update();
+        update.setVisible(true);
+        while (update.isVisible() && !updateProgram) {
+          Thread.sleep(100);
+        }
+        if (updateProgram) {
+          updateProgram();
+          return;
+        }
+        update.dispose();
       }
-      if (updateProgram) {
-        updateProgram();
-        return;
-      }
-      update.dispose();
-    }
     } catch (Exception e) {
       ErrorManagement.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
       ErrorManagement.fatalError();
+      return;
     }
     Email.init();
     setup = new Setup();
@@ -58,26 +61,50 @@ public class PAXChecker {
     }
     setup.dispose();
     status = new Status();
-    status.setTitle(Email.getUsername() + " - " + textEmail);
-    status.setVisible(true);
+    if (Email.getTextEmail() != null) {
+      status.setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
+    } else if (!Email.getEmailList().isEmpty()) {
+      status.setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
+      String list = "<html>";
+      for (int a = 0; a < Email.getEmailList().size(); a++) {
+        list += Email.getEmailList().get(a);
+        if (a + 1 != Email.getEmailList().size()) {
+          list += "<br>";
+        }
+      }
+      list += "</html>";
+      status.setLabelTooltipText(list);
+    } else {
+      status.setInfoText("[TEXTING DISABLED]");
+      status.setTextButtonState(false);
+    }
     try {
-      status.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("PAX Icon.png")));
+      status.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/PAX Icon.png")));
     } catch (Exception e) {
       System.out.println("Unable to set IconImage!");
       e.printStackTrace();
     }
+    status.setVisible(true);
     long startMS;
     while (true) {
       startMS = System.currentTimeMillis();
-      if (Browser.isUpdated()) {
+      if (Browser.isPAXWebsiteUpdated()) {
         status.setVisible(false);
         status.dispose();
-        Email.sendMessage(textEmail, "PAX Tickets!", "The PAX website has (hopefully) been updated!");
-        tickets = new Tickets();
-        tickets.setAlwaysOnTop(true);
-        tickets.setVisible(true);
-        tickets.requestFocus();
+        showTicketsWindow();
         Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Only the best.
+        if (Email.getTextEmail() != null) {
+          Email.sendMessage("PAX Tickets ON SALE!", "The PAX website has been updated!");
+        }
+        break;
+      } else if (Browser.isShowclixUpdated()) {
+        status.setVisible(false);
+        status.dispose();
+        showTicketsWindow();
+        Browser.openLinkInBrowser(Browser.getShowclixLink()); // Only the best.
+        if (Email.getTextEmail() != null) {
+          Email.sendMessage("PAX Tickets ON SALE!", "The Showclix website has been updated!");
+        }
         break;
       }
       while (System.currentTimeMillis() - startMS < (secondsBetweenUpdate * 1000)) {
@@ -91,6 +118,19 @@ public class PAXChecker {
     }
   }
 
+  public static void showTicketsWindow() {
+        tickets = new Tickets();
+        tickets.setAlwaysOnTop(true);
+        try {
+          tickets.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/alert.png")));
+        } catch (Exception e) {
+          System.out.println("Unable to set IconImage!");
+          e.printStackTrace();
+        }
+        tickets.setVisible(true);
+        tickets.requestFocus();
+  }
+
   /**
    * Set the updateProgram flag to true. This will start the program updating process. This should
    * only be called by the Update GUI when the main() method is waiting for the prompt.
@@ -102,6 +142,7 @@ public class PAXChecker {
   /**
    * Sets the time between checking the PAX Registration website for updates. This can be called at
    * any time, however it is recommended to only call it during Setup.
+   *
    * @param seconds The amount of seconds between website updates.
    */
   public static void setUpdateTime(int seconds) {
@@ -109,30 +150,16 @@ public class PAXChecker {
   }
 
   /**
-   * Sets the email address that will be mailed to. This method defaults to @mms.att.net if no
-   * extension is specified. While this can be called at any time, it is recommended to only call
-   * during Setup.
-   * @param num 
-   */
-  public static void setCellnum(String num) {
-    if (!num.contains("@")) {
-      num += "@mms.att.net";
-    }
-    textEmail = num;
-    System.out.println("textEmail = " + textEmail);
-  }
-
-  /**
    * Forces the program to check the PAX website for updates. Note that this resets the time since
    * last check to 0.
    */
-  public static void forceUpdate() {
+  public static void forceRefresh() {
     forceUpdate = true;
     status.setButtonStatusText("Forced website check!");
   }
 
   public static void testEmail() {
-    if (Email.sendMessage(textEmail, "Test", "The test is successful!")) {
+    if (Email.sendMessage("Test", "The test is successful. The PAX Checker is now set up to text your phone when the website updates!")) {
       status.setButtonStatusText("Text message successfully sent!");
     } else {
       status.setButtonStatusText("There was an error sending your text message.");
@@ -144,6 +171,7 @@ public class PAXChecker {
    * sizes between the current file and the file on the Dropbox server. This means that if ANY
    * modification is made to the JAR file, it's likely to trigger an update.
    * This THEORETICALLY works well. We'll find out whether or not it will actually work in practice.
+   *
    * @return True if an update is available, false if not.
    */
   private static boolean updateAvailable() {

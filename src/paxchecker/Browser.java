@@ -3,6 +3,8 @@ package paxchecker;
 import java.io.*;
 import java.net.*;
 import java.awt.Desktop;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -10,7 +12,14 @@ import java.awt.Desktop;
  */
 public class Browser {
 
-  public static boolean isUpdated() {
+  private static boolean checkPAXWebsite;
+  private static boolean checkShowclix;
+  private static int lastShowclixEventID = 3817350;
+
+  public static boolean isPAXWebsiteUpdated() {
+    if (!checkPAXWebsite) {
+      return false;
+    }
     String lineText = getCurrentButtonLinkLine();
     if (lineText == null) {
       PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX Prime website!");
@@ -25,6 +34,38 @@ public class Browser {
       PAXChecker.status.setWebsiteLink(parseHRef(lineText));
       return false;
     }
+  }
+
+  public static boolean isShowclixUpdated() {
+    if (!checkShowclix) {
+      return false;
+    }
+    int currEvent = getShowclixInfo();
+    if (currEvent == -1) {
+      return false;
+    }
+    if (currEvent != lastShowclixEventID) {
+//      JSONObject eventObj = (JSONObject) obj.get(Integer.toString(currEvent));
+//      status.setLatestEvent(eventObj.getString("event"));
+      String eventUrl = "http://showclix.com/event/" + currEvent;
+//      status.setLatestURL(eventUrl);
+      System.out.println("Current ID = " + lastShowclixEventID);
+      try {
+        Desktop.getDesktop().browse(new URI(eventUrl));
+      } catch (IOException | URISyntaxException e) {
+        e.printStackTrace();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  public static void enablePaxWebsiteChecking() {
+    checkPAXWebsite = true;
+  }
+
+  public static void enableShowclixWebsiteChecking() {
+    checkShowclix = true;
   }
 
   public static String parseHRef(String parse) {
@@ -78,6 +119,40 @@ public class Browser {
       }
     }
     return null;
+  }
+
+  public static int getShowclixInfo() {
+    try {
+      URL url = new URL("http://api.showclix.com/Seller/16886/events");
+      HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+      httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+      String jsonText = "";
+      while (reader.ready()) {
+        jsonText += reader.readLine();
+      }
+      reader.close();
+      JSONParser mP = new JSONParser();
+      JSONObject obj = (JSONObject) mP.parse(jsonText);
+
+      int maxId = 0;
+      for (String s : (Iterable<String>) obj.keySet()) {
+        maxId = Math.max(maxId, Integer.parseInt((String) s));
+      }
+      return maxId;
+    } catch (Exception e) {
+//      ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
+      return -1;
+    }
+  }
+
+  public static String getShowclixLink() {
+    try {
+      return "http://showclix.com/event/" + getShowclixInfo();
+    } catch (Exception e) {
+      ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
+      return null;
+    }
   }
 
   public static void openLinkInBrowser(String link) {

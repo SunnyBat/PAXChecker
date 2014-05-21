@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package paxchecker;
+package paxchecker.GUI;
 
 /**
  *
@@ -27,7 +27,8 @@ public class Tickets extends javax.swing.JFrame {
     jScrollPane1 = new javax.swing.JScrollPane();
     jTextArea1 = new javax.swing.JTextArea();
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    setTitle("PAX On Sale!");
     setResizable(false);
 
     jTextArea1.setColumns(20);

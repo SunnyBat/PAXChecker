@@ -1,4 +1,6 @@
-package paxchecker;
+package paxchecker.GUI;
+
+import paxchecker.ErrorManagement;
 
 /**
  *

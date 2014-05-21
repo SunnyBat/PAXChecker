@@ -2,7 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package paxchecker;
+package paxchecker.GUI;
+
+import paxchecker.Browser;
+import paxchecker.PAXChecker;
 
 /**
  *
@@ -14,7 +17,7 @@ public class Status extends javax.swing.JFrame {
   public Status() {
     initComponents();
   }
-  
+
   public void setWebsiteLink(String link) {
     JLWebsiteLink.setText("Current Website Link: " + link);
   }
@@ -35,8 +38,10 @@ public class Status extends javax.swing.JFrame {
     jButton3 = new javax.swing.JButton();
     JLLastChecked = new javax.swing.JLabel();
     JLButtonStatus = new javax.swing.JLabel();
+    jLabel2 = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setTitle("PAX Website Status");
     setResizable(false);
 
     jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -70,6 +75,10 @@ public class Status extends javax.swing.JFrame {
 
     JLButtonStatus.setText("Button Status");
 
+    jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+    jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    jLabel2.setText("Email -- Phone");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -78,16 +87,17 @@ public class Status extends javax.swing.JFrame {
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JLButtonStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLLastChecked)
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(JLButtonStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -95,11 +105,13 @@ public class Status extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addComponent(jLabel1)
-        .addGap(18, 18, 18)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jLabel2)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLWebsiteLink)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLLastChecked)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+        .addGap(18, 18, Short.MAX_VALUE)
         .addComponent(JLButtonStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -115,21 +127,33 @@ public class Status extends javax.swing.JFrame {
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
     // TODO add your handling code here:
-    PAXChecker.forceUpdate();
+    PAXChecker.forceRefresh();
   }//GEN-LAST:event_jButton3ActionPerformed
 
   public void setButtonStatusText(String text) {
     JLButtonStatus.setText(text);
   }
-  
+
   public void setLastCheckedText(String text) {
     JLLastChecked.setText(text);
   }
-  
+
   public void setLastCheckedText(int seconds) {
     setLastCheckedText("Time since last checked: " + seconds + " seconds ago");
   }
-  
+
+  public void setInfoText(String text) {
+    jLabel2.setText(text);
+  }
+
+  public void setTextButtonState(boolean enabled) {
+    jButton1.setEnabled(enabled);
+  }
+
+  public void setLabelTooltipText(String s) {
+    jLabel2.setToolTipText(s);
+  }
+
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
     PAXChecker.testEmail();
@@ -149,5 +173,6 @@ public class Status extends javax.swing.JFrame {
   private javax.swing.JButton jButton2;
   private javax.swing.JButton jButton3;
   private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel2;
   // End of variables declaration//GEN-END:variables
 }

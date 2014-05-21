@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package paxchecker;
+package paxchecker.GUI;
+
+import paxchecker.PAXChecker;
 
 /**
  *
@@ -117,11 +119,11 @@ public class Update extends javax.swing.JFrame {
     jProgressBar1.setVisible(true);
     pack();
   }
-  
+
   public void updateProgress(int percent) {
     jProgressBar1.setValue(percent);
   }
-  
+
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
     setVisible(false);
