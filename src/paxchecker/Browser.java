@@ -22,16 +22,22 @@ public class Browser {
     }
     String lineText = getCurrentButtonLinkLine();
     if (lineText == null) {
-      PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX Prime website!");
+      if (PAXChecker.status != null) {
+        PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX Prime website!");
+      }
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
-      PAXChecker.status.setWebsiteLink("Unable to connect to the PAX Prime website!");
+      if (PAXChecker.status != null) {
+        PAXChecker.status.setWebsiteLink("Unable to connect to the PAX Prime website!");
+      }
       return false;
     } else if (!lineText.contains("\"http://prime.paxsite.com\"")) {
       System.out.println("OMG IT'S UPDATED: " + lineText);
       return true;
     } else {
-      PAXChecker.status.setWebsiteLink(parseHRef(lineText));
+      if (PAXChecker.status != null) {
+        PAXChecker.status.setWebsiteLink(parseHRef(lineText));
+      }
       return false;
     }
   }
@@ -98,11 +104,15 @@ public class Browser {
     }
     int currEvent = getShowclixInfo();
     if (currEvent == -1) {
-      PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website");
+      if (PAXChecker.status != null) {
+        PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website");
+      }
       return false;
     }
     String eventUrl = "http://showclix.com/event/" + currEvent;
-    PAXChecker.status.setShowclixLink(eventUrl);
+    if (PAXChecker.status != null) {
+      PAXChecker.status.setShowclixLink(eventUrl);
+    }
     if (currEvent != lastShowclixEventID) {
       return true;
     }

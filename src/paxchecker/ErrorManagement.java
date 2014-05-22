@@ -62,6 +62,7 @@ public class ErrorManagement {
     if (t != null) {
       errorWindow.JBError.setEnabled(true);
       errorWindow.myError = t;
+      t.printStackTrace();
     }
     errorWindowCount++;
   }

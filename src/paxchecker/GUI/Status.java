@@ -4,8 +4,7 @@
  */
 package paxchecker.GUI;
 
-import paxchecker.Browser;
-import paxchecker.PAXChecker;
+import paxchecker.*;
 
 /**
  *
@@ -157,6 +156,10 @@ public class Status extends javax.swing.JFrame {
   public void setTextButtonState(boolean enabled) {
     jButton1.setEnabled(enabled);
   }
+  
+  public void setSoundButtonState(boolean enabled) {
+    jButton2.setEnabled(enabled);
+  }
 
   public void hideShowclixText() {
     JLShowclixLink.setVisible(false);
@@ -182,7 +185,7 @@ public class Status extends javax.swing.JFrame {
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
-    PAXChecker.testEmail();
+    Email.testEmail();
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

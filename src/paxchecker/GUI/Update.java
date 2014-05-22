@@ -15,7 +15,7 @@ public class Update extends javax.swing.JFrame {
   /** Creates new form Update */
   public Update() {
     initComponents();
-    jLabel3.setVisible(false);
+    //JLStatus.setVisible(false);
     jProgressBar1.setVisible(false);
     pack();
     setLocationRelativeTo(null);
@@ -34,7 +34,7 @@ public class Update extends javax.swing.JFrame {
     jLabel2 = new javax.swing.JLabel();
     jButton1 = new javax.swing.JButton();
     jButton2 = new javax.swing.JButton();
-    jLabel3 = new javax.swing.JLabel();
+    JLStatus = new javax.swing.JLabel();
     jProgressBar1 = new javax.swing.JProgressBar();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -64,8 +64,8 @@ public class Update extends javax.swing.JFrame {
       }
     });
 
-    jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel3.setText("Downloading Update:");
+    JLStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    JLStatus.setText("Downloading Update:");
 
     jProgressBar1.setToolTipText("Please wait, downloading the latest version...");
 
@@ -76,7 +76,7 @@ public class Update extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JLStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
           .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
@@ -98,7 +98,7 @@ public class Update extends javax.swing.JFrame {
           .addComponent(jButton1)
           .addComponent(jButton2))
         .addGap(18, 18, 18)
-        .addComponent(jLabel3)
+        .addComponent(JLStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -111,13 +111,19 @@ public class Update extends javax.swing.JFrame {
     // TODO add your handling code here:
     PAXChecker.startUpdatingProgram();
     updateInit();
+    jButton1.setVisible(false);
+    jButton2.setVisible(false);
     //setVisible(false);
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void updateInit() {
-    jLabel3.setVisible(true);
+    //JLStatus.setVisible(true);
     jProgressBar1.setVisible(true);
     pack();
+  }
+  
+  public void setStatusLabelText(String text) {
+    JLStatus.setText(text);
   }
 
   public void updateProgress(int percent) {
@@ -130,11 +136,11 @@ public class Update extends javax.swing.JFrame {
   }//GEN-LAST:event_jButton2ActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JLabel JLStatus;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
-  private javax.swing.JLabel jLabel3;
   private javax.swing.JProgressBar jProgressBar1;
   // End of variables declaration//GEN-END:variables
 }

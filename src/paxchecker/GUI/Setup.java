@@ -45,9 +45,13 @@ public class Setup extends javax.swing.JFrame {
     jButton1 = new javax.swing.JButton();
     jCheckBox1 = new javax.swing.JCheckBox();
     jCheckBox2 = new javax.swing.JCheckBox();
+    jCheckBox3 = new javax.swing.JCheckBox();
     jPanel2 = new javax.swing.JPanel();
-    jScrollPane1 = new javax.swing.JScrollPane();
-    jTextArea1 = new javax.swing.JTextArea();
+    jScrollPane3 = new javax.swing.JScrollPane();
+    jTextArea3 = new javax.swing.JTextArea();
+    jPanel4 = new javax.swing.JPanel();
+    jScrollPane4 = new javax.swing.JScrollPane();
+    jTextArea4 = new javax.swing.JTextArea();
     jPanel3 = new javax.swing.JPanel();
     jScrollPane2 = new javax.swing.JScrollPane();
     jTextArea2 = new javax.swing.JTextArea();
@@ -99,12 +103,17 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
+    jCheckBox2.setSelected(true);
     jCheckBox2.setText("Scan Showclix website");
     jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jCheckBox2ActionPerformed(evt);
       }
     });
+
+    jCheckBox3.setSelected(true);
+    jCheckBox3.setText("Play Sound when Updated");
+    jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -119,6 +128,7 @@ public class Setup extends javax.swing.JFrame {
           .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(jCheckBox3)
               .addComponent(jCheckBox2)
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +170,9 @@ public class Setup extends javax.swing.JFrame {
         .addComponent(jCheckBox1)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jCheckBox2)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jCheckBox3)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(jLabel6)
         .addGap(0, 0, 0)
         .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,32 +183,53 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Setup", jPanel1);
 
-    jTextArea1.setEditable(false);
-    jTextArea1.setColumns(20);
-    jTextArea1.setLineWrap(true);
-    jTextArea1.setRows(5);
-    jTextArea1.setText("->To receive text messages, you must specify the GMail or Yahoo email and password you want to use. If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon, NO SPACES) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number in.\nFor example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com");
-    jTextArea1.setWrapStyleWord(true);
-    jTextArea1.setFocusable(false);
-    jScrollPane1.setViewportView(jTextArea1);
+    jTextArea3.setEditable(false);
+    jTextArea3.setColumns(20);
+    jTextArea3.setLineWrap(true);
+    jTextArea3.setRows(5);
+    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the GMail or Yahoo email and password you want to use. If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon, NO SPACES) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number in.\nFor example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com");
+    jTextArea3.setWrapStyleWord(true);
+    jScrollPane3.setViewportView(jTextArea3);
 
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
     jPanel2.setLayout(jPanel2Layout);
     jPanel2Layout.setHorizontalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
     );
     jPanel2Layout.setVerticalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel2);
 
+    jTextArea4.setEditable(false);
+    jTextArea4.setColumns(20);
+    jTextArea4.setLineWrap(true);
+    jTextArea4.setRows(5);
+    jTextArea4.setText("->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setWrapStyleWord(true);
+    jScrollPane4.setViewportView(jTextArea4);
+
+    javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+    jPanel4.setLayout(jPanel4Layout);
+    jPanel4Layout.setHorizontalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+    );
+    jPanel4Layout.setVerticalGroup(
+      jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+    );
+
+    jTabbedPane1.addTab("Recent Changes", jPanel4);
+
+    jTextArea2.setEditable(false);
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("Credit to /u/GrahamArthurBlair for the Showclix website checker code.\n");
+    jTextArea2.setText("->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 
@@ -208,7 +241,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -239,6 +272,7 @@ public class Setup extends javax.swing.JFrame {
     if (jCheckBox2.isSelected()) {
       Browser.enableShowclixWebsiteChecking();
     }
+    PAXChecker.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));
     String text = jTextField2.getText();
@@ -247,7 +281,7 @@ public class Setup extends javax.swing.JFrame {
     } else if (text.length() > 4) {
       Email.setCellNum(text, jComboBox1.getSelectedItem().toString());
     }
-    PAXChecker.setUpdateTime(jSlider1.getValue());
+    PAXChecker.setRefreshTime(jSlider1.getValue());
     this.dispose();
   }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -272,6 +306,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JButton jButton1;
   private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox2;
+  private javax.swing.JCheckBox jCheckBox3;
   private javax.swing.JComboBox jComboBox1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
@@ -281,13 +316,16 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
+  private javax.swing.JPanel jPanel4;
   private javax.swing.JPasswordField jPasswordField1;
-  private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
+  private javax.swing.JScrollPane jScrollPane3;
+  private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JSlider jSlider1;
   private javax.swing.JTabbedPane jTabbedPane1;
-  private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTextArea jTextArea2;
+  private javax.swing.JTextArea jTextArea3;
+  private javax.swing.JTextArea jTextArea4;
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   // End of variables declaration//GEN-END:variables

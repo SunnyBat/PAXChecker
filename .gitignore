@@ -1,6 +1,6 @@
 *.class
-/build/
-/nbproject/
+build/
+nbproject/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
