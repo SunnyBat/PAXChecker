@@ -60,7 +60,6 @@ public class Browser {
     } catch (UnknownHostException | MalformedURLException uhe) {
       return "NoConnection";
     } catch (IOException ioe) {
-      ioe.printStackTrace();
       return "IOException";
     } catch (Exception e) {
       ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
@@ -73,6 +72,8 @@ public class Browser {
         }
       } catch (IOException ioe) {
         // nothing to see here
+        System.out.println("Note: Unable to close InputStream for getCurrentButtonLinkLine()");
+        ioe.printStackTrace();
       }
     }
     System.out.println("NULL");
@@ -90,6 +91,7 @@ public class Browser {
         System.out.println("Unable to correctly parse link from button HTML.");
         return "http://prime.paxsite.com";
       }
+      //System.out.println("Link parsed from Register Online button: " + parse);
       return parse;
     } catch (Exception e) {
       System.out.println("ERROR: Unable to parse link from button");
@@ -160,11 +162,11 @@ public class Browser {
       try {
         desktop.browse(new URI(link));
       } catch (Exception e) {
-        e.printStackTrace();
+        ErrorManagement.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
       }
     } else {
-      System.out.println("Unable to open " + link + " in default browser.");
-      ErrorManagement.showErrorWindow("ERROR", "Unable to open the requested link: " + link, null);
+      System.out.println("Unable to open link in default browser.");
+      ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
     }
   }
 

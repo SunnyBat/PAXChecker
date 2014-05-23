@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 public class Email {
 
   private static String host, port, username, password, textEmail;
-  private static List<String> emailList = new ArrayList<>();
+  private static List<String> emailList;
   private static Properties props = System.getProperties();
   private static Session l_session = null;
 
@@ -115,7 +115,7 @@ public class Email {
     }
     textEmail = num;
     System.out.println("textEmail = " + textEmail);
-    //emailList = null;
+    emailList = null;
   }
 
   /**
@@ -128,6 +128,7 @@ public class Email {
    * @param parseList
    */
   public static void setCellList(String parseList) {
+    emailList = new ArrayList<String>();
     try {
       String[] parsed = parseList.split(";");
       for (int a = 0; a < parsed.length; a++) {

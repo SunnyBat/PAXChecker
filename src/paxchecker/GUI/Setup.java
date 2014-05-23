@@ -208,7 +208,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea4.setColumns(20);
     jTextArea4.setLineWrap(true);
     jTextArea4.setRows(5);
-    jTextArea4.setText("->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setText("~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
     jTextArea4.setWrapStyleWord(true);
     jScrollPane4.setViewportView(jTextArea4);
 
@@ -229,7 +229,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
+    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 

@@ -309,7 +309,7 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="-&gt;Added alarm to program (significant program size increase... Darn WAV files)&#xa;--&gt;Can choose to enable or disable the alarm&#xa;-&gt;Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both&#xa;-&gt;Added &quot;Recent Changes&quot; section&#xa;-&gt;Added tooltips to the program&#xa;-&gt;Made program updater display update size before downloading update&#xa;-&gt;Made program updater display current update progress&#xa;-&gt;Made program select Showclix website monitoring and play sound when update found by default"/>
+                    <Property name="text" type="java.lang.String" value="~~~1.0.0~~~&#xa;-&gt;Fixed issue sending email when website update was found while using multiple email addresses&#xa;-&gt;Fixed issue with playing multiple alarm sounds at the same time&#xa;-&gt;Various minor bugfixes (see Github repo)&#xa;&#xa;~~~Pre-versioning~~~&#xa;-&gt;Added alarm to program (significant program size increase... Darn WAV files)&#xa;--&gt;Can choose to enable or disable the alarm&#xa;-&gt;Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both&#xa;-&gt;Added &quot;Recent Changes&quot; section&#xa;-&gt;Added tooltips to the program&#xa;-&gt;Made program updater display update size before downloading update&#xa;-&gt;Made program updater display current update progress&#xa;-&gt;Made program select Showclix website monitoring and play sound when update found by default"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
                 </Component>
@@ -352,7 +352,7 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="-&gt;Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.&#xa;-&gt;To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.&#xa;-&gt;Link to Github repository for source code:&#xa;https://github.com/SunnyBat/PAXChecker"/>
+                    <Property name="text" type="java.lang.String" value="-&gt;Program created by Sunny Bat -- Sunnybat@yahoo.com&#xa;-&gt;Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.&#xa;-&gt;To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.&#xa;-&gt;Link to Github repository for source code:&#xa;https://github.com/SunnyBat/PAXChecker"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
                 </Component>

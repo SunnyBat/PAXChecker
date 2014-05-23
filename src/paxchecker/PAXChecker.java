@@ -27,6 +27,8 @@ public class PAXChecker {
   public static boolean updateProgram;
   public static boolean playSound;
   public static long updateSize;
+  private static Clip clip;
+  private static String version = "1.0.0";
 
   /**
    * @param args the command line arguments
@@ -62,22 +64,24 @@ public class PAXChecker {
     Email.init();
     setup = new Setup();
     setup.setVisible(true);
+    setup.setTitle("PAXChecker Setup v"+version);
     while (setup.isVisible()) {
       Thread.sleep(100);
     }
     setup.dispose();
     status = new Status();
+    java.util.List emailList = Email.getEmailList();
     if (Email.getUsername().indexOf("@") == 0) {
       status.setInfoText("[TEXTING DISABLED]");
       status.setTextButtonState(false);
     } else if (Email.getTextEmail() != null) {
       status.setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
-    } else if (!Email.getEmailList().isEmpty()) {
+    } else if (emailList != null) {
       status.setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
       String list = "<html>";
-      for (int a = 0; a < Email.getEmailList().size(); a++) {
-        list += Email.getEmailList().get(a);
-        if (a + 1 != Email.getEmailList().size()) {
+      for (int a = 0; a < emailList.size(); a++) {
+        list += emailList.get(a);
+        if (a + 1 != emailList.size()) {
           list += "<br>";
         }
       }
@@ -102,24 +106,20 @@ public class PAXChecker {
       startMS = System.currentTimeMillis();
       if (Browser.isPAXWebsiteUpdated()) {
         playAlarm();
-        status.setVisible(false);
-        status.dispose();
         showTicketsWindow();
         Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Only the best.
-        if (Email.getTextEmail() != null) {
-          Email.sendMessage("PAX Tickets ON SALE!", "The PAX website has been updated!");
-        }
+        Email.sendMessage("PAX Tickets ON SALE!", "The PAX website has been updated!");
+        status.setVisible(false);
+        status.dispose();
         break;
       }
       if (Browser.isShowclixUpdated()) {
         playAlarm();
-        status.setVisible(false);
-        status.dispose();
         showTicketsWindow();
         Browser.openLinkInBrowser(Browser.getShowclixLink()); // Only the best.
-        if (Email.getTextEmail() != null) {
-          Email.sendMessage("PAX Tickets ON SALE!", "The Showclix website has been updated!");
-        }
+        Email.sendMessage("PAX Tickets ON SALE!", "The Showclix website has been updated!");
+        status.setVisible(false);
+        status.dispose();
         break;
       }
       while (System.currentTimeMillis() - startMS < (secondsBetweenRefresh * 1000)) {
@@ -270,7 +270,11 @@ public class PAXChecker {
 
   public static boolean playAlarm() {
     try {
-      Clip clip = AudioSystem.getClip();
+      if (clip != null) {
+        clip.stop();
+        clip.setFramePosition(0);
+      }
+      clip = AudioSystem.getClip();
       InputStream audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
