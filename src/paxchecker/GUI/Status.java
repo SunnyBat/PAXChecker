@@ -15,11 +15,39 @@ public class Status extends javax.swing.JFrame {
   /** Creates new form Status */
   public Status() {
     initComponents();
+    customComponents();
+  }
+  
+  private void customComponents() {
     if (!Browser.isCheckingPaxWebsite()) {
       hideWebsiteText();
     }
     if (!Browser.isCheckingShowclix()) {
       hideShowclixText();
+    }
+    java.util.List emailList = Email.getEmailList();
+    if (Email.getUsername().indexOf("@") == 0) {
+      setInfoText("[TEXTING DISABLED]");
+      setTextButtonState(false);
+    } else if (Email.getTextEmail() != null) {
+      setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
+    } else if (emailList != null) {
+      setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
+      String list = "<html>";
+      for (int a = 0; a < emailList.size(); a++) {
+        list += emailList.get(a);
+        if (a + 1 != emailList.size()) {
+          list += "<br>";
+        }
+      }
+      list += "</html>";
+      setLabelTooltipText(list);
+    } else {
+      setInfoText("[TEXTING DISABLED]");
+      setTextButtonState(false);
+    }
+    if (!PAXChecker.playSound) {
+      setSoundButtonState(false);
     }
   }
 

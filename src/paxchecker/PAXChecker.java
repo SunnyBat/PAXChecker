@@ -28,7 +28,7 @@ public class PAXChecker {
   public static boolean playSound;
   public static long updateSize;
   private static Clip clip;
-  private static String version = "1.0.0";
+  private static String version = "1.0.1";
 
   /**
    * @param args the command line arguments
@@ -37,6 +37,9 @@ public class PAXChecker {
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     if (args.length > 0) {
       System.out.println("Args!");
+      for (int a = 0; a < args.length; a++) {
+        System.out.println("args["+a+"] = " + args[a]);
+      }
     }
     System.out.println(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
     try {
@@ -70,30 +73,6 @@ public class PAXChecker {
     }
     setup.dispose();
     status = new Status();
-    java.util.List emailList = Email.getEmailList();
-    if (Email.getUsername().indexOf("@") == 0) {
-      status.setInfoText("[TEXTING DISABLED]");
-      status.setTextButtonState(false);
-    } else if (Email.getTextEmail() != null) {
-      status.setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
-    } else if (emailList != null) {
-      status.setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
-      String list = "<html>";
-      for (int a = 0; a < emailList.size(); a++) {
-        list += emailList.get(a);
-        if (a + 1 != emailList.size()) {
-          list += "<br>";
-        }
-      }
-      list += "</html>";
-      status.setLabelTooltipText(list);
-    } else {
-      status.setInfoText("[TEXTING DISABLED]");
-      status.setTextButtonState(false);
-    }
-    if (!playSound) {
-      status.setSoundButtonState(false);
-    }
     try {
       status.setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/PAX Icon.png")));
     } catch (Exception e) {
@@ -239,7 +218,6 @@ public class PAXChecker {
         if ((int) (((in * 100) / max)) != prevPercent) {
           prevPercent = (int) (((in * 100) / max));
           update.updateProgress(prevPercent);
-          update.setStatusLabelText("Progress: " + prevPercent + "%");
         }
       }
       fOut.flush();

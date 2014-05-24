@@ -187,7 +187,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea3.setColumns(20);
     jTextArea3.setLineWrap(true);
     jTextArea3.setRows(5);
-    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the GMail or Yahoo email and password you want to use. If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon, NO SPACES) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number in.\nFor example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com");
+    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the GMail or Yahoo email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the email). If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
     jTextArea3.setWrapStyleWord(true);
     jScrollPane3.setViewportView(jTextArea3);
 
@@ -208,7 +208,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea4.setColumns(20);
     jTextArea4.setLineWrap(true);
     jTextArea4.setRows(5);
-    jTextArea4.setText("~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setText("~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n->\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
     jTextArea4.setWrapStyleWord(true);
     jScrollPane4.setViewportView(jTextArea4);
 
@@ -260,6 +260,24 @@ public class Setup extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    // TODO add your handling code here:
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+      jButton1.setEnabled(false);
+    } else {
+      jButton1.setEnabled(true);
+    }
+  }//GEN-LAST:event_jCheckBox2ActionPerformed
+
+  private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    // TODO add your handling code here:
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+      jButton1.setEnabled(false);
+    } else {
+      jButton1.setEnabled(true);
+    }
+  }//GEN-LAST:event_jCheckBox1ActionPerformed
+
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
     if (jCheckBox1.isSelected()) {
@@ -285,23 +303,6 @@ public class Setup extends javax.swing.JFrame {
     this.dispose();
   }//GEN-LAST:event_jButton1ActionPerformed
 
-  private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-    // TODO add your handling code here:
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-      jButton1.setEnabled(false);
-    } else {
-      jButton1.setEnabled(true);
-    }
-  }//GEN-LAST:event_jCheckBox1ActionPerformed
-
-  private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-    // TODO add your handling code here:
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-      jButton1.setEnabled(false);
-    } else {
-      jButton1.setEnabled(true);
-    }
-  }//GEN-LAST:event_jCheckBox2ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
   private javax.swing.JCheckBox jCheckBox1;

@@ -7,11 +7,12 @@ import paxchecker.GUI.ErrorWindow;
  * @author SunnyBat
  */
 public class ErrorManagement {
+
   private static byte errorWindowCount = 0;
   private static ErrorWindow errorWindow;
   private static boolean fatalError;
 
-    /**
+  /**
    * Displays a window clearly indicating something has gone wrong. This should be used only when
    * the program encounters an error that impedes its function, not for notifications to the user.
    *
@@ -122,10 +123,43 @@ public class ErrorManagement {
   }
 
   private static boolean canExit() {
-    if ((PAXChecker.setup == null && PAXChecker.status == null && PAXChecker.tickets == null && PAXChecker.update == null) || fatalError) {
-      return true;
+    if (errorWindowCount == 0) {
+      if (fatalError) {
+        return true;
+      }
+      int validCount = 0;
+      if (PAXChecker.setup != null) {
+        if (!PAXChecker.setup.isVisible()) {
+          validCount++;
+        }
+      } else {
+        validCount++;
+      }
+      if (PAXChecker.tickets != null) {
+        if (!PAXChecker.tickets.isVisible()) {
+          validCount++;
+        }
+      } else {
+        validCount++;
+      }
+      if (PAXChecker.update != null) {
+        if (!PAXChecker.update.isVisible()) {
+          validCount++;
+        }
+      } else {
+        validCount++;
+      }
+      if (PAXChecker.status != null) {
+        if (!PAXChecker.status.isVisible()) {
+          validCount++;
+        }
+      } else {
+        validCount++;
+      }
+      if (validCount == 4) {
+        return true;
+      }
     }
     return false;
   }
-
 }

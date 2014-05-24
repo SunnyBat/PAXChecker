@@ -74,13 +74,32 @@ public class Email {
     System.out.println("textEmail = " + textEmail);
   }
 
+  public static String getCarrierExtension(String carrier) {
+    switch (carrier) {
+      case "AT&T":
+        return "@mms.att.net";
+      case "Verizon":
+        return "@vtext.com";
+      case "Sprint":
+        return "@messaging.sprintpcs.com";
+      case "T-Mobile":
+        return "@tmomail.net";
+      case "U.S. Cellular":
+        return "@email.uscc.net";
+      default:
+        System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
+        return "@mms.att.net";
+    }
+  }
+
   /**
    * <HTML>Sets {@link #textEmail} to the specified email address. If no [AT] symbol is in {@link num},
    * {@link carrier} is used to add the correct carrier email ending to the number. If an invalid
    * carrier is specified, the method defaults to AT&T.<br>
    * Note that this sets {@link #emailList} to null.</HTML>
+   *
    * @param num
-   * @param carrier 
+   * @param carrier
    */
   public static void setCellNum(String num, String carrier) {
     if (num == null) {
@@ -91,27 +110,7 @@ public class Email {
       return;
     }
     if (!num.contains("@")) {
-      switch (carrier) {
-        case "AT&T":
-          num += "@mms.att.net";
-          break;
-        case "Verizon":
-          num += "@vtext.com";
-          break;
-        case "Sprint":
-          num += "@messaging.sprintpcs.com";
-          break;
-        case "T-Mobile":
-          num += "@tmomail.net";
-          break;
-        case "U.S. Cellular":
-          num += "@email.uscc.net";
-          break;
-        default:
-          System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
-          setCellNum(num, "AT&T");
-          return;
-      }
+      num += getCarrierExtension(carrier);
     }
     textEmail = num;
     System.out.println("textEmail = " + textEmail);
@@ -121,17 +120,50 @@ public class Email {
   /**
    * <HTML>Sets the current email list to the String specified. This parses every email address by
    * splitting the String by ; (semicolons).<br>
-   * Example String: 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
+   * Example String:
+   * 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
    * Note that [AT] should be one character. Javadocs are fun.<br>
    * Also note that this sets {@link #textEmail} to null.
    * </HTML>
-   * @param parseList
+   *
+   * @param parseList The list of numbers to read through
    */
   public static void setCellList(String parseList) {
-    emailList = new ArrayList<String>();
+    emailList = new ArrayList<>();
     try {
       String[] parsed = parseList.split(";");
       for (int a = 0; a < parsed.length; a++) {
+        parsed[a] = parsed[a].trim();
+        emailList.add(parsed[a]);
+      }
+    } catch (Exception e) {
+      emailList = null;
+      ErrorManagement.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
+    }
+    textEmail = null;
+  }
+
+  /**
+   * <HTML>Sets the current email list to the String specified. This parses every email address by
+   * splitting the String by ; (semicolons).<br>
+   * Example String:
+   * 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
+   * Note that [AT] should be one character. Javadocs are fun.<br>
+   * Also note that this sets {@link #textEmail} to null.
+   * </HTML>
+   *
+   * @param parseList      The list of numbers to read through
+   * @param defaultCarrier The default carrier to email to, if none is specified
+   */
+  public static void setCellList(String parseList, String defaultCarrier) {
+    emailList = new ArrayList<>();
+    try {
+      String[] parsed = parseList.split(";");
+      for (int a = 0; a < parsed.length; a++) {
+        parsed[a] = parsed[a].trim();
+        if (!parsed[a].contains("@")) {
+          parsed[a] += getCarrierExtension(defaultCarrier);
+        }
         emailList.add(parsed[a]);
       }
     } catch (Exception e) {

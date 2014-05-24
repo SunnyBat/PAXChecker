@@ -121,20 +121,20 @@ public class Update extends javax.swing.JFrame {
     jProgressBar1.setVisible(true);
     pack();
   }
-  
+
   public void setStatusLabelText(String text) {
     JLStatus.setText(text);
   }
 
   public void updateProgress(int percent) {
     jProgressBar1.setValue(percent);
+    setStatusLabelText("Progress: " + percent + "%");
   }
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
     setVisible(false);
   }//GEN-LAST:event_jButton2ActionPerformed
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLStatus;
   private javax.swing.JButton jButton1;
