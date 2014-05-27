@@ -17,7 +17,7 @@ public class Status extends javax.swing.JFrame {
     initComponents();
     customComponents();
   }
-  
+
   private void customComponents() {
     if (!Browser.isCheckingPaxWebsite()) {
       hideWebsiteText();
@@ -165,49 +165,94 @@ public class Status extends javax.swing.JFrame {
     PAXChecker.forceRefresh();
   }//GEN-LAST:event_jButton3ActionPerformed
 
-  public void setButtonStatusText(String text) {
-    JLButtonStatus.setText(text);
+  public void setButtonStatusText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLButtonStatus.setText(text);
+      }
+    });
   }
 
-  public void setLastCheckedText(String text) {
-    JLLastChecked.setText(text);
+  public void setLastCheckedText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLLastChecked.setText(text);
+      }
+    });
   }
 
-  public void setLastCheckedText(int seconds) {
-    setLastCheckedText("Time since last checked: " + seconds + " seconds ago");
+  public void setLastCheckedText(final int seconds) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setLastCheckedText("Time since last checked: " + seconds + " seconds ago");
+      }
+    });
   }
 
-  public void setInfoText(String text) {
-    jLabel2.setText(text);
+  public void setInfoText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jLabel2.setText(text);
+      }
+    });
   }
 
-  public void setTextButtonState(boolean enabled) {
-    jButton1.setEnabled(enabled);
+  public void setTextButtonState(final boolean enabled) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jButton1.setEnabled(enabled);
+      }
+    });
   }
-  
-  public void setSoundButtonState(boolean enabled) {
-    jButton2.setEnabled(enabled);
+
+  public void setSoundButtonState(final boolean enabled) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jButton2.setEnabled(enabled);
+      }
+    });
   }
 
   public void hideShowclixText() {
-    JLShowclixLink.setVisible(false);
-    pack();
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLShowclixLink.setVisible(false);
+        pack();
+      }
+    });
   }
 
   public void hideWebsiteText() {
-    JLWebsiteLink.setVisible(false);
-    pack();
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLWebsiteLink.setVisible(false);
+        pack();
+      }
+    });
   }
 
-  public void setLabelTooltipText(String s) {
-    jLabel2.setToolTipText(s);
+  public void setLabelTooltipText(final String s) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jLabel2.setToolTipText(s);
+      }
+    });
   }
 
-  public void setWebsiteLink(String link) {
+  public void setWebsiteLink(final String link) {
     JLWebsiteLink.setText("Current Website Link: " + link);
   }
 
-  public void setShowclixLink(String link) {
+  public void setShowclixLink(final String link) {
     JLShowclixLink.setText("Current Showclix Link: " + link);
   }
 

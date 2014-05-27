@@ -33,8 +33,20 @@ public class Email {
     } else if (user.toLowerCase().contains("@gmail.com")) {
       setHost("smtp.gmail.com");
     } else if (!user.toLowerCase().contains("@yahoo.com")) {
-      System.out.println("ERROR: Yahoo or Google email required!");
-      System.exit(0);
+      String extraInfo = user.toLowerCase().substring(user.indexOf("::"));
+      if (extraInfo == null) {
+        ErrorManagement.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
+        username = null;
+        props.put("mail.smtp.user", username);
+        return;
+      }
+      setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
+      if (extraInfo.indexOf(":") != -1) {
+        setPort(extraInfo.substring(extraInfo.indexOf(":")));
+      }
+      user = user.substring(0, user.indexOf("::"));
+//      System.out.println("ERROR: Yahoo or Google email required!");
+//      System.exit(0);
     }
     System.out.println("Username = " + user);
     username = user;
@@ -49,10 +61,11 @@ public class Email {
     host = h;
   }
 
+  public static void setPort(String p) {
+    port = p;
+  }
+
   public static void setPassword(String pass) {
-    if (pass.length() < 8) {
-      System.out.println("Password seems weak, >=8 characters is recommended.");
-    }
     password = pass;
     props.put("mail.smtp.password", password);
   }
@@ -88,7 +101,7 @@ public class Email {
         return "@email.uscc.net";
       default:
         System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
-        return "@mms.att.net";
+        return getCarrierExtension("AT&T");
     }
   }
 
@@ -128,12 +141,22 @@ public class Email {
    *
    * @param parseList The list of numbers to read through
    */
+  @Deprecated
   public static void setCellList(String parseList) {
     emailList = new ArrayList<>();
     try {
       String[] parsed = parseList.split(";");
       for (int a = 0; a < parsed.length; a++) {
+        if (!parsed[a].contains("@")) {
+          System.out.println("Note: " + parsed[a] + " is not a valid email address.");
+          return;
+        }
+        System.out.println("Old Number [" + a + "]: " + parsed[a]);
         parsed[a] = parsed[a].trim();
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("-", "") + parsed[a].substring(parsed[a].indexOf("@")); // Avoid replacing chars in @car.rier.ext
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("(", "") + parsed[a].substring(parsed[a].indexOf("@"));
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace(")", "") + parsed[a].substring(parsed[a].indexOf("@"));
+        System.out.println("New Number [" + a + "]: " + parsed[a]);
         emailList.add(parsed[a]);
       }
     } catch (Exception e) {
@@ -160,10 +183,15 @@ public class Email {
     try {
       String[] parsed = parseList.split(";");
       for (int a = 0; a < parsed.length; a++) {
+        System.out.println("Old Number [" + a + "]: " + parsed[a]);
         parsed[a] = parsed[a].trim();
         if (!parsed[a].contains("@")) {
           parsed[a] += getCarrierExtension(defaultCarrier);
         }
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("-", "") + parsed[a].substring(parsed[a].indexOf("@")); // Avoid replacing chars in @car.rier.ext
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("(", "") + parsed[a].substring(parsed[a].indexOf("@"));
+        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace(")", "") + parsed[a].substring(parsed[a].indexOf("@"));
+        System.out.println("New Number [" + a + "]: " + parsed[a]);
         emailList.add(parsed[a]);
       }
     } catch (Exception e) {

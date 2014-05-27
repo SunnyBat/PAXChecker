@@ -187,7 +187,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea3.setColumns(20);
     jTextArea3.setLineWrap(true);
     jTextArea3.setRows(5);
-    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the GMail or Yahoo email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the email). If you don't, you will be unable to receive texts.\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front, no dashes, no perentheses. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;2345678901@vtext.net;3456789012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
+    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the cell number). If you don't see your carrier listed, you must go to emailtextmessages.com, find your carrier, and add the @extension.com to your number.\n=>NOTE: If you use an email besides Yahoo or GMail, you will have to look up your service's SMTP server and put the address after your email and two colons. Also, if it uses a port other than 587, you must specify the port after the server and a colon.\nExamples:\nUser@anotheremail.com::another.email.server\nUser@emailservice.net::email.service.server:1234\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front. Optionally, you can put perentheses () and dashes - if you need to. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;(234)5678901@vtext.net;345-678-9012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
     jTextArea3.setWrapStyleWord(true);
     jScrollPane3.setViewportView(jTextArea3);
 
@@ -208,7 +208,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea4.setColumns(20);
     jTextArea4.setLineWrap(true);
     jTextArea4.setRows(5);
-    jTextArea4.setText("~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n->\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setText("~~~1.0.2~~~\n->Program now allows dashes - and perentheses () in cell number(s)\n->Fixed using default carrier -- program will now actually use the default carrier when multiple numbers are specified\n->You're now able to use any email service that supports SMTP via TLS -- simply put ::server.address after the email, and optionally :PORTNUMBER after the server address.\n\n~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
     jTextArea4.setWrapStyleWord(true);
     jScrollPane4.setViewportView(jTextArea4);
 
@@ -229,7 +229,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
+    jTextArea2.setText("My apologies about the tons recent updates. I don't think I'll be pushing any more before PAX tickets go on sale.\n\n->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 
@@ -262,20 +262,30 @@ public class Setup extends javax.swing.JFrame {
 
   private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
     // TODO add your handling code here:
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-      jButton1.setEnabled(false);
-    } else {
-      jButton1.setEnabled(true);
-    }
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+          jButton1.setEnabled(false);
+        } else {
+          jButton1.setEnabled(true);
+        }
+      }
+    });
   }//GEN-LAST:event_jCheckBox2ActionPerformed
 
   private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
     // TODO add your handling code here:
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-      jButton1.setEnabled(false);
-    } else {
-      jButton1.setEnabled(true);
-    }
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+          jButton1.setEnabled(false);
+        } else {
+          jButton1.setEnabled(true);
+        }
+      }
+    });
   }//GEN-LAST:event_jCheckBox1ActionPerformed
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -295,7 +305,7 @@ public class Setup extends javax.swing.JFrame {
     Email.setPassword(new String(jPasswordField1.getPassword()));
     String text = jTextField2.getText();
     if (text.contains(";")) {
-      Email.setCellList(text);
+      Email.setCellList(text, jComboBox1.getSelectedItem().toString());
     } else if (text.length() > 4) {
       Email.setCellNum(text, jComboBox1.getSelectedItem().toString());
     }

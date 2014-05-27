@@ -28,7 +28,7 @@ public class PAXChecker {
   public static boolean playSound;
   public static long updateSize;
   private static Clip clip;
-  private static String version = "1.0.1";
+  private static String version = "1.0.2";
 
   /**
    * @param args the command line arguments
@@ -41,7 +41,6 @@ public class PAXChecker {
         System.out.println("args["+a+"] = " + args[a]);
       }
     }
-    System.out.println(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
     try {
       updateURL = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
       if (updateAvailable()) {
@@ -81,7 +80,7 @@ public class PAXChecker {
     }
     status.setVisible(true);
     long startMS;
-    while (true) {
+    do {
       startMS = System.currentTimeMillis();
       if (Browser.isPAXWebsiteUpdated()) {
         playAlarm();
@@ -109,7 +108,7 @@ public class PAXChecker {
         Thread.sleep(100);
         status.setLastCheckedText((int) ((System.currentTimeMillis() - startMS) / 1000));
       }
-    }
+    } while (status.isVisible());
   }
 
   /**
@@ -135,7 +134,7 @@ public class PAXChecker {
 
   /**
    * Set the updateProgram flag to true. This will start the program updating process. This should
-   * only be called by the Update GUI when the main() method is waiting for the prompt.
+   * only be called by the Update GUI when the main() method is waiti ng for the prompt.
    */
   public static void startUpdatingProgram() {
     updateProgram = true;
@@ -156,8 +155,7 @@ public class PAXChecker {
       if (fileSize == 4096) { // No, I do NOT want to update when I'm running in Netbeans
         return false;
       }
-      URL url = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
-      URLConnection conn = url.openConnection();
+      URLConnection conn = updateURL.openConnection();
       updateSize = conn.getContentLengthLong();
       System.out.println("Updatesize = " + updateSize + " -- Filesize = " + fileSize);
       if (updateSize == -1) {
@@ -202,8 +200,7 @@ public class PAXChecker {
 //      e.printStackTrace();
 //    }
     try {
-      URL url = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
-      URLConnection conn = url.openConnection();
+      URLConnection conn = updateURL.openConnection();
       InputStream is = conn.getInputStream();
       long max = conn.getContentLength();
       System.out.println("Downloding file...\nUpdate Size(compressed): " + max + " Bytes");

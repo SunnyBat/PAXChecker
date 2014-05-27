@@ -118,22 +118,42 @@ public class Update extends javax.swing.JFrame {
 
   private void updateInit() {
     //JLStatus.setVisible(true);
-    jProgressBar1.setVisible(true);
-    pack();
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jProgressBar1.setVisible(true);
+        pack();
+      }
+    });
   }
 
-  public void setStatusLabelText(String text) {
-    JLStatus.setText(text);
+  public void setStatusLabelText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLStatus.setText(text);
+      }
+    });
   }
 
-  public void updateProgress(int percent) {
-    jProgressBar1.setValue(percent);
-    setStatusLabelText("Progress: " + percent + "%");
+  public void updateProgress(final int percent) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jProgressBar1.setValue(percent);
+        setStatusLabelText("Progress: " + percent + "%");
+      }
+    });
   }
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
-    setVisible(false);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setVisible(false);
+      }
+    });
   }//GEN-LAST:event_jButton2ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLStatus;

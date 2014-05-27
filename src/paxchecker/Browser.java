@@ -159,6 +159,9 @@ public class Browser {
   public static void openLinkInBrowser(String link) {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      if (link.startsWith("/") || link.startsWith("\\")) {
+        link = "prime.paxsite.com" + link;
+      }
       try {
         desktop.browse(new URI(link));
       } catch (Exception e) {
