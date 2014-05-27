@@ -38,7 +38,7 @@ public class PAXChecker {
     if (args.length > 0) {
       System.out.println("Args!");
       for (int a = 0; a < args.length; a++) {
-        System.out.println("args["+a+"] = " + args[a]);
+        System.out.println("args[" + a + "] = " + args[a]);
       }
     }
     try {
@@ -66,7 +66,7 @@ public class PAXChecker {
     Email.init();
     setup = new Setup();
     setup.setVisible(true);
-    setup.setTitle("PAXChecker Setup v"+version);
+    setup.setTitle("PAXChecker Setup v" + version);
     while (setup.isVisible()) {
       Thread.sleep(100);
     }
@@ -134,7 +134,7 @@ public class PAXChecker {
 
   /**
    * Set the updateProgram flag to true. This will start the program updating process. This should
-   * only be called by the Update GUI when the main() method is waiti ng for the prompt.
+   * only be called by the Update GUI when the main() method is waiting for the prompt.
    */
   public static void startUpdatingProgram() {
     updateProgram = true;
@@ -178,56 +178,58 @@ public class PAXChecker {
    * either through finishing the update or failing to properly update.
    */
   private static void updateProgram() {
-//    try { // Code to make a copy of the current JAR file
-//      String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-//      File mF = new File(path.substring(0, path.lastIndexOf(".jar")) + ".2.jar");
-//      mF.createNewFile();
-//      InputStream fIn = new BufferedInputStream(new FileInputStream(new File(path)));
-//      long max = new File(path).length();
-//      BufferedOutputStream fOut = new BufferedOutputStream(new FileOutputStream(mF));
-//      byte[] buffer = new byte[32 * 1024];
-//      int bytesRead = 0;
-//      int in = 0;
-//      while ((bytesRead = fIn.read(buffer)) != -1) {
-//        in += bytesRead;
-//        fOut.write(buffer, 0, bytesRead);
-//        update.updateProgress((int) (((in * 100) / max)));
-//      }
-//      fOut.flush();
-//      fOut.close();
-//      fIn.close();
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
     try {
       URLConnection conn = updateURL.openConnection();
-      InputStream is = conn.getInputStream();
-      long max = conn.getContentLength();
-      System.out.println("Downloding file...\nUpdate Size(compressed): " + max + " Bytes");
-      BufferedOutputStream fOut = new BufferedOutputStream(new FileOutputStream(new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())));
+      InputStream inputStream = conn.getInputStream();
+      long remoteFileSize = conn.getContentLength();
+      System.out.println("Downloding file...\nUpdate Size(compressed): " + remoteFileSize + " Bytes");
+      String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+      BufferedOutputStream buffOutputStream = new BufferedOutputStream(new FileOutputStream(new File(path.substring(0, path.lastIndexOf(".jar")) + ".temp.jar")));
       byte[] buffer = new byte[32 * 1024];
       int bytesRead = 0;
       int in = 0;
       int prevPercent = 0;
-      while ((bytesRead = is.read(buffer)) != -1) {
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
         in += bytesRead;
-        fOut.write(buffer, 0, bytesRead);
-        if ((int) (((in * 100) / max)) != prevPercent) {
-          prevPercent = (int) (((in * 100) / max));
+        buffOutputStream.write(buffer, 0, bytesRead);
+        if ((int) (((in * 100) / remoteFileSize)) != prevPercent) {
+          prevPercent = (int) (((in * 100) / remoteFileSize));
           update.updateProgress(prevPercent);
         }
       }
-      fOut.flush();
-      fOut.close();
-      is.close();
+      buffOutputStream.flush();
+      buffOutputStream.close();
+      inputStream.close();
+      update.setStatusLabelText("Finishing up...");
+      try { // Code to make a copy of the current JAR file
+        File inputFile = new File(path.substring(0, path.lastIndexOf(".jar")) + ".temp.jar");
+        InputStream fIn = new BufferedInputStream(new FileInputStream(inputFile));
+        File outputFile = new File(path);
+        buffOutputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+        buffer = new byte[32 * 1024];
+        bytesRead = 0;
+        in = 0;
+        while ((bytesRead = fIn.read(buffer)) != -1) {
+          in += bytesRead;
+          buffOutputStream.write(buffer, 0, bytesRead);
+        }
+        buffOutputStream.flush();
+        buffOutputStream.close();
+        fIn.close();
+        inputFile.delete();
+      } catch (Exception e) {
+        ErrorManagement.showErrorWindow("ERROR updating", "Unable to complete update -- unable to copy temp JAR file to current JAR file.", e);
+        ErrorManagement.fatalError();
+      }
       System.out.println("Download Complete!");
-//      ProcessBuilder pb = new ProcessBuilder("java", "-jar", PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-//      //pb.directory(new File("preferred/working/directory"));
-//      pb.start();
-//      System.exit(0);
-//      ErrorManagement.showErrorWindow("Restart PAXChecker", "Your download has successfully been downloaded! Please restart the program by closing this window and running the JAR file again.", null);
-//      ErrorManagement.fatalError();
+      try {
+        ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath()); // path can have leading / on it, getAbsolutePath() removes them
+        Process p = pb.start();
+      } catch (Exception e) {
+        System.out.println("ERROR starting program -- manual restart required.");
+      }
     } catch (Exception e) {
+      e.printStackTrace();
       System.out.println("ERROR updating program!");
       ErrorManagement.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. Your version is likely corrupt -- please manually download the latest version.", e);
       ErrorManagement.fatalError();
@@ -264,7 +266,7 @@ public class PAXChecker {
 
   /**
    * Creates the Tickets window and makes it visible. This should really only be called once, as
-   * subsequent calls will rewrite {@link #status} and lose the object reference to the previously
+   * subsequent calls will rewrite {@link #tickets} and lose the object reference to the previously
    * opened tickets window.
    */
   public static void showTicketsWindow() {
@@ -280,5 +282,17 @@ public class PAXChecker {
     tickets.setVisible(true);
     tickets.toFront();
     tickets.requestFocus();
+  }
+
+  /**
+   * This makes a new daemon, low-priority Thread and runs it. This is currently unused.
+   *
+   * @param run The Runnable to make into a Thread and run
+   */
+  public static void startBackgroundThread(Runnable run) {
+    Thread newThread = new Thread(run);
+    newThread.setDaemon(true); // Kill the JVM if only daemon threads are running
+    newThread.setPriority(Thread.MIN_PRIORITY); // Let other Threads take priority, as this will probably not run for long
+    newThread.start(); // Start the Thread
   }
 }
