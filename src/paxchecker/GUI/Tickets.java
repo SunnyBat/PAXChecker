@@ -13,6 +13,10 @@ public class Tickets extends javax.swing.JFrame {
   /** Creates new form Tickets */
   public Tickets() {
     initComponents();
+    setAlwaysOnTop(true);
+    setVisible(true);
+    toFront();
+    requestFocus();
   }
 
   /** This method is called from within the constructor to
@@ -36,7 +40,7 @@ public class Tickets extends javax.swing.JFrame {
     jTextArea1.setForeground(new java.awt.Color(255, 51, 0));
     jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
-    jTextArea1.setText("PAX Tickets have gone on sale!\nOpening a browser window to the PAX registration button link.");
+    jTextArea1.setText("PAX Tickets have gone on sale!\n\nAn attempt to open your browser to the PAX queue has been made. If it did not open, you will have to do so manually.\n\nGood luck buying tickets!\n-/u/SunnyBat (Sunnybat@yahoo.com)");
     jTextArea1.setWrapStyleWord(true);
     jScrollPane1.setViewportView(jTextArea1);
 
@@ -59,7 +63,6 @@ public class Tickets extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JTextArea jTextArea1;

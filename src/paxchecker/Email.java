@@ -17,8 +17,7 @@ public class Email {
   private static Session l_session = null;
 
   public static void init() {
-    host = "smtp.mail.yahoo.com";
-    port = "587";
+    setPort("587");
     emailSettings();
   }
 
@@ -30,9 +29,12 @@ public class Email {
     }
     if (!user.contains("@")) {
       user += "@yahoo.com";
+      setHost("smtp.mail.yahoo.com");
     } else if (user.toLowerCase().contains("@gmail.com")) {
       setHost("smtp.gmail.com");
-    } else if (!user.toLowerCase().contains("@yahoo.com")) {
+    } else if (user.toLowerCase().contains("@yahoo.com")) {
+      setHost("smtp.mail.yahoo.com");
+    } else {
       String extraInfo = user.toLowerCase().substring(user.indexOf("::"));
       if (extraInfo == null) {
         ErrorManagement.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
@@ -228,7 +230,6 @@ public class Email {
    */
   public static void emailSettings() {
     props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.smtp.host", host);
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.port", port);
   }
@@ -302,18 +303,16 @@ public class Email {
     return true;
   }
 
-  public static class multiThread extends Thread {
-
-    private String s, m;
-
-    public multiThread(String subject, String msg) {
-      s = subject;
-      m = msg;
-    }
-
-    @Override
-    public void run() {
-      sendMessage(s, m);
-    }
+  public static void sendEmailInBackground(final String title, final String message) {
+    PAXChecker.startBackgroundThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          Email.sendMessage(title, message);
+        } catch (Exception e) {
+          System.out.println("Unable to send email in background!");
+        }
+      }
+    });
   }
 }

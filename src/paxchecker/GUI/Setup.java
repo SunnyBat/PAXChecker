@@ -16,9 +16,20 @@ public class Setup extends javax.swing.JFrame {
   public Setup() {
     initComponents();
     customComponents();
+    setVisible(true);
   }
 
   private void customComponents() {
+  }
+
+  public void setPatchNotesText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jTextArea4.setText(text);
+        jTextArea4.setCaretPosition(0);
+      }
+    });
   }
 
   /** This method is called from within the constructor to
@@ -46,6 +57,8 @@ public class Setup extends javax.swing.JFrame {
     jCheckBox1 = new javax.swing.JCheckBox();
     jCheckBox2 = new javax.swing.JCheckBox();
     jCheckBox3 = new javax.swing.JCheckBox();
+    jComboBox2 = new javax.swing.JComboBox();
+    jLabel5 = new javax.swing.JLabel();
     jPanel2 = new javax.swing.JPanel();
     jScrollPane3 = new javax.swing.JScrollPane();
     jTextArea3 = new javax.swing.JTextArea();
@@ -66,13 +79,13 @@ public class Setup extends javax.swing.JFrame {
 
     jLabel2.setText("Username");
 
-    jTextField1.setToolTipText("<html>\nPlease note that the only email addresses currently<br>\nsupported are Yahoo! and GMail. Put your full email<br>\naddres in, otherwise it defaults to @yahoo.com.\n</html>");
+    jTextField1.setToolTipText("<html>\nPlease note that the only email addresses internally<br>\nsupported are Yahoo! and GMail. Put your full email<br>\naddres in, otherwise it defaults to @yahoo.com.<br>\n<br>\nIf you have a different email that you know<br>\nsupports SMTP, put ::SMTP.Server.Address after<br>\nyour full email, and if it uses a port other than 587,<br>\nput :PORT after the server address.<br>\nExample: Mail@site.net::site.smtp.net:82\n</html>");
 
     jLabel3.setText("Password");
 
     jLabel4.setText("Cell Num");
 
-    jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nONLY use numbers - no dashes, no spaces, no ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension and put it onto<br>\nthe end of your number.<br>\nExample: 1234567890@car.rier.net\n</html>");
+    jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes [ -- ] or perentheses [ ( ) ]<br>\nin the number.<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [AT&T selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n<br>\nTo put more than one number in, separate each by<br>\na semicolon [ ; ].<br>\nExample:<br>\n1234567890@car.rier.net;2345678901@car.rier.net\n</html>");
 
     jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
 
@@ -115,6 +128,10 @@ public class Setup extends javax.swing.JFrame {
     jCheckBox3.setText("Play Sound when Updated");
     jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
+    jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX Aus" }));
+
+    jLabel5.setText("PAX Expo to Check");
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -144,7 +161,12 @@ public class Setup extends javax.swing.JFrame {
                     .addComponent(jTextField2)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
-              .addComponent(jCheckBox1))
+              .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                  .addComponent(jLabel5)
+                  .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                  .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -172,13 +194,17 @@ public class Setup extends javax.swing.JFrame {
         .addComponent(jCheckBox2)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jCheckBox3)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(jLabel5)
+          .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jLabel6)
         .addGap(0, 0, 0)
         .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton1)
-        .addContainerGap())
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("Setup", jPanel1);
@@ -187,7 +213,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea3.setColumns(20);
     jTextArea3.setLineWrap(true);
     jTextArea3.setRows(5);
-    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the cell number). If you don't see your carrier listed, you must go to emailtextmessages.com, find your carrier, and add the @extension.com to your number.\n=>NOTE: If you use an email besides Yahoo or GMail, you will have to look up your service's SMTP server and put the address after your email and two colons. Also, if it uses a port other than 587, you must specify the port after the server and a colon.\nExamples:\nUser@anotheremail.com::another.email.server\nUser@emailservice.net::email.service.server:1234\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front. Optionally, you can put perentheses () and dashes - if you need to. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;(234)5678901@vtext.net;345-678-9012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
+    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get @Official_PAX Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the cell number). If you don't see your carrier listed, you must go to emailtextmessages.com, find your carrier, and add the @extension.com to your number.\n=>NOTE: If you use an email besides Yahoo or GMail, you will have to look up your service's SMTP server and put the address after your email and two colons. Also, if it uses a port other than 587, you must specify the port after the server and a colon.\nExamples:\nUser@anotheremail.com::another.email.server\nUser@emailservice.net::email.service.server:1234\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front. Optionally, you can put perentheses () and dashes - if you need to. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;(234)5678901@vtext.net;345-678-9012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
     jTextArea3.setWrapStyleWord(true);
     jScrollPane3.setViewportView(jTextArea3);
 
@@ -199,7 +225,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel2Layout.setVerticalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel2);
@@ -208,7 +234,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea4.setColumns(20);
     jTextArea4.setLineWrap(true);
     jTextArea4.setRows(5);
-    jTextArea4.setText("~~~1.0.2~~~\n->Program now allows dashes - and perentheses () in cell number(s)\n->Fixed using default carrier -- program will now actually use the default carrier when multiple numbers are specified\n->You're now able to use any email service that supports SMTP via TLS -- simply put ::server.address after the email, and optionally :PORTNUMBER after the server address.\n\n~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setText("~~~1.0.4~~~\n->Added option to check Prime, East, or Aus PAX expos\n--->Right now PAX East is \"unable to find the register online button.\" Don't worry, it will be there next year!\n->Made program GUI more responsive (eg sending emails will no longer stall the main window)\n->Made program wait 60 seconds after sending test email before being able to send another (to prevent multiple texts, which GMail and Yahoo take for account security breaches)\n\n~~~1.0.3~~~\n->Faulty updating introduced in previous version now fixed (Sorry!)\n->Made program save temp version before overwriting current (in case download fails)\n->Made program auto-run newest version upon download completion\n\n~~~1.0.2~~~\n->Program now allows dashes - and perentheses () in cell number(s)\n->Fixed using default carrier -- program will now actually use the default carrier when multiple numbers are specified\n->You're now able to use any email service that supports SMTP via TLS -- simply put ::server.address after the email, and optionally :PORTNUMBER after the server address.\n\n~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
     jTextArea4.setWrapStyleWord(true);
     jScrollPane4.setViewportView(jTextArea4);
 
@@ -220,10 +246,10 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
-    jTabbedPane1.addTab("Recent Changes", jPanel4);
+    jTabbedPane1.addTab("Patch Notes", jPanel4);
 
     jTextArea2.setEditable(false);
     jTextArea2.setColumns(20);
@@ -241,7 +267,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -300,9 +326,11 @@ public class Setup extends javax.swing.JFrame {
     if (jCheckBox2.isSelected()) {
       Browser.enableShowclixWebsiteChecking();
     }
-    PAXChecker.setPlayAlarm(jCheckBox3.isSelected());
+    PAXChecker.setStatusIconInBackground(PAXChecker.getIconName(jComboBox2.getSelectedItem().toString()));
+    Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));
+    Browser.setWebsiteLink(Browser.getWebsiteLink(jComboBox2.getSelectedItem().toString()));
     String text = jTextField2.getText();
     if (text.contains(";")) {
       Email.setCellList(text, jComboBox1.getSelectedItem().toString());
@@ -312,17 +340,18 @@ public class Setup extends javax.swing.JFrame {
     PAXChecker.setRefreshTime(jSlider1.getValue());
     this.dispose();
   }//GEN-LAST:event_jButton1ActionPerformed
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
   private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox2;
   private javax.swing.JCheckBox jCheckBox3;
   private javax.swing.JComboBox jComboBox1;
+  private javax.swing.JComboBox jComboBox2;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
+  private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel2;
@@ -340,4 +369,4 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   // End of variables declaration//GEN-END:variables
-}
+    }

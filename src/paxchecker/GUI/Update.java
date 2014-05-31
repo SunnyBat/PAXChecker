@@ -4,6 +4,7 @@
  */
 package paxchecker.GUI;
 
+import paxchecker.Browser;
 import paxchecker.PAXChecker;
 
 /**
@@ -12,6 +13,8 @@ import paxchecker.PAXChecker;
  */
 public class Update extends javax.swing.JFrame {
 
+  public PatchNotes patchNotes;
+
   /** Creates new form Update */
   public Update() {
     initComponents();
@@ -19,6 +22,8 @@ public class Update extends javax.swing.JFrame {
     jProgressBar1.setVisible(false);
     pack();
     setLocationRelativeTo(null);
+    setStatusLabelText("Update Size: " + ((double) ((int) ((double) Browser.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
+    setVisible(true);
   }
 
   /** This method is called from within the constructor to
@@ -36,6 +41,7 @@ public class Update extends javax.swing.JFrame {
     jButton2 = new javax.swing.JButton();
     JLStatus = new javax.swing.JLabel();
     jProgressBar1 = new javax.swing.JProgressBar();
+    jButton3 = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
     setTitle("PAX Checker Update");
@@ -69,6 +75,13 @@ public class Update extends javax.swing.JFrame {
 
     jProgressBar1.setToolTipText("Please wait, downloading the latest version...");
 
+    jButton3.setText("View Patch Notes");
+    jButton3.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton3ActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -76,6 +89,7 @@ public class Update extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(JLStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
           .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -97,7 +111,9 @@ public class Update extends javax.swing.JFrame {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jButton1)
           .addComponent(jButton2))
-        .addGap(18, 18, 18)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jButton3)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -113,6 +129,7 @@ public class Update extends javax.swing.JFrame {
     updateInit();
     jButton1.setVisible(false);
     jButton2.setVisible(false);
+    jButton3.setVisible(false);
     //setVisible(false);
   }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -122,6 +139,16 @@ public class Update extends javax.swing.JFrame {
       @Override
       public void run() {
         jProgressBar1.setVisible(true);
+        pack();
+      }
+    });
+  }
+
+  public void setPatchNotesButtonState(final boolean enabled) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jButton3.setEnabled(enabled);
         pack();
       }
     });
@@ -146,6 +173,16 @@ public class Update extends javax.swing.JFrame {
     });
   }
 
+  @Override
+  public void dispose() {
+    if (patchNotes != null) {
+      if (patchNotes.isVisible()) {
+        patchNotes.dispose();
+      }
+    }
+    super.dispose();
+  }
+
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -155,10 +192,20 @@ public class Update extends javax.swing.JFrame {
       }
     });
   }//GEN-LAST:event_jButton2ActionPerformed
+
+  private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    // TODO add your handling code here:
+    if (patchNotes == null) {
+      patchNotes = new PatchNotes();
+    }
+    patchNotes.setVisible(true);
+    setPatchNotesButtonState(false);
+  }//GEN-LAST:event_jButton3ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLStatus;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
+  private javax.swing.JButton jButton3;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JProgressBar jProgressBar1;

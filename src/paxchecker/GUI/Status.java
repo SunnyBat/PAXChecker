@@ -16,6 +16,7 @@ public class Status extends javax.swing.JFrame {
   public Status() {
     initComponents();
     customComponents();
+    setVisible(true);
   }
 
   private void customComponents() {
@@ -46,7 +47,7 @@ public class Status extends javax.swing.JFrame {
       setInfoText("[TEXTING DISABLED]");
       setTextButtonState(false);
     }
-    if (!PAXChecker.playSound) {
+    if (!Audio.soundEnabled()) {
       setSoundButtonState(false);
     }
   }
@@ -248,24 +249,95 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  public void setTextButtonText(final String s) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jButton1.setText(s);
+      }
+    });
+  }
+
   public void setWebsiteLink(final String link) {
-    JLWebsiteLink.setText("Current Website Link: " + link);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLWebsiteLink.setText("Current Website Link: " + link);
+      }
+    });
   }
 
   public void setShowclixLink(final String link) {
-    JLShowclixLink.setText("Current Showclix Link: " + link);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLShowclixLink.setText("Current Showclix Link: " + link);
+      }
+    });
+  }
+
+  @Deprecated // Hangs EDT/GUI
+  public void loadNewIcon(final String iconName) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
+        } catch (Exception e) {
+          System.out.println("ERROR loading PAX icon image: " + iconName);
+        }
+      }
+    });
+  }
+  
+  public void setIcon(final java.awt.Image image) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          setIconImage(image);
+        } catch (Exception e) {
+          System.out.println("ERROR setting status iconImage!");
+        }
+      }
+    });
+  }
+
+  private void sendBackgroundTestEmail() {
+    PAXChecker.startBackgroundThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          setTextButtonState(false);
+          setTextButtonText("Sending...");
+          Email.testEmail();
+          long timeStarted = System.currentTimeMillis();
+          while (System.currentTimeMillis() - timeStarted < 60000) {
+            setTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+            Thread.sleep(200);
+          }
+          setTextButtonText("Test Text");
+          setTextButtonState(true);
+        } catch (Exception e) {
+          System.out.println("ERROR sending background test email!");
+          e.printStackTrace();
+          setTextButtonText("Test Text");
+          setTextButtonState(true);
+        }
+      }
+    });
   }
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
-    Email.testEmail();
+    sendBackgroundTestEmail();
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
 //    Browser.openLinkInBrowser("http://prime.paxsite.com");
 //    setButtonStatusText("PAX Prime site opened.");
-    if (PAXChecker.playAlarm()) {
+    if (Audio.playAlarm()) {
       setButtonStatusText("Alarm started.");
     } else {
       setButtonStatusText("Unable to play alarm.");
