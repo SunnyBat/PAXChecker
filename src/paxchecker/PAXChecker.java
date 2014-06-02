@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.0.6";
+  public static final String VERSION = "1.0.7";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
