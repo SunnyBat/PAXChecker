@@ -55,6 +55,10 @@ public class ErrorManagement {
    * @param t           The error to display
    */
   public static void showErrorWindow(String windowTitle, String title, String message, Throwable t) {
+    if (errorWindowCount > 10) {
+      System.out.println("Stopped showing error windows -- too many!");
+      return;
+    }
     errorWindow = new ErrorWindow();
     errorWindow.setTitle(windowTitle);
     errorWindow.JLTitle.setText(title);

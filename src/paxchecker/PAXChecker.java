@@ -14,20 +14,23 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static Setup setup;
-  public static Status status;
-  public static Tickets tickets;
-  public static Update update;
-  public static final String version = "1.0.4";
-  public static volatile int secondsBetweenRefresh;
-  public static volatile boolean forceRefresh;
-  public static volatile boolean updateProgram;
+  public static final String VERSION = "1.0.6";
+  private static volatile int secondsBetweenRefresh;
+  private static volatile boolean forceRefresh;
+  private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
+
+  // GUIs
+  protected static Setup setup;
+  protected static Status status;
+  protected static Tickets tickets;
+  protected static Update update;
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) throws Exception {
+    System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     if (args.length > 0) {
       System.out.println("Args!");
@@ -38,7 +41,9 @@ public class PAXChecker {
     Browser.init();
     Email.init();
     prefetchIconsInBackground();
+    loadPatchNotesInBackground();
     try {
+      System.out.println("Checking for updates...");
       if (Browser.updateAvailable()) {
         update = new Update();
         while (update.isVisible() && !updateProgram) {
@@ -58,13 +63,15 @@ public class PAXChecker {
       return;
     }
     setup = new Setup();
-    setup.setTitle("PAXChecker Setup v" + version);
-    loadPatchNotesInBackground();
     while (setup.isVisible()) {
       Thread.sleep(100);
     }
+    setup = null;
+    update = null;
+    System.gc();
     status = new Status();
     long startMS;
+    int seconds = secondsBetweenRefresh; // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
     do {
       //status.setLastCheckedText("Checking for updates...");
       startMS = System.currentTimeMillis();
@@ -73,7 +80,6 @@ public class PAXChecker {
         showTicketsWindow();
         Audio.playAlarm();
         Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Only the best.
-        status.setVisible(false);
         status.dispose();
         break;
       }
@@ -82,11 +88,10 @@ public class PAXChecker {
         showTicketsWindow();
         Audio.playAlarm();
         Browser.openLinkInBrowser(Browser.getShowclixLink()); // Only the best.
-        status.setVisible(false);
         status.dispose();
         break;
       }
-      while (System.currentTimeMillis() - startMS < (secondsBetweenRefresh * 1000)) {
+      while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
         if (forceRefresh) {
           forceRefresh = false;
           break;
@@ -230,7 +235,7 @@ public class PAXChecker {
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        setup.setPatchNotesText(Browser.getVersionNotes());
+        Browser.loadVersionNotes();
       }
     });
   }

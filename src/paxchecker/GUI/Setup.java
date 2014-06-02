@@ -20,6 +20,8 @@ public class Setup extends javax.swing.JFrame {
   }
 
   private void customComponents() {
+    setTitle("PAXChecker Setup v" + PAXChecker.VERSION);
+    setPatchNotesText(Browser.getVersionNotes());
   }
 
   public void setPatchNotesText(final String text) {

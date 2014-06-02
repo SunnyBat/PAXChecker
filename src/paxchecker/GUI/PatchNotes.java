@@ -13,15 +13,20 @@ import paxchecker.PAXChecker;
  */
 public class PatchNotes extends javax.swing.JFrame {
 
-  /** Creates new form PatchNotes */
-  public PatchNotes() {
+  private Update updateFrom;
+
+  /** Creates new form patchNotes.
+   * @param uF The Update object that this patchNotes is attached to
+   */
+  public PatchNotes(Update uF) {
     initComponents();
     customComponents();
+    updateFrom = uF;
   }
 
   private void customComponents() {
     loadNotesOnNewThread();
-    setTitle("Patch Notes for Version " + PAXChecker.version);
+    setTitle("Patch Notes for Version " + PAXChecker.VERSION);
   }
 
   public void setWindowTitle(final String title) {
@@ -44,7 +49,9 @@ public class PatchNotes extends javax.swing.JFrame {
 
   @Override
   public void dispose() {
-    PAXChecker.update.setPatchNotesButtonState(true);
+    if (updateFrom != null) {
+      updateFrom.setPatchNotesButtonState(true);
+    }
     super.dispose();
   }
 
@@ -52,9 +59,9 @@ public class PatchNotes extends javax.swing.JFrame {
     PAXChecker.startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        String versionNotes = Browser.getVersionNotes(PAXChecker.version);
+        String versionNotes = Browser.getVersionNotes(PAXChecker.VERSION);
         if (!versionNotes.contains("~~~")) {
-          jTextArea1.setText("Unknown updates?");
+          jTextArea1.setText("Unknown updates? Showing full notes..." + System.getProperty("line.separator", "\n") + Browser.getVersionNotes());
         } else {
           jTextArea1.setText(versionNotes);
         }

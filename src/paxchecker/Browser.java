@@ -18,6 +18,7 @@ public class Browser {
   private static String websiteLink;
   private static URL updateURL;
   private static long updateSize;
+  private static volatile String versionNotes;
 
   public static void init() {
     try {
@@ -247,6 +248,18 @@ public class Browser {
   }
 
   public static String getVersionNotes(String version) { // TODO: Utilize getVersionNotes() instead of copying code and adding 3 lines
+    String versNotes = getVersionNotes();
+    if (versNotes == null) {
+      return null;
+    }
+    return versNotes.substring(0, versNotes.indexOf("~~~" + version)).trim();
+  }
+
+  public static String getVersionNotes() {
+    return versionNotes;
+  }
+
+  public static void loadVersionNotes() {
     URLConnection inputConnection;
     InputStream textInputStream;
     BufferedReader myReader = null;
@@ -256,25 +269,14 @@ public class Browser {
       textInputStream = inputConnection.getInputStream();
       myReader = new BufferedReader(new InputStreamReader(textInputStream));
       String line;
-      String lineSeparator = System.getProperty("line.separator");
+      String lineSeparator = System.getProperty("line.separator", "\n");
       String allText = "Patch Notes:" + lineSeparator;
-      System.out.println("Downloading Patch Notes:");
       while ((line = myReader.readLine()) != null) {
-        if (line.contains(version)) {
-          break;
-        }
-        if (line.contains("Token:")) {
-          String name = line.substring(line.indexOf(":"+1, line.indexOf("=")));
-          String value = line.substring(line.indexOf("=")+1);
-          System.out.println("Token found: " + name + " :: Value = " + value);
-          continue;
-        }
         allText += line + lineSeparator;
       }
-      return allText.trim();
+      versionNotes = allText.trim();
     } catch (Exception e) {
       System.out.println("Unable to load version notes!");
-      return null;
     } finally {
       try {
         if (myReader != null) {
@@ -286,37 +288,6 @@ public class Browser {
     }
   }
 
-  public static String getVersionNotes() {
-    URLConnection inputConnection;
-    InputStream textInputStream;
-    BufferedReader myReader = null;
-    try {
-      String URL = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-      inputConnection = new URL(URL).openConnection();
-      textInputStream = inputConnection.getInputStream();
-      myReader = new BufferedReader(new InputStreamReader(textInputStream));
-      String line;
-      String lineSeparator = System.getProperty("line.separator");
-      String allText = "Patch Notes:" + lineSeparator;
-      System.out.println("Downloading Patch Notes:");
-      while ((line = myReader.readLine()) != null) {
-        allText += line + lineSeparator;
-      }
-      return allText.trim();
-    } catch (Exception e) {
-      System.out.println("Unable to load version notes!");
-      return null;
-    } finally {
-      try {
-        if (myReader != null) {
-          myReader.close();
-        }
-      } catch (IOException e) {
-        // nothing to see here
-      }
-    }
-  }
-  
   public static long getUpdateSize() {
     return updateSize;
   }
@@ -334,7 +305,7 @@ public class Browser {
     try {
       File mF = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
       long fileSize = mF.length();
-      if (fileSize == 4097) { // No, I do NOT want to update when I'm running in Netbeans
+      if (fileSize == 4096) { // No, I do NOT want to update when I'm running in Netbeans
         return false;
       }
       URLConnection conn = updateURL.openConnection();
@@ -375,15 +346,19 @@ public class Browser {
       while ((bytesRead = inputStream.read(buffer)) != -1) {
         in += bytesRead;
         buffOutputStream.write(buffer, 0, bytesRead);
-        if ((int) (((in * 100) / remoteFileSize)) != prevPercent) {
-          prevPercent = (int) (((in * 100) / remoteFileSize));
-          PAXChecker.update.updateProgress(prevPercent);
+        if (PAXChecker.update != null) {
+          if ((int) (((in * 100) / remoteFileSize)) != prevPercent) {
+            prevPercent = (int) (((in * 100) / remoteFileSize));
+            PAXChecker.update.updateProgress(prevPercent);
+          }
         }
       }
       buffOutputStream.flush();
       buffOutputStream.close();
       inputStream.close();
-      PAXChecker.update.setStatusLabelText("Finishing up...");
+      if (PAXChecker.update != null) {
+        PAXChecker.update.setStatusLabelText("Finishing up...");
+      }
       try { // Code to make a copy of the current JAR file
         File inputFile = new File(path.substring(0, path.lastIndexOf(".jar")) + ".temp.jar");
         InputStream fIn = new BufferedInputStream(new FileInputStream(inputFile));

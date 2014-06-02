@@ -13,7 +13,7 @@ import paxchecker.PAXChecker;
  */
 public class Update extends javax.swing.JFrame {
 
-  public PatchNotes patchNotes;
+  private PatchNotes patchNotes;
 
   /** Creates new form Update */
   public Update() {
@@ -196,7 +196,7 @@ public class Update extends javax.swing.JFrame {
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
     // TODO add your handling code here:
     if (patchNotes == null) {
-      patchNotes = new PatchNotes();
+      patchNotes = new PatchNotes(this);
     }
     patchNotes.setVisible(true);
     setPatchNotesButtonState(false);

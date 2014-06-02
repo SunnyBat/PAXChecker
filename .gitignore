@@ -13,5 +13,5 @@ hs_err_pid*
 /dist/
 
 # Ignore Netbeans-specific classes
-/build/
-/nbproject/
+build/
+nbproject/
