@@ -15,14 +15,18 @@ public class Browser {
   private static boolean checkPAXWebsite;
   private static boolean checkShowclix;
   private static int lastShowclixEventID = 3846764;
+  private static final String updateLink = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
+  private static final String patchNotesLink = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
   private static String websiteLink;
   private static URL updateURL;
+  private static URL patchNotesURL;
   private static long updateSize;
   private static volatile String versionNotes;
 
   public static void init() {
     try {
-      updateURL = new URL("https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar");
+      updateURL = new URL(updateLink);
+      patchNotesURL = new URL(patchNotesLink);
     } catch (Exception e) {
       System.out.println("Unable to make a new URL?");
     }
@@ -264,8 +268,7 @@ public class Browser {
     InputStream textInputStream;
     BufferedReader myReader = null;
     try {
-      String URL = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-      inputConnection = new URL(URL).openConnection();
+      inputConnection = patchNotesURL.openConnection();
       textInputStream = inputConnection.getInputStream();
       myReader = new BufferedReader(new InputStreamReader(textInputStream));
       String line;

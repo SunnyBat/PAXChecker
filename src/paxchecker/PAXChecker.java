@@ -14,12 +14,11 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.0.7";
+  public static final String VERSION = "1.0.8";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
-
   // GUIs
   protected static Setup setup;
   protected static Status status;
@@ -32,35 +31,41 @@ public class PAXChecker {
   public static void main(String[] args) throws Exception {
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
+    boolean doUpdate = true;
     if (args.length > 0) {
       System.out.println("Args!");
       for (int a = 0; a < args.length; a++) {
         System.out.println("args[" + a + "] = " + args[a]);
+        if (args[a].equals("noupdate")) { // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
+          doUpdate = false;
+        }
       }
     }
     Browser.init();
     Email.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
-    try {
-      System.out.println("Checking for updates...");
-      if (Browser.updateAvailable()) {
-        update = new Update();
-        while (update.isVisible() && !updateProgram) {
-          Thread.sleep(100);
-        }
-        if (updateProgram) {
-          update.setStatusLabelText("Downloading update...");
-          Browser.updateProgram();
+    if (doUpdate) {
+      try {
+        System.out.println("Checking for updates...");
+        if (Browser.updateAvailable()) {
+          update = new Update();
+          while (update.isVisible() && !updateProgram) {
+            Thread.sleep(100);
+          }
+          if (updateProgram) {
+            update.setStatusLabelText("Downloading update...");
+            Browser.updateProgram();
+            update.dispose();
+            return;
+          }
           update.dispose();
-          return;
         }
-        update.dispose();
+      } catch (Exception e) {
+        ErrorManagement.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
+        ErrorManagement.fatalError();
+        return;
       }
-    } catch (Exception e) {
-      ErrorManagement.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-      ErrorManagement.fatalError();
-      return;
     }
     setup = new Setup();
     while (setup.isVisible()) {
@@ -79,7 +84,7 @@ public class PAXChecker {
         Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated!");
         showTicketsWindow();
         Audio.playAlarm();
-        Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Only the best.
+        Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Last, because Browser.getCurrentButtonLinkLine() takes a while to do
         status.dispose();
         break;
       }
@@ -87,7 +92,7 @@ public class PAXChecker {
         Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated!");
         showTicketsWindow();
         Audio.playAlarm();
-        Browser.openLinkInBrowser(Browser.getShowclixLink()); // Only the best.
+        Browser.openLinkInBrowser(Browser.getShowclixLink()); // Last, because Browser.getShowclixLink() takes a while to do
         status.dispose();
         break;
       }
@@ -100,6 +105,7 @@ public class PAXChecker {
         status.setLastCheckedText((int) ((System.currentTimeMillis() - startMS) / 1000));
       }
     } while (status.isVisible());
+    System.out.println("Finished!");
   }
 
   /**
@@ -222,7 +228,7 @@ public class PAXChecker {
       public void run() {
         try {
           String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-          ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath()); // path can have leading / on it, getAbsolutePath() removes them
+          ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "noupdate"); // path can have leading / on it, getAbsolutePath() removes them
           Process p = pb.start();
         } catch (Exception e) {
           ErrorManagement.showErrorWindow("Small Error", "Unable to automatically run update.", null);
