@@ -17,6 +17,7 @@ public class Browser {
   private static int lastShowclixEventID = 3846764;
   private static final String updateLink = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String patchNotesLink = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
+  private static String Expo;
   private static String websiteLink;
   private static URL updateURL;
   private static URL patchNotesURL;
@@ -192,6 +193,14 @@ public class Browser {
       System.out.println("Unable to open link in default browser.");
       ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
     }
+  }
+  
+  public static void setExpo(String e) {
+    Expo = e;
+  }
+  
+  public static String getExpo() {
+    return Expo;
   }
 
   /**

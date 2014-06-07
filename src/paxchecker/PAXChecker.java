@@ -30,6 +30,7 @@ public class PAXChecker {
    */
   public static void main(String[] args) throws Exception {
     System.out.println("Initializing...");
+    System.out.println(SettingsHandler.getPrefsPath());
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     boolean doUpdate = true;
     if (args.length > 0) {
@@ -68,11 +69,15 @@ public class PAXChecker {
       }
     }
     setup = new Setup();
+    while (!setup.isVisible()) {
+      Thread.sleep(100);
+    }
     while (setup.isVisible()) {
       Thread.sleep(100);
     }
     setup = null;
     update = null;
+    savePrefsInBackground();
     System.gc();
     status = new Status();
     long startMS;
@@ -102,7 +107,7 @@ public class PAXChecker {
           break;
         }
         Thread.sleep(100);
-        status.setLastCheckedText((int) ((System.currentTimeMillis() - startMS) / 1000));
+        status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
       }
     } while (status.isVisible());
     System.out.println("Finished!");
@@ -242,6 +247,15 @@ public class PAXChecker {
       @Override
       public void run() {
         Browser.loadVersionNotes();
+      }
+    });
+  }
+
+  public static void savePrefsInBackground() {
+    startBackgroundThread(new Runnable() {
+      @Override
+      public void run() {
+        SettingsHandler.savePrefs(secondsBetweenRefresh, Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Email.getProvider());
       }
     });
   }

@@ -23,7 +23,7 @@ public class Email {
 
   public static void setUsername(String user) {
     if (user == null) {
-      username = null;
+      username = "@yahoo.com";
       props.put("mail.smtp.user", username);
       return;
     }
@@ -35,11 +35,14 @@ public class Email {
     } else if (user.toLowerCase().contains("@yahoo.com")) {
       setHost("smtp.mail.yahoo.com");
     } else {
-      String extraInfo = user.toLowerCase().substring(user.indexOf("::"));
+      String extraInfo = null;
+      try {
+        extraInfo = user.toLowerCase().substring(user.indexOf("::"));
+      } catch (Exception e) {
+      }
       if (extraInfo == null) {
         ErrorManagement.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
-        username = null;
-        props.put("mail.smtp.user", username);
+        username = "@yahoo.com";
         return;
       }
       setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
@@ -87,6 +90,27 @@ public class Email {
     }
     textEmail = num;
     System.out.println("textEmail = " + textEmail);
+  }
+
+  public static String getProvider() {
+    try {
+      switch (textEmail.substring(textEmail.indexOf("@") + 1)) {
+        case "mms.att.net":
+          return "AT&T";
+        case "vtext.com":
+          return "Verizon";
+        case "messaging.sprintpcs.com":
+          return "Sprint";
+        case "tmomail.net":
+          return "T-Mobile";
+        case "email.uscc.net":
+          return "U.S. Cellular";
+        default:
+          return "[Other]";
+      }
+    } catch (Exception e) {
+      return "AT&T";
+    }
   }
 
   public static String getCarrierExtension(String carrier) {
