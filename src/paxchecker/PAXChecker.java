@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.0.8";
+  public static final String VERSION = "1.2.0";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -30,7 +30,6 @@ public class PAXChecker {
    */
   public static void main(String[] args) throws Exception {
     System.out.println("Initializing...");
-    System.out.println(SettingsHandler.getPrefsPath());
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     boolean doUpdate = true;
     if (args.length > 0) {
@@ -69,48 +68,72 @@ public class PAXChecker {
       }
     }
     setup = new Setup();
-    while (!setup.isVisible()) {
-      Thread.sleep(100);
-    }
-    while (setup.isVisible()) {
-      Thread.sleep(100);
-    }
-    setup = null;
-    update = null;
-    savePrefsInBackground();
-    System.gc();
-    status = new Status();
-    long startMS;
-    int seconds = secondsBetweenRefresh; // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
-    do {
-      //status.setLastCheckedText("Checking for updates...");
-      startMS = System.currentTimeMillis();
-      if (Browser.isPAXWebsiteUpdated()) {
-        Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated!");
-        showTicketsWindow();
-        Audio.playAlarm();
-        Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Last, because Browser.getCurrentButtonLinkLine() takes a while to do
-        status.dispose();
-        break;
+  }
+
+  public static void startCheckingWebsites() {
+    continueProgram(new Runnable() {
+      @Override
+      public void run() {
+        setup = null;
+        update = null;
+        savePrefsInBackground();
+        System.gc();
+        status = new Status();
+        setStatusIconInBackground(getIconName(Browser.getExpo()));
+        long startMS;
+        int seconds = secondsBetweenRefresh; // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+        do {
+          //status.setLastCheckedText("Checking for updates...");
+          startMS = System.currentTimeMillis();
+          if (Browser.isPAXWebsiteUpdated()) {
+            startBackgroundThread(new Runnable() {
+              @Override
+              public void run() {
+                Browser.openLinkInBrowser(Browser.parseHRef(Browser.getCurrentButtonLinkLine())); // Separate Thread, because Browser.getCurrentButtonLinkLine() takes a while to do
+              }
+            }, "Open PAX Website Button Link");
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated!");
+            showTicketsWindow();
+            status.dispose();
+            Audio.playAlarm();
+            break;
+          }
+          if (Browser.isShowclixUpdated()) {
+            startBackgroundThread(new Runnable() {
+              @Override
+              public void run() {
+                Browser.openLinkInBrowser(Browser.getShowclixLink()); // Separate Thread because Browser.getShowclixLink() takes a while to do
+              }
+            }, "Open Showclix EventID Link");
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated!");
+            showTicketsWindow();
+            status.dispose();
+            Audio.playAlarm();
+            break;
+          }
+          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+            if (forceRefresh) {
+              forceRefresh = false;
+              break;
+            }
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException interruptedException) {
+            }
+            status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+          }
+        } while (status.isVisible());
+        System.out.println("Finished!");
       }
-      if (Browser.isShowclixUpdated()) {
-        Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated!");
-        showTicketsWindow();
-        Audio.playAlarm();
-        Browser.openLinkInBrowser(Browser.getShowclixLink()); // Last, because Browser.getShowclixLink() takes a while to do
-        status.dispose();
-        break;
-      }
-      while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
-        if (forceRefresh) {
-          forceRefresh = false;
-          break;
-        }
-        Thread.sleep(100);
-        status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
-      }
-    } while (status.isVisible());
-    System.out.println("Finished!");
+    });
+  }
+
+  public static void continueProgram(Runnable run) {
+    Thread newThread = new Thread(run);
+    newThread.setName("Program Loop");
+    newThread.setDaemon(false); // Prevent the JVM from stopping due to zero non-daemon threads running
+    newThread.setPriority(Thread.NORM_PRIORITY);
+    newThread.start(); // Start the Thread
   }
 
   /**
@@ -169,12 +192,17 @@ public class PAXChecker {
   }
 
   /**
-   * This makes a new daemon, low-priority Thread and runs it. This is currently unused.
+   * This makes a new daemon, low-priority Thread and runs it.
    *
    * @param run The Runnable to make into a Thread and run
    */
   public static void startBackgroundThread(Runnable run) {
+    startBackgroundThread(run, "General Background Thread");
+  }
+
+  public static void startBackgroundThread(Runnable run, String name) {
     Thread newThread = new Thread(run);
+    newThread.setName(name);
     newThread.setDaemon(true); // Kill the JVM if only daemon threads are running
     newThread.setPriority(Thread.MIN_PRIORITY); // Let other Threads take priority, as this will probably not run for long
     newThread.start(); // Start the Thread
@@ -224,7 +252,7 @@ public class PAXChecker {
           System.out.println("Unable to load PAX icon: " + iconName);
         }
       }
-    });
+    }, "Set Status Icon");
   }
 
   public static void startNewProgramInstanceInBackground() {
@@ -239,7 +267,7 @@ public class PAXChecker {
           ErrorManagement.showErrorWindow("Small Error", "Unable to automatically run update.", null);
         }
       }
-    });
+    }, "Run New Program Instance");
   }
 
   public static void loadPatchNotesInBackground() {
@@ -247,8 +275,11 @@ public class PAXChecker {
       @Override
       public void run() {
         Browser.loadVersionNotes();
+        if (Browser.getVersionNotes() != null && setup != null) {
+          setup.setPatchNotesText(Browser.getVersionNotes());
+        }
       }
-    });
+    }, "Load Patch Notes");
   }
 
   public static void savePrefsInBackground() {
@@ -257,6 +288,6 @@ public class PAXChecker {
       public void run() {
         SettingsHandler.savePrefs(secondsBetweenRefresh, Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Email.getProvider());
       }
-    });
+    }, "Save Preferences");
   }
 }

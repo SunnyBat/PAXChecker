@@ -26,9 +26,6 @@ public class SettingsHandler {
    */
   public static void savePrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
     try {
-//      if (myPrefs.nodeExists(getPrefsPath())) {
-//        myPrefs.removeNode();
-//      }
       myPrefs.sync();
     } catch (BackingStoreException backingStoreException) {
       System.out.println("Error syncing settings! (They might not load properly...)");
@@ -40,6 +37,7 @@ public class SettingsHandler {
       myPrefs.putBoolean(PREFTYPES.PLAY_ALARM.name(), playAlarm);
       myPrefs.put(PREFTYPES.EVENT.name(), (expo == null ? "" : expo));
       myPrefs.put(PREFTYPES.PROVIDER.name(), (provider == null ? "" : provider));
+      System.out.println("Save provider = " + provider);
       saveCellNum();
       saveEmail();
       System.out.println("Pax = " + checkPax + ", Showclix = " + checkShowclix + ", playAlarm = " + playAlarm + ", Expo = " + expo + ", Provider = " + provider);
@@ -143,7 +141,13 @@ public class SettingsHandler {
   }
 
   public static String getCellNumber() {
-    return myPrefs.get(PREFTYPES.CELLNUM.name(), "");
+    String cellNum = myPrefs.get(PREFTYPES.CELLNUM.name(), "");
+    if (cellNum.contains("@") && !cellNum.contains(";")) {
+      if (Email.getCarrierExtension(getProvider()).equals(cellNum.substring(cellNum.indexOf("@")))) {
+        cellNum = cellNum.substring(0, cellNum.indexOf("@"));
+      }
+    }
+    return cellNum;
   }
 
   public static String getProvider() {

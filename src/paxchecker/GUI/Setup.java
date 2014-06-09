@@ -5,27 +5,40 @@
 package paxchecker.GUI;
 
 import paxchecker.*;
+import javax.swing.Timer;
 
 /**
  *
  * @author SunnyBat
  */
 public class Setup extends javax.swing.JFrame {
+  
+  public Timer myTimer;
 
   /** Creates new form Setup */
   public Setup() {
-    initComponents();
-    customComponents();
-    setVisible(true);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        customComponents();
+        setVisible(true);
+      }
+    });
   }
-
+  
   private void customComponents() {
     setTitle("PAXChecker Setup v" + PAXChecker.VERSION);
-    setPatchNotesText(Browser.getVersionNotes());
+    if (Browser.getVersionNotes() != null) {
+      setPatchNotesText(Browser.getVersionNotes());
+    }
     long tS = System.nanoTime();
     jSlider1.setValue(SettingsHandler.getDelayTime());
     jCheckBox1.setSelected(SettingsHandler.getCheckPaxWebsite());
     jCheckBox2.setSelected(SettingsHandler.getCheckShowclix());
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+      jButton1.setEnabled(false);
+    }
     jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
     jComboBox1.setSelectedIndex(getIndexOfProvider(SettingsHandler.getProvider()));
     jComboBox2.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
@@ -33,13 +46,9 @@ public class Setup extends javax.swing.JFrame {
     java.awt.Dimension d = jTextField2.getSize();
     jTextField2.setText(SettingsHandler.getCellNumber());
     jTextField2.setSize(d);
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException interruptedException) {
-    }
     System.out.println("Prefs loading time = " + (System.nanoTime() - tS) + " Nanoseconds");
   }
-
+  
   private static final int getIndexOfEvent(String eventName) {
     switch (eventName.toLowerCase()) {
       case "pax prime":
@@ -51,7 +60,7 @@ public class Setup extends javax.swing.JFrame {
         return 2;
     }
   }
-
+  
   private static final int getIndexOfProvider(String provider) {
     switch (provider.toLowerCase()) {
       case "at&t":
@@ -69,7 +78,7 @@ public class Setup extends javax.swing.JFrame {
         return 5;
     }
   }
-
+  
   public void setPatchNotesText(final String text) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -280,7 +289,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea4.setColumns(20);
     jTextArea4.setLineWrap(true);
     jTextArea4.setRows(5);
-    jTextArea4.setText("~~~1.0.4~~~\n->Added option to check Prime, East, or Aus PAX expos\n--->Right now PAX East is \"unable to find the register online button.\" Don't worry, it will be there next year!\n->Made program GUI more responsive (eg sending emails will no longer stall the main window)\n->Made program wait 60 seconds after sending test email before being able to send another (to prevent multiple texts, which GMail and Yahoo take for account security breaches)\n\n~~~1.0.3~~~\n->Faulty updating introduced in previous version now fixed (Sorry!)\n->Made program save temp version before overwriting current (in case download fails)\n->Made program auto-run newest version upon download completion\n\n~~~1.0.2~~~\n->Program now allows dashes - and perentheses () in cell number(s)\n->Fixed using default carrier -- program will now actually use the default carrier when multiple numbers are specified\n->You're now able to use any email service that supports SMTP via TLS -- simply put ::server.address after the email, and optionally :PORTNUMBER after the server address.\n\n~~~1.0.1~~~\n->Fixed issue with program not ending when all windows were closed\n->Added default carrier to multiple number list -- if no @car.rier.ext is specified for a number, the option selected is used\n\n~~~1.0.0~~~\n->Fixed issue sending email when website update was found while using multiple email addresses\n->Fixed issue with playing multiple alarm sounds at the same time\n->Various minor bugfixes (see Github repo)\n\n~~~Pre-versioning~~~\n->Added alarm to program (significant program size increase... Darn WAV files)\n-->Can choose to enable or disable the alarm\n->Added option to check Showclix website for updates and choose whether to check the PAX website, Showclix website, or both\n->Added \"Recent Changes\" section\n->Added tooltips to the program\n->Made program updater display update size before downloading update\n->Made program updater display current update progress\n->Made program select Showclix website monitoring and play sound when update found by default");
+    jTextArea4.setText("Loading patch notes, please wait...");
     jTextArea4.setWrapStyleWord(true);
     jScrollPane4.setViewportView(jTextArea4);
 
@@ -301,7 +310,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("My apologies about the tons recent updates. I don't think I'll be pushing any more before PAX tickets go on sale.\n\n->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
+    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 
@@ -345,7 +354,7 @@ public class Setup extends javax.swing.JFrame {
       }
     });
   }//GEN-LAST:event_jCheckBox2ActionPerformed
-
+  
   private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
     // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -359,9 +368,11 @@ public class Setup extends javax.swing.JFrame {
       }
     });
   }//GEN-LAST:event_jCheckBox1ActionPerformed
-
+  
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
+    jButton1.setText("Starting, please wait...");
+    jButton1.setEnabled(false);
     if (jCheckBox1.isSelected()) {
       Browser.enablePaxWebsiteChecking();
     } else {
@@ -372,12 +383,11 @@ public class Setup extends javax.swing.JFrame {
     if (jCheckBox2.isSelected()) {
       Browser.enableShowclixWebsiteChecking();
     }
-    PAXChecker.setStatusIconInBackground(PAXChecker.getIconName(jComboBox2.getSelectedItem().toString()));
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));
     Browser.setExpo(jComboBox2.getSelectedItem().toString());
-    Browser.setWebsiteLink(Browser.getExpo());
+    Browser.setWebsiteLink(Browser.getWebsiteLink(Browser.getExpo()));
     String text = jTextField2.getText();
     if (text.contains(";")) {
       Email.setCellList(text, jComboBox1.getSelectedItem().toString());
@@ -386,6 +396,7 @@ public class Setup extends javax.swing.JFrame {
     }
     PAXChecker.setRefreshTime(jSlider1.getValue());
     this.dispose();
+    PAXChecker.startCheckingWebsites();
   }//GEN-LAST:event_jButton1ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
