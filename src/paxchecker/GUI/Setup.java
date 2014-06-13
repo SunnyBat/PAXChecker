@@ -12,7 +12,7 @@ import javax.swing.Timer;
  * @author SunnyBat
  */
 public class Setup extends javax.swing.JFrame {
-  
+
   public Timer myTimer;
 
   /** Creates new form Setup */
@@ -26,7 +26,7 @@ public class Setup extends javax.swing.JFrame {
       }
     });
   }
-  
+
   private void customComponents() {
     setTitle("PAXChecker Setup v" + PAXChecker.VERSION);
     if (Browser.getVersionNotes() != null) {
@@ -47,8 +47,28 @@ public class Setup extends javax.swing.JFrame {
     jTextField2.setText(SettingsHandler.getCellNumber());
     jTextField2.setSize(d);
     System.out.println("Prefs loading time = " + (System.nanoTime() - tS) + " Nanoseconds");
+    if (SettingsHandler.getSavePrefs()) {
+      JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
+      JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
+      JCBSaveCheckPax.setSelected(SettingsHandler.getSavePax());
+      JCBSaveCheckShowclix.setSelected(SettingsHandler.getSaveShowclix());
+      JCBSaveEvent.setSelected(SettingsHandler.getSaveEvent());
+      JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
+      JCBSaveProvider.setSelected(SettingsHandler.getSaveProvider());
+      JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
+      JCBSaveEmail.setSelected(SettingsHandler.getSaveEmail());
+    } else {
+      JCBSaveCellnum.setEnabled(false);
+      JCBSaveCheckPax.setEnabled(false);
+      JCBSaveCheckShowclix.setEnabled(false);
+      JCBSaveEvent.setEnabled(false);
+      JCBSavePlayAlarm.setEnabled(false);
+      JCBSaveProvider.setEnabled(false);
+      JCBSaveRefreshTime.setEnabled(false);
+      JCBSaveEmail.setEnabled(false);
+    }
   }
-  
+
   private static final int getIndexOfEvent(String eventName) {
     switch (eventName.toLowerCase()) {
       case "pax prime":
@@ -60,7 +80,7 @@ public class Setup extends javax.swing.JFrame {
         return 2;
     }
   }
-  
+
   private static final int getIndexOfProvider(String provider) {
     switch (provider.toLowerCase()) {
       case "at&t":
@@ -78,7 +98,7 @@ public class Setup extends javax.swing.JFrame {
         return 5;
     }
   }
-  
+
   public void setPatchNotesText(final String text) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -125,6 +145,16 @@ public class Setup extends javax.swing.JFrame {
     jPanel3 = new javax.swing.JPanel();
     jScrollPane2 = new javax.swing.JScrollPane();
     jTextArea2 = new javax.swing.JTextArea();
+    jPanel5 = new javax.swing.JPanel();
+    JCBSavePreferences = new javax.swing.JCheckBox();
+    JCBSaveEmail = new javax.swing.JCheckBox();
+    JCBSaveCellnum = new javax.swing.JCheckBox();
+    JCBSaveProvider = new javax.swing.JCheckBox();
+    JCBSaveRefreshTime = new javax.swing.JCheckBox();
+    JCBSaveCheckPax = new javax.swing.JCheckBox();
+    JCBSaveCheckShowclix = new javax.swing.JCheckBox();
+    JCBSavePlayAlarm = new javax.swing.JCheckBox();
+    JCBSaveEvent = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -181,7 +211,6 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    jCheckBox3.setSelected(true);
     jCheckBox3.setText("Play Sound when Updated");
     jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
@@ -327,6 +356,78 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Extra", jPanel3);
 
+    JCBSavePreferences.setText("Save Preferences");
+    JCBSavePreferences.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JCBSavePreferencesActionPerformed(evt);
+      }
+    });
+
+    JCBSaveEmail.setText("Save Username");
+
+    JCBSaveCellnum.setText("Save Cell Number");
+    JCBSaveCellnum.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JCBSaveCellnumActionPerformed(evt);
+      }
+    });
+
+    JCBSaveProvider.setText("Save Provider");
+
+    JCBSaveRefreshTime.setText("Save Refresh Time");
+
+    JCBSaveCheckPax.setText("Save PAX Checking");
+
+    JCBSaveCheckShowclix.setText("Save Showclix Checking");
+
+    JCBSavePlayAlarm.setText("Save Play Alarm");
+
+    JCBSaveEvent.setText("Save Event");
+
+    javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+    jPanel5.setLayout(jPanel5Layout);
+    jPanel5Layout.setHorizontalGroup(
+      jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel5Layout.createSequentialGroup()
+        .addContainerGap()
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(JCBSavePreferences)
+          .addComponent(JCBSaveEmail)
+          .addComponent(JCBSaveCellnum)
+          .addComponent(JCBSaveProvider)
+          .addComponent(JCBSaveCheckPax)
+          .addComponent(JCBSaveCheckShowclix)
+          .addComponent(JCBSavePlayAlarm)
+          .addComponent(JCBSaveEvent)
+          .addComponent(JCBSaveRefreshTime))
+        .addContainerGap(218, Short.MAX_VALUE))
+    );
+    jPanel5Layout.setVerticalGroup(
+      jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(jPanel5Layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(JCBSavePreferences)
+        .addGap(18, 18, 18)
+        .addComponent(JCBSaveEmail)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveCellnum)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveProvider)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(JCBSaveCheckPax)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveCheckShowclix)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSavePlayAlarm)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveRefreshTime)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(JCBSaveEvent)
+        .addContainerGap(96, Short.MAX_VALUE))
+    );
+
+    jTabbedPane1.addTab("Preferences", jPanel5);
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -354,7 +455,7 @@ public class Setup extends javax.swing.JFrame {
       }
     });
   }//GEN-LAST:event_jCheckBox2ActionPerformed
-  
+
   private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
     // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -368,7 +469,7 @@ public class Setup extends javax.swing.JFrame {
       }
     });
   }//GEN-LAST:event_jCheckBox1ActionPerformed
-  
+
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
     jButton1.setText("Starting, please wait...");
@@ -395,10 +496,47 @@ public class Setup extends javax.swing.JFrame {
       Email.setCellNum(text, jComboBox1.getSelectedItem().toString());
     }
     PAXChecker.setRefreshTime(jSlider1.getValue());
+    SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
+    if (JCBSavePreferences.isSelected()) {
+      SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
+      SettingsHandler.setSavePax(JCBSaveCheckPax.isSelected());
+      SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
+      SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
+      SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
+      SettingsHandler.setSaveProvider(JCBSaveProvider.isSelected());
+      SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
+      SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
+    }
     this.dispose();
     PAXChecker.startCheckingWebsites();
   }//GEN-LAST:event_jButton1ActionPerformed
+
+  private void JCBSaveCellnumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSaveCellnumActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_JCBSaveCellnumActionPerformed
+
+  private void JCBSavePreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSavePreferencesActionPerformed
+    // TODO add your handling code here:
+    boolean selected = JCBSavePreferences.isSelected();
+    JCBSaveCellnum.setEnabled(selected);
+    JCBSaveCheckPax.setEnabled(selected);
+    JCBSaveCheckShowclix.setEnabled(selected);
+    JCBSaveEmail.setEnabled(selected);
+    JCBSaveEvent.setEnabled(selected);
+    JCBSavePlayAlarm.setEnabled(selected);
+    JCBSaveProvider.setEnabled(selected);
+    JCBSaveRefreshTime.setEnabled(selected);
+  }//GEN-LAST:event_JCBSavePreferencesActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JCheckBox JCBSaveCellnum;
+  private javax.swing.JCheckBox JCBSaveCheckPax;
+  private javax.swing.JCheckBox JCBSaveCheckShowclix;
+  private javax.swing.JCheckBox JCBSaveEmail;
+  private javax.swing.JCheckBox JCBSaveEvent;
+  private javax.swing.JCheckBox JCBSavePlayAlarm;
+  private javax.swing.JCheckBox JCBSavePreferences;
+  private javax.swing.JCheckBox JCBSaveProvider;
+  private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JButton jButton1;
   private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox2;
@@ -415,6 +553,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
+  private javax.swing.JPanel jPanel5;
   private javax.swing.JPasswordField jPasswordField1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;

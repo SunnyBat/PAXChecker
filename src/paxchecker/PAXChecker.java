@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.2.0";
+  public static final String VERSION = "1.2.1";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -45,6 +45,7 @@ public class PAXChecker {
     Email.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
+    loadShowclixIDInBackground();
     if (doUpdate) {
       try {
         System.out.println("Checking for updates...");
@@ -286,8 +287,17 @@ public class PAXChecker {
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        SettingsHandler.savePrefs(secondsBetweenRefresh, Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Email.getProvider());
+        SettingsHandler.saveAllPrefs(secondsBetweenRefresh, Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Email.getProvider());
       }
     }, "Save Preferences");
+  }
+
+  public static void loadShowclixIDInBackground() {
+    startBackgroundThread(new Runnable() {
+      @Override
+      public void run() {
+        Browser.setShowclixID(Browser.getLatestShowclixID());
+      }
+    }, "Load Most Recent Showclix ID");
   }
 }

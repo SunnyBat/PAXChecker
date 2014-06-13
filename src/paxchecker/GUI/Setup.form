@@ -233,7 +233,6 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox3">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Play Sound when Updated"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;If checked, the program will play a sound when an update to&lt;br&gt;&#xa;the PAX Prime website OR the Showclix website (whichever one(s)&lt;br&gt;&#xa;you have enabled) is found.&#xa;&lt;/html&gt;"/>
               </Properties>
@@ -383,6 +382,115 @@
                 </Component>
               </SubComponents>
             </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="jPanel5">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Preferences">
+                <Property name="tabTitle" type="java.lang.String" value="Preferences"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveProvider" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSavePlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBSaveRefreshTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="218" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="JCBSaveEmail" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSaveCellnum" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSaveProvider" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="JCBSaveCheckPax" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="96" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JCheckBox" name="JCBSavePreferences">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Preferences"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSavePreferencesActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveEmail">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Username"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveCellnum">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Cell Number"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSaveCellnumActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveProvider">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Provider"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveRefreshTime">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Refresh Time"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckPax">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save PAX Checking"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckShowclix">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Showclix Checking"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSavePlayAlarm">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Play Alarm"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveEvent">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Event"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

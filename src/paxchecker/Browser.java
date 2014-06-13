@@ -14,7 +14,7 @@ public class Browser {
 
   private static boolean checkPAXWebsite;
   private static boolean checkShowclix;
-  private static int lastShowclixEventID = 3846764;
+  private static int lastShowclixEventID = 3852445;
   private static final String updateLink = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String patchNotesLink = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
   private static String Expo;
@@ -126,10 +126,10 @@ public class Browser {
     if (!checkShowclix) {
       return false;
     }
-    int currEvent = getShowclixInfo();
+    int currEvent = getLatestShowclixID();
     if (currEvent == -1) {
       if (PAXChecker.status != null) {
-        PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website");
+        PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website!");
       }
       return false;
     }
@@ -143,15 +143,16 @@ public class Browser {
     return false;
   }
 
-  public static int getShowclixInfo() {
+  public static int getLatestShowclixID() {
     try {
       URL url = new URL("http://api.showclix.com/Seller/16886/events");
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
       BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
       String jsonText = "";
-      while (reader.ready()) {
-        jsonText += reader.readLine();
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        jsonText += line;
       }
       reader.close();
       JSONParser mP = new JSONParser();
@@ -171,7 +172,7 @@ public class Browser {
 
   public static String getShowclixLink() {
     try {
-      return "http://showclix.com/event/" + getShowclixInfo();
+      return "http://showclix.com/event/" + getLatestShowclixID();
     } catch (Exception e) {
       ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
       return null;
@@ -194,13 +195,21 @@ public class Browser {
       ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
     }
   }
-  
+
   public static void setExpo(String e) {
     Expo = e;
   }
-  
+
   public static String getExpo() {
     return Expo;
+  }
+
+  public static void setShowclixID(int ID) {
+    if (ID == -1) {
+      System.out.println("Unable to set most recent Showclix Event ID -- invalid ShowclixID!");
+      return;
+    }
+    lastShowclixEventID = ID;
   }
 
   /**
@@ -212,7 +221,6 @@ public class Browser {
    */
   public static void setWebsiteLink(String link) {
     websiteLink = link;
-    System.out.println("websiteLink = " + websiteLink);
   }
 
   /**
@@ -265,7 +273,11 @@ public class Browser {
     if (versNotes == null) {
       return null;
     }
-    return versNotes.substring(0, versNotes.indexOf("~~~" + version)).trim();
+    try {
+      versNotes = versNotes.substring(0, versNotes.indexOf("~~~" + version)).trim();
+    } catch (Exception e) {
+    }
+    return versNotes;
   }
 
   public static String getVersionNotes() {
@@ -284,7 +296,25 @@ public class Browser {
       String lineSeparator = System.getProperty("line.separator", "\n");
       String allText = "Patch Notes:" + lineSeparator;
       while ((line = myReader.readLine()) != null) {
-        allText += line + lineSeparator;
+        line = line.trim();
+        if (line.startsWith("TOKEN:")) {
+          try {
+            String d = line.substring(6);
+            if (d.startsWith("SETSHOWCLIXID:")) {
+              String load = d.substring(14);
+              System.out.println("Load = " + load);
+              setShowclixID(Integer.parseInt(load));
+            } //else if (d.startsWith("")) {
+//              String load = d.substring(0);
+//              System.out.println("Load = " + load);
+//              setShowclixID(Integer.parseInt(load));
+//            }
+          } catch (NumberFormatException numberFormatException) {
+            System.out.println("Unable to set token: " + line);
+          }
+        } else {
+          allText += line + lineSeparator;
+        }
       }
       versionNotes = allText.trim();
     } catch (Exception e) {

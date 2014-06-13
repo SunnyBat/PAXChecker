@@ -10,6 +10,57 @@ import java.util.prefs.Preferences;
 public class SettingsHandler {
 
   private static Preferences myPrefs = Preferences.userRoot();
+  private static boolean saveRefreshTime;
+  private static boolean saveCheckShowclix;
+  private static boolean saveCheckPax;
+  private static boolean savePlayAlarm;
+  private static boolean saveEvent;
+  private static boolean saveEmail;
+  private static boolean saveCellnum;
+  private static boolean saveProvider;
+
+  public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum, boolean provider) {
+    setSaveRefreshTime(refreshTime);
+    setSaveShowclix(showclix);
+    setSavePax(pax);
+    setSaveAlarm(alarm);
+    setSaveEvent(event);
+    setSaveEmail(email);
+    setSaveCellnum(cellnum);
+    setSaveProvider(provider);
+  }
+
+  public static void setSaveRefreshTime(boolean save) {
+    saveRefreshTime = save;
+  }
+
+  public static void setSaveShowclix(boolean save) {
+    saveCheckShowclix = save;
+  }
+
+  public static void setSavePax(boolean save) {
+    saveCheckPax = save;
+  }
+
+  public static void setSaveAlarm(boolean save) {
+    savePlayAlarm = save;
+  }
+
+  public static void setSaveEvent(boolean save) {
+    saveEvent = save;
+  }
+
+  public static void setSaveEmail(boolean save) {
+    saveEmail = save;
+  }
+
+  public static void setSaveCellnum(boolean save) {
+    saveCellnum = save;
+  }
+
+  public static void setSaveProvider(boolean save) {
+    saveProvider = save;
+  }
 
   /**
    * Saves the Preferences given into a Preferences file. I'm not really sure where the file is, nor
@@ -24,19 +75,20 @@ public class SettingsHandler {
    * @param email         The email address being used.
    * @param provider      The provider being used.
    */
-  public static void savePrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
+  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
     try {
       myPrefs.sync();
     } catch (BackingStoreException backingStoreException) {
-      System.out.println("Error syncing settings! (They might not load properly...)");
+      ErrorManagement.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
+      return;
     }
     try {
-      myPrefs.putInt(PREFTYPES.REFRESHTIME.name(), refreshTime);
-      myPrefs.putBoolean(PREFTYPES.CHECK_PAX.name(), checkPax);
-      myPrefs.putBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), checkShowclix);
-      myPrefs.putBoolean(PREFTYPES.PLAY_ALARM.name(), playAlarm);
-      myPrefs.put(PREFTYPES.EVENT.name(), (expo == null ? "" : expo));
-      myPrefs.put(PREFTYPES.PROVIDER.name(), (provider == null ? "" : provider));
+      saveRefreshTime(refreshTime);
+      saveCheckPax(checkPax);
+      saveCheckShowclix(checkShowclix);
+      savePlayAlarm(playAlarm);
+      saveEvent(expo == null ? "" : expo);
+      saveProvider(provider == null ? "" : provider);
       System.out.println("Save provider = " + provider);
       saveCellNum();
       saveEmail();
@@ -47,47 +99,69 @@ public class SettingsHandler {
     }
   }
 
-  private static void saveEmail() {
-    String email = Email.getUsername();
-    if (email == null) {
-      myPrefs.remove(PREFTYPES.EMAIL.name());
+  private static void saveRefreshTime(int time) {
+    if (saveRefreshTime) {
+      myPrefs.putInt(PREFTYPES.REFRESHTIME.name(), time);
     } else {
-      if (email.equals("@yahoo.com")) {
-        myPrefs.remove(PREFTYPES.EMAIL.name());
-      } else {
-        myPrefs.put(PREFTYPES.EMAIL.name(), email);
-      }
+      myPrefs.remove(PREFTYPES.REFRESHTIME.name());
     }
   }
 
-  private static void saveCellNum() {
-    String textEmail = Email.getTextEmail();
-    java.util.List textList = Email.getEmailList();
-    if (textEmail != null) {
-      myPrefs.put(PREFTYPES.CELLNUM.name(), textEmail.equals("@yahoo.com") ? "" : textEmail);
-    } else if (textList != null) {
-      if (textList.isEmpty()) {
-        myPrefs.remove(PREFTYPES.CELLNUM.name());
-        return;
-      }
-      String longEmail = null;
-      java.util.Iterator<String> mI = textList.iterator();
-      while (mI.hasNext()) {
-        String s = mI.next();
-        if (s == null) {
-          continue;
-        }
-        if (longEmail == null) {
-          longEmail = s;
-        } else {
-          longEmail += "; " + s;
-        }
-      }
-      myPrefs.put(PREFTYPES.CELLNUM.name(), longEmail == null ? "" : longEmail);
+  private static void saveCheckShowclix(boolean check) {
+    if (saveCheckShowclix) {
+      myPrefs.putBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.CELLNUM.name());
+      myPrefs.remove(PREFTYPES.CHECK_SHOWCLIX.name());
     }
-    System.out.println("Cellnum = " + myPrefs.get(PREFTYPES.CELLNUM.name(), "NONGET"));
+  }
+
+  private static void saveCheckPax(boolean check) {
+    if (saveCheckPax) {
+      myPrefs.putBoolean(PREFTYPES.CHECK_PAX.name(), check);
+    } else {
+      myPrefs.remove(PREFTYPES.CHECK_PAX.name());
+    }
+  }
+
+  private static void savePlayAlarm(boolean alarm) {
+    if (savePlayAlarm) {
+      myPrefs.putBoolean(PREFTYPES.PLAY_ALARM.name(), alarm);
+    } else {
+      myPrefs.remove(PREFTYPES.PLAY_ALARM.name());
+    }
+  }
+
+  private static void saveEvent(String expo) {
+    if (saveEvent) {
+      myPrefs.put(PREFTYPES.EVENT.name(), expo);
+    } else {
+      myPrefs.remove(PREFTYPES.EVENT.name());
+    }
+  }
+
+  private static void saveProvider(String provider) {
+    if (saveProvider) {
+      myPrefs.put(PREFTYPES.PROVIDER.name(), provider);
+    } else {
+      myPrefs.remove(PREFTYPES.PROVIDER.name());
+    }
+  }
+
+  private static void saveEmail() {
+    if (saveEmail) {
+      String email = Email.getUsername();
+      if (email == null) {
+        myPrefs.put(PREFTYPES.EMAIL.name(), "");
+      } else {
+        if (email.equals("@yahoo.com")) {
+          myPrefs.put(PREFTYPES.EMAIL.name(), "");
+        } else {
+          myPrefs.put(PREFTYPES.EMAIL.name(), "");
+        }
+      }
+    } else {
+      myPrefs.remove(PREFTYPES.EMAIL.name());
+    }
   }
 
   /**
@@ -96,8 +170,12 @@ public class SettingsHandler {
    * @param email The email address to save to the Preferences file
    */
   public static void saveEmail(String email) {
-    if (email != null) {
-      myPrefs.put(PREFTYPES.EMAIL.name(), email);
+    if (saveEmail) {
+      if (email != null) {
+        myPrefs.put(PREFTYPES.EMAIL.name(), email);
+      } else {
+        myPrefs.put(PREFTYPES.EMAIL.name(), "");
+      }
     } else {
       myPrefs.remove(PREFTYPES.EMAIL.name());
     }
@@ -109,15 +187,88 @@ public class SettingsHandler {
    * @param cellNum The cell number to save to the Preferences file
    */
   public static void saveCellNum(String cellNum) {
-    if (cellNum != null) {
-      myPrefs.put(PREFTYPES.CELLNUM.name(), cellNum);
+    if (saveCellnum) {
+      if (cellNum != null) {
+        myPrefs.put(PREFTYPES.CELLNUM.name(), cellNum);
+      } else {
+        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+      }
     } else {
       myPrefs.remove(PREFTYPES.CELLNUM.name());
     }
   }
 
+  private static void saveCellNum() {
+    if (saveCellnum) {
+      String textEmail = Email.getTextEmail();
+      java.util.List textList = Email.getEmailList();
+      if (textEmail != null) {
+        myPrefs.put(PREFTYPES.CELLNUM.name(), textEmail.equals("@yahoo.com") ? "" : textEmail);
+      } else if (textList != null) {
+        if (textList.isEmpty()) {
+          myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+          return;
+        }
+        String longEmail = null;
+        java.util.Iterator<String> mI = textList.iterator();
+        while (mI.hasNext()) {
+          String s = mI.next();
+          if (s == null) {
+            continue;
+          }
+          if (longEmail == null) {
+            longEmail = s;
+          } else {
+            longEmail += "; " + s;
+          }
+        }
+        myPrefs.put(PREFTYPES.CELLNUM.name(), longEmail == null ? "" : longEmail);
+      } else {
+        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+      }
+    } else {
+      myPrefs.remove(PREFTYPES.CELLNUM.name());
+    }
+  }
+
+  public static boolean getSaveRefreshTime() {
+    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 61) != 61;
+  }
+
+  public static boolean getSaveShowclix() {
+    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), true));
+  }
+
+  public static boolean getSavePax() {
+    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), true));
+  }
+
+  public static boolean getSaveAlarm() {
+    return !(!myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), true));
+  }
+
+  public static boolean getSaveEvent() {
+    return !myPrefs.get(PREFTYPES.EVENT.name(), "NOPE").toString().equals("NOPE");
+  }
+
+  public static boolean getSaveEmail() {
+    return !myPrefs.get(PREFTYPES.EMAIL.name(), "NOPE").toString().equals("NOPE");
+  }
+
+  public static boolean getSaveCellnum() {
+    return !myPrefs.get(PREFTYPES.CELLNUM.name(), "NOPE").toString().equals("NOPE");
+  }
+
+  public static boolean getSaveProvider() {
+    return !myPrefs.get(PREFTYPES.PROVIDER.name(), "NOPE").toString().equals("NOPE");
+  }
+
+  public static boolean getSavePrefs() {
+    return myPrefs.getBoolean(PREFTYPES.SAVE_PREFS.name(), true);
+  }
+
   public static int getDelayTime() {
-    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 10);
+    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 15);
   }
 
   public static boolean getCheckPaxWebsite() {
@@ -129,7 +280,7 @@ public class SettingsHandler {
   }
 
   public static boolean getPlayAlarm() {
-    return myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false);
   }
 
   public static String getExpo() {
@@ -156,7 +307,14 @@ public class SettingsHandler {
 
   private static enum PREFTYPES {
 
-    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, PLAY_ALARM, EVENT, EMAIL, CELLNUM, PROVIDER;
+    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, PLAY_ALARM, EVENT, EMAIL, CELLNUM, PROVIDER, SAVE_PREFS;
+  }
+
+  public static void setSavePrefs(boolean save) {
+    myPrefs.putBoolean(PREFTYPES.SAVE_PREFS.name(), save);
+    if (!save) {
+      setSaveAll(false, false, false, false, false, false, false, false);
+    }
   }
 
   public static String getPrefsPath() {
