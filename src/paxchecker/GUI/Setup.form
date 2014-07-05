@@ -8,6 +8,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -53,24 +54,10 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" pref="343" max="32767" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" pref="391" max="32767" attributes="0"/>
                           <Component id="jButton1" alignment="0" max="32767" attributes="0"/>
                           <Component id="jSlider1" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
-                          <Component id="jCheckBox3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox2" min="-2" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jComboBox2" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="jCheckBox1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jComboBox1" min="-2" pref="82" max="-2" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -82,9 +69,28 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextField2" max="32767" attributes="0"/>
                                   <Component id="jPasswordField1" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jTextField2" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jComboBox1" min="-2" pref="82" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jCheckBox3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jCheckBox2" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jComboBox2" max="32767" attributes="0"/>
+                                      </Group>
+                                      <Component id="jCheckBox1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -110,12 +116,10 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCheckBox2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -148,12 +152,12 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Username"/>
+                <Property name="text" type="java.lang.String" value="Email"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="jTextField1">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Please note that the only email addresses internally&lt;br&gt;&#xa;supported are Yahoo! and GMail. Put your full email&lt;br&gt;&#xa;addres in, otherwise it defaults to @yahoo.com.&lt;br&gt;&#xa;&lt;br&gt;&#xa;If you have a different email that you know&lt;br&gt;&#xa;supports SMTP, put ::SMTP.Server.Address after&lt;br&gt;&#xa;your full email, and if it uses a port other than 587,&lt;br&gt;&#xa;put :PORT after the server address.&lt;br&gt;&#xa;Example: Mail@site.net::site.smtp.net:82&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Email address to send texts with. Currently,&lt;br&gt;&#xa;only Yahoo! and Gmail are supported.&lt;br&gt;&#xa;Put your full email addres in, otherwise it&lt;br&gt;&#xa;defaults to @yahoo.com.&lt;br&gt;&#xa;See the Instructions tab for how to use emails&lt;br&gt;&#xa;other than Yahoo! or Gmail.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JPasswordField" name="jPasswordField1">
@@ -170,7 +174,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="jTextField2">
               <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Specify the number you want to receive texts at.&lt;br&gt;&#xa;Only put your number - no spaces, no leading 1.&lt;br&gt;&#xa;You may use dashes [ -- ] or perentheses [ ( ) ]&lt;br&gt;&#xa;in the number.&lt;br&gt;&#xa;If you use a different carrier, you may find their&lt;br&gt;&#xa;texting email address extension at&lt;br&gt;&#xa;www.emailtextmessages.com and put it onto the&lt;br&gt;&#xa;end of your number.&lt;br&gt;&#xa;Examples:&lt;br&gt;&#xa;(123)-456-7890 [AT&amp;T selected in dropdown box]&lt;br&gt;&#xa;1234567890@car.rier.net&lt;br&gt;&#xa;123-4567890@car.rier.net&lt;br&gt;&#xa;&lt;br&gt;&#xa;To put more than one number in, separate each by&lt;br&gt;&#xa;a semicolon [ ; ].&lt;br&gt;&#xa;Example:&lt;br&gt;&#xa;1234567890@car.rier.net;2345678901@car.rier.net&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Specify the number you want to receive texts at.&lt;br&gt;&#xa;Only put your number - no spaces, no leading 1.&lt;br&gt;&#xa;You may use dashes -- or perentheses ().&lt;br&gt;&#xa;If you use a different carrier, you may find their&lt;br&gt;&#xa;texting email address extension at&lt;br&gt;&#xa;www.emailtextmessages.com and put it onto the&lt;br&gt;&#xa;end of your number.&lt;br&gt;&#xa;Examples:&lt;br&gt;&#xa;(123)-456-7890 [Verizon selected in dropdown box]&lt;br&gt;&#xa;1234567890@car.rier.net&lt;br&gt;&#xa;123-4567890@car.rier.net&lt;br&gt;&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="jComboBox1">
@@ -240,10 +244,11 @@
             <Component class="javax.swing.JComboBox" name="jComboBox2">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="3">
+                  <StringArray count="4">
                     <StringItem index="0" value="PAX Prime"/>
                     <StringItem index="1" value="PAX East"/>
-                    <StringItem index="2" value="PAX Aus"/>
+                    <StringItem index="2" value="PAX South"/>
+                    <StringItem index="3" value="PAX Aus"/>
                   </StringArray>
                 </Property>
               </Properties>
@@ -267,12 +272,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane3" alignment="0" pref="363" max="32767" attributes="0"/>
+                  <Component id="jScrollPane3" alignment="0" pref="411" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane3" alignment="0" pref="334" max="32767" attributes="0"/>
+                  <Component id="jScrollPane3" alignment="0" pref="331" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -310,12 +315,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="363" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="411" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="334" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="331" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -353,12 +358,12 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="363" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="411" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="334" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="331" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -376,7 +381,7 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="-&gt;Program created by Sunny Bat -- Sunnybat@yahoo.com&#xa;-&gt;Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.&#xa;-&gt;To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.&#xa;-&gt;Link to Github repository for source code:&#xa;https://github.com/SunnyBat/PAXChecker"/>
+                    <Property name="text" type="java.lang.String" value="-&gt;Program created by Sunny Bat -- Sunnybat@yahoo.com&#xa;-&gt;Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.&#xa;-&gt;To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.&#xa;-&gt;Link to Github repository for source code:&#xa;https://github.com/SunnyBat/PAXChecker&#xa;&#xa;---Libraries Used---&#xa;-&gt;JavaMail 1.4.7&#xa;-&gt;JAF 1.1.1"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
                 </Component>
@@ -396,20 +401,26 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveProvider" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSavePlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveRefreshTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" pref="391" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveProvider" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSavePlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveRefreshTime" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="218" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -434,7 +445,9 @@
                       <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="96" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" pref="80" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -491,6 +504,25 @@
                 <Property name="text" type="java.lang.String" value="Save Event"/>
               </Properties>
             </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTextArea" name="jTextArea1">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="lineWrap" type="boolean" value="true"/>
+                    <Property name="rows" type="int" value="5"/>
+                    <Property name="text" type="java.lang.String" value="Preferences are saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences."/>
+                    <Property name="wrapStyleWord" type="boolean" value="true"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>

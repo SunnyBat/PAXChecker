@@ -76,8 +76,10 @@ public class Setup extends javax.swing.JFrame {
         return 0;
       case "pax east":
         return 1;
-      case "pax aus":
+      case "pax south":
         return 2;
+      case "pax aus":
+        return 3;
     }
   }
 
@@ -155,6 +157,8 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveCheckShowclix = new javax.swing.JCheckBox();
     JCBSavePlayAlarm = new javax.swing.JCheckBox();
     JCBSaveEvent = new javax.swing.JCheckBox();
+    jScrollPane1 = new javax.swing.JScrollPane();
+    jTextArea1 = new javax.swing.JTextArea();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -164,15 +168,15 @@ public class Setup extends javax.swing.JFrame {
     jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel1.setText("PAX Checker Setup");
 
-    jLabel2.setText("Username");
+    jLabel2.setText("Email");
 
-    jTextField1.setToolTipText("<html>\nPlease note that the only email addresses internally<br>\nsupported are Yahoo! and GMail. Put your full email<br>\naddres in, otherwise it defaults to @yahoo.com.<br>\n<br>\nIf you have a different email that you know<br>\nsupports SMTP, put ::SMTP.Server.Address after<br>\nyour full email, and if it uses a port other than 587,<br>\nput :PORT after the server address.<br>\nExample: Mail@site.net::site.smtp.net:82\n</html>");
+    jTextField1.setToolTipText("<html>\nEmail address to send texts with. Currently,<br>\nonly Yahoo! and Gmail are supported.<br>\nPut your full email addres in, otherwise it<br>\ndefaults to @yahoo.com.<br>\nSee the Instructions tab for how to use emails<br>\nother than Yahoo! or Gmail.\n</html>");
 
     jLabel3.setText("Password");
 
     jLabel4.setText("Cell Num");
 
-    jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes [ -- ] or perentheses [ ( ) ]<br>\nin the number.<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [AT&T selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n<br>\nTo put more than one number in, separate each by<br>\na semicolon [ ; ].<br>\nExample:<br>\n1234567890@car.rier.net;2345678901@car.rier.net\n</html>");
+    jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
     jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
 
@@ -214,7 +218,7 @@ public class Setup extends javax.swing.JFrame {
     jCheckBox3.setText("Play Sound when Updated");
     jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
-    jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX Aus" }));
+    jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));
 
     jLabel5.setText("PAX Expo to Check");
 
@@ -225,21 +229,10 @@ public class Setup extends javax.swing.JFrame {
       .addGroup(jPanel1Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
           .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jCheckBox3)
-          .addComponent(jCheckBox2)
-          .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-              .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-              .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -249,8 +242,22 @@ public class Setup extends javax.swing.JFrame {
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(jTextField1)
-              .addComponent(jTextField2)
-              .addComponent(jPasswordField1))))
+              .addComponent(jPasswordField1)
+              .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jTextField2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
+          .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(jCheckBox3)
+              .addComponent(jCheckBox2)
+              .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                  .addComponent(jLabel5)
+                  .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                  .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING)))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     jPanel1Layout.setVerticalGroup(
@@ -269,11 +276,10 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel4)
-          .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jCheckBox1)
+          .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jCheckBox1)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jCheckBox2)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -305,11 +311,11 @@ public class Setup extends javax.swing.JFrame {
     jPanel2.setLayout(jPanel2Layout);
     jPanel2Layout.setHorizontalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
     );
     jPanel2Layout.setVerticalGroup(
       jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel2);
@@ -326,11 +332,11 @@ public class Setup extends javax.swing.JFrame {
     jPanel4.setLayout(jPanel4Layout);
     jPanel4Layout.setHorizontalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -339,7 +345,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea2.setColumns(20);
     jTextArea2.setLineWrap(true);
     jTextArea2.setRows(5);
-    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker");
+    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker\n\n---Libraries Used---\n->JavaMail 1.4.7\n->JAF 1.1.1");
     jTextArea2.setWrapStyleWord(true);
     jScrollPane2.setViewportView(jTextArea2);
 
@@ -347,11 +353,11 @@ public class Setup extends javax.swing.JFrame {
     jPanel3.setLayout(jPanel3Layout);
     jPanel3Layout.setHorizontalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -384,6 +390,14 @@ public class Setup extends javax.swing.JFrame {
 
     JCBSaveEvent.setText("Save Event");
 
+    jTextArea1.setEditable(false);
+    jTextArea1.setColumns(20);
+    jTextArea1.setLineWrap(true);
+    jTextArea1.setRows(5);
+    jTextArea1.setText("Preferences are saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.\n\nNote that your password is NEVER saved using Preferences.");
+    jTextArea1.setWrapStyleWord(true);
+    jScrollPane1.setViewportView(jTextArea1);
+
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
     jPanel5Layout.setHorizontalGroup(
@@ -391,16 +405,20 @@ public class Setup extends javax.swing.JFrame {
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(JCBSavePreferences)
-          .addComponent(JCBSaveEmail)
-          .addComponent(JCBSaveCellnum)
-          .addComponent(JCBSaveProvider)
-          .addComponent(JCBSaveCheckPax)
-          .addComponent(JCBSaveCheckShowclix)
-          .addComponent(JCBSavePlayAlarm)
-          .addComponent(JCBSaveEvent)
-          .addComponent(JCBSaveRefreshTime))
-        .addContainerGap(218, Short.MAX_VALUE))
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+          .addGroup(jPanel5Layout.createSequentialGroup()
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(JCBSaveEvent)
+              .addComponent(JCBSavePreferences)
+              .addComponent(JCBSaveEmail)
+              .addComponent(JCBSaveCellnum)
+              .addComponent(JCBSaveProvider)
+              .addComponent(JCBSaveCheckPax)
+              .addComponent(JCBSaveCheckShowclix)
+              .addComponent(JCBSavePlayAlarm)
+              .addComponent(JCBSaveRefreshTime))
+            .addGap(0, 0, Short.MAX_VALUE)))
+        .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
       jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -423,7 +441,9 @@ public class Setup extends javax.swing.JFrame {
         .addComponent(JCBSaveRefreshTime)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(JCBSaveEvent)
-        .addContainerGap(96, Short.MAX_VALUE))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+        .addContainerGap())
     );
 
     jTabbedPane1.addTab("Preferences", jPanel5);
@@ -555,11 +575,13 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JPanel jPanel4;
   private javax.swing.JPanel jPanel5;
   private javax.swing.JPasswordField jPasswordField1;
+  private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JSlider jSlider1;
   private javax.swing.JTabbedPane jTabbedPane1;
+  private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTextArea jTextArea2;
   private javax.swing.JTextArea jTextArea3;
   private javax.swing.JTextArea jTextArea4;

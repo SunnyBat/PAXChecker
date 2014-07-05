@@ -23,6 +23,7 @@ public class Browser {
   private static URL patchNotesURL;
   private static long updateSize;
   private static volatile String versionNotes;
+  private static long dataUsed;
 
   public static void init() {
     try {
@@ -31,6 +32,14 @@ public class Browser {
     } catch (Exception e) {
       System.out.println("Unable to make a new URL?");
     }
+  }
+
+  public static long getDataUsed() {
+    return dataUsed;
+  }
+
+  public static double getDataUsedMB() {
+    return (double) ((int) ((double) dataUsed / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
   }
 
   public static boolean isPAXWebsiteUpdated() {
@@ -74,6 +83,7 @@ public class Browser {
       is = url.openStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
+        dataUsed += line.length();
         line = line.trim();
         if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
           return line;
@@ -152,6 +162,7 @@ public class Browser {
       String jsonText = "";
       String line = null;
       while ((line = reader.readLine()) != null) {
+        dataUsed += line.length();
         jsonText += line;
       }
       reader.close();
@@ -241,6 +252,9 @@ public class Browser {
       case "east":
       case "pax east":
         return "http://east.paxsite.com";
+      case "south":
+      case "pax south":
+        return "http://south.paxsite.com";
       case "aus":
       case "pax aus":
         return "http://aus.paxsite.com";
@@ -296,6 +310,7 @@ public class Browser {
       String lineSeparator = System.getProperty("line.separator", "\n");
       String allText = "Patch Notes:" + lineSeparator;
       while ((line = myReader.readLine()) != null) {
+        dataUsed += line.length();
         line = line.trim();
         if (line.startsWith("TOKEN:")) {
           try {

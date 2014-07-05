@@ -50,6 +50,7 @@ public class Status extends javax.swing.JFrame {
     if (!Audio.soundEnabled()) {
       setSoundButtonState(false);
     }
+    setDataUsageText(Browser.getDataUsedMB());
   }
 
   /** This method is called from within the constructor to
@@ -70,6 +71,7 @@ public class Status extends javax.swing.JFrame {
     JLButtonStatus = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
     JLShowclixLink = new javax.swing.JLabel();
+    JLDataUsage = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Website Status");
@@ -112,6 +114,8 @@ public class Status extends javax.swing.JFrame {
 
     JLShowclixLink.setText("Current Showclix Link:");
 
+    JLDataUsage.setText("Data Usage:");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -128,10 +132,11 @@ public class Status extends javax.swing.JFrame {
           .addComponent(JLButtonStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JLShowclixLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLLastChecked)
             .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(JLShowclixLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(JLDataUsage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -147,7 +152,9 @@ public class Status extends javax.swing.JFrame {
         .addComponent(JLShowclixLink)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLLastChecked)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JLDataUsage)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(JLButtonStatus)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -276,6 +283,23 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  public void setDataUsageText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLDataUsage.setText(text);
+      }
+    });
+  }
+
+  public void setDataUsageText(long amount) {
+    setDataUsageText("Data Used: " + amount + "MB");
+  }
+
+  public void setDataUsageText(double mb) {
+    setDataUsageText("Data Used: " + mb + "MB");
+  }
+
   @Deprecated // Hangs EDT/GUI
   public void loadNewIcon(final String iconName) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -289,7 +313,7 @@ public class Status extends javax.swing.JFrame {
       }
     });
   }
-  
+
   public void setIcon(final java.awt.Image image) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -345,6 +369,7 @@ public class Status extends javax.swing.JFrame {
   }//GEN-LAST:event_jButton2ActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLButtonStatus;
+  private javax.swing.JLabel JLDataUsage;
   private javax.swing.JLabel JLLastChecked;
   private javax.swing.JLabel JLShowclixLink;
   private javax.swing.JLabel JLWebsiteLink;

@@ -9,7 +9,7 @@ import java.util.prefs.Preferences;
  */
 public class SettingsHandler {
 
-  private static Preferences myPrefs = Preferences.userRoot();
+  private static final Preferences myPrefs = Preferences.userRoot();
   private static boolean saveRefreshTime;
   private static boolean saveCheckShowclix;
   private static boolean saveCheckPax;
@@ -72,7 +72,6 @@ public class SettingsHandler {
    * @param checkShowclix True to check the Showclix website, false to not
    * @param playAlarm     True to play the alarm, false to not
    * @param expo          The Expo being checked for. Note it should be in "PAX XXXX" format.
-   * @param email         The email address being used.
    * @param provider      The provider being used.
    */
   public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
@@ -101,49 +100,49 @@ public class SettingsHandler {
 
   private static void saveRefreshTime(int time) {
     if (saveRefreshTime) {
-      myPrefs.putInt(PREFTYPES.REFRESHTIME.name(), time);
+      myPrefs.putInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), time);
     } else {
-      myPrefs.remove(PREFTYPES.REFRESHTIME.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_REFRESHTIME.name());
     }
   }
 
   private static void saveCheckShowclix(boolean check) {
     if (saveCheckShowclix) {
-      myPrefs.putBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), check);
+      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.CHECK_SHOWCLIX.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name());
     }
   }
 
   private static void saveCheckPax(boolean check) {
     if (saveCheckPax) {
-      myPrefs.putBoolean(PREFTYPES.CHECK_PAX.name(), check);
+      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.CHECK_PAX.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_PAX.name());
     }
   }
 
   private static void savePlayAlarm(boolean alarm) {
     if (savePlayAlarm) {
-      myPrefs.putBoolean(PREFTYPES.PLAY_ALARM.name(), alarm);
+      myPrefs.putBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), alarm);
     } else {
-      myPrefs.remove(PREFTYPES.PLAY_ALARM.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_PLAY_ALARM.name());
     }
   }
 
   private static void saveEvent(String expo) {
     if (saveEvent) {
-      myPrefs.put(PREFTYPES.EVENT.name(), expo);
+      myPrefs.put(PREFTYPES.PAXCHECK_EVENT.name(), expo);
     } else {
-      myPrefs.remove(PREFTYPES.EVENT.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_EVENT.name());
     }
   }
 
   private static void saveProvider(String provider) {
     if (saveProvider) {
-      myPrefs.put(PREFTYPES.PROVIDER.name(), provider);
+      myPrefs.put(PREFTYPES.PAXCHECK_PROVIDER.name(), provider);
     } else {
-      myPrefs.remove(PREFTYPES.PROVIDER.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_PROVIDER.name());
     }
   }
 
@@ -151,16 +150,16 @@ public class SettingsHandler {
     if (saveEmail) {
       String email = Email.getUsername();
       if (email == null) {
-        myPrefs.put(PREFTYPES.EMAIL.name(), "");
+        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
       } else {
         if (email.equals("@yahoo.com")) {
-          myPrefs.put(PREFTYPES.EMAIL.name(), "");
+          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
         } else {
-          myPrefs.put(PREFTYPES.EMAIL.name(), "");
+          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
         }
       }
     } else {
-      myPrefs.remove(PREFTYPES.EMAIL.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_EMAIL.name());
     }
   }
 
@@ -172,12 +171,12 @@ public class SettingsHandler {
   public static void saveEmail(String email) {
     if (saveEmail) {
       if (email != null) {
-        myPrefs.put(PREFTYPES.EMAIL.name(), email);
+        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), email);
       } else {
-        myPrefs.put(PREFTYPES.EMAIL.name(), "");
+        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
       }
     } else {
-      myPrefs.remove(PREFTYPES.EMAIL.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_EMAIL.name());
     }
   }
 
@@ -189,12 +188,12 @@ public class SettingsHandler {
   public static void saveCellNum(String cellNum) {
     if (saveCellnum) {
       if (cellNum != null) {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), cellNum);
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), cellNum);
       } else {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
       }
     } else {
-      myPrefs.remove(PREFTYPES.CELLNUM.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_CELLNUM.name());
     }
   }
 
@@ -203,10 +202,10 @@ public class SettingsHandler {
       String textEmail = Email.getTextEmail();
       java.util.List textList = Email.getEmailList();
       if (textEmail != null) {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), textEmail.equals("@yahoo.com") ? "" : textEmail);
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), textEmail.equals("@yahoo.com") ? "" : textEmail);
       } else if (textList != null) {
         if (textList.isEmpty()) {
-          myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+          myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
           return;
         }
         String longEmail = null;
@@ -222,77 +221,77 @@ public class SettingsHandler {
             longEmail += "; " + s;
           }
         }
-        myPrefs.put(PREFTYPES.CELLNUM.name(), longEmail == null ? "" : longEmail);
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), longEmail == null ? "" : longEmail);
       } else {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
       }
     } else {
-      myPrefs.remove(PREFTYPES.CELLNUM.name());
+      myPrefs.remove(PREFTYPES.PAXCHECK_CELLNUM.name());
     }
   }
 
   public static boolean getSaveRefreshTime() {
-    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 61) != 61;
+    return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 61) != 61;
   }
 
   public static boolean getSaveShowclix() {
-    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true));
   }
 
   public static boolean getSavePax() {
-    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true));
   }
 
   public static boolean getSaveAlarm() {
-    return !(!myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), true));
   }
 
   public static boolean getSaveEvent() {
-    return !myPrefs.get(PREFTYPES.EVENT.name(), "NOPE").toString().equals("NOPE");
+    return !myPrefs.get(PREFTYPES.PAXCHECK_EVENT.name(), "NOPE").equals("NOPE");
   }
 
   public static boolean getSaveEmail() {
-    return !myPrefs.get(PREFTYPES.EMAIL.name(), "NOPE").toString().equals("NOPE");
+    return !myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "NOPE").equals("NOPE");
   }
 
   public static boolean getSaveCellnum() {
-    return !myPrefs.get(PREFTYPES.CELLNUM.name(), "NOPE").toString().equals("NOPE");
+    return !myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "NOPE").equals("NOPE");
   }
 
   public static boolean getSaveProvider() {
-    return !myPrefs.get(PREFTYPES.PROVIDER.name(), "NOPE").toString().equals("NOPE");
+    return !myPrefs.get(PREFTYPES.PAXCHECK_PROVIDER.name(), "NOPE").equals("NOPE");
   }
 
   public static boolean getSavePrefs() {
-    return myPrefs.getBoolean(PREFTYPES.SAVE_PREFS.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), true);
   }
 
   public static int getDelayTime() {
-    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 15);
+    return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 15);
   }
 
   public static boolean getCheckPaxWebsite() {
-    return myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true);
   }
 
   public static boolean getCheckShowclix() {
-    return myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true);
   }
 
   public static boolean getPlayAlarm() {
-    return myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false);
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), false);
   }
 
   public static String getExpo() {
-    return myPrefs.get(PREFTYPES.EVENT.name(), "Prime");
+    return myPrefs.get(PREFTYPES.PAXCHECK_EVENT.name(), "Prime");
   }
 
   public static String getEmail() {
-    return myPrefs.get(PREFTYPES.EMAIL.name(), "");
+    return myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "");
   }
 
   public static String getCellNumber() {
-    String cellNum = myPrefs.get(PREFTYPES.CELLNUM.name(), "");
+    String cellNum = myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
     if (cellNum.contains("@") && !cellNum.contains(";")) {
       if (Email.getCarrierExtension(getProvider()).equals(cellNum.substring(cellNum.indexOf("@")))) {
         cellNum = cellNum.substring(0, cellNum.indexOf("@"));
@@ -302,16 +301,22 @@ public class SettingsHandler {
   }
 
   public static String getProvider() {
-    return myPrefs.get(PREFTYPES.PROVIDER.name(), "AT&T");
+    return myPrefs.get(PREFTYPES.PAXCHECK_PROVIDER.name(), "AT&T");
+  }
+
+  public static boolean prefsExist() {
+    if (myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "NONE!!!").equals("NONE!!!")) {
+    }
+    return true;
   }
 
   private static enum PREFTYPES {
 
-    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, PLAY_ALARM, EVENT, EMAIL, CELLNUM, PROVIDER, SAVE_PREFS;
+    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_PROVIDER, PAXCHECK_SAVE_PREFS;
   }
 
   public static void setSavePrefs(boolean save) {
-    myPrefs.putBoolean(PREFTYPES.SAVE_PREFS.name(), save);
+    myPrefs.putBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), save);
     if (!save) {
       setSaveAll(false, false, false, false, false, false, false, false);
     }
