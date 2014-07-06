@@ -185,11 +185,12 @@ public class Setup extends javax.swing.JFrame {
 
     jSlider1.setMajorTickSpacing(10);
     jSlider1.setMaximum(60);
-    jSlider1.setMinimum(5);
+    jSlider1.setMinimum(10);
     jSlider1.setMinorTickSpacing(2);
     jSlider1.setPaintLabels(true);
     jSlider1.setPaintTicks(true);
     jSlider1.setPaintTrack(false);
+    jSlider1.setSnapToTicks(true);
     jSlider1.setValue(10);
 
     jButton1.setText("START!");
@@ -305,6 +306,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea3.setRows(5);
     jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get @Official_PAX Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the cell number). If you don't see your carrier listed, you must go to emailtextmessages.com, find your carrier, and add the @extension.com to your number.\n=>NOTE: If you use an email besides Yahoo or GMail, you will have to look up your service's SMTP server and put the address after your email and two colons. Also, if it uses a port other than 587, you must specify the port after the server and a colon.\nExamples:\nUser@anotheremail.com::another.email.server\nUser@emailservice.net::email.service.server:1234\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front. Optionally, you can put perentheses () and dashes - if you need to. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;(234)5678901@vtext.net;345-678-9012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
     jTextArea3.setWrapStyleWord(true);
+    jTextArea3.setCaretPosition(0);
     jScrollPane3.setViewportView(jTextArea3);
 
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
