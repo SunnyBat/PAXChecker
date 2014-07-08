@@ -154,7 +154,7 @@ public class ErrorManagement {
         validCount++;
       }
       if (PAXChecker.status != null) {
-        if (!PAXChecker.status.isVisible()) {
+        if (!PAXChecker.status.isDisplayable()) {
           validCount++;
         }
       } else {

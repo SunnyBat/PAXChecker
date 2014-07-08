@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.3.3";
+  public static final String VERSION = "1.3.4";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -329,7 +329,11 @@ public class PAXChecker {
         try {
           status.setTextButtonState(false);
           status.setTextButtonText("Sending...");
-          Email.testEmail();
+          if (!Email.testEmail()) {
+            status.setTextButtonText("Test Text");
+            status.setTextButtonState(true);
+            return;
+          }
           long timeStarted = System.currentTimeMillis();
           while (System.currentTimeMillis() - timeStarted < 60000) {
             status.setTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
