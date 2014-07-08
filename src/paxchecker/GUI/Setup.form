@@ -238,7 +238,7 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Play Sound when Updated"/>
+                <Property name="text" type="java.lang.String" value="Play Alarm when Tickets Found"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;If checked, the program will play a sound when an update to&lt;br&gt;&#xa;the PAX Prime website OR the Showclix website (whichever one(s)&lt;br&gt;&#xa;you have enabled) is found.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>

@@ -216,7 +216,7 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    jCheckBox3.setText("Play Sound when Updated");
+    jCheckBox3.setText("Play Alarm when Tickets Found");
     jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
     jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));

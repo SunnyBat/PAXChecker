@@ -78,9 +78,7 @@ public class Email {
   /**
    * Sets the email address that will be mailed to. This method defaults to
    *
-   * @mms.att.net if no
-   * extension is specified. While this can be called at any time, it is recommended to only call
-   * during Setup.
+   * @mms.att.net if no extension is specified. While this can be called at any time, it is recommended to only call during Setup.
    * @param num
    */
   @Deprecated
@@ -133,8 +131,8 @@ public class Email {
 
   /**
    * <HTML>Sets {@link #textEmail} to the specified email address. If no [AT] symbol is in {@link num},
-   * {@link carrier} is used to add the correct carrier email ending to the number. If an invalid
-   * carrier is specified, the method defaults to AT&T.<br>
+   * {@link carrier} is used to add the correct carrier email ending to the number. If an invalid carrier is specified, the method defaults to
+   * AT&T.<br>
    * Note that this sets {@link #emailList} to null.</HTML>
    *
    * @param num
@@ -157,10 +155,8 @@ public class Email {
   }
 
   /**
-   * <HTML>Sets the current email list to the String specified. This parses every email address by
-   * splitting the String by ; (semicolons).<br>
-   * Example String:
-   * 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
+   * <HTML>Sets the current email list to the String specified. This parses every email address by splitting the String by ; (semicolons).<br>
+   * Example String: 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
    * Note that [AT] should be one character. Javadocs are fun.<br>
    * Also note that this sets {@link #textEmail} to null.
    * </HTML>
@@ -193,15 +189,13 @@ public class Email {
   }
 
   /**
-   * <HTML>Sets the current email list to the String specified. This parses every email address by
-   * splitting the String by ; (semicolons).<br>
-   * Example String:
-   * 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
+   * <HTML>Sets the current email list to the String specified. This parses every email address by splitting the String by ; (semicolons).<br>
+   * Example String: 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
    * Note that [AT] should be one character. Javadocs are fun.<br>
    * Also note that this sets {@link #textEmail} to null.
    * </HTML>
    *
-   * @param parseList      The list of numbers to read through
+   * @param parseList The list of numbers to read through
    * @param defaultCarrier The default carrier to email to, if none is specified
    */
   public static void setCellList(String parseList, String defaultCarrier) {
@@ -230,27 +224,23 @@ public class Email {
   /**
    * The email address to send a message to.
    *
-   * @return The email address to send a message to, or null if
-   *         {@link #setCellNum(java.lang.String, java.lang.String)} has not been called
+   * @return The email address to send a message to, or null if {@link #setCellNum(java.lang.String, java.lang.String)} has not been called
    */
   public static String getTextEmail() {
     return textEmail;
   }
 
   /**
-   * Gets the current List of all email addresses that will be emailed when a message is
-   * sent.
+   * Gets the current List of all email addresses that will be emailed when a message is sent.
    *
-   * @return The List<string> of all email addresses being emailed, or null if
-   *         {@link #setCellList(java.lang.String)} has not been called
+   * @return The List<string> of all email addresses being emailed, or null if {@link #setCellList(java.lang.String)} has not been called
    */
   public static List<String> getEmailList() {
     return emailList;
   }
 
   /**
-   * Sets the {@link #props} settings for the the current email address being used. Call every time
-   * the email provider (Yahoo, GMail) changes.
+   * Sets the {@link #props} settings for the the current email address being used. Call every time the email provider (Yahoo, GMail) changes.
    */
   public static void emailSettings() {
     props.put("mail.smtp.starttls.enable", "true");
@@ -259,16 +249,14 @@ public class Email {
   }
 
   /**
-   * Gets the current instance of the JavaMail session for {@link #props}. This should be called
-   * every time you send an email.
+   * Gets the current instance of the JavaMail session for {@link #props}. This should be called every time you send an email.
    */
   public static void createSession() {
     l_session = Session.getDefaultInstance(props);
   }
 
   /**
-   * Sends a test email to every number put into the program and prints whether it was successful or
-   * not to the Status window.
+   * Sends a test email to every number put into the program and prints whether it was successful or not to the Status window.
    */
   public static void testEmail() {
     if (sendMessage("Test", "The test is successful. The PAX Checker is now set up to text your phone when the website updates!")) {
@@ -283,9 +271,23 @@ public class Email {
   }
 
   /**
-   * Sends an email to the provided number(s) using the supplied login information. This should only
-   * be called once {@link #setUsername(java.lang.String)}, {@link #setPassword(java.lang.String)},
-   * and ({@link #setCellNum(java.lang.String, java.lang.String)} or
+   * Checks whether the program should send an email. If the username OR the email to send to is null (no valid address/number was given), it returns
+   * false. If both are valid, it returns true.
+   *
+   * @return True if can send email, false if not.
+   */
+  public static boolean canSendEmail() {
+    if (username != null && (textEmail != null || emailList != null))  {
+      if (!username.equals("@yahoo.com")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Sends an email to the provided number(s) using the supplied login information. This should only be called once
+   * {@link #setUsername(java.lang.String)}, {@link #setPassword(java.lang.String)}, and ({@link #setCellNum(java.lang.String, java.lang.String)} or
    * {@link #setCellList(java.lang.String)}) have been called.
    *
    * @param subject
@@ -293,7 +295,7 @@ public class Email {
    * @return
    */
   public static boolean sendMessage(String subject, String msg) {
-    if (username == null || (textEmail == null && emailList == null)) {
+    if (!canSendEmail()) {
       return false;
     }
     createSession();

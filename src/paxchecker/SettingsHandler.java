@@ -155,7 +155,7 @@ public class SettingsHandler {
         if (email.equals("@yahoo.com")) {
           myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
         } else {
-          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
+          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), Email.getUsername());
         }
       }
     } else {

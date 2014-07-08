@@ -147,10 +147,7 @@ public class Browser {
     if (PAXChecker.status != null) {
       PAXChecker.status.setShowclixLink(eventUrl);
     }
-    if (currEvent != lastShowclixEventID) {
-      return true;
-    }
-    return false;
+    return currEvent != lastShowclixEventID;
   }
 
   public static int getLatestShowclixID() {
@@ -221,6 +218,7 @@ public class Browser {
       return;
     }
     lastShowclixEventID = ID;
+    System.out.println("ShowclixID set to " + ID);
   }
 
   /**
