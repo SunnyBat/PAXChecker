@@ -14,11 +14,12 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.3.4";
+  public static final String VERSION = "1.4.1";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
+  private static boolean shouldTypeLink;
   // GUIs
   protected static Setup setup;
   protected static Status status;
@@ -39,11 +40,14 @@ public class PAXChecker {
         System.out.println("args[" + a + "] = " + args[a]);
         if (args[a].equals("noupdate")) { // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
           doUpdate = false;
+        } else if (args[a].equals("typelink")) {
+          shouldTypeLink = true;
         }
       }
     }
     Browser.init();
     Email.init();
+    KeyboardManager.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
     //loadShowclixIDInBackground();
@@ -79,7 +83,7 @@ public class PAXChecker {
         setup = null;
         update = null;
         savePrefsInBackground();
-        System.gc();
+        //System.gc();
         status = new Status();
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
@@ -88,8 +92,12 @@ public class PAXChecker {
           //status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
           if (Browser.isPAXWebsiteUpdated()) {
-            final String link = Browser.getCurrentButtonLinkLine();
-            Browser.openLinkInBrowser(Browser.parseHRef(link));
+            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
+            if (shouldTypeLink()) {
+              KeyboardManager.typeString(link);
+              KeyboardManager.enter();
+            }
+            Browser.openLinkInBrowser(link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);
             status.dispose();
@@ -98,6 +106,10 @@ public class PAXChecker {
           }
           if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
+            if (shouldTypeLink()) {
+              KeyboardManager.typeString(link);
+              KeyboardManager.enter();
+            }
             Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);
@@ -121,6 +133,10 @@ public class PAXChecker {
         System.out.println("Finished!");
       }
     });
+  }
+
+  public static boolean shouldTypeLink() {
+    return shouldTypeLink;
   }
 
   public static void maximizeStatusWindow() {
@@ -314,7 +330,7 @@ public class PAXChecker {
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        Browser.setShowclixID(Browser.getLatestShowclixID());
+        Browser.setShowclixID(Browser.getLatestShowclixID(Browser.getExpo()));
       }
     }, "Load Most Recent Showclix ID");
   }

@@ -188,7 +188,7 @@ public class Status extends javax.swing.JFrame {
   }//GEN-LAST:event_jButton3ActionPerformed
 
   public void minimizeWindow() {
-    if (!SystemTray.isSupported()) {
+    if (!SystemTray.isSupported() || myIcon == null) {
       return;
     }
     try {
@@ -204,7 +204,7 @@ public class Status extends javax.swing.JFrame {
     setVisible(true);
     this.setLocationRelativeTo(null);
     this.toFront();
-    tray.remove(myIcon);
+    tray.remove(myIcon); // Fine if myIcon == null or myIcon isn't in tray
   }
 
   public void setButtonStatusText(final String text) {
@@ -354,12 +354,16 @@ public class Status extends javax.swing.JFrame {
   }
 
   public void setIcon(final java.awt.Image image) {
+    if (image == null) {
+      return;
+    }
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         try {
           setIconImage(image);
-          myIcon = new TrayIcon(image.getScaledInstance(16, 16, 0), "PAXChecker", myMenu);
+          myIcon = new TrayIcon(image, "PAXChecker", myMenu);
+          myIcon.setImageAutoSize(true);
           myIcon.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -371,6 +375,16 @@ public class Status extends javax.swing.JFrame {
         }
       }
     });
+  }
+
+  @Override
+  public void dispose() {
+    if (tray != null) {
+      if (myIcon != null) {
+        tray.remove(myIcon);
+      }
+    }
+    super.dispose();
   }
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
