@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.4.1";
+  public static final String VERSION = "1.5.0";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -29,7 +29,7 @@ public class PAXChecker {
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     System.out.println("Current Time = " + Tickets.currentTime());
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
@@ -93,10 +93,7 @@ public class PAXChecker {
           startMS = System.currentTimeMillis();
           if (Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
-            if (shouldTypeLink()) {
-              KeyboardManager.typeString(link);
-              KeyboardManager.enter();
-            }
+            KeyboardManager.typeLinkNotification(link);
             Browser.openLinkInBrowser(link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);
@@ -106,10 +103,7 @@ public class PAXChecker {
           }
           if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
-            if (shouldTypeLink()) {
-              KeyboardManager.typeString(link);
-              KeyboardManager.enter();
-            }
+            KeyboardManager.typeLinkNotification(link);
             Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);

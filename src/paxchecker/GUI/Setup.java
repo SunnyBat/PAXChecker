@@ -138,9 +138,9 @@ public class Setup extends javax.swing.JFrame {
     jCheckBox3 = new javax.swing.JCheckBox();
     jComboBox2 = new javax.swing.JComboBox();
     jLabel5 = new javax.swing.JLabel();
-    jPanel2 = new javax.swing.JPanel();
-    jScrollPane3 = new javax.swing.JScrollPane();
-    jTextArea3 = new javax.swing.JTextArea();
+    jPanel6 = new javax.swing.JPanel();
+    jScrollPane5 = new javax.swing.JScrollPane();
+    jTextPane1 = new javax.swing.JTextPane();
     jPanel4 = new javax.swing.JPanel();
     jScrollPane4 = new javax.swing.JScrollPane();
     jTextArea4 = new javax.swing.JTextArea();
@@ -181,7 +181,7 @@ public class Setup extends javax.swing.JFrame {
     jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
 
     jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel6.setText("Seconds Between Website Update");
+    jLabel6.setText("Seconds Between Website Checks");
 
     jSlider1.setMajorTickSpacing(10);
     jSlider1.setMaximum(60);
@@ -300,27 +300,33 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Setup", jPanel1);
 
-    jTextArea3.setEditable(false);
-    jTextArea3.setColumns(20);
-    jTextArea3.setLineWrap(true);
-    jTextArea3.setRows(5);
-    jTextArea3.setText("========================================\nIMPORTANT: Do NOT rely on only one way of checking for PAX ticket sales. Get @Official_PAX Twitter notifications. Watch the Reddit live thread. Ask friends to watch for tickets. Do not bank on one method to work!\n========================================\n->To receive text messages, you must specify the email and password you want to use as well as the phone number and carrier (or @car.rier.ext at the end of the cell number). If you don't see your carrier listed, you must go to emailtextmessages.com, find your carrier, and add the @extension.com to your number.\n=>NOTE: If you use an email besides Yahoo or GMail, you will have to look up your service's SMTP server and put the address after your email and two colons. Also, if it uses a port other than 587, you must specify the port after the server and a colon.\nExamples:\nUser@anotheremail.com::another.email.server\nUser@emailservice.net::email.service.server:1234\n->The cell number is the number that is texted when tickets go on sale. The format is 1234567890 -- no 1 in front. Optionally, you can put perentheses () and dashes - if you need to. Just your area code and phone number. You must specify your carrier using the dropdown box. If your carrier is not there, go to emailtextmessages.com and find it.\n->To specify multiple phone numbers, separate each number by a ; (semicolon) and put the email ending for every phone number -- including Verizon, Sprint, etc. -- for each number.\n=>For example: 1234567890@mms.att.net;(234)5678901@vtext.net;345-678-9012@cwemail.com\n=>Note that you are allowed to put spaces between each number:\n1234567890@mms.att.net; 2345678901@vtext.net\n=>Also note that the selected carrier will be the default extension. So, if you select AT&T, all numbers without an extension (@car.rier.net) will have AT&T's extension put onto them.");
-    jTextArea3.setWrapStyleWord(true);
-    jTextArea3.setCaretPosition(0);
-    jScrollPane3.setViewportView(jTextArea3);
+    jTextPane1.setBorder(null);
+    jTextPane1.setContentType("text/html"); // NOI18N
+    jTextPane1.setEditable(false);
+    jTextPane1.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
+    jTextPane1.setText("<html>\n    <body>\n        <em>If there is a horizontal scrollbar here, please let <a href=\"http://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a> know!</em>\n\n        <h1>Important Note</h1>\n        You should NOT rely on only one way of PAX Ticket sale notifications.\n        Sign up for the @Official_PAX Twitter notifications via text.\n        Watch the Reddit Live thread (if there is one). Make sure your friends\n        know to text you if they find out. Do NOT miss out because you relied on only\n        one form of notification!<br>\n        That being said, this program worked perfectly last year. It detected\n        the Showclix link as soon as it went up -- a few minutes before the\n        Twitter notification.\n\n        <h1>Email and Password</h1>\n        <b>If you do not want to receive a text message when tickets are found,\n            simply leave this field blank.</b><br>\n        Your email is used to send a text message when tickets are found. Currently,\n        there are two internally supported email services: <b>Gmail</b> and <b>Yahoo!</b>.\n        Simple type in your email address to use these. For information on using\n        different email services, see the Advanced section.<br>\n        Gmail generally takes 30-45 seconds to receive a sent text. <em>This is\n            the recommended option.</em><br>\n        Yahoo! is very inconsistent with texts -- it can take anywhere from 10\n        <em>seconds</em> to 15 <em>minutes</em> to receive a text from Yahoo!<br>\n        <em>For information on why your email is required, please see the Additional\n            Information section.</em><br>\n\n        <h1>Cell Number</h1>\n        Your cell number is required to text to your phone. The program natively\n        supports AT&T, Verizon, Sprint, T-Mobile, and U.S. Cellular. If you have\n        any of these carriers, simply select yours from the dropdown menu.<br>\n        You can put dashes and parentheses into your number. For example, 012-345-6789\n        is just as valid as (012)-345-6789. Your number is converted\n        into a format with no dashes or parentheses -- just numbers. Overall,\n        the email is sent in the format of 0123456789@car.rier.net<br>\n        If you have a different carrier, you'll need to go to\n        <a href=\"http://www.emailtextmessages.com\">emailtextmessages.com</a> and\n        get the ending for your carrier.<br>\n        To use a different provider, simply add the @car.rier.net extension for your number.\n        For example, if your number is 0123456789 and your provider is 3 River Wireless,\n        you would put 0123456789@sms.3rivers.net in the Cell Num field.<br>\n        <em>For information on sending a text to multiple numbers, please see\n            the Additional Information section.</em>\n\n        <h1>Scan PAX Registration Website</h1>\n        This scans the selected PAX registration website for the \"Register Now\" button.\n        It checks PAX.paxsite.com/registration (obviously PAX is the expo you're checking).<br>\n        This uses the most bandwidth (still not very much). It's a good backup option. It's\n        recommended to use this option if you really want tickets.\n\n        <h1>Scan Showclix Website</h1>\n        This scans the Showclix API (<a href=\"https://api.showclix.com\">api.showclix.com</a>) for the\n        selected PAX expo's most recent ticket sale.<br>\n        <b>This option is highly recommended.</b> The Showclix website is updated first in order\n        to get the link to the ticket queue, which this program finds using the Showclix API. It\n        uses a small amount of bandwidth, and will mostly likely find the tickets before the PAX\n        Registration Website option.<br><br>\n\n\n        <h1>Additional Information</h1>\n\n        <h2>Why Does This Need my Password?</h2>\n        An email is required to send a text message. It's the simplest way to send\n        a text message, and anyone can use it.<br>\n        There are several reasons why your email and password is required:\n        <ul>\n            <li>You must authenticate your login to send an email using your account\n                username and password</li>\n            <li>This program is open-source. If there was a hard-coded username and\n                password, anyone would be able to find it in this program at any time and\n                disable texting for everyone. Using your email address prevents this from\n                happening.</li>\n            <li>Having one email address send out potentially dozens (modestly) of\n                emails within 60 seconds is very fishy, and multiple logins from different\n                locations will lock out the email after a few emails. This means only a few\n                people would actually get the text.</li>\n            <li>You will recognize the sender of your text</li>\n        </ul>\n\n        <h2>Using a Different Email Provider</h2>\n        For sending an email using a different email provider, several things are required:\n        <ul>\n            <li>The service must use STMP and TLS</li>\n            <li>You must know the STMP server address</li>\n            <li>You must know the SMTP server port</li>\n        </ul>\n        Once you have this information, you must input this after your email address\n        and two colons (::). If the server uses a port other than 587, you must\n        add the port after the server and a colon (:).<br>\n        An example:<br>\n        Emailaddress@someprovider.com::provider.smpt.server:999<br>\n        <b>Note that this is very experimental. Make sure to test your text message every time!</b>\n\n        <h2>Text Multiple Numbers at Once</h2>\n        To text multiple numbers at once:<br>\n        <ul>\n            <li>Separate each number with a semicolon (;)</li>\n            <li>You're able to choose <em>one</em> cell carrier to send to. Every\n                other carrier MUST have the email ending from <a href=\"http://www.emailtextmessages.com\">emailtextmessages.com</a>,\n                regardless of whether or not the program supports it!</li>\n            <li>You're only able to put spaces after semicolons. Anywhere else could\n                result in one or more incorrect text emails being sent.</li>\n        </ul>\n        Example (with Verizon selected):<br>\n        0123456789@mms.att.net; (123)4567890;234-567-8901@tmomail.net; 3456789012<br>\n        All the numbers without an @car.rier.net extension will be defaulted to\n        Verizon numbers, as Verizon was selected.\n    </body>\n</html>");
+    jTextPane1.setCaretPosition(0);
+    jTextPane1.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+      public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {
+        if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {
+          Browser.openLinkInBrowser(e.getURL());
+        }
+      }
+    });
+    jScrollPane5.setViewportView(jTextPane1);
 
-    javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-    jPanel2.setLayout(jPanel2Layout);
-    jPanel2Layout.setHorizontalGroup(
-      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+    javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+    jPanel6.setLayout(jPanel6Layout);
+    jPanel6Layout.setHorizontalGroup(
+      jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
     );
-    jPanel2Layout.setVerticalGroup(
-      jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+    jPanel6Layout.setVerticalGroup(
+      jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
     );
 
-    jTabbedPane1.addTab("Instructions", jPanel2);
+    jTabbedPane1.addTab("Instructions", jPanel6);
 
     jTextArea4.setEditable(false);
     jTextArea4.setColumns(20);
@@ -338,7 +344,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -359,7 +365,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -444,7 +450,7 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(JCBSaveEvent)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+        .addComponent(jScrollPane1)
         .addContainerGap())
     );
 
@@ -549,6 +555,7 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveProvider.setEnabled(selected);
     JCBSaveRefreshTime.setEnabled(selected);
   }//GEN-LAST:event_JCBSavePreferencesActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JCheckBox JCBSaveCellnum;
   private javax.swing.JCheckBox JCBSaveCheckPax;
@@ -572,22 +579,22 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
   private javax.swing.JPanel jPanel1;
-  private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
   private javax.swing.JPanel jPanel4;
   private javax.swing.JPanel jPanel5;
+  private javax.swing.JPanel jPanel6;
   private javax.swing.JPasswordField jPasswordField1;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane2;
-  private javax.swing.JScrollPane jScrollPane3;
   private javax.swing.JScrollPane jScrollPane4;
+  private javax.swing.JScrollPane jScrollPane5;
   private javax.swing.JSlider jSlider1;
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTextArea jTextArea2;
-  private javax.swing.JTextArea jTextArea3;
   private javax.swing.JTextArea jTextArea4;
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
+  private javax.swing.JTextPane jTextPane1;
   // End of variables declaration//GEN-END:variables
 }

@@ -118,4 +118,14 @@ public class KeyboardManager {
     return '?';
   }
 
+  public static void typeLinkNotification(String link) {
+    if (!PAXChecker.shouldTypeLink()) {
+      return;
+    }
+    typeString("The PAXChecker has detected a new Showclix event for " + Browser.getExpo());
+    enter();
+    typeString("Event link: " + link);
+    enter();
+  }
+
 }

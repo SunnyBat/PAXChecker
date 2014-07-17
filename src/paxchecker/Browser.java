@@ -39,6 +39,15 @@ public class Browser {
   }
 
   /**
+   * Adds an amount of data (in bytes) used by the program. This should be called whenever a network connection is made.
+   *
+   * @param data The amount of data (in bytes) to add to the total data used
+   */
+  public static void addDataUsed(long data) {
+    dataUsed += data;
+  }
+
+  /**
    * Gets the amount of data (in bytes) used by the program.
    *
    * @return The amount of data (in bytes) used by the program
@@ -53,7 +62,7 @@ public class Browser {
    * @return The amount of data in megabytes used by the program
    */
   public static double getDataUsedMB() {
-    return (double) ((int) ((double) dataUsed / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
+    return (double) ((int) ((double) getDataUsed() / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
   }
 
   public static void setExpo(String e) {
@@ -107,6 +116,7 @@ public class Browser {
   /**
    * Finds the link of the Register Now button on the PAX website. This scans EVENT.paxsite.com/registration for the Register Now button link, and
    * returns the ENTIRE line, HTML and all.
+   *
    * @return The line (HTML included) that the Register Now button link is on
    * @see #parseHRef(java.lang.String)
    */
@@ -120,7 +130,7 @@ public class Browser {
       is = url.openStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
-        dataUsed += line.length();
+        addDataUsed(line.length());
         line = line.trim();
         if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
           return line;
@@ -286,9 +296,9 @@ public class Browser {
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
       BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
       String jsonText = "";
-      String line = null;
+      String line;
       while ((line = reader.readLine()) != null) {
-        dataUsed += line.length();
+        addDataUsed(line.length());
         jsonText += line;
       }
       reader.close();
@@ -312,7 +322,7 @@ public class Browser {
    */
   public static String getShowclixLink() {
     try {
-      return "http://showclix.com/event/" + getLatestShowclixID(getExpo());
+      return "https://showclix.com/event/" + getLatestShowclixID(getExpo());
     } catch (Exception e) {
       ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
       return null;
@@ -386,6 +396,27 @@ public class Browser {
     }
   }
 
+  /**
+   * Opens the URL given in the computer's default browser. Note that this will NOT work if the desktop environment isn't supported (generally a
+   * non-issue).
+   * Also note that this will simply open the URL -- it will not parse through it to make sure it is valid!
+   *
+   * @param url The URL to open in the computer's default browser
+   */
+  public static void openLinkInBrowser(URL url) {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(url.toURI());
+      } catch (Exception e) {
+        ErrorManagement.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
+      }
+    } else {
+      System.out.println("Unable to open link in default browser.");
+      ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
+    }
+  }
+
   public static String getVersionNotes(String version) {
     String versNotes = getVersionNotes();
     if (versNotes == null) {
@@ -414,7 +445,7 @@ public class Browser {
       String lineSeparator = System.getProperty("line.separator", "\n");
       String allText = "Patch Notes:" + lineSeparator;
       while ((line = myReader.readLine()) != null) {
-        dataUsed += line.length();
+        addDataUsed(line.length());
         line = line.trim();
         if (line.startsWith("TOKEN:")) {
           try {
