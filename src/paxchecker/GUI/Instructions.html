@@ -1,10 +1,12 @@
 <html>
     <body>
-        <em>If there is a horizontal scrollbar here, please let <a href="http://www.reddit.com/user/SunnyBat">/u/SunnyBat</a> know!</em>
+        <em>If there is a horizontal scrollbar here, please let
+            <a href="http://www.reddit.com/user/SunnyBat">/u/SunnyBat</a> know!</em>
 
         <h1>Important Note</h1>
         You should NOT rely on only one way of PAX Ticket sale notifications.
-        Sign up for the @Official_PAX Twitter notifications via text.
+        Sign up for the @Official_PAX Twitter notifications
+        <a href="https://support.twitter.com/articles/20170004-fast-following-on-sms">via text</a>.
         Watch the Reddit Live thread (if there is one). Make sure your friends
         know to text you if they find out. Do NOT miss out because you relied on only
         one form of notification!<br>
@@ -14,31 +16,30 @@
 
         <h1>Email and Password</h1>
         <b>If you do not want to receive a text message when tickets are found,
-            simply leave this field blank.</b><br>
+            simply leave these fields blank.</b><br>
         Your email is used to send a text message when tickets are found. Currently,
         there are two internally supported email services: <b>Gmail</b> and <b>Yahoo!</b>.
         Simple type in your email address to use these. For information on using
-        different email services, see the Advanced section.<br>
+        different email services, see the Additional Information section.<br>
         Gmail generally takes 30-45 seconds to receive a sent text. <em>This is
             the recommended option.</em><br>
         Yahoo! is very inconsistent with texts -- it can take anywhere from 10
         <em>seconds</em> to 15 <em>minutes</em> to receive a text from Yahoo!<br>
-        <em>For information on why your email is required, please see the Additional
+        <em>For information on why your email is required, see the Additional
             Information section.</em><br>
 
         <h1>Cell Number</h1>
         Your cell number is required to text to your phone. The program natively
         supports AT&T, Verizon, Sprint, T-Mobile, and U.S. Cellular. If you have
-        any of these carriers, simply select yours from the dropdown menu.<br>
-        You can put dashes and parentheses into your number. For example, 012-345-6789
-        is just as valid as (012)-345-6789. Your number is converted
-        into a format with no dashes or parentheses -- just numbers. Overall,
-        the email is sent in the format of 0123456789@car.rier.net<br>
+        any of these carriers, simply select yours from the dropdown menu.
         If you have a different carrier, you'll need to go to
         <a href="http://www.emailtextmessages.com">emailtextmessages.com</a> and
         get the ending for your carrier.<br>
-        To use a different provider, simply add the @car.rier.net extension for your number.
-        For example, if your number is 0123456789 and your provider is 3 River Wireless,
+        You can put dashes and parentheses into your number. For example, 012-345-6789
+        is just as valid as (012)-345-6789. Your number is converted
+        into a format with no dashes or parentheses -- just numbers. Overall,
+        the email is sent in the format of 0123456789@car.rier.net. For example,
+        if your number is 0123456789 and your provider is 3 River Wireless,
         you would put 0123456789@sms.3rivers.net in the Cell Num field.<br>
         <em>For information on sending a text to multiple numbers, please see
             the Additional Information section.</em>
@@ -46,8 +47,8 @@
         <h1>Scan PAX Registration Website</h1>
         This scans the selected PAX registration website for the "Register Now" button.
         It checks PAX.paxsite.com/registration (obviously PAX is the expo you're checking).<br>
-        This uses the most bandwidth (still not very much). It's a good backup option. It's
-        recommended to use this option if you really want tickets.
+        This uses the most bandwidth (still not very much). It's recommended to
+        use this option if you really want tickets.
 
         <h1>Scan Showclix Website</h1>
         This scans the Showclix API (<a href="https://api.showclix.com">api.showclix.com</a>) for the
@@ -55,7 +56,9 @@
         <b>This option is highly recommended.</b> The Showclix website is updated first in order
         to get the link to the ticket queue, which this program finds using the Showclix API. It
         uses a small amount of bandwidth, and will mostly likely find the tickets before the PAX
-        Registration Website option.<br><br>
+        Registration Website option.<br>
+        Credit goes to <a href="http://www.reddit.com/user/GrahamArthurBlair">/u/GrahamArthurBlair</a>
+        for his original Showclix API scanning code.<br><br>
 
 
         <h1>Additional Information</h1>
@@ -81,8 +84,8 @@
         <h2>Using a Different Email Provider</h2>
         For sending an email using a different email provider, several things are required:
         <ul>
-            <li>The service must use STMP and TLS</li>
-            <li>You must know the STMP server address</li>
+            <li>The service must use SMTP and TLS</li>
+            <li>You must know the SMTP server address</li>
             <li>You must know the SMTP server port</li>
         </ul>
         Once you have this information, you must input this after your email address

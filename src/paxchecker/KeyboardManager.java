@@ -39,8 +39,14 @@ public class KeyboardManager {
         System.out.println("New char = " + keyCode);
         myRobot.keyPress(KeyEvent.VK_SHIFT);
       }
-      myRobot.keyPress(keyCode);
-      myRobot.keyRelease(keyCode);
+      try {
+        myRobot.keyPress(keyCode);
+        myRobot.keyRelease(keyCode);
+      } catch (java.lang.IllegalArgumentException e) {
+        System.out.println("ERROR: Invalid character typed! Keycode: " + keyCode + " -- char = " + ((char)c));
+        typeString("?"); // If this throws an error, there's something SERIOUSLY wrong, and the program should just burn
+        continue;
+      }
       if (shouldShift(c)) {
         myRobot.keyRelease(KeyEvent.VK_SHIFT);
       }
@@ -49,6 +55,10 @@ public class KeyboardManager {
 
   public static void enter() {
     typeString("\n");
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException interruptedException) {
+    }
   }
 
   private static boolean shouldShift(char c) {
@@ -115,7 +125,7 @@ public class KeyboardManager {
         return '.';
     }
     System.out.println("No char found");
-    return '?';
+    return '/';
   }
 
   public static void typeLinkNotification(String link) {
