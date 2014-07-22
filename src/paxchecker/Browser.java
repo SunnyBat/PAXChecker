@@ -35,6 +35,7 @@ public class Browser {
       patchNotesURL = new URL(PATCH_NOTES_LINK);
     } catch (Exception e) {
       System.out.println("Unable to make a new URL?");
+      e.printStackTrace();
     }
   }
 
@@ -141,7 +142,7 @@ public class Browser {
     } catch (IOException ioe) {
       return "IOException";
     } catch (Exception e) {
-      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
+      ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
       System.out.println("ERROR");
       return null;
     } finally {
@@ -155,7 +156,7 @@ public class Browser {
         ioe.printStackTrace();
       }
     }
-    System.out.println("Button not found!");
+    System.out.println("Website \"Register Now\" button not found!");
     return "NoFind";
   }
 
@@ -170,13 +171,17 @@ public class Browser {
    * @see #getCurrentButtonLinkLine()
    */
   public static String parseHRef(String parse) {
+    if (parse == null) {
+      System.out.println("ERROR: parseHRef arg parse is null!");
+      return websiteLink;
+    }
     try {
       parse = parse.trim(); // Remove white space
       parse = parse.substring(parse.indexOf("href=") + 6); // Get index of link
       parse = parse.substring(0, parse.indexOf("\"")); // Remove everything after the link
       if (parse.startsWith("\"") && parse.endsWith("\"")) {
         parse = parse.substring(1, parse.length() - 1);
-      } else if (parse == null || parse.length() < 10) {
+      } else if (parse.length() < 10) {
         System.out.println("Unable to correctly parse link from button HTML.");
         return websiteLink;
       }
@@ -324,7 +329,7 @@ public class Browser {
     try {
       return "https://showclix.com/event/" + getLatestShowclixID(getExpo());
     } catch (Exception e) {
-      ErrorManagement.showErrorWindow("ERORR checking the Showclix website for updates!", e);
+      ErrorHandler.showErrorWindow("ERORR checking the Showclix website for updates!", e);
       return null;
     }
   }
@@ -352,6 +357,9 @@ public class Browser {
    * @return The Showclix API link to Seller Events
    */
   public static String getShowclixAPILink(String expo) {
+    if (expo == null) {
+      return SHOWCLIX_API_LINK_PRIME;
+    }
     switch (expo.toLowerCase()) {
       case "prime":
       case "pax prime":
@@ -388,18 +396,17 @@ public class Browser {
       try {
         desktop.browse(new URI(link));
       } catch (Exception e) {
-        ErrorManagement.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
+        ErrorHandler.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
       }
     } else {
       System.out.println("Unable to open link in default browser.");
-      ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
+      ErrorHandler.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
     }
   }
 
   /**
    * Opens the URL given in the computer's default browser. Note that this will NOT work if the desktop environment isn't supported (generally a
-   * non-issue).
-   * Also note that this will simply open the URL -- it will not parse through it to make sure it is valid!
+   * non-issue). Also note that this will simply open the URL -- it will not parse through it to make sure it is valid!
    *
    * @param url The URL to open in the computer's default browser
    */
@@ -409,11 +416,11 @@ public class Browser {
       try {
         desktop.browse(url.toURI());
       } catch (Exception e) {
-        ErrorManagement.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
+        ErrorHandler.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
       }
     } else {
       System.out.println("Unable to open link in default browser.");
-      ErrorManagement.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
+      ErrorHandler.showErrorWindow("ERROR", "Unable to open link in default browser.", null);
     }
   }
 
@@ -443,14 +450,14 @@ public class Browser {
       myReader = new BufferedReader(new InputStreamReader(textInputStream));
       String line;
       String lineSeparator = System.getProperty("line.separator", "\n");
-      String allText = "Patch Notes:" + lineSeparator;
+      String allText = "";
       while ((line = myReader.readLine()) != null) {
         addDataUsed(line.length());
         line = line.trim();
         if (line.startsWith("TOKEN:")) {
           try {
             String d = line.substring(6);
-            if (d.startsWith("SETSHOWCLIXID:")) {
+            if (d.startsWith("SETSHOWCLIXID:")) { // Obsolete, if I'm not mistaken
               String load = d.substring(14);
               System.out.println("Load = " + load);
               setShowclixID(Integer.parseInt(load));
@@ -502,7 +509,7 @@ public class Browser {
       updateSize = conn.getContentLengthLong();
       System.out.println("Updatesize = " + updateSize + " -- Filesize = " + fileSize);
       if (updateSize == -1) {
-        ErrorManagement.showErrorWindow("ERROR checking for updates!", "PAX Checker was unable to check for updates.", null);
+        ErrorHandler.showErrorWindow("ERROR checking for updates!", "PAX Checker was unable to check for updates.", null);
         return false;
       } else if (updateSize != fileSize) {
         System.out.println("Update available!");
@@ -510,7 +517,7 @@ public class Browser {
       }
     } catch (Exception e) {
       System.out.println("ERROR updating program!");
-      ErrorManagement.showErrorWindow("ERROR updating program!", "The program was unable to check for new updates.", e);
+      ErrorHandler.showErrorWindow("ERROR updating program!", "The program was unable to check for new updates.", e);
     }
     return false;
   }
@@ -564,16 +571,16 @@ public class Browser {
         fIn.close();
         inputFile.delete();
       } catch (Exception e) {
-        ErrorManagement.showErrorWindow("ERROR updating", "Unable to complete update -- unable to copy temp JAR file to current JAR file.", e);
-        ErrorManagement.fatalError();
+        ErrorHandler.showErrorWindow("ERROR updating", "Unable to complete update -- unable to copy temp JAR file to current JAR file.", e);
+        ErrorHandler.fatalError();
       }
       System.out.println("Download Complete!");
       PAXChecker.startNewProgramInstance();
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("ERROR updating program!");
-      ErrorManagement.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + updateURL.getPath(), e);
-      ErrorManagement.fatalError();
+      ErrorHandler.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + updateURL.getPath(), e);
+      ErrorHandler.fatalError();
     }
   }
 }

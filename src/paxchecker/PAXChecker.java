@@ -14,7 +14,8 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.5.1";
+  public static final String VERSION = "1.5.2";
+  public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -47,7 +48,7 @@ public class PAXChecker {
     }
     Browser.init();
     Email.init();
-    KeyboardManager.init();
+    KeyboardHandler.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
     //loadShowclixIDInBackground();
@@ -68,8 +69,8 @@ public class PAXChecker {
           update.dispose();
         }
       } catch (Exception e) {
-        ErrorManagement.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-        ErrorManagement.fatalError();
+        ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
+        ErrorHandler.fatalError();
         return;
       }
     }
@@ -93,7 +94,7 @@ public class PAXChecker {
           startMS = System.currentTimeMillis();
           if (Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
-            KeyboardManager.typeLinkNotification(link);
+            KeyboardHandler.typeLinkNotification(link);
             Browser.openLinkInBrowser(link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);
@@ -103,7 +104,7 @@ public class PAXChecker {
           }
           if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
-            KeyboardManager.typeLinkNotification(link);
+            KeyboardHandler.typeLinkNotification(link);
             Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
             showTicketsWindow(link);
@@ -211,7 +212,7 @@ public class PAXChecker {
       ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath()); // path can have leading / on it, getAbsolutePath() removes them
       Process p = pb.start();
     } catch (Exception e) {
-      ErrorManagement.showErrorWindow("Small Error", "Unable to automatically run update.", null);
+      ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
     }
   }
 
@@ -242,7 +243,7 @@ public class PAXChecker {
           System.out.println("Unable to fetch PAX Icon!");
         }
       }
-    });
+    }, "Prefetch Icons");
   }
 
   public static String getIconName(String expo) {
@@ -293,7 +294,7 @@ public class PAXChecker {
           ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "noupdate"); // path can have leading / on it, getAbsolutePath() removes them
           Process p = pb.start();
         } catch (Exception e) {
-          ErrorManagement.showErrorWindow("Small Error", "Unable to automatically run update.", null);
+          ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
         }
       }
     }, "Run New Program Instance");
@@ -358,6 +359,6 @@ public class PAXChecker {
           status.setTextButtonState(true);
         }
       }
-    });
+    }, "Send Test Email");
   }
 }

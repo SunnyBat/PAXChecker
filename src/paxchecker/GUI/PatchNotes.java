@@ -66,7 +66,7 @@ public class PatchNotes extends javax.swing.JFrame {
           jTextArea1.setText(versionNotes);
         }
       }
-    });
+    }, "Load Patch Notes");
   }
 
   /** This method is called from within the constructor to

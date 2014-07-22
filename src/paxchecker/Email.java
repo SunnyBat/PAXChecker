@@ -41,7 +41,7 @@ public class Email {
       } catch (Exception e) {
       }
       if (extraInfo == null) {
-        ErrorManagement.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
+        ErrorHandler.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
         username = "@yahoo.com";
         return;
       }
@@ -183,7 +183,7 @@ public class Email {
       }
     } catch (Exception e) {
       emailList = null;
-      ErrorManagement.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
+      ErrorHandler.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
     }
     textEmail = null;
   }
@@ -216,7 +216,7 @@ public class Email {
       }
     } catch (Exception e) {
       emailList = null;
-      ErrorManagement.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
+      ErrorHandler.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
     }
     textEmail = null;
   }
@@ -321,10 +321,10 @@ public class Email {
       System.out.println("Message Sent");
     } catch (MessagingException mex) {
       mex.printStackTrace();
-      ErrorManagement.showErrorWindow("ERROR", "The message was unable to be sent.", mex);
+      ErrorHandler.showErrorWindow("ERROR", "The message was unable to be sent.", mex);
       return false;
     } catch (Exception e) {
-      ErrorManagement.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
+      ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
       e.printStackTrace();
       return false;
     }//end catch block
@@ -341,6 +341,6 @@ public class Email {
           System.out.println("Unable to send email in background!");
         }
       }
-    });
+    }, "Send Email");
   }
 }

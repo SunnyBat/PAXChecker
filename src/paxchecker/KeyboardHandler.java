@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
  *
  * @author Sunnybat
  */
-public class KeyboardManager {
+public class KeyboardHandler {
 
   private static Robot myRobot;
   private static final char[] shiftChars = {'~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?'};
@@ -135,6 +135,8 @@ public class KeyboardManager {
     typeString("The PAXChecker has detected a new Showclix event for " + Browser.getExpo());
     enter();
     typeString("Event link: " + link);
+    enter();
+    typeString("PAXChecker v" + PAXChecker.VERSION + " information can be found at " + PAXChecker.REDDIT_THREAD_LINK);
     enter();
   }
 

@@ -6,7 +6,7 @@ import paxchecker.GUI.ErrorWindow;
  *
  * @author SunnyBat
  */
-public class ErrorManagement {
+public class ErrorHandler {
 
   private static byte errorWindowCount = 0;
   private static ErrorWindow errorWindow;

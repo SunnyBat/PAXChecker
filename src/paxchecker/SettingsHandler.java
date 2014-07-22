@@ -78,7 +78,7 @@ public class SettingsHandler {
     try {
       myPrefs.sync();
     } catch (BackingStoreException backingStoreException) {
-      ErrorManagement.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
+      ErrorHandler.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
       return;
     }
     try {
