@@ -43,7 +43,7 @@ public class KeyboardHandler {
         myRobot.keyPress(keyCode);
         myRobot.keyRelease(keyCode);
       } catch (java.lang.IllegalArgumentException e) {
-        System.out.println("ERROR: Invalid character typed! Keycode: " + keyCode + " -- char = " + ((char)c));
+        System.out.println("ERROR: Invalid character typed! Keycode: " + keyCode + " -- char = " + ((char) c));
         typeString("?"); // If this throws an error, there's something SERIOUSLY wrong, and the program should just burn
         continue;
       }
@@ -53,12 +53,23 @@ public class KeyboardHandler {
     }
   }
 
-  public static void enter() {
+  public static void newLine() {
     typeString("\n");
+  }
+
+  /**
+   * Used for Reddit Live line submission. This tabs down, hits Enter, waits two seconds, then tabs back up. This hits the "Make Update" button on
+   * Reddit Live.
+   */
+  public static void submitLine() {
+    typeString("\t\n");
     try {
-      Thread.sleep(500);
+      Thread.sleep(2000);
     } catch (InterruptedException interruptedException) {
     }
+    myRobot.keyPress(KeyEvent.VK_SHIFT);
+    typeString("\t");
+    myRobot.keyRelease(KeyEvent.VK_SHIFT);
   }
 
   private static boolean shouldShift(char c) {
@@ -133,11 +144,11 @@ public class KeyboardHandler {
       return;
     }
     typeString("The PAXChecker has detected a new Showclix event for " + Browser.getExpo());
-    enter();
+    newLine();
     typeString("Event link: " + link);
-    enter();
+    submitLine();
     typeString("PAXChecker v" + PAXChecker.VERSION + " information can be found at " + PAXChecker.REDDIT_THREAD_LINK);
-    enter();
+    submitLine();
   }
 
 }

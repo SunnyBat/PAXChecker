@@ -96,6 +96,11 @@ public class Status extends javax.swing.JFrame {
     JLTitle.setText("PAX Website Status");
 
     JLWebsiteLink.setText("Current Website Link: ");
+    JLWebsiteLink.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        JLWebsiteLinkMouseClicked(evt);
+      }
+    });
 
     jButton1.setText("Test Text");
     jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -127,6 +132,11 @@ public class Status extends javax.swing.JFrame {
     jLabel2.setText("Email -- Phone");
 
     JLShowclixLink.setText("Current Showclix Link:");
+    JLShowclixLink.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        JLShowclixLinkMouseClicked(evt);
+      }
+    });
 
     JLDataUsage.setText("Data Usage:");
 
@@ -407,6 +417,20 @@ public class Status extends javax.swing.JFrame {
     // TODO add your handling code here:
     minimizeWindow();
   }//GEN-LAST:event_formWindowIconified
+
+  private void JLWebsiteLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLWebsiteLinkMouseClicked
+    // TODO add your handling code here:
+    if (JLWebsiteLink.getText().toLowerCase().contains("http")) {
+      Browser.openLinkInBrowser(JLWebsiteLink.getText().substring(JLWebsiteLink.getText().toLowerCase().indexOf("http")));
+    }
+  }//GEN-LAST:event_JLWebsiteLinkMouseClicked
+
+  private void JLShowclixLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLShowclixLinkMouseClicked
+    // TODO add your handling code here:
+    if (JLShowclixLink.getText().toLowerCase().contains("http")) {
+      Browser.openLinkInBrowser(JLShowclixLink.getText().substring(JLShowclixLink.getText().toLowerCase().indexOf("http")));
+    }
+  }//GEN-LAST:event_JLShowclixLinkMouseClicked
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLButtonStatus;
