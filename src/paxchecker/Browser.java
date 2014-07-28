@@ -112,8 +112,8 @@ public class Browser {
   /**
    * Checks whether or not the PAX website is updated. This checks for the Register Online button on the [expo].paxsite.com/registration page. If
    * found, it reads the current href (hyperlink) for the button, and if it doesn't link to the [expo].paxsite.com website (when tickets are all sold
-   * out, PAX switches it to that), it returns true. This method also sets the Status window website link text.
-   * Note that this returns false if {@link #enablePaxWebsiteChecking() enablePaxWebsiteChecking()} has not been called.
+   * out, PAX switches it to that), it returns true. This method also sets the Status window website link text. Note that this returns false if
+   * {@link #enablePaxWebsiteChecking() enablePaxWebsiteChecking()} has not been called.
    *
    * @return True if the Register Now button link is updated, false if not
    */
@@ -362,6 +362,23 @@ public class Browser {
   }
 
   /**
+   * Checks the link given against the most recent Showclix link. This uses the currently-set expo link. Note that if this returns false, it opens up
+   * an ErrorHandler window with a NOTE-style warning, and opens the most recent Showclix link in the browser.
+   *
+   * @param link The link to check
+   * @return True if it matches, false if not
+   */
+  public static boolean checkShowclixLink(String link) {
+    String showLink = getShowclixLink();
+    if (!showLink.equals(link)) {
+      ErrorHandler.showErrorWindow("NOTE", "NOTE: The last found Showclix link has changed! New link:\n" + showLink + "\nThe link will be opened in case the queue has been found.", null);
+      openLinkInBrowser(showLink);
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Returns the link of the most recent Showclix event. Note that this gets the most recent from the current expo.
    *
    * @return The link of the most recent Showclix event
@@ -497,9 +514,9 @@ public class Browser {
 
   /**
    * Loads the current version notes from online. This retreives all of the version notes possible and stores them in one String, with each line
-   * separated by a line break (\n). Note that this method takes several seconds to load and should be run in a background Thread.
-   * Note that this also parses tokens from the version notes (and does not add them into the version notes String). Currently the only token read is
-   * SETSHOWCLIXID, which is obsolete due to the program loading the most recent Showclix ID after the version notes.
+   * separated by a line break (\n). Note that this method takes several seconds to load and should be run in a background Thread. Note that this also
+   * parses tokens from the version notes (and does not add them into the version notes String). Currently the only token read is SETSHOWCLIXID, which
+   * is obsolete due to the program loading the most recent Showclix ID after the version notes.
    *
    * @see paxchecker.PAXChecker#loadPatchNotesInBackground()
    * @see #getVersionNotes()

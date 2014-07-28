@@ -14,7 +14,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.5.3";
+  public static final String VERSION = "1.5.4";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;
@@ -51,7 +51,6 @@ public class PAXChecker {
     KeyboardHandler.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
-    //loadShowclixIDInBackground();
     if (doUpdate) {
       try {
         System.out.println("Checking for updates...");
@@ -84,11 +83,14 @@ public class PAXChecker {
         setup = null;
         update = null;
         savePrefsInBackground();
+        if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
+          SettingsHandler.saveLastEvent(Browser.getShowclixLink());
+        }
         //System.gc();
         status = new Status();
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
-        int seconds = secondsBetweenRefresh; // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
           //status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
@@ -128,6 +130,15 @@ public class PAXChecker {
         System.out.println("Finished!");
       }
     });
+  }
+
+  /**
+   * Gets the time (in seconds) between website checks. This method is thread-safe.
+   *
+   * @return The amount of time between website checks
+   */
+  public static int getRefreshTime() {
+    return secondsBetweenRefresh;
   }
 
   public static boolean shouldTypeLink() {
@@ -294,7 +305,7 @@ public class PAXChecker {
           ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "noupdate"); // path can have leading / on it, getAbsolutePath() removes them
           Process p = pb.start();
         } catch (Exception e) {
-          ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
+          ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update. Program must be restarted manually. Sorry for the inconvenience. :(", null);
         }
       }
     }, "Run New Program Instance");
@@ -316,18 +327,9 @@ public class PAXChecker {
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        SettingsHandler.saveAllPrefs(secondsBetweenRefresh, Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Email.getProvider());
+        SettingsHandler.saveAllPrefs();
       }
     }, "Save Preferences");
-  }
-
-  public static void loadShowclixIDInBackground() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        Browser.setShowclixID(Browser.getLatestShowclixID(Browser.getExpo()));
-      }
-    }, "Load Most Recent Showclix ID");
   }
 
   public static void sendBackgroundTestEmail() {
