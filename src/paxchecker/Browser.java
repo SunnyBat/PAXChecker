@@ -29,6 +29,9 @@ public class Browser {
   private static final String SHOWCLIX_API_LINK_SOUTH = "http://api.showclix.com/Seller/19042/events";
   private static final String SHOWCLIX_API_LINK_AUS = "http://api.showclix.com/Seller/15374/events";
 
+  /**
+   * Initializes the Browser class. This should be run before any other method is run in the Browser.
+   */
   public static void init() {
     try {
       updateURL = new URL(UDATE_LINK);
@@ -66,23 +69,54 @@ public class Browser {
     return (double) ((int) ((double) getDataUsed() / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
   }
 
+  /**
+   * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
+   * program inoperability. The expo set is used multiple times throughout the program for user feedback, so it's recommended to capitalize it
+   * correctly.
+   *
+   * @param e The String to set as the expo
+   */
   public static void setExpo(String e) {
     Expo = e;
     setShowclixID(getLatestShowclixID(e));
   }
 
+  /**
+   * Returns the expo currently set. This generally adheres to the format of "PAX [expo]" or just "[expo]".
+   *
+   * @return The expo currently set
+   * @see #setExpo(java.lang.String)
+   */
   public static String getExpo() {
     return Expo;
   }
 
+  /**
+   * Enables the checking of the [expo].paxsite.com/registration page for the Register Online button.
+   *
+   * @see #isCheckingPaxWebsite()
+   */
   public static void enablePaxWebsiteChecking() {
     checkPAXWebsite = true;
   }
 
+  /**
+   * Checks whether or not the program should check the PAX Registration website.
+   *
+   * @return True if should check, false if not
+   */
   public static boolean isCheckingPaxWebsite() {
     return checkPAXWebsite;
   }
 
+  /**
+   * Checks whether or not the PAX website is updated. This checks for the Register Online button on the [expo].paxsite.com/registration page. If
+   * found, it reads the current href (hyperlink) for the button, and if it doesn't link to the [expo].paxsite.com website (when tickets are all sold
+   * out, PAX switches it to that), it returns true. This method also sets the Status window website link text.
+   * Note that this returns false if {@link #enablePaxWebsiteChecking() enablePaxWebsiteChecking()} has not been called.
+   *
+   * @return True if the Register Now button link is updated, false if not
+   */
   public static boolean isPAXWebsiteUpdated() {
     if (!isCheckingPaxWebsite()) {
       return false;
@@ -254,6 +288,13 @@ public class Browser {
     return checkShowclix;
   }
 
+  /**
+   * Checks whether or not the Showclix website has a new event. This uses the Showclix API to get the latest Event ID
+   * (https://www.showclix.com/Event/######) from the API. This uses the {@link #getLatestShowclixID(java.lang.String)} method to get the most recent
+   * ID.
+   *
+   * @return True if there is a new Showclix event, false if not
+   */
   public static boolean isShowclixUpdated() {
     if (!isCheckingShowclix()) {
       return false;
@@ -424,22 +465,45 @@ public class Browser {
     }
   }
 
+  /**
+   * Returns the current Version Notes found. This returns all of the notes after the supplied version (useful for things like patch notes when
+   * updating). Note that the version must be the same as in the update notes, otherwise this will return
+   *
+   * @param version The Version (raw String of version number)
+   * @return The version notes after the given version, or null if notes have not been retrieved yet
+   */
   public static String getVersionNotes(String version) {
     String versNotes = getVersionNotes();
     if (versNotes == null) {
       return null;
     }
     try {
-      versNotes = versNotes.substring(0, versNotes.indexOf("~~~" + version)).trim();
-    } catch (Exception e) {
+      versNotes = versNotes.substring(0, versNotes.indexOf("~~~" + version + "~~~")).trim();
+    } catch (IndexOutOfBoundsException e) {
+      System.out.println("ERROR: Unable to find update notes for version " + version);
     }
     return versNotes;
   }
 
+  /**
+   * Gets the currently loaded version notes. This returns all of the notes in one String. Note that this returns null if the version notes have not
+   * been loaded yet.
+   *
+   * @return The currently loaded version notes, or null if notes are not loaded yet.
+   */
   public static String getVersionNotes() {
     return versionNotes;
   }
 
+  /**
+   * Loads the current version notes from online. This retreives all of the version notes possible and stores them in one String, with each line
+   * separated by a line break (\n). Note that this method takes several seconds to load and should be run in a background Thread.
+   * Note that this also parses tokens from the version notes (and does not add them into the version notes String). Currently the only token read is
+   * SETSHOWCLIXID, which is obsolete due to the program loading the most recent Showclix ID after the version notes.
+   *
+   * @see paxchecker.PAXChecker#loadPatchNotesInBackground()
+   * @see #getVersionNotes()
+   */
   public static void loadVersionNotes() {
     URLConnection inputConnection;
     InputStream textInputStream;
@@ -487,6 +551,11 @@ public class Browser {
     }
   }
 
+  /**
+   * Returns the size of the update file found online. This will return 0 if the size has not been loaded yet.
+   *
+   * @return The size of the update file found online, or 0 if the size has not been loaded yet
+   */
   public static long getUpdateSize() {
     return updateSize;
   }

@@ -16,11 +16,24 @@ public class Email {
   private static Properties props = System.getProperties();
   private static Session l_session = null;
 
+  /**
+   * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
+   */
   public static void init() {
     setPort("587");
     emailSettings();
   }
 
+  /**
+   * Sets the current email address (username) for the program to use. Note that if the username does not contain an ending (&#64;site.net) or is
+   * null, &#64;yahoo.com is automatically appended to the end of the username. If the site ending does not end in &#64;yahoo.com or &#64;gmail.com,
+   * the program parses the SMTP server addess after the address ending and two colons.<br>
+   * Example: User&#64;site.com::site.smtp.server<br>
+   * This also (optionall) parses the site's SMTP port after the SMTP server address and a colon.<br>
+   * Example: User&#64;site.com::site.smtp.server:123
+   *
+   * @param user The username to set
+   */
   public static void setUsername(String user) {
     if (user == null) {
       username = "@yahoo.com";
@@ -195,7 +208,7 @@ public class Email {
    * Also note that this sets {@link #textEmail} to null.
    * </HTML>
    *
-   * @param parseList The list of numbers to read through
+   * @param parseList      The list of numbers to read through
    * @param defaultCarrier The default carrier to email to, if none is specified
    */
   public static void setCellList(String parseList, String defaultCarrier) {
@@ -279,7 +292,7 @@ public class Email {
    * @return True if can send email, false if not.
    */
   public static boolean canSendEmail() {
-    if (username != null && (textEmail != null || emailList != null))  {
+    if (username != null && (textEmail != null || emailList != null)) {
       if (!username.equals("@yahoo.com")) {
         return true;
       }

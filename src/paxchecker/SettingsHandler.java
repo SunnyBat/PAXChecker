@@ -18,6 +18,7 @@ public class SettingsHandler {
   private static boolean saveEmail;
   private static boolean saveCellnum;
   private static boolean saveProvider;
+  private static String lastShowclixLink;
 
   public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum, boolean provider) {
     setSaveRefreshTime(refreshTime);
@@ -30,49 +31,123 @@ public class SettingsHandler {
     setSaveProvider(provider);
   }
 
+  /**
+   * Sets whether or not to save the refresh time of the program. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveRefreshTime(boolean save) {
     saveRefreshTime = save;
   }
 
+  /**
+   * Sets whether or not to save the Check Showclix option. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveShowclix(boolean save) {
     saveCheckShowclix = save;
   }
 
+  /**
+   * Sets whether or not to save the Check PAX Website option. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSavePax(boolean save) {
     saveCheckPax = save;
   }
 
+  /**
+   * Sets whether or not to save the Play Alarm option. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveAlarm(boolean save) {
     savePlayAlarm = save;
   }
 
+  /**
+   * Sets whether or not to save the event selected. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveEvent(boolean save) {
     saveEvent = save;
   }
 
+  /**
+   * Sets whether or not to save the email address used. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveEmail(boolean save) {
     saveEmail = save;
   }
 
+  /**
+   * Sets whether or not to save the cell number used. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveCellnum(boolean save) {
     saveCellnum = save;
   }
 
+  /**
+   * Sets whether or not to save the cell provider used. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save refresh time, false to not
+   */
   public static void setSaveProvider(boolean save) {
     saveProvider = save;
   }
 
   /**
-   * Saves the Preferences given into a Preferences file. I'm not really sure where the file is, nor
-   * am I concerned about it. Note that this also saves the cell number given. If you want to save a
-   * different cell number, see {@link #saveCellNum(String)}.
+   * Saves all the preferences. Note that this uses the values currently assigned to the program, so if Setup hasn't been completed yet, some
+   * Preferences will likely be wrong.
+   */
+  public static void saveAllPrefs() {
+    try {
+      myPrefs.sync();
+    } catch (BackingStoreException backingStoreException) {
+      ErrorHandler.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
+      return;
+    }
+    try {
+      //saveRefreshTime(PAXChecker.);
+      saveCheckPax(Browser.isCheckingPaxWebsite());
+      saveCheckShowclix(Browser.isCheckingShowclix());
+      savePlayAlarm(Audio.playAlarm());
+      saveEvent(Browser.getExpo() == null ? "" : Browser.getExpo());
+      saveProvider(Email.getProvider() == null ? "" : Email.getProvider());
+      System.out.println("Save provider = " + Email.getProvider());
+      saveCellNum();
+      saveEmail();
+      myPrefs.flush();
+    } catch (BackingStoreException backingStoreException) {
+      System.out.println("Unable to save settings!");
+    }
+  }
+
+  /**
+   * Saves the Preferences given into a Preferences file. The Preferences are located in the user's registry (for Windows). Note that this also saves
+   * the cell number given. If you want to save a different cell number, see {@link #saveCellNum(String)}.
    *
-   * @param refreshTime   The time (in seconds) between refreshes
-   * @param checkPax      True to check the PAX website, false to not
+   * @param refreshTime The time (in seconds) between refreshes
+   * @param checkPax True to check the PAX website, false to not
    * @param checkShowclix True to check the Showclix website, false to not
-   * @param playAlarm     True to play the alarm, false to not
-   * @param expo          The Expo being checked for. Note it should be in "PAX XXXX" format.
-   * @param provider      The provider being used.
+   * @param playAlarm True to play the alarm, false to not
+   * @param expo The Expo being checked for. Note it should be in "PAX XXXX" format.
+   * @param provider The provider being used.
    */
   public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
     try {
@@ -98,6 +173,11 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Saves the refresh time to the Preferences.
+   *
+   * @param time The time (in seconds) between refreshes
+   */
   private static void saveRefreshTime(int time) {
     if (saveRefreshTime) {
       myPrefs.putInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), time);
@@ -197,6 +277,10 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Saves the current cell number (address) to the Preferences file. Note that this gets the email from {@link paxchecker.Email#getTextEmail()} or
+   * {@link paxchecker.Email#getEmailList()}.
+   */
   private static void saveCellNum() {
     if (saveCellnum) {
       String textEmail = Email.getTextEmail();
@@ -230,50 +314,110 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Checks whether or not the program saved the Refresh Time preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveRefreshTime() {
     return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 61) != 61;
   }
 
+  /**
+   * Checks whether or not the program saved the Check Showclix Website preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveShowclix() {
     return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true));
   }
 
+  /**
+   * Checks whether or not the program saved the Check PAX Website preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSavePax() {
     return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true));
   }
 
+  /**
+   * Checks whether or not the program saved the Play Alarm preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveAlarm() {
     return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), true));
   }
 
+  /**
+   * Checks whether or not the program saved the Event preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveEvent() {
     return !myPrefs.get(PREFTYPES.PAXCHECK_EVENT.name(), "NOPE").equals("NOPE");
   }
 
+  /**
+   * Checks whether or not the program saved the Email preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveEmail() {
     return !myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "NOPE").equals("NOPE");
   }
 
+  /**
+   * Checks whether or not the program saved the Cell Number preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveCellnum() {
     return !myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "NOPE").equals("NOPE");
   }
 
+  /**
+   * Checks whether or not the program saved the Cell Provider preference
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSaveProvider() {
     return !myPrefs.get(PREFTYPES.PAXCHECK_PROVIDER.name(), "NOPE").equals("NOPE");
   }
 
+  /**
+   * Checks whether or not the program saved the preferences
+   *
+   * @return True if preference was saved, false if not
+   */
   public static boolean getSavePrefs() {
     return myPrefs.getBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), true);
   }
 
+  /**
+   * Gets the currently saved refresh time of the program, or 15 if preference was not saved.
+   *
+   * @return The delay time saved, or 15 if not saved
+   */
   public static int getDelayTime() {
     return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 15);
   }
 
+  /**
+   * Gets whether the program should check the PAX Website, or true if preference was not saved.
+   *
+   * @return True if the program should check the PAX website, false if not
+   */
   public static boolean getCheckPaxWebsite() {
     return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true);
   }
 
+  /**
+   * Gets whether the program should check the Showclix website, or true if prefrence was not saved.
+   *
+   * @return True if the program should check the Showclix website, false if not
+   */
   public static boolean getCheckShowclix() {
     return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true);
   }
