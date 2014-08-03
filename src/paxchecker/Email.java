@@ -37,7 +37,7 @@ public class Email {
   public static void setUsername(String user) {
     if (user == null) {
       username = "@yahoo.com";
-      props.put("mail.smtp.user", username);
+      props.put("mail.smtp.user", getUsername());
       return;
     }
     if (!user.contains("@")) {
@@ -68,7 +68,7 @@ public class Email {
     }
     System.out.println("Username = " + user);
     username = user;
-    props.put("mail.smtp.user", username);
+    props.put("mail.smtp.user", getUsername());
   }
 
   public static String getUsername() {
@@ -89,6 +89,26 @@ public class Email {
   }
 
   /**
+   * Splits the given email address up into email and provider. This always returns an array with two values. Both, one or none of these values may be
+   * null.
+   *
+   * @param emailToSplit The email address to split
+   * @return An array with the email and provider separated
+   */
+  public static String[] splitEmail(String emailToSplit) {
+    if (emailToSplit == null) {
+      return new String[]{null, null};
+    }
+    if (emailToSplit.contains("@")) {
+      String temp1 = emailToSplit.substring(0, emailToSplit.indexOf("@"));
+      String temp2 = emailToSplit.substring(emailToSplit.indexOf("@"));
+      return new String[]{temp1, temp2};
+    } else {
+      return new String[]{emailToSplit, null};
+    }
+  }
+
+  /**
    * Sets the email address that will be mailed to. This method defaults to
    *
    * @mms.att.net if no extension is specified. While this can be called at any time, it is recommended to only call during Setup.
@@ -104,8 +124,18 @@ public class Email {
   }
 
   public static String getProvider() {
+    if (textEmail == null) {
+      return "AT&T";
+    }
+    return getProvider(textEmail.substring(textEmail.indexOf("@") + 1));
+  }
+
+  public static String getProvider(String ending) {
     try {
-      switch (textEmail.substring(textEmail.indexOf("@") + 1)) {
+      if (ending.startsWith("@")) {
+        ending = ending.substring(1);
+      }
+      switch (ending) {
         case "mms.att.net":
           return "AT&T";
         case "vtext.com":
@@ -178,27 +208,7 @@ public class Email {
    */
   @Deprecated
   public static void setCellList(String parseList) {
-    emailList = new ArrayList<>();
-    try {
-      String[] parsed = parseList.split(";");
-      for (int a = 0; a < parsed.length; a++) {
-        if (!parsed[a].contains("@")) {
-          System.out.println("Note: " + parsed[a] + " is not a valid email address.");
-          return;
-        }
-        System.out.println("Old Number [" + a + "]: " + parsed[a]);
-        parsed[a] = parsed[a].trim();
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("-", "") + parsed[a].substring(parsed[a].indexOf("@")); // Avoid replacing chars in @car.rier.ext
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("(", "") + parsed[a].substring(parsed[a].indexOf("@"));
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace(")", "") + parsed[a].substring(parsed[a].indexOf("@"));
-        System.out.println("New Number [" + a + "]: " + parsed[a]);
-        emailList.add(parsed[a]);
-      }
-    } catch (Exception e) {
-      emailList = null;
-      ErrorHandler.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
-    }
-    textEmail = null;
+    setCellList(parseList, getProvider());
   }
 
   /**
@@ -208,7 +218,7 @@ public class Email {
    * Also note that this sets {@link #textEmail} to null.
    * </HTML>
    *
-   * @param parseList      The list of numbers to read through
+   * @param parseList The list of numbers to read through
    * @param defaultCarrier The default carrier to email to, if none is specified
    */
   public static void setCellList(String parseList, String defaultCarrier) {
@@ -292,8 +302,8 @@ public class Email {
    * @return True if can send email, false if not.
    */
   public static boolean canSendEmail() {
-    if (username != null && (textEmail != null || emailList != null)) {
-      if (!username.equals("@yahoo.com")) {
+    if (getUsername() != null && (textEmail != null || emailList != null)) {
+      if (!getUsername().equals("@yahoo.com")) {
         return true;
       }
     }
@@ -316,7 +326,7 @@ public class Email {
     createSession();
     try {
       MimeMessage message = new MimeMessage(l_session);
-      message.setFrom(new InternetAddress(username));
+      message.setFrom(new InternetAddress(getUsername()));
       if (textEmail != null) {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(textEmail));
       } else if (emailList != null) {
@@ -328,7 +338,7 @@ public class Email {
       message.setSubject(subject);
       message.setText(msg);
       Transport transport = l_session.getTransport("smtp");
-      transport.connect(host, username, password);
+      transport.connect(host, getUsername(), password);
       transport.sendMessage(message, message.getAllRecipients());
       transport.close();
       System.out.println("Message Sent");
