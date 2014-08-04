@@ -69,7 +69,7 @@ public class IconMenu extends PopupMenu {
   }
 
   private void addAllComponents() {
-    if (Email.canSendEmail()) {
+    if (Email.shouldSendEmail()) {
       add(testTextButton);
     }
     if (Audio.soundEnabled()) {

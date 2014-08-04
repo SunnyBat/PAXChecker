@@ -15,6 +15,7 @@ public class Email {
   private static List<String> emailList;
   private static Properties props = System.getProperties();
   private static Session l_session = null;
+  private static List<EmailAddress> addressList;
 
   /**
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
@@ -301,13 +302,8 @@ public class Email {
    *
    * @return True if can send email, false if not.
    */
-  public static boolean canSendEmail() {
-    if (getUsername() != null && (textEmail != null || emailList != null)) {
-      if (!getUsername().equals("@yahoo.com")) {
-        return true;
-      }
-    }
-    return false;
+  public static boolean shouldSendEmail() {
+    return getUsername() != null && !getUsername().equals("@yahoo.com") && (textEmail != null || emailList != null);
   }
 
   /**
@@ -320,7 +316,7 @@ public class Email {
    * @return
    */
   public static boolean sendMessage(String subject, String msg) {
-    if (!canSendEmail()) {
+    if (!shouldSendEmail()) {
       return false;
     }
     createSession();
@@ -365,5 +361,103 @@ public class Email {
         }
       }
     }, "Send Email");
+  }
+
+  /**
+   * A new implementation of email addresses to email when a new event is found. The goal of this is to make it easier to read and write separate
+   * email addresses. This should be used as much as possible to avoid having String conversions and highly-likely IndexOutOfBoundsExceptions and
+   * NullPointerExceptions being thrown. This will also free up the cluttered code in Email.java and the Setup GUI.
+   */
+  public static final class EmailAddress {
+
+    private String completeAddress;
+
+    public EmailAddress(String address) {
+      setEmailAddress(address);
+    }
+
+    public String getCompleteAddress() {
+      return completeAddress;
+    }
+
+    public String getAddressWithoutCarrier() {
+      if (completeAddress == null) {
+        return null; // Return blank? Null is more descriptive...
+      }
+      return completeAddress.substring(0, completeAddress.indexOf("@"));
+    }
+
+    public String getCarrierName() {
+      if (completeAddress == null) {
+        return null; // Return blank? Null is more descriptive...
+      }
+      return getProvider(completeAddress.substring(completeAddress.indexOf("@")));
+    }
+
+    public String getCarrierEnding() {
+      if (completeAddress == null) {
+        return null; // Return blank? Null is more descriptive...
+      }
+      return completeAddress.substring(completeAddress.indexOf("@"));
+    }
+
+    public void setEmailAddress(String address) {
+      if (address == null) {
+        System.out.println("ERROR: Address is null!");
+        return;
+      } else if (address.length() < 5) { // Seriously if it's less than ~10 characters it's probably invalid, but 4 or less is just absurd.
+        System.out.println("ERROR: Email address is too short!");
+        return;
+      } else if (!address.contains("@")) {
+        System.out.println("NOTE: Address " + address + " does not contain ending! Adding AT&T ending...");
+        address += "@mms.att.net";
+      }
+      completeAddress = address;
+    }
+
+    public boolean isValid() {
+      return completeAddress != null && completeAddress.contains("@");
+    }
+  }
+
+  public static void addEmailAddress(EmailAddress add) {
+    if (add == null) {
+      return;
+    } else if (!add.isValid()) {
+      return;
+    }
+    addressList.add(add);
+  }
+
+  public static void removeEmailAddress(EmailAddress remove) {
+    if (remove == null) {
+      return;
+    }
+    addressList.remove(remove);
+  }
+
+  public static List<EmailAddress> convertToList(String addresses) {
+    List<EmailAddress> tempList = new ArrayList<>();
+    EmailAddress temp;
+    String[] split = addresses.split(";");
+    for (String split1 : split) {
+      temp = new EmailAddress(split1.trim());
+      if (temp.isValid()) {
+        tempList.add(temp);
+      } else {
+        System.out.println("ERROR: Temp address " + split1 + " is not valid!");
+      }
+    }
+    return tempList;
+  }
+
+  public static String convertToString(List<EmailAddress> list) {
+    StringBuilder builder = new StringBuilder();
+    Iterator<EmailAddress> myIt = list.iterator();
+    while (myIt.hasNext()) {
+      builder.append(myIt.next().getCompleteAddress());
+      builder.append("; ");
+    }
+    return builder.toString();
   }
 }

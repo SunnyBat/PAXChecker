@@ -37,7 +37,7 @@ public class Status extends javax.swing.JFrame {
     }
     java.util.List emailList = Email.getEmailList();
     JLTitle.setText(Browser.getExpo() + " Website Status");
-    if (!Email.canSendEmail()) {
+    if (!Email.shouldSendEmail()) {
       setInfoText("[TEXTING DISABLED]");
       setTextButtonState(false);
     } else if (Email.getTextEmail() != null) {
