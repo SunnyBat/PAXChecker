@@ -49,8 +49,6 @@ public class SettingsHandler {
       saveCheckShowclix(Browser.isCheckingShowclix());
       savePlayAlarm(Audio.playAlarm());
       saveEvent(Browser.getExpo() == null ? "" : Browser.getExpo());
-      saveProvider(Email.getProvider() == null ? "" : Email.getProvider());
-      System.out.println("Save provider = " + Email.getProvider());
       saveCellNum();
       saveEmail();
       myPrefs.flush();
@@ -318,31 +316,10 @@ public class SettingsHandler {
    */
   private static void saveCellNum() {
     if (saveCellnum) {
-      String textEmail = Email.getTextEmail();
-      java.util.List textList = Email.getEmailList();
-      if (textEmail != null) {
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), textEmail.equals("@yahoo.com") ? "" : textEmail);
-      } else if (textList != null) {
-        if (textList.isEmpty()) {
-          myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
-          return;
-        }
-        String longEmail = null;
-        java.util.Iterator<String> mI = textList.iterator();
-        while (mI.hasNext()) {
-          String s = mI.next();
-          if (s == null) {
-            continue;
-          }
-          if (longEmail == null) {
-            longEmail = s;
-          } else {
-            longEmail += "; " + s;
-          }
-        }
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), longEmail == null ? "" : longEmail);
-      } else {
+      if (Email.getAddressList().isEmpty()) {
         myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
+      } else {
+        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), Email.convertToString(Email.getAddressList()));
       }
     } else {
       myPrefs.remove(PREFTYPES.PAXCHECK_CELLNUM.name());
@@ -505,21 +482,7 @@ public class SettingsHandler {
    */
   public static String getCellNumber() {
     String cellNum = myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
-    if (cellNum.contains("@") && !cellNum.contains(";")) {
-      if (Email.getCarrierExtension(getProvider()).equals(cellNum.substring(cellNum.indexOf("@")))) {
-        cellNum = cellNum.substring(0, cellNum.indexOf("@"));
-      }
-    }
     return cellNum;
-  }
-
-  /**
-   * Gets the provider last used, or AT&T if preference was not saved.
-   *
-   * @return The provider last used
-   */
-  public static String getProvider() {
-    return myPrefs.get(PREFTYPES.PAXCHECK_PROVIDER.name(), "AT&T");
   }
 
   /**

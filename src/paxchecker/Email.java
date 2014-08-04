@@ -11,11 +11,10 @@ import javax.mail.internet.MimeMessage;
  */
 public class Email {
 
-  private static String host, port, username, password, textEmail;
-  private static List<String> emailList;
+  private static String host, port, username, password;
   private static Properties props = System.getProperties();
   private static Session l_session = null;
-  private static List<EmailAddress> addressList;
+  private static final List<EmailAddress> addressList = new ArrayList<>();
 
   /**
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
@@ -109,28 +108,6 @@ public class Email {
     }
   }
 
-  /**
-   * Sets the email address that will be mailed to. This method defaults to
-   *
-   * @mms.att.net if no extension is specified. While this can be called at any time, it is recommended to only call during Setup.
-   * @param num
-   */
-  @Deprecated
-  public static void setCellNum(String num) {
-    if (!num.contains("@")) {
-      num += "@mms.att.net";
-    }
-    textEmail = num;
-    System.out.println("textEmail = " + textEmail);
-  }
-
-  public static String getProvider() {
-    if (textEmail == null) {
-      return "AT&T";
-    }
-    return getProvider(textEmail.substring(textEmail.indexOf("@") + 1));
-  }
-
   public static String getProvider(String ending) {
     try {
       if (ending.startsWith("@")) {
@@ -174,96 +151,6 @@ public class Email {
   }
 
   /**
-   * <HTML>Sets {@link #textEmail} to the specified email address. If no [AT] symbol is in {@link num},
-   * {@link carrier} is used to add the correct carrier email ending to the number. If an invalid carrier is specified, the method defaults to
-   * AT&T.<br>
-   * Note that this sets {@link #emailList} to null.</HTML>
-   *
-   * @param num
-   * @param carrier
-   */
-  public static void setCellNum(String num, String carrier) {
-    if (num == null) {
-      textEmail = null;
-      return;
-    } else if (num.length() == 0) {
-      textEmail = null;
-      return;
-    }
-    if (!num.contains("@")) {
-      num += getCarrierExtension(carrier);
-    }
-    textEmail = num;
-    System.out.println("textEmail = " + textEmail);
-    emailList = null;
-  }
-
-  /**
-   * <HTML>Sets the current email list to the String specified. This parses every email address by splitting the String by ; (semicolons).<br>
-   * Example String: 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
-   * Note that [AT] should be one character. Javadocs are fun.<br>
-   * Also note that this sets {@link #textEmail} to null.
-   * </HTML>
-   *
-   * @param parseList The list of numbers to read through
-   */
-  @Deprecated
-  public static void setCellList(String parseList) {
-    setCellList(parseList, getProvider());
-  }
-
-  /**
-   * <HTML>Sets the current email list to the String specified. This parses every email address by splitting the String by ; (semicolons).<br>
-   * Example String: 1234567890[AT]mms.att.net;2345678901[AT]vtext.net;3456789012[AT]carr.ier.com><br>
-   * Note that [AT] should be one character. Javadocs are fun.<br>
-   * Also note that this sets {@link #textEmail} to null.
-   * </HTML>
-   *
-   * @param parseList The list of numbers to read through
-   * @param defaultCarrier The default carrier to email to, if none is specified
-   */
-  public static void setCellList(String parseList, String defaultCarrier) {
-    emailList = new ArrayList<>();
-    try {
-      String[] parsed = parseList.split(";");
-      for (int a = 0; a < parsed.length; a++) {
-        System.out.println("Old Number [" + a + "]: " + parsed[a]);
-        parsed[a] = parsed[a].trim();
-        if (!parsed[a].contains("@")) {
-          parsed[a] += getCarrierExtension(defaultCarrier);
-        }
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("-", "") + parsed[a].substring(parsed[a].indexOf("@")); // Avoid replacing chars in @car.rier.ext
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace("(", "") + parsed[a].substring(parsed[a].indexOf("@"));
-        parsed[a] = parsed[a].substring(0, parsed[a].indexOf("@")).replace(")", "") + parsed[a].substring(parsed[a].indexOf("@"));
-        System.out.println("New Number [" + a + "]: " + parsed[a]);
-        emailList.add(parsed[a]);
-      }
-    } catch (Exception e) {
-      emailList = null;
-      ErrorHandler.showErrorWindow("ERROR parsing email addresses", "There was a problem reading the email address list specified. Please restart the program and enter a correct list.\nList provided: " + parseList, e);
-    }
-    textEmail = null;
-  }
-
-  /**
-   * The email address to send a message to.
-   *
-   * @return The email address to send a message to, or null if {@link #setCellNum(java.lang.String, java.lang.String)} has not been called
-   */
-  public static String getTextEmail() {
-    return textEmail;
-  }
-
-  /**
-   * Gets the current List of all email addresses that will be emailed when a message is sent.
-   *
-   * @return The List<string> of all email addresses being emailed, or null if {@link #setCellList(java.lang.String)} has not been called
-   */
-  public static List<String> getEmailList() {
-    return emailList;
-  }
-
-  /**
    * Sets the {@link #props} settings for the the current email address being used. Call every time the email provider (Yahoo, GMail) changes.
    */
   public static void emailSettings() {
@@ -300,10 +187,10 @@ public class Email {
    * Checks whether the program should send an email. If the username OR the email to send to is null (no valid address/number was given), it returns
    * false. If both are valid, it returns true.
    *
-   * @return True if can send email, false if not.
+   * @return True if should send email, false if not.
    */
   public static boolean shouldSendEmail() {
-    return getUsername() != null && !getUsername().equals("@yahoo.com") && (textEmail != null || emailList != null);
+    return getUsername() != null && !getUsername().equals("@yahoo.com") && !addressList.isEmpty();
   }
 
   /**
@@ -323,13 +210,9 @@ public class Email {
     try {
       MimeMessage message = new MimeMessage(l_session);
       message.setFrom(new InternetAddress(getUsername()));
-      if (textEmail != null) {
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(textEmail));
-      } else if (emailList != null) {
-        ListIterator<String> lI = emailList.listIterator();
-        while (lI.hasNext()) {
-          message.addRecipient(Message.RecipientType.BCC, new InternetAddress(lI.next()));
-        }
+      ListIterator<EmailAddress> lI = getAddressList().listIterator();
+      while (lI.hasNext()) {
+        message.addRecipient(Message.RecipientType.BCC, new InternetAddress(lI.next().getCompleteAddress()));
       }
       message.setSubject(subject);
       message.setText(msg);
@@ -412,21 +295,49 @@ public class Email {
         System.out.println("NOTE: Address " + address + " does not contain ending! Adding AT&T ending...");
         address += "@mms.att.net";
       }
+      System.out.println("Old Number: " + address);
+      address = address.trim();
+      String temp = address.substring(0, address.indexOf("@"));
+      temp = temp.replace("-", ""); // Avoid replacing chars in @car.rier.ext
+      temp = temp.replace("(", "");
+      temp = temp.replace(")", "");
+      address = temp + address.substring(address.indexOf("@"));
+      System.out.println("New Number: " + address);
       completeAddress = address;
     }
 
     public boolean isValid() {
+      System.out.println("completeAddress = " + completeAddress);
       return completeAddress != null && completeAddress.contains("@");
+    }
+  }
+
+  public static void addEmailAddress(String add) {
+    if (add.contains(";")) {
+      System.out.println("String contains ;");
+      addEmailAddress(convertToList(add));
+    } else {
+      addEmailAddress(new EmailAddress(add));
     }
   }
 
   public static void addEmailAddress(EmailAddress add) {
     if (add == null) {
+      System.out.println("EmailAddress is NULL!");
       return;
     } else if (!add.isValid()) {
+      System.out.println("EmailAddress is INVALID!");
       return;
     }
+    System.out.println("Adding EmailAddress " + add.getCompleteAddress());
     addressList.add(add);
+  }
+
+  public static void addEmailAddress(List<EmailAddress> add) {
+    Iterator<EmailAddress> myIt = add.iterator();
+    while (myIt.hasNext()) {
+      addEmailAddress(myIt.next());
+    }
   }
 
   public static void removeEmailAddress(EmailAddress remove) {
@@ -459,5 +370,9 @@ public class Email {
       builder.append("; ");
     }
     return builder.toString();
+  }
+
+  public static List<EmailAddress> getAddressList() {
+    return addressList;
   }
 }

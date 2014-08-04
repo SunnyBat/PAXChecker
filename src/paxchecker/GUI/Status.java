@@ -35,27 +35,24 @@ public class Status extends javax.swing.JFrame {
     if (!Browser.isCheckingShowclix()) {
       hideShowclixText();
     }
-    java.util.List emailList = Email.getEmailList();
     JLTitle.setText(Browser.getExpo() + " Website Status");
     if (!Email.shouldSendEmail()) {
       setInfoText("[TEXTING DISABLED]");
       setTextButtonState(false);
-    } else if (Email.getTextEmail() != null) {
-      setInfoText(Email.getUsername() + " -- " + Email.getTextEmail());
-    } else if (emailList != null) {
+    } else if (Email.getAddressList().size() == 1) {
+      setInfoText(Email.getUsername() + " -- " + Email.getAddressList().get(0).getCompleteAddress());
+    } else {
       setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
       String list = "<html>";
-      for (int a = 0; a < emailList.size(); a++) {
-        list += emailList.get(a);
-        if (a + 1 != emailList.size()) {
+      String[] allAddresses = Email.convertToString(Email.getAddressList()).split(";");
+      for (int a = 0; a < allAddresses.length; a++) {
+        list += allAddresses[a].trim();
+        if (a + 1 != allAddresses.length) {
           list += "<br>";
         }
       }
       list += "</html>";
       setLabelTooltipText(list);
-    } else {
-      setInfoText("[TEXTING DISABLED]");
-      setTextButtonState(false);
     }
     if (!Audio.soundEnabled()) {
       setSoundButtonState(false);

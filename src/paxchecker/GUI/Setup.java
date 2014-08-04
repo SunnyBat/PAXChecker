@@ -586,6 +586,9 @@ public class Setup extends javax.swing.JFrame {
     Browser.setExpo(jComboBox2.getSelectedItem().toString());
     Browser.setWebsiteLink(Browser.getWebsiteLink(Browser.getExpo()));
     String text = jTextField2.getText();
+    if (!text.contains("@")) {
+      text += Email.getCarrierExtension(jComboBox1.getSelectedItem().toString());
+    }
     String tempText;
     java.util.Iterator<ExtraPhonePanel> myIt = extraPhonePanelList.iterator();
     while (myIt.hasNext()) {
@@ -603,11 +606,7 @@ public class Setup extends javax.swing.JFrame {
       System.out.println("Debug: " + tempText);
     }
     System.out.println("Final Text: " + text);
-    if (text.contains(";")) {
-      Email.setCellList(text, jComboBox1.getSelectedItem().toString());
-    } else if (text.length() > 4) {
-      Email.setCellNum(text, jComboBox1.getSelectedItem().toString());
-    }
+    Email.addEmailAddress(text);
     PAXChecker.setRefreshTime(jSlider1.getValue());
     SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
     if (JCBSavePreferences.isSelected()) {
