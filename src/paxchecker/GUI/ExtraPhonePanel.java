@@ -46,6 +46,7 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
       } else {
         jTextField2.setText(number);
       }
+      jTextField2.setCaretPosition(0);
     }
   }
 
@@ -70,7 +71,7 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
     jComboBox1 = new javax.swing.JComboBox();
     jButton1 = new javax.swing.JButton();
 
-    setPreferredSize(new java.awt.Dimension(391, 41));
+    setPreferredSize(new java.awt.Dimension(391, 26));
 
     jLabel1.setText("Cell Num");
 

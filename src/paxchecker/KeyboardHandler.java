@@ -77,10 +77,14 @@ public class KeyboardHandler {
    * Reddit Live.
    */
   public static void submitLine() {
+    submitLine(2000);
+  }
+
+  public static void submitLine(int millis) {
     typeString("\t\n");
     try {
-      Thread.sleep(2000);
-    } catch (InterruptedException interruptedException) {
+      Thread.sleep(millis);
+    } catch (InterruptedException iE) {
     }
     myRobot.keyPress(KeyEvent.VK_SHIFT);
     typeString("\t");
@@ -184,9 +188,9 @@ public class KeyboardHandler {
     typeString("The PAXChecker has detected a new Showclix event for " + Browser.getExpo());
     newLine();
     typeString("Event link: " + link);
-    submitLine();
+    newLine();
     typeString("PAXChecker v" + PAXChecker.VERSION + " information can be found at " + PAXChecker.REDDIT_THREAD_LINK);
-    submitLine();
+    submitLine(0);
   }
 
 }

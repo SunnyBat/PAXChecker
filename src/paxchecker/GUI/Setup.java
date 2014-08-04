@@ -53,13 +53,14 @@ public class Setup extends javax.swing.JFrame {
       String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
       jComboBox1.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
       if (Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@"))).equals("[Other]")) {
-        jTextField2.setText(specificNumbers[0]);
+        jTextField2.setText(specificNumbers[0].trim());
       } else {
-        jTextField2.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")));
+        jTextField2.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")).trim());
       }
+      jTextField2.setCaretPosition(0);
       for (int a = 1; a < specificNumbers.length; a++) {
-      System.out.println("specificNumbers["+a+"] = " + specificNumbers[a]);
-        addPhonePanel(new ExtraPhonePanel(this, Email.splitEmail(specificNumbers[a])[0], Email.splitEmail(specificNumbers[a])[1]));
+        System.out.println("specificNumbers[" + a + "] = " + specificNumbers[a]);
+        addPhonePanel(new ExtraPhonePanel(this, Email.splitEmail(specificNumbers[a])[0].trim(), Email.splitEmail(specificNumbers[a])[1].trim()));
       }
     } else {
       System.out.println("Normal address");
@@ -338,9 +339,9 @@ public class Setup extends javax.swing.JFrame {
           .addComponent(jLabel4)
           .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(0, 0, 0)
         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(0, 0, 0)
         .addComponent(JPPhonePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton2)
@@ -360,7 +361,7 @@ public class Setup extends javax.swing.JFrame {
         .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton1)
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     JPPhonePanel.setLayout(new javax.swing.BoxLayout(JPPhonePanel, javax.swing.BoxLayout.Y_AXIS));
@@ -390,7 +391,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel6Layout.setVerticalGroup(
       jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel6);
@@ -411,7 +412,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -432,7 +433,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -531,7 +532,7 @@ public class Setup extends javax.swing.JFrame {
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+      .addComponent(jTabbedPane1)
     );
 
     pack();
@@ -590,7 +591,13 @@ public class Setup extends javax.swing.JFrame {
     while (myIt.hasNext()) {
       ExtraPhonePanel panel = myIt.next();
       tempText = panel.getNumber();
-      tempText += Email.getCarrierExtension(panel.getProvider());
+      if (tempText.length() < 4) {
+        System.out.println("NOTE: Number is too short! Cannot use!");
+        continue;
+      }
+      if (!tempText.contains("@")) {
+        tempText += Email.getCarrierExtension(panel.getProvider());
+      }
       //Validate tempText address?
       text += ";" + tempText;
       System.out.println("Debug: " + tempText);

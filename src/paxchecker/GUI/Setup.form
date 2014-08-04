@@ -121,9 +121,9 @@
                           <Component id="jTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="JPPhonePanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
@@ -144,7 +144,7 @@
                       <Component id="jSlider1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -317,7 +317,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane5" alignment="0" pref="372" max="32767" attributes="0"/>
+                  <Component id="jScrollPane5" alignment="0" pref="374" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -363,7 +363,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="372" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="374" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -406,7 +406,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="372" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" alignment="0" pref="374" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
