@@ -598,8 +598,15 @@ public class Setup extends javax.swing.JFrame {
         System.out.println("NOTE: Number is too short! Cannot use!");
         continue;
       }
-      if (!tempText.contains("@")) {
-        tempText += Email.getCarrierExtension(panel.getProvider());
+      String[] split = tempText.split(";");
+      tempText = "";
+      for (String split1 : split) {
+        split1 = split1.trim();
+        tempText += split1;
+        if (!split1.contains("@")) {
+          tempText += Email.getCarrierExtension(panel.getProvider());
+        }
+        tempText += ";";
       }
       //Validate tempText address?
       text += ";" + tempText;

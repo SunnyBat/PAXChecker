@@ -12,8 +12,8 @@ import javax.mail.internet.MimeMessage;
 public class Email {
 
   private static String host, port, username, password;
-  private static Properties props = System.getProperties();
   private static Session l_session = null;
+  private static final Properties props = System.getProperties();
   private static final List<EmailAddress> addressList = new ArrayList<>();
 
   /**
@@ -50,7 +50,7 @@ public class Email {
     } else {
       String extraInfo = null;
       try {
-        extraInfo = user.toLowerCase().substring(user.indexOf("::"));
+        extraInfo = user.toLowerCase().substring(user.indexOf("::") + 2);
       } catch (Exception e) {
       }
       if (extraInfo == null) {
@@ -59,8 +59,8 @@ public class Email {
         return;
       }
       setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
-      if (extraInfo.indexOf(":") != -1) {
-        setPort(extraInfo.substring(extraInfo.indexOf(":")));
+      if (extraInfo.contains(":")) {
+        setPort(extraInfo.substring(extraInfo.indexOf(":") + 1));
       }
       user = user.substring(0, user.indexOf("::"));
 //      System.out.println("ERROR: Yahoo or Google email required!");
@@ -210,9 +210,15 @@ public class Email {
     try {
       MimeMessage message = new MimeMessage(l_session);
       message.setFrom(new InternetAddress(getUsername()));
-      ListIterator<EmailAddress> lI = getAddressList().listIterator();
-      while (lI.hasNext()) {
-        message.addRecipient(Message.RecipientType.BCC, new InternetAddress(lI.next().getCompleteAddress()));
+      if (getAddressList().size() == 1) {
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(getAddressList().get(0).getCompleteAddress()));
+      } else {
+        ListIterator<EmailAddress> lI = getAddressList().listIterator();
+        while (lI.hasNext()) {
+          EmailAddress address = lI.next();
+          System.out.println("Address: " + address.getCompleteAddress());
+          message.addRecipient(Message.RecipientType.BCC, new InternetAddress(address.getCompleteAddress()));
+        }
       }
       message.setSubject(subject);
       message.setText(msg);
@@ -293,7 +299,7 @@ public class Email {
         return;
       } else if (!address.contains("@")) {
         System.out.println("NOTE: Address " + address + " does not contain ending! Adding AT&T ending...");
-        address += "@mms.att.net";
+        address += getCarrierExtension("AT&T");
       }
       System.out.println("Old Number: " + address);
       address = address.trim();
@@ -329,7 +335,6 @@ public class Email {
       System.out.println("EmailAddress is INVALID!");
       return;
     }
-    System.out.println("Adding EmailAddress " + add.getCompleteAddress());
     addressList.add(add);
   }
 
