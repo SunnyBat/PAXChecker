@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package paxchecker;
 
 import java.awt.Color;
@@ -14,7 +10,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.6.1.3.2";
+  public static final String VERSION = "1.6.1";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;

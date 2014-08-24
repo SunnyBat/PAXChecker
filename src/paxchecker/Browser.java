@@ -24,7 +24,7 @@ public class Browser {
   private static volatile String versionNotes;
   private static final String UDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String PATCH_NOTES_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-  private static final String SHOWCLIX_API_LINK_PRIME = "http://api.showclix.com/Seller/16886/events";
+  private static final String SHOWCLIX_API_LINK_PRIME = "http://api.showclix.com/Seller/16886/events"; // Also for PAX Dev
   private static final String SHOWCLIX_API_LINK_EAST = "http://api.showclix.com/Seller/17792/events";
   private static final String SHOWCLIX_API_LINK_SOUTH = "http://api.showclix.com/Seller/19042/events";
   private static final String SHOWCLIX_API_LINK_AUS = "http://api.showclix.com/Seller/15374/events";
@@ -36,7 +36,7 @@ public class Browser {
     try {
       updateURL = new URL(UDATE_LINK);
       patchNotesURL = new URL(PATCH_NOTES_LINK);
-    } catch (Exception e) {
+    } catch (MalformedURLException e) {
       System.out.println("Unable to make a new URL?");
       e.printStackTrace();
     }
@@ -82,7 +82,7 @@ public class Browser {
   }
 
   /**
-   * Returns the expo currently set. This generally adheres to the format of "PAX [expo]" or just "[expo]".
+   * Returns the expo currently set. This should adhere to the format of "PAX [expo]" or just "[expo]".
    *
    * @return The expo currently set
    * @see #setExpo(java.lang.String)

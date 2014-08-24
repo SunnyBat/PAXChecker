@@ -40,7 +40,12 @@ public class Email {
       props.put("mail.smtp.user", getUsername());
       return;
     }
-    if (!user.contains("@")) {
+    if (user.length() < 3) {
+      System.out.println("ERROR: Usernae is too short!");
+      username = "@yahoo.com";
+      props.put("mail.smtp.user", getUsername());
+      return;
+    } else if (!user.contains("@")) {
       user += "@yahoo.com";
       setHost("smtp.mail.yahoo.com");
     } else if (user.toLowerCase().contains("@gmail.com")) {
@@ -190,7 +195,7 @@ public class Email {
    * @return True if should send email, false if not.
    */
   public static boolean shouldSendEmail() {
-    return getUsername() != null && !getUsername().equals("@yahoo.com") && !addressList.isEmpty();
+    return getUsername() != null && !getUsername().equals("@yahoo.com") && !getAddressList().isEmpty();
   }
 
   /**

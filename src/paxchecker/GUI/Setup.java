@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package paxchecker.GUI;
 
 import paxchecker.*;
-import javax.swing.Timer;
 
 /**
  *
@@ -13,7 +8,6 @@ import javax.swing.Timer;
  */
 public class Setup extends javax.swing.JFrame {
 
-  public Timer myTimer;
   public java.util.ArrayList<ExtraPhonePanel> extraPhonePanelList = new java.util.ArrayList<>();
 
   /**
