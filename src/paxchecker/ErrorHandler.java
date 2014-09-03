@@ -91,6 +91,7 @@ public class ErrorHandler {
       message += "\n";
     }
     errorWindow.JTAError.setText(message);
+    errorWindow.JTAError.setCaretPosition(0);
     errorWindow.setVisible(true);
     errorWindowCount++;
     System.out.println(t.getMessage());

@@ -184,7 +184,11 @@ public class KeyboardHandler {
     newLine();
     typeString("Event link: " + link);
     newLine();
-    typeString("PAXChecker v" + PAXChecker.VERSION + " information can be found at " + PAXChecker.REDDIT_THREAD_LINK);
+    typeString("[PAXChecker v" + PAXChecker.VERSION + " information can be found here](" + PAXChecker.REDDIT_THREAD_LINK + ")");
+    try {
+      Thread.sleep(30000);
+    } catch (InterruptedException interruptedException) {
+    }
     submitLine(0);
   }
 
