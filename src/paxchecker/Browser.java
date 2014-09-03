@@ -129,7 +129,12 @@ public class Browser {
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
       if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink("Unable to connect to the PAX website!");
+        PAXChecker.status.setWebsiteLink("Unable to connect: " + lineText);
+      }
+      return false;
+    } else if (lineText.contains("class=\"soldOut\"")) {
+      if (PAXChecker.status != null) {
+          PAXChecker.status.setWebsiteLink("Looks like it is still sold out!");
       }
       return false;
     } else if (lineText.equals("NoFind")) {
@@ -162,7 +167,10 @@ public class Browser {
     String line;
     try {
       url = new URL(websiteLink + "/registration");
-      is = url.openStream();
+      //is = url.openStream();
+      HttpURLConnection httpCon1 = (HttpURLConnection) url.openConnection();
+      httpCon1.addRequestProperty("User-Agent","Mozilla/4.0");
+      is = httpCon1.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
         addDataUsed(line.length());
@@ -170,10 +178,14 @@ public class Browser {
         if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
           return line;
         }
+        else if(line.contains("class=\"soldOut")) {
+          return line;
+        }
       }
     } catch (UnknownHostException | MalformedURLException uhe) {
       return "NoConnection";
     } catch (IOException ioe) {
+      System.out.println(ioe.getMessage());
       return "IOException";
     } catch (Exception e) {
       ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
