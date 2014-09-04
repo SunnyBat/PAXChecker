@@ -129,7 +129,7 @@ public class Browser {
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
       if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink("Unable to connect to the PAX website!");
+        PAXChecker.status.setWebsiteLink("Unable to connect: " + lineText);
       }
       return false;
     } else if (lineText.equals("NoFind")) {
@@ -162,7 +162,10 @@ public class Browser {
     String line;
     try {
       url = new URL(websiteLink + "/registration");
-      is = url.openStream();
+      //is = url.openStream();
+      HttpURLConnection httpCon1 = (HttpURLConnection) url.openConnection();
+      httpCon1.addRequestProperty("User-Agent","Mozilla/4.0");
+      is = httpCon1.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
         addDataUsed(line.length());
