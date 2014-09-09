@@ -176,8 +176,8 @@ public class Setup extends javax.swing.JFrame {
     jScrollPane4 = new javax.swing.JScrollPane();
     jTextArea4 = new javax.swing.JTextArea();
     jPanel3 = new javax.swing.JPanel();
-    jScrollPane2 = new javax.swing.JScrollPane();
-    jTextArea2 = new javax.swing.JTextArea();
+    jScrollPane6 = new javax.swing.JScrollPane();
+    jTextPane2 = new javax.swing.JTextPane();
     jPanel5 = new javax.swing.JPanel();
     JCBSavePreferences = new javax.swing.JCheckBox();
     JCBSaveEmail = new javax.swing.JCheckBox();
@@ -411,23 +411,31 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
 
-    jTextArea2.setEditable(false);
-    jTextArea2.setColumns(20);
-    jTextArea2.setLineWrap(true);
-    jTextArea2.setRows(5);
-    jTextArea2.setText("->Program created by Sunny Bat -- Sunnybat@yahoo.com\n->Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.\n->To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.\n->Link to Github repository for source code:\nhttps://github.com/SunnyBat/PAXChecker\n\n---Libraries Used---\n->JavaMail 1.4.7\n->JAF 1.1.1");
-    jTextArea2.setWrapStyleWord(true);
-    jScrollPane2.setViewportView(jTextArea2);
+    jTextPane2.setBorder(null);
+    jTextPane2.setContentType("text/html"); // NOI18N
+    jTextPane2.setEditable(false);
+    jTextPane2.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
+    jTextPane2.setText("<html>\n    <body>\n        <em>If there is a horizontal scrollbar here, please let\n            <a href=\"https://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a> know!</em>\n\n        <h1>External Links</h1>\n        <ul>\n            <li>This program has been provided for free. If you have been charged for it, get your money back and contact me immediately!</li>\n            <li>The source code can be found <a href=\"https://www.github.com/SunnyBat/PAXChecker\">on GitHub</a>.</li>\n            <li>Program published on <a href=\"https://www.github.com/SunnyBat/PAXChecker\">/r/PAX</a> -- If you see it somewhere else, please let me know!</li>\n        </ul>\n\n        <h1>Credits</h1>\n        <ul>\n            <li>Program created by <a href=\"https://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a></li>\n            <li>Showclix API scanning code originally created by <a href=\"https://www.reddit.com/user/GrahamArthurBlair\">/u/GrahamArthurBlair</a></li>\n            <li>Reddit Gold guilders: You're all awesome. If you want me to put your name here, let me know!</li>\n            <li><a href=\"https://java.net/projects/javamail/pages/Home\">JavaMail 1.4.7</a> -- For sending emails</li>\n            <li><a href=\"https://code.google.com/p/json-simple/\">JSON.simple</a> -- For parsing Showclix API JSON responses</li>\n        </ul>\n\n        <h1>Contact Me</h1>\n        To contact me, please use one of the following methods:\n        <ul>\n            <li><a href=\"mailto:Sunnybat@yahoo.com\">Email me</a></li>\n            <li><a href=\"https://www.reddit.com/message/compose/?to=SunnyBat\">Message me on Reddit</a></li>\n            <li><a href=\"https://github.com/SunnyBat\">Message me on Github</a></li>\n        </ul>\n    </body>\n</html>");
+    jTextPane2.setToolTipText("");
+    jTextPane2.setCaretPosition(0);
+    jTextPane2.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+      public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {
+        if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {
+          Browser.openLinkInBrowser(e.getURL());
+        }
+      }
+    });
+    jScrollPane6.setViewportView(jTextPane2);
 
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
     jPanel3Layout.setHorizontalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -678,16 +686,16 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JPanel jPanel6;
   private javax.swing.JPasswordField jPasswordField1;
   private javax.swing.JScrollPane jScrollPane1;
-  private javax.swing.JScrollPane jScrollPane2;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JScrollPane jScrollPane5;
+  private javax.swing.JScrollPane jScrollPane6;
   private javax.swing.JSlider jSlider1;
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JTextArea jTextArea1;
-  private javax.swing.JTextArea jTextArea2;
   private javax.swing.JTextArea jTextArea4;
   private javax.swing.JTextField jTextField1;
   private javax.swing.JTextField jTextField2;
   private javax.swing.JTextPane jTextPane1;
+  private javax.swing.JTextPane jTextPane2;
   // End of variables declaration//GEN-END:variables
 }

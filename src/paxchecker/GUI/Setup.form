@@ -401,32 +401,36 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="411" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="411" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="360" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="360" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+            <Container class="javax.swing.JScrollPane" name="jScrollPane6">
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea2">
+                <Component class="javax.swing.JTextPane" name="jTextPane2">
                   <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                    <Property name="columns" type="int" value="20"/>
-                    <Property name="lineWrap" type="boolean" value="true"/>
-                    <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="-&gt;Program created by Sunny Bat -- Sunnybat@yahoo.com&#xa;-&gt;Credit to /u/GrahamArthurBlair for the Showclix website checker code -- it was basically copy+pasted into this program.&#xa;-&gt;To the awesome Guilder of Reddit Gold: You singlehandedly inspired me to update the program with Showclix monitoring and sound alerts.&#xa;-&gt;Link to Github repository for source code:&#xa;https://github.com/SunnyBat/PAXChecker&#xa;&#xa;---Libraries Used---&#xa;-&gt;JavaMail 1.4.7&#xa;-&gt;JAF 1.1.1"/>
-                    <Property name="wrapStyleWord" type="boolean" value="true"/>
+                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                      <Border info="null"/>
+                    </Property>
+                    <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;    &lt;body&gt;&#xa;        &lt;em&gt;If there is a horizontal scrollbar here, please let&#xa;            &lt;a href=&quot;https://www.reddit.com/user/SunnyBat&quot;&gt;/u/SunnyBat&lt;/a&gt; know!&lt;/em&gt;&#xa;&#xa;        &lt;h1&gt;External Links&lt;/h1&gt;&#xa;        &lt;ul&gt;&#xa;            &lt;li&gt;This program has been provided for free. If you have been charged for it, get your money back and contact me immediately!&lt;/li&gt;&#xa;            &lt;li&gt;The source code can be found &lt;a href=&quot;https://www.github.com/SunnyBat/PAXChecker&quot;&gt;on GitHub&lt;/a&gt;.&lt;/li&gt;&#xa;            &lt;li&gt;Program published on &lt;a href=&quot;https://www.github.com/SunnyBat/PAXChecker&quot;&gt;/r/PAX&lt;/a&gt; -- If you see it somewhere else, please let me know!&lt;/li&gt;&#xa;        &lt;/ul&gt;&#xa;&#xa;        &lt;h1&gt;Credits&lt;/h1&gt;&#xa;        &lt;ul&gt;&#xa;            &lt;li&gt;Program created by &lt;a href=&quot;https://www.reddit.com/user/SunnyBat&quot;&gt;/u/SunnyBat&lt;/a&gt;&lt;/li&gt;&#xa;            &lt;li&gt;Showclix API scanning code originally created by &lt;a href=&quot;https://www.reddit.com/user/GrahamArthurBlair&quot;&gt;/u/GrahamArthurBlair&lt;/a&gt;&lt;/li&gt;&#xa;            &lt;li&gt;Reddit Gold guilders: You&apos;re all awesome. If you want me to put your name here, let me know!&lt;/li&gt;&#xa;            &lt;li&gt;&lt;a href=&quot;https://java.net/projects/javamail/pages/Home&quot;&gt;JavaMail 1.4.7&lt;/a&gt; -- For sending emails&lt;/li&gt;&#xa;            &lt;li&gt;&lt;a href=&quot;https://code.google.com/p/json-simple/&quot;&gt;JSON.simple&lt;/a&gt; -- For parsing Showclix API JSON responses&lt;/li&gt;&#xa;        &lt;/ul&gt;&#xa;&#xa;        &lt;h1&gt;Contact Me&lt;/h1&gt;&#xa;        To contact me, please use one of the following methods:&#xa;        &lt;ul&gt;&#xa;            &lt;li&gt;&lt;a href=&quot;mailto:Sunnybat@yahoo.com&quot;&gt;Email me&lt;/a&gt;&lt;/li&gt;&#xa;            &lt;li&gt;&lt;a href=&quot;https://www.reddit.com/message/compose/?to=SunnyBat&quot;&gt;Message me on Reddit&lt;/a&gt;&lt;/li&gt;&#xa;            &lt;li&gt;&lt;a href=&quot;https://github.com/SunnyBat&quot;&gt;Message me on Github&lt;/a&gt;&lt;/li&gt;&#xa;        &lt;/ul&gt;&#xa;    &lt;/body&gt;&#xa;&lt;/html&gt;" preCode="jTextPane2.setEditable(false);&#xa;jTextPane2.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType(&quot;text/html&quot;));"/>
+                    <Property name="toolTipText" type="java.lang.String" value=""/>
+                    <Property name="caretPosition" type="int" value="0"/>
                   </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jTextPane2.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {&#xa;    public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {&#xa;        if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {&#xa;            Browser.openLinkInBrowser(e.getURL());&#xa;        }&#xa;    }&#xa;});"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
