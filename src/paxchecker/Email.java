@@ -121,6 +121,8 @@ public class Email {
       switch (ending) {
         case "mms.att.net":
           return "AT&T";
+        case "txt.att.net":
+          return "AT&T (Text)";
         case "vtext.com":
           return "Verizon";
         case "messaging.sprintpcs.com":
@@ -140,6 +142,8 @@ public class Email {
   public static String getCarrierExtension(String carrier) {
     switch (carrier) {
       case "AT&T":
+        return "@mms.att.net";
+      case "AT&T (Text)":
         return "@mms.att.net";
       case "Verizon":
         return "@vtext.com";

@@ -10,7 +10,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.6.3";
+  public static final String VERSION = "1.6.4";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh;
   private static volatile boolean forceRefresh;

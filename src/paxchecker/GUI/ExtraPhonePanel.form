@@ -57,13 +57,14 @@
     <Component class="javax.swing.JComboBox" name="jComboBox1">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="6">
+          <StringArray count="7">
             <StringItem index="0" value="AT&amp;T"/>
-            <StringItem index="1" value="Verizon"/>
-            <StringItem index="2" value="Sprint"/>
-            <StringItem index="3" value="T-Mobile"/>
-            <StringItem index="4" value="U.S. Cellular"/>
-            <StringItem index="5" value="[Other]"/>
+            <StringItem index="1" value="AT&amp;T (Text)"/>
+            <StringItem index="2" value="Verizon"/>
+            <StringItem index="3" value="Sprint"/>
+            <StringItem index="4" value="T-Mobile"/>
+            <StringItem index="5" value="U.S. Cellular"/>
+            <StringItem index="6" value="[Other]"/>
           </StringArray>
         </Property>
       </Properties>
