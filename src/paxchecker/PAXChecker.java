@@ -86,7 +86,7 @@ public class PAXChecker {
             System.out.println("Set refresh time to " + getRefreshTime());
             break;
           case "-autostart":
-            //autoStart = true;
+            autoStart = true;
             break;
         }
       }
