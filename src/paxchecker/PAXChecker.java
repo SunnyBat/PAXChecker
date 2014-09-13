@@ -10,9 +10,9 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.6.4";
+  public static final String VERSION = "1.6.5";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
-  private static volatile int secondsBetweenRefresh;
+  private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
@@ -31,15 +31,70 @@ public class PAXChecker {
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     boolean doUpdate = true;
+    boolean autoStart = false;
     if (args.length > 0) {
       System.out.println("Args!");
+      boolean checkPax = true;
+      boolean checkShowclix = true;
+      argsCycle:
       for (int a = 0; a < args.length; a++) {
         System.out.println("args[" + a + "] = " + args[a]);
-        if (args[a].equals("noupdate")) { // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
-          doUpdate = false;
-        } else if (args[a].equals("typelink")) {
-          shouldTypeLink = true;
+        switch (args[a].toLowerCase()) {
+          case "-noupdate":
+            // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
+            doUpdate = false;
+            break;
+          case "-typelink":
+            shouldTypeLink = true;
+            break;
+          case "-email":
+            Email.setUsername(args[a + 1]);
+            System.out.println("Username set to " + Email.getUsername());
+            break;
+          case "-password":
+            Email.setPassword(args[a + 1]);
+            System.out.println("Password set");
+            break;
+          case "-cellnum":
+            for (int b = a+1; b < args.length; b++) {
+              if (args[b].startsWith("-")) {
+                a = b - 1;
+                continue argsCycle;
+              }
+              System.out.println("Adding email address " + args[b]);
+              Email.addEmailAddress(args[b]);
+            }
+            break;
+          case "-expo":
+            Browser.setExpo(args[a + 1]);
+            System.out.println("Expo set to " + Browser.getExpo());
+            break;
+          case "-nopax":
+            System.out.println("Setting check PAX website to false");
+            checkPax = false;
+            break;
+          case "-noshowclix":
+            System.out.println("Setting check Showclix website to false");
+            checkShowclix = false;
+            break;
+          case "-alarm":
+            System.out.println("Alarm activated");
+            Audio.setPlayAlarm(true);
+            break;
+          case "-delay":
+            setRefreshTime(Integer.getInteger(args[a + 1], 15));
+            System.out.println("Set refresh time to " + getRefreshTime());
+            break;
+          case "-autostart":
+            //autoStart = true;
+            break;
         }
+      }
+      if (checkPax) Browser.enablePaxWebsiteChecking();
+      if (checkShowclix) Browser.enableShowclixWebsiteChecking();
+      if (autoStart && !Browser.isCheckingPaxWebsite() && !Browser.isCheckingShowclix()) {
+        System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
+        System.exit(0);
       }
     }
     Browser.init();
@@ -69,7 +124,11 @@ public class PAXChecker {
         return;
       }
     }
-    setup = new Setup();
+    if (autoStart) {
+      startCheckingWebsites();
+    } else {
+      setup = new Setup();
+    }
   }
 
   public static void startCheckingWebsites() {
@@ -298,7 +357,7 @@ public class PAXChecker {
       public void run() {
         try {
           String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-          ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "noupdate"); // path can have leading / on it, getAbsolutePath() removes them
+          ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "-noupdate"); // path can have leading / on it, getAbsolutePath() removes them
           Process p = pb.start();
         } catch (Exception e) {
           ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update. Program must be restarted manually. Sorry for the inconvenience. :(", null);
