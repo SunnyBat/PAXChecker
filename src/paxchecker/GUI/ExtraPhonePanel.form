@@ -58,8 +58,8 @@
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="7">
-            <StringItem index="0" value="AT&amp;T"/>
-            <StringItem index="1" value="AT&amp;T (Text)"/>
+            <StringItem index="0" value="AT&amp;T (MMS)"/>
+            <StringItem index="1" value="AT&amp;T (SMS)"/>
             <StringItem index="2" value="Verizon"/>
             <StringItem index="3" value="Sprint"/>
             <StringItem index="4" value="T-Mobile"/>

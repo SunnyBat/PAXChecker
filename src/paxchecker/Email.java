@@ -120,9 +120,9 @@ public class Email {
       }
       switch (ending) {
         case "mms.att.net":
-          return "AT&T";
+          return "AT&T (MMS)";
         case "txt.att.net":
-          return "AT&T (Text)";
+          return "AT&T (SMS)";
         case "vtext.com":
           return "Verizon";
         case "messaging.sprintpcs.com":
@@ -135,16 +135,16 @@ public class Email {
           return "[Other]";
       }
     } catch (Exception e) {
-      return "AT&T";
+      return "AT&T (MMS)";
     }
   }
 
   public static String getCarrierExtension(String carrier) {
     switch (carrier) {
-      case "AT&T":
+      case "AT&T (MMS)":
         return "@mms.att.net";
-      case "AT&T (Text)":
-        return "@mms.att.net";
+      case "AT&T (SMS)":
+        return "@txt.att.net";
       case "Verizon":
         return "@vtext.com";
       case "Sprint":
@@ -155,7 +155,7 @@ public class Email {
         return "@email.uscc.net";
       default:
         System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
-        return getCarrierExtension("AT&T");
+        return getCarrierExtension("AT&T (MMS)");
     }
   }
 
@@ -308,7 +308,7 @@ public class Email {
         return;
       } else if (!address.contains("@")) {
         System.out.println("NOTE: Address " + address + " does not contain ending! Adding AT&T ending...");
-        address += getCarrierExtension("AT&T");
+        address += getCarrierExtension("AT&T (MMS)");
       }
       System.out.println("Old Number: " + address);
       address = address.trim();

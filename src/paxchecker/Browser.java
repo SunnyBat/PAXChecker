@@ -79,6 +79,7 @@ public class Browser {
   public static void setExpo(String e) {
     Expo = e;
     setShowclixID(getLatestShowclixID(e));
+    setWebsiteLink(getWebsiteLink(getExpo()));
   }
 
   /**
@@ -665,7 +666,6 @@ public class Browser {
         ErrorHandler.fatalError();
       }
       System.out.println("Download Complete!");
-      PAXChecker.startNewProgramInstance();
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("ERROR updating program!");

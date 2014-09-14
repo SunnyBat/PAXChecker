@@ -2,6 +2,7 @@ package paxchecker;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.Scanner;
 import paxchecker.GUI.*;
 
 /**
@@ -10,13 +11,14 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.6.5";
+  public static final String VERSION = "1.6.6";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
   private static boolean shouldTypeLink;
+  private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
   protected static Setup setup;
   protected static Status status;
@@ -32,6 +34,7 @@ public class PAXChecker {
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     boolean doUpdate = true;
     boolean autoStart = false;
+    boolean commandLine = false;
     if (args.length > 0) {
       System.out.println("Args!");
       boolean checkPax = true;
@@ -56,7 +59,7 @@ public class PAXChecker {
             System.out.println("Password set");
             break;
           case "-cellnum":
-            for (int b = a+1; b < args.length; b++) {
+            for (int b = a + 1; b < args.length; b++) {
               if (args[b].startsWith("-")) {
                 a = b - 1;
                 continue argsCycle;
@@ -88,10 +91,22 @@ public class PAXChecker {
           case "-autostart":
             autoStart = true;
             break;
+          case "-cli":
+            commandLine = true;
+            break;
+          default:
+            if (args[a].startsWith("-")) {
+              System.out.println("Unknown argument: " + args[a]);
+            }
+            break;
         }
       }
-      if (checkPax) Browser.enablePaxWebsiteChecking();
-      if (checkShowclix) Browser.enableShowclixWebsiteChecking();
+      if (checkPax) {
+        Browser.enablePaxWebsiteChecking();
+      }
+      if (checkShowclix) {
+        Browser.enableShowclixWebsiteChecking();
+      }
       if (autoStart && !Browser.isCheckingPaxWebsite() && !Browser.isCheckingShowclix()) {
         System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
         System.exit(0);
@@ -102,6 +117,26 @@ public class PAXChecker {
     KeyboardHandler.init();
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
+    if (commandLine) {
+      if (doUpdate) {
+        try {
+          System.out.println("Checking for updates...");
+          if (Browser.updateAvailable()) {
+            System.out.println("Update found, downloading update...");
+            Browser.updateProgram();
+            startNewProgramInstance(args);
+            return;
+          }
+        } catch (Exception e) {
+          ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
+          ErrorHandler.fatalError();
+          return;
+        }
+      }
+      commandLineSettingsInput();
+      startCommandLineWebsiteChecking();
+      return;
+    }
     if (doUpdate) {
       try {
         System.out.println("Checking for updates...");
@@ -113,6 +148,7 @@ public class PAXChecker {
           if (updateProgram) {
             update.setStatusLabelText("Downloading update...");
             Browser.updateProgram();
+            PAXChecker.startNewProgramInstance();
             update.dispose();
             return;
           }
@@ -182,6 +218,178 @@ public class PAXChecker {
             status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
           }
         } while (status.isDisplayable());
+        System.out.println("Finished!");
+      }
+    });
+  }
+
+  public static void commandLineSettingsInput() {
+    if (Email.getUsername() == null) {
+      System.out.print("Username: ");
+      try {
+        Email.setUsername(myScanner.next());
+        System.out.println("Password: ");
+        Email.setPassword(myScanner.next());
+      } catch (Exception e) {}
+    }
+    if (Email.getAddressList().isEmpty()) {
+      System.out.print("Cell Number: ");
+      try {
+        Email.addEmailAddress(myScanner.next());
+        System.out.println();
+      } catch (Exception e) {}
+    }
+    if (Browser.isCheckingPaxWebsite()) {
+      System.out.print("Check PAX Website (Y/N): ");
+      try {
+        if (!myScanner.next().toLowerCase().startsWith("n")) {
+          Browser.enablePaxWebsiteChecking();
+        }
+        System.out.println();
+      } catch (Exception e) {}
+    }
+    if (Browser.isCheckingPaxWebsite()) {
+      System.out.print("Check Showclix Website (Y/N): ");
+      try {
+        if (!myScanner.next().toLowerCase().startsWith("n")) {
+          Browser.enableShowclixWebsiteChecking();
+        }
+        System.out.println();
+      } catch (Exception e) {}
+    }
+    if (getRefreshTime() == 10) {
+      System.out.print("Refresh Time (seconds, no input limit at the moment): ");
+      try {
+        setRefreshTime(Integer.parseInt(myScanner.next(), 10));
+        System.out.println();
+      } catch (Exception e) {}
+    }
+    if (!Browser.isCheckingPaxWebsite()) {
+      System.out.print("Play Alarm (Y/N): ");
+      try {
+        if (!myScanner.next().toLowerCase().startsWith("n")) {
+          Audio.setPlayAlarm(true);
+        }
+        System.out.println();
+      } catch (Exception e) {}
+    }
+    if (Browser.getExpo() == null) {
+      System.out.print("Expo: ");
+      try {
+        String input = myScanner.next();
+        switch (input.toLowerCase()) {
+          case "prime":
+          case "paxprime":
+          case "pax prime":
+            Browser.setExpo("PAX Prime");
+          case "east":
+          case "paxeast":
+          case "pax east":
+            Browser.setExpo("PAX East");
+          case "south":
+          case "paxsouth":
+          case "pax south":
+            Browser.setExpo("PAX South");
+          case "aus":
+          case "australia":
+          case "paxaus":
+          case "paxaustralia":
+          case "pax aus":
+          case "pax australia":
+            Browser.setExpo("PAX Aus");
+          default:
+            System.out.println("Invalid expo! Setting to Prime...");
+            Browser.setExpo("PAX Prime");
+        }
+        System.out.println();
+      } catch (Exception e) {}
+    }
+  }
+
+  public static void startCommandLineWebsiteChecking() {
+    continueProgram(new Runnable() {
+      @Override
+      public void run() {
+        String input;
+        while (true) {
+          try {
+            input = myScanner.next();
+          } catch (Exception e) {
+            //e.printStackTrace();
+            System.out.println("Error parsing input -- please try again.");
+            continue;
+          }
+          switch (input.toLowerCase()) {
+            case "exit":
+              System.exit(0);
+              break;
+            case "test text":
+              sendBackgroundTestEmail();
+              break;
+            case "test alaram":
+              Audio.playAlarm();
+              break;
+            case "refresh":
+            case "force check":
+            case "check":
+              forceRefresh = true;
+              break;
+            default:
+              System.out.println("Unknown command: " + input.toLowerCase());
+              System.out.println("Commands:");
+              System.out.println("exit        - Exit the program");
+              System.out.println("test text   - Send a test text");
+              System.out.println("test alarm  - Play the alarm (if enabled)");
+              System.out.println("refresh     - Force check");
+              System.out.println("check       - Force check");
+              System.out.println("force check - Force check");
+              System.out.println("Commands are NOT case sensitive.");
+          }
+        }
+      }
+    });
+    continueProgram(new Runnable() {
+      @Override
+      public void run() {
+        if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
+          SettingsHandler.saveLastEvent(Browser.getShowclixLink());
+        }
+        //System.gc();
+        long startMS;
+        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+        do {
+          //status.setLastCheckedText("Checking for updates...");
+          startMS = System.currentTimeMillis();
+          if (Browser.isPAXWebsiteUpdated()) {
+            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
+            System.out.println("LINK FOUND: " + link);
+            //Browser.openLinkInBrowser(link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
+            Audio.playAlarm();
+            break;
+          }
+          if (Browser.isShowclixUpdated()) {
+            final String link = Browser.getShowclixLink();
+            System.out.println("LINK FOUND: " + link);
+            //Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
+            Audio.playAlarm();
+            break;
+          }
+          //status.setDataUsageText(Browser.getDataUsedMB());
+          System.out.println("Data used: " + Browser.getDataUsedMB() + "MB");
+          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+            if (forceRefresh) {
+              forceRefresh = false;
+              break;
+            }
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException interruptedException) {
+            }
+            //status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+          }
+        } while (true); // Change later
         System.out.println("Finished!");
       }
     });
@@ -272,10 +480,20 @@ public class PAXChecker {
     }
   }
 
-  public static void startNewProgramInstance() {
+  public static void startNewProgramInstance(String... args) {
     try {
+      String[] nArgs;
       String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-      ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath()); // path can have leading / on it, getAbsolutePath() removes them
+      if (args != null && args.length > 0) {
+        nArgs = new String[args.length + 3];
+        System.arraycopy(args, 0, nArgs, 3, args.length);
+      } else {
+        nArgs = new String[3];
+      }
+      nArgs[0] = System.getProperty("java.home") + "\\bin\\javaw.exe";
+      nArgs[1] = "-jar";
+      nArgs[2] = new File(path).getAbsolutePath();
+      ProcessBuilder pb = new ProcessBuilder(nArgs); // path can have leading / on it, getAbsolutePath() removes them
       Process p = pb.start();
     } catch (Exception e) {
       ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
