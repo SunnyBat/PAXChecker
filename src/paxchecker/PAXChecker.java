@@ -118,14 +118,16 @@ public class PAXChecker {
     prefetchIconsInBackground();
     loadPatchNotesInBackground();
     if (commandLine) {
+      ErrorHandler.setCommandLine(true);
       if (doUpdate) {
         try {
           System.out.println("Checking for updates...");
           if (Browser.updateAvailable()) {
             System.out.println("Update found, downloading update...");
             Browser.updateProgram();
+            System.out.println("Update finished, restarting program...");
             startNewProgramInstance(args);
-            return;
+            System.exit(0);
           }
         } catch (Exception e) {
           ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
@@ -150,7 +152,7 @@ public class PAXChecker {
             Browser.updateProgram();
             PAXChecker.startNewProgramInstance();
             update.dispose();
-            return;
+            System.exit(0);
           }
           update.dispose();
         }
@@ -225,7 +227,7 @@ public class PAXChecker {
 
   public static void commandLineSettingsInput() {
     if (Email.getUsername() == null) {
-      System.out.print("Username: ");
+      System.out.print("Email: ");
       try {
         Email.setUsername(myScanner.next());
         System.out.println("Password: ");
