@@ -72,7 +72,6 @@ public class Email {
           host = extraInfo;
         }
         setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
-        props.put("mail.smtp.ssl.trust", extraInfo.substring(0, extraInfo.indexOf(":")));
       } catch (Exception e) {
         System.out.println("ERROR parsing host -- no semicolon found!");
         ErrorHandler.showErrorWindow("ERROR Using Custom Host", "Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!", e);
@@ -97,6 +96,7 @@ public class Email {
 
   public static void setHost(String h) {
     host = h;
+    props.put("mail.smtp.ssl.trust", h);
   }
 
   public static void setPort(String p) {
@@ -181,8 +181,6 @@ public class Email {
     props.put("mail.smtp.starttls.enable", "true");
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.port", port);
-    props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-    props.put("mail.smtp.ssl.trust", "smtp.mail.yahoo.com");
   }
 
   /**
