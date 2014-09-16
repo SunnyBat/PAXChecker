@@ -15,6 +15,7 @@ public class Browser {
   private static boolean checkPAXWebsite;
   private static boolean checkShowclix;
   private static int lastShowclixEventID = 3852445;
+  private static volatile int updateLevel;
   private static long updateSize;
   private static long dataUsed;
   private static String Expo;
@@ -165,7 +166,7 @@ public class Browser {
       url = new URL(websiteLink + "/registration");
       //is = url.openStream();
       HttpURLConnection httpCon1 = (HttpURLConnection) url.openConnection();
-      httpCon1.addRequestProperty("User-Agent","Mozilla/4.0");
+      httpCon1.addRequestProperty("User-Agent", "Mozilla/4.0");
       is = httpCon1.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
@@ -537,9 +538,13 @@ public class Browser {
       String line;
       String lineSeparator = System.getProperty("line.separator", "\n");
       String allText = "";
+      boolean versionFound = false;
       while ((line = myReader.readLine()) != null) {
         addDataUsed(line.length());
         line = line.trim();
+        if (line.contains("~~~" + PAXChecker.VERSION + "~~~")) {
+          versionFound = true;
+        }
         if (line.startsWith("TOKEN:")) {
           try {
             String d = line.substring(6);
@@ -547,11 +552,20 @@ public class Browser {
               String load = d.substring(14);
               System.out.println("Load = " + load);
               setShowclixID(Integer.parseInt(load));
-            } //else if (d.startsWith("")) {
-//              String load = d.substring(0);
-//              System.out.println("Load = " + load);
-//              setShowclixID(Integer.parseInt(load));
-//            }
+            } else if (d.startsWith("UPDATETYPE:")) {
+              if (!versionFound) {
+                String load = d.substring(11);
+                if (load.equals("BETA")) {
+                  setUpdateLevel(1);
+                } else if (load.equals("UPDATE")) {
+                  setUpdateLevel(2);
+                } else if (load.equals("MAJORUPDATE")) {
+                  setUpdateLevel(3);
+                }
+              }
+            } else {
+              System.out.println("Unknown token: " + d);
+            }
           } catch (NumberFormatException numberFormatException) {
             System.out.println("Unable to set token: " + line);
           }
@@ -560,6 +574,9 @@ public class Browser {
         }
       }
       versionNotes = allText.trim();
+      if (PAXChecker.update != null) {
+        PAXChecker.update.setYesButtonText(getUpdateLevel());
+      }
     } catch (Exception e) {
       System.out.println("Unable to load version notes!");
     } finally {
@@ -580,6 +597,28 @@ public class Browser {
    */
   public static long getUpdateSize() {
     return updateSize;
+  }
+
+  /**
+   * Sets the level of the update. Note that this can only increase the level -- attempting to set the update level lower will have no effect.<br>
+   * Level 0 = Unknown (should be treated the same as Level 2 in program)<br>
+   * Level 1 = BETA<br>
+   * Level 2 = Update<br>
+   * Level 3 = Major Update
+   *
+   * @param level The level to set the update to
+   */
+  public static void setUpdateLevel(int level) {
+    if (updateLevel < level) {
+      updateLevel = level;
+      if (PAXChecker.update != null) {
+        PAXChecker.update.setYesButtonText(updateLevel);
+      }
+    }
+  }
+
+  public static int getUpdateLevel() {
+    return updateLevel;
   }
 
   /**

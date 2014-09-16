@@ -459,7 +459,6 @@
                                   <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveProvider" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSavePlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -482,8 +481,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSaveCellnum" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSaveProvider" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="JCBSaveCheckPax" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
@@ -491,9 +488,9 @@
                       <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="109" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -521,11 +518,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSaveCellnumActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveProvider">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Provider"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBSaveRefreshTime">
               <Properties>

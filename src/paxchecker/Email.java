@@ -166,6 +166,7 @@ public class Email {
     props.put("mail.smtp.starttls.enable", "true");
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.port", port);
+    props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
   }
 
   /**

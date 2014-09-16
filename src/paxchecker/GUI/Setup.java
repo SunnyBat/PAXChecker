@@ -69,7 +69,6 @@ public class Setup extends javax.swing.JFrame {
       JCBSaveCheckShowclix.setSelected(SettingsHandler.getSaveShowclix());
       JCBSaveEvent.setSelected(SettingsHandler.getSaveEvent());
       JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
-      JCBSaveProvider.setSelected(SettingsHandler.getSaveProvider());
       JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
       JCBSaveEmail.setSelected(SettingsHandler.getSaveEmail());
     } else {
@@ -78,7 +77,6 @@ public class Setup extends javax.swing.JFrame {
       JCBSaveCheckShowclix.setEnabled(false);
       JCBSaveEvent.setEnabled(false);
       JCBSavePlayAlarm.setEnabled(false);
-      JCBSaveProvider.setEnabled(false);
       JCBSaveRefreshTime.setEnabled(false);
       JCBSaveEmail.setEnabled(false);
     }
@@ -184,7 +182,6 @@ public class Setup extends javax.swing.JFrame {
     JCBSavePreferences = new javax.swing.JCheckBox();
     JCBSaveEmail = new javax.swing.JCheckBox();
     JCBSaveCellnum = new javax.swing.JCheckBox();
-    JCBSaveProvider = new javax.swing.JCheckBox();
     JCBSaveRefreshTime = new javax.swing.JCheckBox();
     JCBSaveCheckPax = new javax.swing.JCheckBox();
     JCBSaveCheckShowclix = new javax.swing.JCheckBox();
@@ -458,8 +455,6 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    JCBSaveProvider.setText("Save Provider");
-
     JCBSaveRefreshTime.setText("Save Refresh Time");
 
     JCBSaveCheckPax.setText("Save PAX Checking");
@@ -492,7 +487,6 @@ public class Setup extends javax.swing.JFrame {
               .addComponent(JCBSavePreferences)
               .addComponent(JCBSaveEmail)
               .addComponent(JCBSaveCellnum)
-              .addComponent(JCBSaveProvider)
               .addComponent(JCBSaveCheckPax)
               .addComponent(JCBSaveCheckShowclix)
               .addComponent(JCBSavePlayAlarm)
@@ -510,8 +504,6 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSaveCellnum)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBSaveProvider)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addComponent(JCBSaveCheckPax)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSaveCheckShowclix)
@@ -519,9 +511,9 @@ public class Setup extends javax.swing.JFrame {
         .addComponent(JCBSavePlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSaveRefreshTime)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(JCBSaveEvent)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveEvent)
+        .addGap(31, 31, 31)
         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
         .addContainerGap())
     );
@@ -625,7 +617,6 @@ public class Setup extends javax.swing.JFrame {
       SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
       SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
       SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
-      SettingsHandler.setSaveProvider(JCBSaveProvider.isSelected());
       SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
       SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
     }
@@ -646,7 +637,6 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveEmail.setEnabled(selected);
     JCBSaveEvent.setEnabled(selected);
     JCBSavePlayAlarm.setEnabled(selected);
-    JCBSaveProvider.setEnabled(selected);
     JCBSaveRefreshTime.setEnabled(selected);
   }//GEN-LAST:event_JCBSavePreferencesActionPerformed
 
@@ -663,7 +653,6 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSaveEvent;
   private javax.swing.JCheckBox JCBSavePlayAlarm;
   private javax.swing.JCheckBox JCBSavePreferences;
-  private javax.swing.JCheckBox JCBSaveProvider;
   private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JPanel JPPhonePanel;
   private javax.swing.JButton jButton1;

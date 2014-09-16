@@ -17,10 +17,9 @@ public class SettingsHandler {
   private static boolean saveEvent;
   private static boolean saveEmail;
   private static boolean saveCellnum;
-  private static boolean saveProvider;
   private static String lastShowclixLink;
 
-  public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum, boolean provider) {
+  public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum) {
     setSaveRefreshTime(refreshTime);
     setSaveShowclix(showclix);
     setSavePax(pax);
@@ -28,7 +27,6 @@ public class SettingsHandler {
     setSaveEvent(event);
     setSaveEmail(email);
     setSaveCellnum(cellnum);
-    setSaveProvider(provider);
   }
 
   /**
@@ -69,7 +67,7 @@ public class SettingsHandler {
    * @param expo The Expo being checked for. Note it should be in "PAX XXXX" format.
    * @param provider The provider being used.
    */
-  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, String provider) {
+  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo) {
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
@@ -83,11 +81,9 @@ public class SettingsHandler {
       saveCheckShowclix(checkShowclix);
       savePlayAlarm(playAlarm);
       saveEvent(expo == null ? "" : expo);
-      saveProvider(provider == null ? "" : provider);
-      System.out.println("Save provider = " + provider);
       saveCellNum();
       saveEmail();
-      System.out.println("Pax = " + checkPax + ", Showclix = " + checkShowclix + ", playAlarm = " + playAlarm + ", Expo = " + expo + ", Provider = " + provider);
+      System.out.println("Pax = " + checkPax + ", Showclix = " + checkShowclix + ", playAlarm = " + playAlarm + ", Expo = " + expo);
       myPrefs.flush();
     } catch (BackingStoreException bSE) {
       System.out.println("Unable to save settings!");
@@ -166,16 +162,6 @@ public class SettingsHandler {
   }
 
   /**
-   * Sets whether or not to save the cell provider used. Note that you still must commit the changes using
-   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
-   *
-   * @param save True to save refresh time, false to not
-   */
-  public static void setSaveProvider(boolean save) {
-    saveProvider = save;
-  }
-
-  /**
    * Saves the refresh time to the Preferences.
    *
    * @param time The time (in seconds) between refreshes
@@ -237,19 +223,6 @@ public class SettingsHandler {
       myPrefs.put(PREFTYPES.PAXCHECK_EVENT.name(), expo);
     } else {
       myPrefs.remove(PREFTYPES.PAXCHECK_EVENT.name());
-    }
-  }
-
-  /**
-   * Saves the Cell Provider option to the Preferences.
-   *
-   * @param provider The Cell Provider last chosen
-   */
-  private static void saveProvider(String provider) {
-    if (saveProvider) {
-      myPrefs.put(PREFTYPES.PAXCHECK_PROVIDER.name(), provider);
-    } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_PROVIDER.name());
     }
   }
 
@@ -520,7 +493,7 @@ public class SettingsHandler {
   public static void setSavePrefs(boolean save) {
     myPrefs.putBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), save);
     if (!save) {
-      setSaveAll(false, false, false, false, false, false, false, false);
+      setSaveAll(false, false, false, false, false, false, false);
     }
   }
 }
