@@ -189,6 +189,7 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveEvent = new javax.swing.JCheckBox();
     jScrollPane1 = new javax.swing.JScrollPane();
     jTextArea1 = new javax.swing.JTextArea();
+    jCheckBox4 = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -473,6 +474,9 @@ public class Setup extends javax.swing.JFrame {
     jTextArea1.setWrapStyleWord(true);
     jScrollPane1.setViewportView(jTextArea1);
 
+    jCheckBox4.setText("Use BETA Versions");
+    jCheckBox4.setToolTipText("<html>\n(This option currently does nothing)<br>\nBETA versions will most likely<br>\ninclude features that could, at any<br>\npoint in time, break the program<br>\nor parts of it. Use at your own risk.\n</html>");
+
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
     jPanel5Layout.setHorizontalGroup(
@@ -484,21 +488,26 @@ public class Setup extends javax.swing.JFrame {
           .addGroup(jPanel5Layout.createSequentialGroup()
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(JCBSaveEvent)
-              .addComponent(JCBSavePreferences)
               .addComponent(JCBSaveEmail)
               .addComponent(JCBSaveCellnum)
               .addComponent(JCBSaveCheckPax)
               .addComponent(JCBSaveCheckShowclix)
               .addComponent(JCBSavePlayAlarm)
               .addComponent(JCBSaveRefreshTime))
-            .addGap(0, 0, Short.MAX_VALUE)))
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addGroup(jPanel5Layout.createSequentialGroup()
+            .addComponent(JCBSavePreferences)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jCheckBox4)))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
       jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(JCBSavePreferences)
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBSavePreferences)
+          .addComponent(jCheckBox4))
         .addGap(18, 18, 18)
         .addComponent(JCBSaveEmail)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -660,6 +669,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox2;
   private javax.swing.JCheckBox jCheckBox3;
+  private javax.swing.JCheckBox jCheckBox4;
   private javax.swing.JComboBox jComboBox1;
   private javax.swing.JComboBox jComboBox2;
   private javax.swing.JLabel jLabel1;

@@ -63,9 +63,24 @@ public class Email {
         username = "@yahoo.com";
         return;
       }
-      setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
+      String host;
+      try {
+        if (extraInfo.contains(":")) {
+          host = extraInfo.substring(0, extraInfo.indexOf(":"));
+          setPort(extraInfo.substring(extraInfo.indexOf(":") + 1));
+        } else {
+          host = extraInfo;
+        }
+        setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
+        props.put("mail.smtp.ssl.trust", extraInfo.substring(0, extraInfo.indexOf(":")));
+      } catch (Exception e) {
+        System.out.println("ERROR parsing host -- no semicolon found!");
+        ErrorHandler.showErrorWindow("ERROR Using Custom Host", "Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!", e);
+        username = "@yahoo.com";
+        props.put("mail.smtp.user", getUsername());
+        return;
+      }
       if (extraInfo.contains(":")) {
-        setPort(extraInfo.substring(extraInfo.indexOf(":") + 1));
       }
       user = user.substring(0, user.indexOf("::"));
 //      System.out.println("ERROR: Yahoo or Google email required!");
@@ -167,6 +182,7 @@ public class Email {
     props.put("mail.smtp.auth", "true");
     props.put("mail.smtp.port", port);
     props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+    props.put("mail.smtp.ssl.trust", "smtp.mail.yahoo.com");
   }
 
   /**

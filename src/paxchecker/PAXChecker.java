@@ -11,7 +11,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.0";
+  public static final String VERSION = "1.7.1";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
@@ -282,22 +282,17 @@ public class PAXChecker {
         switch (input.toLowerCase()) {
           case "prime":
           case "paxprime":
-          case "pax prime":
             Browser.setExpo("PAX Prime");
           case "east":
           case "paxeast":
-          case "pax east":
             Browser.setExpo("PAX East");
           case "south":
           case "paxsouth":
-          case "pax south":
             Browser.setExpo("PAX South");
           case "aus":
           case "australia":
           case "paxaus":
           case "paxaustralia":
-          case "pax aus":
-          case "pax australia":
             Browser.setExpo("PAX Aus");
           default:
             System.out.println("Invalid expo! Setting to Prime...");
@@ -325,14 +320,13 @@ public class PAXChecker {
             case "exit":
               System.exit(0);
               break;
-            case "test text":
+            case "testtext":
               sendBackgroundTestEmail();
               break;
-            case "test alaram":
+            case "testalarm":
               Audio.playAlarm();
               break;
             case "refresh":
-            case "force check":
             case "check":
               forceRefresh = true;
               break;
@@ -340,11 +334,10 @@ public class PAXChecker {
               System.out.println("Unknown command: " + input.toLowerCase());
               System.out.println("Commands:");
               System.out.println("exit        - Exit the program");
-              System.out.println("test text   - Send a test text");
-              System.out.println("test alarm  - Play the alarm (if enabled)");
+              System.out.println("testtext    - Send a test text");
+              System.out.println("testalarm   - Play the alarm (if enabled)");
               System.out.println("refresh     - Force check");
               System.out.println("check       - Force check");
-              System.out.println("force check - Force check");
               System.out.println("Commands are NOT case sensitive.");
           }
         }
