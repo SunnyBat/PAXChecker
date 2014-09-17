@@ -228,10 +228,12 @@ public class Email {
    */
   public static boolean sendMessage(String subject, String msg) {
     if (!shouldSendEmail()) {
+      System.out.println("Unable to send email: Program not properly configured.");
       return false;
     }
     createSession();
     try {
+      System.out.println("Initializing message...");
       MimeMessage message = new MimeMessage(l_session);
       message.setFrom(new InternetAddress(getUsername()));
       if (getAddressList().size() == 1) {
@@ -246,11 +248,13 @@ public class Email {
       }
       message.setSubject(subject);
       message.setText(msg);
+      System.out.println("Message created. Logging in...");
       Transport transport = l_session.getTransport("smtp");
       transport.connect(host, getUsername(), password);
+      System.out.println("Logged in. Sending message...");
       transport.sendMessage(message, message.getAllRecipients());
+      System.out.println("Message Sent!");
       transport.close();
-      System.out.println("Message Sent");
     } catch (MessagingException mex) {
       mex.printStackTrace();
       ErrorHandler.showErrorWindow("ERROR", "The message was unable to be sent.", mex);

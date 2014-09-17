@@ -127,16 +127,22 @@ public class Browser {
     if (lineText == null) {
       if (PAXChecker.status != null) {
         PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX website!");
+      } else {
+        System.out.println("ERROR connecting to the PAX website!");
       }
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
       if (PAXChecker.status != null) {
         PAXChecker.status.setWebsiteLink("Unable to connect: " + lineText);
+      } else {
+        System.out.println("Unable to connect: " + lineText);
       }
       return false;
     } else if (lineText.equals("NoFind")) {
       if (PAXChecker.status != null) {
         PAXChecker.status.setWebsiteLink("Unable to find the Register Online button!");
+      } else {
+        System.out.println("Unable to find the Register Online button!");
       }
       return false;
     } else if (!lineText.contains("\"" + websiteLink + "\"")) {
@@ -145,6 +151,8 @@ public class Browser {
     } else {
       if (PAXChecker.status != null) {
         PAXChecker.status.setWebsiteLink(parseHRef(lineText));
+      } else {
+        System.out.println("");
       }
       return false;
     }
@@ -358,8 +366,8 @@ public class Browser {
       int maxId = 0;
       for (String s : (Iterable<String>) obj.keySet()) {
         maxId = Math.max(maxId, Integer.parseInt((String) s));
-        System.out.println("ID = " + Integer.parseInt((String) s));
       }
+      System.out.println("Max ID = " + maxId);
       return maxId;
     } catch (Exception e) {
       e.printStackTrace();
