@@ -11,7 +11,7 @@ import javax.mail.internet.MimeMessage;
  */
 public class Email {
 
-  private static String host, port, username, password;
+  private static String password;
   private static Session l_session = null;
   private static final Properties props = System.getProperties();
   private static final List<EmailAddress> addressList = new ArrayList<>();
@@ -20,7 +20,6 @@ public class Email {
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
    */
   public static void init() {
-    setPort("587");
     emailSettings();
   }
 
@@ -32,75 +31,100 @@ public class Email {
    * This also (optionall) parses the site's SMTP port after the SMTP server address and a colon.<br>
    * Example: User&#64;site.com::site.smtp.server:123
    *
-   * @param user The username to set
+   * @param username The username to set
    */
-  public static void setUsername(String user) {
-    if (user == null) {
-      username = "@yahoo.com";
-      props.put("mail.smtp.user", getUsername());
+  public static void setUsername(String username) {
+    if (username == null) {
+      props.put("mail.smtp.user", "@yahoo.com");
       return;
     }
-    if (user.length() < 3) {
+    if (username.length() < 3) {
       System.out.println("ERROR: Usernae is too short!");
-      username = "@yahoo.com";
-      props.put("mail.smtp.user", getUsername());
+      props.put("mail.smtp.user", "@yahoo.com");
       return;
-    } else if (!user.contains("@")) {
-      user += "@yahoo.com";
+    } else if (!username.contains("@")) {
+      username += "@yahoo.com";
       setHost("smtp.mail.yahoo.com");
-    } else if (user.toLowerCase().contains("@gmail.com")) {
+    } else if (username.toLowerCase().contains("@gmail.com")) {
       setHost("smtp.gmail.com");
-    } else if (user.toLowerCase().contains("@yahoo.com")) {
+    } else if (username.toLowerCase().contains("@yahoo.com")) {
       setHost("smtp.mail.yahoo.com");
     } else {
       String extraInfo = null;
       try {
-        extraInfo = user.toLowerCase().substring(user.indexOf("::") + 2);
+        extraInfo = username.toLowerCase().substring(username.indexOf("::") + 2);
+        System.out.println("extraInfo: " + extraInfo);
       } catch (Exception e) {
+        System.out.println("Error parsing extra info in email.");
       }
       if (extraInfo == null) {
         ErrorHandler.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
-        username = "@yahoo.com";
+        props.put("mail.smtp.user", "@yahoo.com");
         return;
       }
-      String host;
+      String tempHost;
       try {
         if (extraInfo.contains(":")) {
-          host = extraInfo.substring(0, extraInfo.indexOf(":"));
+          tempHost = extraInfo.substring(0, extraInfo.indexOf(":"));
           setPort(extraInfo.substring(extraInfo.indexOf(":") + 1));
+          System.out.println("Port set to " + getPort());
         } else {
-          host = extraInfo;
+          tempHost = extraInfo;
         }
-        setHost(extraInfo.substring(0, extraInfo.indexOf(":")));
+        setHost(tempHost);
       } catch (Exception e) {
         System.out.println("ERROR parsing host -- no semicolon found!");
         ErrorHandler.showErrorWindow("ERROR Using Custom Host", "Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!", e);
-        username = "@yahoo.com";
-        props.put("mail.smtp.user", getUsername());
+        props.put("mail.smtp.user", "@yahoo.com");
         return;
       }
       if (extraInfo.contains(":")) {
       }
-      user = user.substring(0, user.indexOf("::"));
+      username = username.substring(0, username.indexOf("::"));
 //      System.out.println("ERROR: Yahoo or Google email required!");
 //      System.exit(0);
     }
-    System.out.println("Username = " + user);
-    username = user;
-    props.put("mail.smtp.user", getUsername());
+    System.out.println("Username = " + username);
+    props.put("mail.smtp.user", username);
   }
 
+  /**
+   * Gets the username currently set.
+   * @return
+   */
   public static String getUsername() {
-    return username;
+    return (String) props.get("mail.smtp.user");
   }
 
   public static void setHost(String h) {
-    host = h;
+    if (h == null) {
+      System.out.println("Cannot set host to null!");
+      return;
+    }
     props.put("mail.smtp.ssl.trust", h);
+    System.out.println("Host set to " + h);
+  }
+
+  /**
+   * Gets the currently set host. Note that this just returns the set trusted host in the Properties.
+   *
+   * @return The currently-set host, or null if none has been set.
+   */
+  public static String getHost() {
+    return (String) props.get("mail.smtp.ssl.trust");
   }
 
   public static void setPort(String p) {
-    port = p;
+    if (p == null) {
+      System.out.println("Cannot set port to null!");
+      return;
+    }
+    props.put("mail.smtp.port", p);
+    System.out.println("Port set to " + p);
+  }
+
+  public static String getPort() {
+    return (String) props.get("mail.smtp.port");
   }
 
   public static void setPassword(String pass) {
@@ -180,7 +204,7 @@ public class Email {
   public static void emailSettings() {
     props.put("mail.smtp.starttls.enable", "true");
     props.put("mail.smtp.auth", "true");
-    props.put("mail.smtp.port", port);
+    props.put("mail.smtp.port", "587");
   }
 
   /**
@@ -250,7 +274,7 @@ public class Email {
       message.setText(msg);
       System.out.println("Message created. Logging in...");
       Transport transport = l_session.getTransport("smtp");
-      transport.connect(host, getUsername(), password);
+      transport.connect(getHost(), getUsername(), password);
       System.out.println("Logged in. Sending message...");
       transport.sendMessage(message, message.getAllRecipients());
       System.out.println("Message Sent!");

@@ -2,6 +2,8 @@ package paxchecker;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Scanner;
 import paxchecker.GUI.*;
 
@@ -11,7 +13,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.1.2";
+  public static final String VERSION = "1.7.1.3";
   public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
@@ -29,6 +31,18 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
+    try {
+      String pass = "Test Pass!";
+      String encrypt = Encryption.encrypt(pass);
+      String decrypt = Encryption.decrypt(encrypt);
+      System.out.println("Encrypt: " + encrypt);
+      System.out.println("Decrypt: " + decrypt);
+    } catch (GeneralSecurityException gse) {
+      gse.printStackTrace();
+    } catch (IOException ieo) {
+      ieo.printStackTrace();
+    }
+    loadPatchNotesInBackground();
     System.out.println("Current Time = " + Tickets.currentTime());
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
@@ -114,9 +128,7 @@ public class PAXChecker {
     }
     Browser.init();
     Email.init();
-    KeyboardHandler.init();
     prefetchIconsInBackground();
-    loadPatchNotesInBackground();
     if (commandLine) {
       ErrorHandler.setCommandLine(true);
       if (doUpdate) {
@@ -139,6 +151,7 @@ public class PAXChecker {
       startCommandLineWebsiteChecking();
       return;
     }
+    KeyboardHandler.init();
     if (doUpdate) {
       try {
         System.out.println("Checking for updates...");
@@ -362,16 +375,16 @@ public class PAXChecker {
           if (Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
             System.out.println("LINK FOUND: " + link);
-            //Browser.openLinkInBrowser(link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
+            Browser.openLinkInBrowser(link);
             Audio.playAlarm();
             break;
           }
           if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
             System.out.println("LINK FOUND: " + link);
-            //Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
+            Browser.openLinkInBrowser(link);
             Audio.playAlarm();
             break;
           }
