@@ -14,6 +14,7 @@ public class Browser {
 
   private static boolean checkPAXWebsite;
   private static boolean checkShowclix;
+  private static volatile boolean useBetaVersion;
   private static int lastShowclixEventID = 3852445;
   private static volatile int updateLevel;
   private static long updateSize;
@@ -587,6 +588,7 @@ public class Browser {
       }
     } catch (Exception e) {
       System.out.println("Unable to load version notes!");
+      e.printStackTrace();
     } finally {
       try {
         if (myReader != null) {
@@ -596,6 +598,15 @@ public class Browser {
         // nothing to see here
       }
     }
+  }
+
+  public static void setUseBeta(boolean use) {
+    System.out.println("Browser Use Beta =  "+ use);
+    useBetaVersion = use;
+  }
+
+  public static boolean getUseBeta() {
+    return useBetaVersion;
   }
 
   /**
@@ -645,9 +656,13 @@ public class Browser {
       }
       URLConnection conn = updateURL.openConnection();
       updateSize = conn.getContentLengthLong();
-      System.out.println("Updatesize = " + updateSize + " -- Filesize = " + fileSize);
+      System.out.println("Update size = " + updateSize + " -- Program size = " + fileSize);
+      if (getUpdateLevel() == 1 && !SettingsHandler.getUseBetaVersion()) {
+        System.out.println("Update available, but not opted into BETA versions");
+        return false;
+      }
       if (updateSize == -1) {
-        ErrorHandler.showErrorWindow("ERROR checking for updates!", "PAX Checker was unable to check for updates.", null);
+        ErrorHandler.showErrorWindow("ERROR checking for updates!", "Update size listed as -1 -- Program most likely unable to connect!", null);
         return false;
       } else if (updateSize != fileSize) {
         System.out.println("Update available!");

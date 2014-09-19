@@ -468,7 +468,7 @@
                           <Group type="102" attributes="0">
                               <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jCheckBox4" min="-2" max="-2" attributes="0"/>
+                              <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -481,7 +481,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBSavePreferences" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBUseBeta" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="JCBSaveEmail" min="-2" max="-2" attributes="0"/>
@@ -570,10 +570,10 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox4">
+            <Component class="javax.swing.JCheckBox" name="JCBUseBeta">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Use BETA Versions"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;(This option currently does nothing)&lt;br&gt;&#xa;BETA versions will most likely&lt;br&gt;&#xa;include features that could, at any&lt;br&gt;&#xa;point in time, break the program&lt;br&gt;&#xa;or parts of it. Use at your own risk.&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;BETA versions will most likely&lt;br&gt;&#xa;include features that could, at any&lt;br&gt;&#xa;point in time, break the program&lt;br&gt;&#xa;or parts of it. These versions will&lt;br&gt;&#xa;contain ideas that still need to be&lt;br&gt;&#xa;debugged, so any help in finding&lt;br&gt;&#xa;these is greatly appreciated.&lt;br&gt;&#xa;Change information can be found&lt;br&gt;&#xa;in the Patch Notes, and more&lt;br&gt;&#xa;detailed changes can be found in&lt;br&gt;&#xa;the GitHub commits.&lt;br&gt;&#xa;&lt;br&gt;&#xa;Use at your own risk.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

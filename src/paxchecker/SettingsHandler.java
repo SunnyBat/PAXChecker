@@ -17,7 +17,6 @@ public class SettingsHandler {
   private static boolean saveEvent;
   private static boolean saveEmail;
   private static boolean saveCellnum;
-  private static String lastShowclixLink;
 
   public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum) {
     setSaveRefreshTime(refreshTime);
@@ -49,6 +48,7 @@ public class SettingsHandler {
       saveEvent(Browser.getExpo() == null ? "" : Browser.getExpo());
       saveCellNum();
       saveEmail();
+      saveUseBeta(Browser.getUseBeta());
       myPrefs.flush();
     } catch (BackingStoreException bSE) {
       System.out.println("Unable to save settings!");
@@ -65,9 +65,9 @@ public class SettingsHandler {
    * @param checkShowclix True to check the Showclix website, false to not
    * @param playAlarm True to play the alarm, false to not
    * @param expo The Expo being checked for. Note it should be in "PAX XXXX" format.
-   * @param provider The provider being used.
+   * @param useBeta True to use BETA versions, false to not
    */
-  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo) {
+  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, boolean useBeta) {
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
@@ -83,6 +83,7 @@ public class SettingsHandler {
       saveEvent(expo == null ? "" : expo);
       saveCellNum();
       saveEmail();
+      saveUseBeta(useBeta);
       System.out.println("Pax = " + checkPax + ", Showclix = " + checkShowclix + ", playAlarm = " + playAlarm + ", Expo = " + expo);
       myPrefs.flush();
     } catch (BackingStoreException bSE) {
@@ -312,6 +313,11 @@ public class SettingsHandler {
     saveLastEvent(Browser.getExpo(), link);
   }
 
+  public static void saveUseBeta(boolean use) {
+    System.out.println("Save beta: " + use);
+    myPrefs.putBoolean(PREFTYPES.PAXCHECK_USE_BETA.name(), use);
+  }
+
   /**
    * Checks whether or not the program saved the Refresh Time preference
    *
@@ -373,15 +379,6 @@ public class SettingsHandler {
    */
   public static boolean getSaveCellnum() {
     return !myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "NOPE").equals("NOPE");
-  }
-
-  /**
-   * Checks whether or not the program saved the Cell Provider preference
-   *
-   * @return True if preference was saved, false if not
-   */
-  public static boolean getSaveProvider() {
-    return !myPrefs.get(PREFTYPES.PAXCHECK_PROVIDER.name(), "NOPE").equals("NOPE");
   }
 
   /**
@@ -454,8 +451,7 @@ public class SettingsHandler {
    * @return The cell number last used
    */
   public static String getCellNumber() {
-    String cellNum = myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
-    return cellNum;
+    return myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
   }
 
   /**
@@ -465,7 +461,11 @@ public class SettingsHandler {
    * @return The last Showclix link for the specific expo
    */
   public static String getLastEvent(String expo) {
-    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT + "_" + expo.toUpperCase(), Browser.getShowclixLink());
+    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), Browser.getShowclixLink());
+  }
+
+  public static boolean getUseBetaVersion() {
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_USE_BETA.name(), false);
   }
 
   /**
@@ -481,7 +481,7 @@ public class SettingsHandler {
 
   private static enum PREFTYPES {
 
-    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_PROVIDER, PAXCHECK_SAVE_PREFS, PAXCHECK_LAST_EVENT;
+    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_SAVE_PREFS, PAXCHECK_LAST_EVENT, PAXCHECK_USE_BETA;
   }
 
   /**

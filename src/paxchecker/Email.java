@@ -39,7 +39,7 @@ public class Email {
       return;
     }
     if (username.length() < 3) {
-      System.out.println("ERROR: Usernae is too short!");
+      System.out.println("ERROR: Username is too short!");
       props.put("mail.smtp.user", "@yahoo.com");
       return;
     } else if (!username.contains("@")) {
@@ -90,6 +90,7 @@ public class Email {
 
   /**
    * Gets the username currently set.
+   *
    * @return
    */
   public static String getUsername() {
@@ -371,6 +372,13 @@ public class Email {
   }
 
   public static void addEmailAddress(String add) {
+    if (add == null) {
+      System.out.println("EmailAddress is NULL!");
+      return;
+    } else if (add.length() < 5) {
+      System.out.println("EmailAddress is TOO SHORT!");
+      return;
+    }
     if (add.contains(";")) {
       System.out.println("String contains ;");
       addEmailAddress(convertToList(add));

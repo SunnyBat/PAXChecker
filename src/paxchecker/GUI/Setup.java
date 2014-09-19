@@ -25,21 +25,19 @@ public class Setup extends javax.swing.JFrame {
   }
 
   private void customComponents() {
-    setTitle("PAXChecker Setup v" + PAXChecker.VERSION);
+    setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
     if (Browser.getVersionNotes() != null) {
       setPatchNotesText(Browser.getVersionNotes());
     }
-    long tS = System.nanoTime();
-    jSlider1.setValue(SettingsHandler.getDelayTime());
+    jTextField1.setText(SettingsHandler.getEmail());
+    jComboBox2.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
     jCheckBox1.setSelected(SettingsHandler.getCheckPaxWebsite());
     jCheckBox2.setSelected(SettingsHandler.getCheckShowclix());
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+    jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
+    jSlider1.setValue(SettingsHandler.getDelayTime());
+    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) { // Disable START! button
       jButton1.setEnabled(false);
     }
-    jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
-    //jComboBox1.setSelectedIndex(getIndexOfProvider(SettingsHandler.getProvider()));
-    jComboBox2.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
-    jTextField1.setText(SettingsHandler.getEmail());
     java.awt.Dimension d = jTextField2.getSize();
     String cellnum = SettingsHandler.getCellNumber();
     if (cellnum.contains(";")) {
@@ -61,7 +59,6 @@ public class Setup extends javax.swing.JFrame {
       jTextField2.setText(cellnum);
     }
     jTextField2.setSize(d);
-    System.out.println("Prefs loading time = " + (System.nanoTime() - tS) + " Nanoseconds");
     if (SettingsHandler.getSavePrefs()) {
       JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
       JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
@@ -71,6 +68,7 @@ public class Setup extends javax.swing.JFrame {
       JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
       JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
       JCBSaveEmail.setSelected(SettingsHandler.getSaveEmail());
+      JCBUseBeta.setSelected(SettingsHandler.getUseBetaVersion());
     } else {
       JCBSaveCellnum.setEnabled(false);
       JCBSaveCheckPax.setEnabled(false);
@@ -96,6 +94,12 @@ public class Setup extends javax.swing.JFrame {
     pack();
   }
 
+  /**
+   * Gets the index of the given Expo for the Setup JComboBox. The proper input for the method is the same Strings as the JComboBox in the Setup GUI.
+   *
+   * @param eventName The expo ("Pax EXPO") to get the index of
+   * @return The index of the given expo, or 0 for incorrect inputs.
+   */
   public static final int getIndexOfEvent(String eventName) {
     switch (eventName.toLowerCase()) {
       case "pax prime":
@@ -110,6 +114,13 @@ public class Setup extends javax.swing.JFrame {
     }
   }
 
+  /**
+   * Gets the index of the given provider for the Set JComboBox. The proper input for this method is the same Strings as the JComboBox in the Setup
+   * GUI.
+   *
+   * @param provider The provider to get the index of
+   * @return The index of the given provider, or 0 for incorrect inputs.
+   */
   public static final int getIndexOfProvider(String provider) {
     switch (provider.toLowerCase()) {
       case "at&t (mms)":
@@ -189,7 +200,7 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveEvent = new javax.swing.JCheckBox();
     jScrollPane1 = new javax.swing.JScrollPane();
     jTextArea1 = new javax.swing.JTextArea();
-    jCheckBox4 = new javax.swing.JCheckBox();
+    JCBUseBeta = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -474,8 +485,8 @@ public class Setup extends javax.swing.JFrame {
     jTextArea1.setWrapStyleWord(true);
     jScrollPane1.setViewportView(jTextArea1);
 
-    jCheckBox4.setText("Use BETA Versions");
-    jCheckBox4.setToolTipText("<html>\n(This option currently does nothing)<br>\nBETA versions will most likely<br>\ninclude features that could, at any<br>\npoint in time, break the program<br>\nor parts of it. Use at your own risk.\n</html>");
+    JCBUseBeta.setText("Use BETA Versions");
+    JCBUseBeta.setToolTipText("<html>\nBETA versions will most likely<br>\ninclude features that could, at any<br>\npoint in time, break the program<br>\nor parts of it. These versions will<br>\ncontain ideas that still need to be<br>\ndebugged, so any help in finding<br>\nthese is greatly appreciated.<br>\nChange information can be found<br>\nin the Patch Notes, and more<br>\ndetailed changes can be found in<br>\nthe GitHub commits.<br>\n<br>\nUse at your own risk.\n</html>");
 
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
@@ -498,7 +509,7 @@ public class Setup extends javax.swing.JFrame {
           .addGroup(jPanel5Layout.createSequentialGroup()
             .addComponent(JCBSavePreferences)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jCheckBox4)))
+            .addComponent(JCBUseBeta)))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
@@ -507,7 +518,7 @@ public class Setup extends javax.swing.JFrame {
         .addContainerGap()
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBSavePreferences)
-          .addComponent(jCheckBox4))
+          .addComponent(JCBUseBeta))
         .addGap(18, 18, 18)
         .addComponent(JCBSaveEmail)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -585,12 +596,15 @@ public class Setup extends javax.swing.JFrame {
     if (jCheckBox2.isSelected()) {
       Browser.enableShowclixWebsiteChecking();
     }
+    Browser.setUseBeta(JCBUseBeta.isSelected());
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));
     Browser.setExpo(jComboBox2.getSelectedItem().toString());
     String text = jTextField2.getText();
-    if (!text.contains("@")) {
+    if (text == null || text.length() < 5) {
+      text = "";
+    } else if (!text.contains("@")) {
       text += Email.getCarrierExtension(jComboBox1.getSelectedItem().toString());
     }
     String tempText;
@@ -663,13 +677,13 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSavePlayAlarm;
   private javax.swing.JCheckBox JCBSavePreferences;
   private javax.swing.JCheckBox JCBSaveRefreshTime;
+  private javax.swing.JCheckBox JCBUseBeta;
   private javax.swing.JPanel JPPhonePanel;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
   private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox2;
   private javax.swing.JCheckBox jCheckBox3;
-  private javax.swing.JCheckBox jCheckBox4;
   private javax.swing.JComboBox jComboBox1;
   private javax.swing.JComboBox jComboBox2;
   private javax.swing.JLabel jLabel1;
