@@ -116,7 +116,7 @@ public class Status extends javax.swing.JFrame {
       }
     });
 
-    JLLastChecked.setText("Last Checked: ");
+    JLLastChecked.setText("Time Until Check:");
 
     JLButtonStatus.setText("Button Status");
 
@@ -229,12 +229,7 @@ public class Status extends javax.swing.JFrame {
   }
 
   public void setLastCheckedText(final int seconds) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        setLastCheckedText("Time since last checked: " + seconds + " seconds ago");
-      }
-    });
+    setLastCheckedText("Time until next check: " + seconds + " seconds");
   }
 
   public void setInfoText(final String text) {

@@ -2,8 +2,6 @@ package paxchecker;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Scanner;
 import paxchecker.GUI.*;
 
@@ -13,8 +11,8 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.1.4";
-  public static final String REDDIT_THREAD_LINK = "http://www.reddit.com/r/PAX/comments/25inam/pax_registration_website_checker_java/";
+  public static final String VERSION = "1.7.1.5";
+  public static final String REDDIT_THREAD_LINK = "https://redd.it/2g9vo7";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
   private static volatile boolean updateProgram;
@@ -31,17 +29,6 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    try {
-      String pass = "Test Pass!";
-      String encrypt = Encryption.encrypt(pass);
-      String decrypt = Encryption.decrypt(encrypt);
-      System.out.println("Encrypt: " + encrypt);
-      System.out.println("Decrypt: " + decrypt);
-    } catch (GeneralSecurityException gse) {
-      gse.printStackTrace();
-    } catch (IOException ieo) {
-      ieo.printStackTrace();
-    }
     Browser.init();
     loadPatchNotesInBackground();
     System.out.println("Current Time = " + Tickets.currentTime());

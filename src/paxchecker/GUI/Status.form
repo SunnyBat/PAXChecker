@@ -125,7 +125,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="JLLastChecked">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Last Checked: "/>
+        <Property name="text" type="java.lang.String" value="Time Until Check:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="JLButtonStatus">

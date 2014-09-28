@@ -1,5 +1,7 @@
 package paxchecker;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -50,6 +52,12 @@ public class Email {
     } else if (username.toLowerCase().contains("@yahoo.com")) {
       setHost("smtp.mail.yahoo.com");
     } else {
+      if (!username.contains("::")) {
+        System.out.println("ERROR parsing host -- no semicolon found!");
+        ErrorHandler.showErrorWindow("ERROR Using Custom Host", "Unable to parse the SMTP server from the given address (" + username + ")! Please make sure this was input correctly!", null);
+        props.put("mail.smtp.user", "@yahoo.com");
+        return;
+      }
       String extraInfo = null;
       try {
         extraInfo = username.toLowerCase().substring(username.indexOf("::") + 2);
@@ -77,8 +85,6 @@ public class Email {
         ErrorHandler.showErrorWindow("ERROR Using Custom Host", "Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!", e);
         props.put("mail.smtp.user", "@yahoo.com");
         return;
-      }
-      if (extraInfo.contains(":")) {
       }
       username = username.substring(0, username.indexOf("::"));
 //      System.out.println("ERROR: Yahoo or Google email required!");
@@ -128,9 +134,36 @@ public class Email {
     return (String) props.get("mail.smtp.port");
   }
 
+  /**
+   * Encrypts the given password and saves the encrypted password in memory for later use.
+   *
+   * @param pass The password to encrypt and save for later
+   * @see #getPassword()
+   */
   public static void setPassword(String pass) {
-    password = pass;
-    props.put("mail.smtp.password", password);
+    try {
+      password = Encryption.encrypt(pass);
+      props.put("mail.smtp.password", password);
+    } catch (Exception e) {
+      System.out.println("ERROR encrypting password!");
+      ErrorHandler.showErrorWindow("ERROR encrypting password", "An error has occurred while attempting to encrypt your password.", e);
+    }
+  }
+
+  /**
+   * Decrypts the currently set password and returns it as a String.
+   *
+   * @return The plaintext password given to the program
+   * @see #setPassword(java.lang.String)
+   */
+  private static String getPassword() {
+    try {
+      return Encryption.decrypt(password);
+    } catch (Exception e) {
+      System.out.println("ERROR decrypting password!");
+      ErrorHandler.showErrorWindow("ERROR decrypting password", "And error has occurred while attempting to decrypt your password.", e);
+    }
+    return null;
   }
 
   /**
@@ -275,7 +308,7 @@ public class Email {
       message.setText(msg);
       System.out.println("Message created. Logging in...");
       Transport transport = l_session.getTransport("smtp");
-      transport.connect(getHost(), getUsername(), password);
+      transport.connect(getHost(), getUsername(), getPassword());
       System.out.println("Logged in. Sending message...");
       transport.sendMessage(message, message.getAllRecipients());
       System.out.println("Message Sent!");

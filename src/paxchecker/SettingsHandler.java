@@ -33,27 +33,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    try {
-      myPrefs.sync();
-    } catch (BackingStoreException bSE) {
-      ErrorHandler.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
-      bSE.printStackTrace();
-      return;
-    }
-    try {
-      saveRefreshTime(PAXChecker.getRefreshTime());
-      saveCheckPax(Browser.isCheckingPaxWebsite());
-      saveCheckShowclix(Browser.isCheckingShowclix());
-      savePlayAlarm(Audio.playAlarm());
-      saveEvent(Browser.getExpo() == null ? "" : Browser.getExpo());
-      saveCellNum();
-      saveEmail();
-      saveUseBeta(Browser.getUseBeta());
-      myPrefs.flush();
-    } catch (BackingStoreException bSE) {
-      System.out.println("Unable to save settings!");
-      bSE.printStackTrace();
-    }
+    saveAllPrefs(PAXChecker.getRefreshTime(), Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Browser.getUseBeta());
   }
 
   /**
