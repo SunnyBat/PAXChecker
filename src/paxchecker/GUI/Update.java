@@ -4,8 +4,7 @@
  */
 package paxchecker.GUI;
 
-import paxchecker.Browser;
-import paxchecker.PAXChecker;
+import paxchecker.*;
 
 /**
  *
@@ -24,9 +23,9 @@ public class Update extends javax.swing.JFrame {
     JPBProgressBar.setVisible(false);
     pack();
     setLocationRelativeTo(null);
-    setStatusLabelText("Update Size: " + ((double) ((int) ((double) Browser.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
+    setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
     setVisible(true);
-    setYesButtonText(Browser.getUpdateLevel());
+    setYesButtonText(UpdateHandler.getUpdateLevel());
   }
 
   /**

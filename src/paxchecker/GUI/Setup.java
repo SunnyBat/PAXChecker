@@ -26,8 +26,8 @@ public class Setup extends javax.swing.JFrame {
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-    if (Browser.getVersionNotes() != null) {
-      setPatchNotesText(Browser.getVersionNotes());
+    if (UpdateHandler.getVersionNotes() != null) {
+      setPatchNotesText(UpdateHandler.getVersionNotes());
     }
     jTextField1.setText(SettingsHandler.getEmail());
     jComboBox2.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
@@ -596,7 +596,7 @@ public class Setup extends javax.swing.JFrame {
     if (jCheckBox2.isSelected()) {
       Browser.enableShowclixWebsiteChecking();
     }
-    Browser.setUseBeta(JCBUseBeta.isSelected());
+    UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());
     Email.setPassword(new String(jPasswordField1.getPassword()));

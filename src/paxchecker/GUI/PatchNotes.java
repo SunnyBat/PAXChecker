@@ -4,8 +4,7 @@
  */
 package paxchecker.GUI;
 
-import paxchecker.Browser;
-import paxchecker.PAXChecker;
+import paxchecker.*;
 
 /**
  *
@@ -59,9 +58,9 @@ public class PatchNotes extends javax.swing.JFrame {
     PAXChecker.startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        String versionNotes = Browser.getVersionNotes(PAXChecker.VERSION);
+        String versionNotes = UpdateHandler.getVersionNotes(PAXChecker.VERSION);
         if (!versionNotes.contains("~~~")) {
-          jTextArea1.setText("Unknown updates? Showing full notes..." + System.getProperty("line.separator", "\n") + Browser.getVersionNotes());
+          jTextArea1.setText("Unknown updates? Showing full notes..." + System.getProperty("line.separator", "\n") + UpdateHandler.getVersionNotes());
         } else {
           jTextArea1.setText(versionNotes);
         }

@@ -12,7 +12,12 @@ public class Audio {
 
   private static boolean playSound;
   private static Clip clip;
-  
+
+  /**
+   * Checks whether or not sound is currently enabled. This is set using {@link #setPlayAlarm(boolean)}.
+   *
+   * @return True to play sound, false to not
+   */
   public static boolean soundEnabled() {
     return playSound;
   }
@@ -26,8 +31,14 @@ public class Audio {
     playSound = play;
   }
 
+  /**
+   * Plays the alarm. Note that this checks {@link #soundEnabled()} to make sure it's supposed to play. This method only allows one sound to play at a
+   * time, and resets the sound currently playing to the beginning.
+   *
+   * @return True if the alarm was successfully started, false if not
+   */
   public static boolean playAlarm() {
-    if (!playSound) {
+    if (!soundEnabled()) {
       return false;
     }
     try {

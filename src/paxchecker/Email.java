@@ -1,7 +1,5 @@
 package paxchecker;
 
-import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -103,6 +101,12 @@ public class Email {
     return (String) props.get("mail.smtp.user");
   }
 
+  /**
+   * Sets the current host used by the JavaMail API. The host is the TLS/SSL email server to use. Note that this also explicitly trusts said host.
+   * This opens up the program to a potential MItM attack, however it does fix the SSL certificate errors that have been popping up.
+   *
+   * @param h The host address to connect to
+   */
   public static void setHost(String h) {
     if (h == null) {
       System.out.println("Cannot set host to null!");
@@ -121,6 +125,11 @@ public class Email {
     return (String) props.get("mail.smtp.ssl.trust");
   }
 
+  /**
+   * Sets the port used by JavaMail. This port is used to access the email server.
+   *
+   * @param p The port to use
+   */
   public static void setPort(String p) {
     if (p == null) {
       System.out.println("Cannot set port to null!");
@@ -130,6 +139,11 @@ public class Email {
     System.out.println("Port set to " + p);
   }
 
+  /**
+   * Gets the port currently set.
+   *
+   * @return The port currently set
+   */
   public static String getPort() {
     return (String) props.get("mail.smtp.port");
   }
@@ -186,12 +200,18 @@ public class Email {
     }
   }
 
+  /**
+   * Gets the provider name for a given cell number ending. Note that this is NOT case sensitive. This returns [Other] if no match is found.
+   *
+   * @param ending The email ending to check
+   * @return The provider name of the given email ending
+   */
   public static String getProvider(String ending) {
     try {
       if (ending.startsWith("@")) {
         ending = ending.substring(1);
       }
-      switch (ending) {
+      switch (ending.toLowerCase()) {
         case "mms.att.net":
           return "AT&T (MMS)";
         case "txt.att.net":
@@ -212,19 +232,25 @@ public class Email {
     }
   }
 
+  /**
+   * Gets the email ending for a given carrier. Note that this defaults to AT&T (MMS) if an invalid carrier is specified. This is not case sensitive.
+   *
+   * @param carrier
+   * @return
+   */
   public static String getCarrierExtension(String carrier) {
-    switch (carrier) {
-      case "AT&T (MMS)":
+    switch (carrier.toLowerCase()) {
+      case "at&t (mms)":
         return "@mms.att.net";
-      case "AT&T (SMS)":
+      case "at&t (sms)":
         return "@txt.att.net";
-      case "Verizon":
+      case "verizon":
         return "@vtext.com";
-      case "Sprint":
+      case "sprint":
         return "@messaging.sprintpcs.com";
-      case "T-Mobile":
+      case "t-mobile":
         return "@tmomail.net";
-      case "U.S. Cellular":
+      case "u.s. cellular":
         return "@email.uscc.net";
       default:
         System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
@@ -306,8 +332,9 @@ public class Email {
       }
       message.setSubject(subject);
       message.setText(msg);
-      System.out.println("Message created. Logging in...");
-      Transport transport = l_session.getTransport("smtp");
+      System.out.println("Message created. Getting Transport session.");
+      Transport transport = l_session.getTransport("smtps");
+      System.out.println("Transport created. Loggin in...");
       transport.connect(getHost(), getUsername(), getPassword());
       System.out.println("Logged in. Sending message...");
       transport.sendMessage(message, message.getAllRecipients());
@@ -318,13 +345,21 @@ public class Email {
       ErrorHandler.showErrorWindow("ERROR", "The message was unable to be sent.", mex);
       return false;
     } catch (Exception e) {
-      ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
       e.printStackTrace();
+      ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
       return false;
     }//end catch block
+    System.out.println("Finished sending message.");
     return true;
   }
 
+  /**
+   * Sends an email in the background with the given information. Note that this starts a new background Thread and will NOT block until an email is
+   * sent.
+   *
+   * @param title
+   * @param message
+   */
   public static void sendEmailInBackground(final String title, final String message) {
     PAXChecker.startBackgroundThread(new Runnable() {
       @Override
@@ -404,6 +439,11 @@ public class Email {
     }
   }
 
+  /**
+   * Adds the given email address to the list of addresses to send to. Note that this does NOT check for duplicates.
+   *
+   * @param add The address to add to the list
+   */
   public static void addEmailAddress(String add) {
     if (add == null) {
       System.out.println("EmailAddress is NULL!");
@@ -420,6 +460,11 @@ public class Email {
     }
   }
 
+  /**
+   * Adds the given email address to the list of addresses to send to. Note that this does NOT check for duplicates.
+   *
+   * @param add The address to add to the list
+   */
   public static void addEmailAddress(EmailAddress add) {
     if (add == null) {
       System.out.println("EmailAddress is NULL!");
@@ -431,6 +476,11 @@ public class Email {
     addressList.add(add);
   }
 
+  /**
+   * Adds the given email addresses to the list of addresses to send to. Note that this does NOT check for duplicates.
+   *
+   * @param add The addresses to add to the list
+   */
   public static void addEmailAddress(List<EmailAddress> add) {
     Iterator<EmailAddress> myIt = add.iterator();
     while (myIt.hasNext()) {
@@ -438,6 +488,27 @@ public class Email {
     }
   }
 
+  public static void removeEmailAddress(String remove) {
+    if (remove == null) {
+      return;
+    }
+    Iterator<EmailAddress> myIt = getAddressList().iterator();
+    while (myIt.hasNext()) {
+      EmailAddress next = myIt.next();
+      if (next.getCompleteAddress().matches(remove)) {
+        removeEmailAddress(next);
+        System.out.println("Removed email address " + remove + " from the list of addresses.");
+        return;
+      }
+    }
+    System.out.println("Could not remove address " + remove + " from list of addresses.");
+  }
+
+  /**
+   * Removes the given email address from the list of addresses to send to. Note that removing
+   *
+   * @param remove The email address to remove.
+   */
   public static void removeEmailAddress(EmailAddress remove) {
     if (remove == null) {
       return;
@@ -445,6 +516,12 @@ public class Email {
     addressList.remove(remove);
   }
 
+  /**
+   * Converts the given addresses to a List\<EmailAddress\> of addresses. Note that these addresses should be separated with semicolons (";").
+   *
+   * @param addresses The addresses to convert to a list
+   * @return A List\<EmailAddress\> of addresses parsed from the given String
+   */
   public static List<EmailAddress> convertToList(String addresses) {
     List<EmailAddress> tempList = new ArrayList<>();
     EmailAddress temp;
@@ -460,6 +537,12 @@ public class Email {
     return tempList;
   }
 
+  /**
+   * Converts a given List<EmailAddress> to a String containing the raw addresses. Note that each address will be separated by semicolons (";").
+   *
+   * @param list The List to convert
+   * @return A String, separated by semicolons, of the given List
+   */
   public static String convertToString(List<EmailAddress> list) {
     StringBuilder builder = new StringBuilder();
     Iterator<EmailAddress> myIt = list.iterator();
@@ -470,6 +553,11 @@ public class Email {
     return builder.toString();
   }
 
+  /**
+   * Gets the current List of addresses that the program will send texts to. This List is final and cannot be reassigned.
+   *
+   * @return The List of addresses the program will use
+   */
   public static List<EmailAddress> getAddressList() {
     return addressList;
   }

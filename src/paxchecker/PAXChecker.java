@@ -11,7 +11,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.1.5";
+  public static final String VERSION = "1.7.2";
   public static final String REDDIT_THREAD_LINK = "https://redd.it/2g9vo7";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
@@ -29,7 +29,7 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    Browser.init();
+    UpdateHandler.init();
     loadPatchNotesInBackground();
     System.out.println("Current Time = " + Tickets.currentTime());
     System.out.println("Initializing...");
@@ -121,9 +121,9 @@ public class PAXChecker {
       if (doUpdate) {
         try {
           System.out.println("Checking for updates...");
-          if (Browser.updateAvailable()) {
+          if (UpdateHandler.updateAvailable()) {
             System.out.println("Update found, downloading update...");
-            Browser.updateProgram();
+            UpdateHandler.updateProgram();
             System.out.println("Update finished, restarting program...");
             startNewProgramInstance(args);
             System.exit(0);
@@ -142,14 +142,14 @@ public class PAXChecker {
     if (doUpdate) {
       try {
         System.out.println("Checking for updates...");
-        if (Browser.updateAvailable()) {
+        if (UpdateHandler.updateAvailable()) {
           update = new Update();
           while (update.isVisible() && !updateProgram) {
             Thread.sleep(100);
           }
           if (updateProgram) {
             update.setStatusLabelText("Downloading update...");
-            Browser.updateProgram();
+            UpdateHandler.updateProgram();
             PAXChecker.startNewProgramInstance();
             update.dispose();
             System.exit(0);
@@ -169,6 +169,9 @@ public class PAXChecker {
     }
   }
 
+  /**
+   * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
+   */
   public static void startCheckingWebsites() {
     continueProgram(new Runnable() {
       @Override
@@ -225,6 +228,10 @@ public class PAXChecker {
     });
   }
 
+  /**
+   * Prompts the user for the required program information, including username, password, email, and other options. Note that this does NOT start the
+   * command-line website checking.
+   */
   public static void commandLineSettingsInput() {
     if (Email.getUsername() == null) {
       System.out.print("Email: ");
@@ -310,6 +317,9 @@ public class PAXChecker {
     }
   }
 
+  /**
+   * Starts checking for website updates and listening for commands given through the console.
+   */
   public static void startCommandLineWebsiteChecking() {
     continueProgram(new Runnable() {
       @Override
@@ -403,14 +413,30 @@ public class PAXChecker {
     return secondsBetweenRefresh;
   }
 
+  /**
+   * Checks whether the program should type the Showclix link out when found
+   *
+   * @return
+   */
   public static boolean shouldTypeLink() {
     return shouldTypeLink;
   }
 
+  /**
+   * Maximizes the Status window.
+   */
   public static void maximizeStatusWindow() {
+    if (status == null) {
+      return;
+    }
     status.maximizeWindow();
   }
 
+  /**
+   * Creates a new non-daemon Thread with the given Runnable object.
+   *
+   * @param run The Runnable object to use
+   */
   public static void continueProgram(Runnable run) {
     Thread newThread = new Thread(run);
     newThread.setName("Program Loop");
@@ -479,6 +505,11 @@ public class PAXChecker {
     }
   }
 
+  /**
+   * Starts a new instance of the program with the given arguments.
+   *
+   * @param args
+   */
   public static void startNewProgramInstance(String... args) {
     try {
       String[] nArgs;
@@ -491,9 +522,9 @@ public class PAXChecker {
       }
       nArgs[0] = System.getProperty("java.home") + "\\bin\\javaw.exe";
       nArgs[1] = "-jar";
-      nArgs[2] = new File(path).getAbsolutePath();
-      ProcessBuilder pb = new ProcessBuilder(nArgs); // path can have leading / on it, getAbsolutePath() removes them
-      Process p = pb.start();
+      nArgs[2] = new File(path).getAbsolutePath(); // path can have leading / on it, getAbsolutePath() removes them
+      ProcessBuilder pb = new ProcessBuilder(nArgs);
+      pb.start();
     } catch (Exception e) {
       ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
     }
@@ -508,6 +539,12 @@ public class PAXChecker {
     startBackgroundThread(run, "General Background Thread");
   }
 
+  /**
+   * Starts a new daemon Thread.
+   *
+   * @param run  The Runnable object to use
+   * @param name The name to give the Thread
+   */
   public static void startBackgroundThread(Runnable run, String name) {
     Thread newThread = new Thread(run);
     newThread.setName(name);
@@ -516,6 +553,9 @@ public class PAXChecker {
     newThread.start(); // Start the Thread
   }
 
+  /**
+   * Loads the program icons in the background. Note that this starts a new Thread and therefore does not block.
+   */
   public static void prefetchIconsInBackground() {
     startBackgroundThread(new Runnable() {
       @Override
@@ -529,6 +569,12 @@ public class PAXChecker {
     }, "Prefetch Icons");
   }
 
+  /**
+   * Gets the icon name for the given expo.
+   *
+   * @param expo The name of the expo
+   * @return The name of the icon for the given expo
+   */
   public static String getIconName(String expo) {
     switch (expo.toLowerCase()) { // toLowerCase to lower the possibilities (and readability)
       case "prime":
@@ -552,6 +598,12 @@ public class PAXChecker {
     }
   }
 
+  /**
+   * Sets the icon of the Status window. Note that this checks the /resources/ folder located in the JAR file for the filename, regardless of what the
+   * iconName is.
+   *
+   * @param iconName The name of the icon to load
+   */
   public static void setStatusIconInBackground(final String iconName) {
     startBackgroundThread(new Runnable() {
       @Override
@@ -568,33 +620,24 @@ public class PAXChecker {
     }, "Set Status Icon");
   }
 
-  public static void startNewProgramInstanceInBackground() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-          ProcessBuilder pb = new ProcessBuilder(System.getProperty("java.home") + "\\bin\\javaw.exe", "-jar", new File(path).getAbsolutePath(), "-noupdate"); // path can have leading / on it, getAbsolutePath() removes them
-          Process p = pb.start();
-        } catch (Exception e) {
-          ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update. Program must be restarted manually. Sorry for the inconvenience. :(", null);
-        }
-      }
-    }, "Run New Program Instance");
-  }
-
+  /**
+   * Loads the Patch Notes on a new daemon Thread. This also sets the Patch Notes in the Setup window if possible.
+   */
   public static void loadPatchNotesInBackground() {
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
-        Browser.loadVersionNotes();
-        if (Browser.getVersionNotes() != null && setup != null) {
-          setup.setPatchNotesText(Browser.getVersionNotes());
+        UpdateHandler.loadVersionNotes();
+        if (UpdateHandler.getVersionNotes() != null && setup != null) {
+          setup.setPatchNotesText(UpdateHandler.getVersionNotes());
         }
       }
     }, "Load Patch Notes");
   }
 
+  /**
+   * Saves program Preferences in the background. This uses the currently set values within the program (ex: current username, current password, etc).
+   */
   public static void savePrefsInBackground() {
     startBackgroundThread(new Runnable() {
       @Override
@@ -604,6 +647,9 @@ public class PAXChecker {
     }, "Save Preferences");
   }
 
+  /**
+   * Sends a test email on a daemon Thread. Note that this also updates the Status window if possible.
+   */
   public static void sendBackgroundTestEmail() {
     if (status == null) {
       Email.testEmail();

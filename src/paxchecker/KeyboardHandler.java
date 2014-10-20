@@ -75,6 +75,12 @@ public class KeyboardHandler {
     submitLine(2000);
   }
 
+  /**
+   * Submits the given line. Note that this method is almost purely for Reddit Live Threads, but can be used for anything that submits using SHIFT+TAB
+   * then ENTER.
+   *
+   * @param millis The milliseconds to wait before pressing ENTER.
+   */
   public static void submitLine(int millis) {
     typeString("\t\n");
     try {
@@ -185,11 +191,7 @@ public class KeyboardHandler {
     typeString("Event link: " + link);
     newLine();
     typeString("[PAXChecker v" + PAXChecker.VERSION + " information can be found here](" + PAXChecker.REDDIT_THREAD_LINK + ")");
-    try {
-      Thread.sleep(30000);
-    } catch (InterruptedException interruptedException) {
-    }
-    submitLine(0);
+    submitLine(30000);
   }
 
 }

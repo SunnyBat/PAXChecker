@@ -18,6 +18,16 @@ public class SettingsHandler {
   private static boolean saveEmail;
   private static boolean saveCellnum;
 
+  /**
+   * Sets whether or not to save each preference.
+   * @param refreshTime True or false
+   * @param showclix True or false
+   * @param pax True or false
+   * @param alarm True or false
+   * @param event True or false
+   * @param email True or false
+   * @param cellnum  True or false
+   */
   public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum) {
     setSaveRefreshTime(refreshTime);
     setSaveShowclix(showclix);
@@ -33,7 +43,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(PAXChecker.getRefreshTime(), Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), Browser.getUseBeta());
+    saveAllPrefs(PAXChecker.getRefreshTime(), Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**
@@ -280,6 +290,11 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Saves the given expo's last event link.
+   * @param expo The expo for which this link applies
+   * @param link The link to save
+   */
   public static void saveLastEvent(String expo, String link) {
     myPrefs.put(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), link);
     try {
@@ -289,10 +304,18 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Saves the given link for the currently set expo.
+   * @param link The link to save
+   */
   public static void saveLastEvent(String link) {
     saveLastEvent(Browser.getExpo(), link);
   }
 
+  /**
+   * Saves whether or not to use BETA versions.
+   * @param use BETA version preference
+   */
   public static void saveUseBeta(boolean use) {
     System.out.println("Save beta: " + use);
     myPrefs.putBoolean(PREFTYPES.PAXCHECK_USE_BETA.name(), use);
