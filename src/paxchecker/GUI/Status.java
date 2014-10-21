@@ -53,7 +53,7 @@ public class Status extends javax.swing.JFrame {
     if (!Audio.soundEnabled()) {
       setSoundButtonState(false);
     }
-    setDataUsageText(Browser.getDataUsedMB());
+    setDataUsageText(DataTracker.getDataUsedMB());
   }
 
   /**

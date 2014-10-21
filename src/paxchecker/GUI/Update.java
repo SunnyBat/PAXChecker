@@ -5,6 +5,7 @@
 package paxchecker.GUI;
 
 import paxchecker.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -13,11 +14,14 @@ import paxchecker.*;
 public class Update extends javax.swing.JFrame {
 
   private PatchNotes patchNotes;
+  private CountDownLatch countdown;
 
   /**
-   * Creates new form Update
+   * Creates a new Update form. Note that the CountDownLatch is only ticked down by one.
+   * @param cdl The CountDownLatch object to tick down.
    */
-  public Update() {
+  public Update(CountDownLatch cdl) {
+    countdown = cdl;
     initComponents();
     //JLStatus.setVisible(false);
     JPBProgressBar.setVisible(false);
@@ -126,11 +130,12 @@ public class Update extends javax.swing.JFrame {
 
   private void JBYesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBYesActionPerformed
     // TODO add your handling code here:
-    PAXChecker.startUpdatingProgram();
+    UpdateHandler.startUpdatingProgram();
     updateInit();
     JBYes.setVisible(false);
     JBNo.setVisible(false);
     JBPatchNotes.setVisible(false);
+    countdown.countDown();
     //setVisible(false);
   }//GEN-LAST:event_JBYesActionPerformed
 
@@ -176,6 +181,7 @@ public class Update extends javax.swing.JFrame {
 
   @Override
   public void dispose() {
+    countdown.countDown();
     if (patchNotes != null) {
       if (patchNotes.isVisible()) {
         patchNotes.dispose();
@@ -207,12 +213,7 @@ public class Update extends javax.swing.JFrame {
 
   private void JBNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBNoActionPerformed
     // TODO add your handling code here:
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        setVisible(false);
-      }
-    });
+    dispose();
   }//GEN-LAST:event_JBNoActionPerformed
 
   private void JBPatchNotesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBPatchNotesActionPerformed

@@ -15,40 +15,12 @@ public class Browser {
   private static boolean checkPAXWebsite;
   private static boolean checkShowclix;
   private static int lastShowclixEventID = 3852445;
-  private static long dataUsed;
   private static String Expo;
   private static String websiteLink;
   private static final String SHOWCLIX_API_LINK_PRIME = "http://api.showclix.com/Seller/16886/events"; // Also for PAX Dev
   private static final String SHOWCLIX_API_LINK_EAST = "http://api.showclix.com/Seller/17792/events";
   private static final String SHOWCLIX_API_LINK_SOUTH = "http://api.showclix.com/Seller/19042/events";
   private static final String SHOWCLIX_API_LINK_AUS = "http://api.showclix.com/Seller/15374/events";
-
-  /**
-   * Adds an amount of data (in bytes) used by the program. This should be called whenever a network connection is made.
-   *
-   * @param data The amount of data (in bytes) to add to the total data used
-   */
-  public static void addDataUsed(long data) {
-    dataUsed += data;
-  }
-
-  /**
-   * Gets the amount of data (in bytes) used by the program.
-   *
-   * @return The amount of data (in bytes) used by the program
-   */
-  public static long getDataUsed() {
-    return dataUsed;
-  }
-
-  /**
-   * Gets the amount of data in megabytes used by the program. Note that the double only extends out two decimal places.
-   *
-   * @return The amount of data in megabytes used by the program
-   */
-  public static double getDataUsedMB() {
-    return (double) ((int) ((double) getDataUsed() / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
-  }
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
@@ -158,7 +130,7 @@ public class Browser {
       is = httpCon1.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
-        addDataUsed(line.length());
+        DataTracker.addDataUsed(line.length());
         line = line.trim();
         if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
           return line;
@@ -337,7 +309,7 @@ public class Browser {
       String jsonText = "";
       String line;
       while ((line = reader.readLine()) != null) {
-        addDataUsed(line.length());
+        DataTracker.addDataUsed(line.length());
         jsonText += line;
       }
       reader.close();

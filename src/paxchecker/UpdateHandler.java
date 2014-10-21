@@ -17,27 +17,11 @@ public class UpdateHandler {
   private static volatile String versionNotes;
   private static volatile boolean useBetaVersion;
   private static volatile int updateLevel;
+  private static volatile boolean updateProgram;
   private static long updateSize;
-  private static URL updateURL;
-  private static URL betaUpdateURL;
-  private static URL patchNotesURL;
   private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String BETA_UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
   private static final String PATCH_NOTES_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-
-  /**
-   * Initializes the Browser class. This should be run before any other method is run in the Browser.
-   */
-  public static void init() {
-    try {
-      updateURL = new URL(UPDATE_LINK);
-      betaUpdateURL = new URL(BETA_UPDATE_LINK);
-      patchNotesURL = new URL(PATCH_NOTES_LINK);
-    } catch (MalformedURLException e) {
-      System.out.println("Unable to make a new URL?");
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Returns the current Version Notes found. This returns all of the notes after the supplied version (useful for things like patch notes when
@@ -83,6 +67,7 @@ public class UpdateHandler {
     InputStream textInputStream;
     BufferedReader myReader = null;
     try {
+      URL patchNotesURL = new URL(PATCH_NOTES_LINK);
       inputConnection = patchNotesURL.openConnection();
       textInputStream = inputConnection.getInputStream();
       myReader = new BufferedReader(new InputStreamReader(textInputStream));
@@ -91,7 +76,7 @@ public class UpdateHandler {
       String allText = "";
       boolean versionFound = false;
       while ((line = myReader.readLine()) != null) {
-        Browser.addDataUsed(line.length());
+        DataTracker.addDataUsed(line.length());
         line = line.trim();
         if (line.contains("~~~" + PAXChecker.VERSION + "~~~")) {
           versionFound = true;
@@ -203,6 +188,18 @@ public class UpdateHandler {
   }
 
   /**
+   * Set the updateProgram flag to true. This will start the program updating process. This should only be called by the Update GUI when the main()
+   * method is waiting for the prompt.
+   */
+  public static void startUpdatingProgram() {
+    updateProgram = true;
+  }
+
+  public static boolean shouldUpdateProgram() {
+    return updateProgram;
+  }
+
+  /**
    * Checks whether or not an update to the program is available. Note that this compares the file sizes between the current file and the file on the
    * Dropbox server. This means that if ANY modification is made to the JAR file, it's likely to trigger an update. This THEORETICALLY works well.
    * We'll find out whether or not it will actually work in practice.
@@ -213,9 +210,10 @@ public class UpdateHandler {
     try {
       File mF = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
       long fileSize = mF.length();
-      if (fileSize == 4096) { // No, I do NOT want to update when I'm running in Netbeans
+      if (fileSize == 4097) { // No, I do NOT want to update when I'm running in Netbeans
         return false;
       }
+      URL updateURL = new URL(UPDATE_LINK);
       URLConnection conn = updateURL.openConnection();
       updateSize = conn.getContentLengthLong();
       System.out.println("Update size = " + updateSize + " -- Program size = " + fileSize);
@@ -243,6 +241,7 @@ public class UpdateHandler {
    */
   public static void updateProgram() {
     try {
+      URL updateURL = new URL(UPDATE_LINK);
       URLConnection conn = updateURL.openConnection();
       InputStream inputStream = conn.getInputStream();
       long remoteFileSize = conn.getContentLength();
@@ -292,7 +291,7 @@ public class UpdateHandler {
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("ERROR updating program!");
-      ErrorHandler.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + updateURL.getPath(), e);
+      ErrorHandler.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + UPDATE_LINK, e);
       ErrorHandler.fatalError();
     }
   }

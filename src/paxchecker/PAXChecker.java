@@ -3,6 +3,7 @@ package paxchecker;
 import java.awt.Color;
 import java.io.File;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 import paxchecker.GUI.*;
 
 /**
@@ -11,11 +12,10 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.2";
+  public static final String VERSION = "1.7.2.1";
   public static final String REDDIT_THREAD_LINK = "https://redd.it/2g9vo7";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
-  private static volatile boolean updateProgram;
   private static volatile java.awt.Image alertIcon;
   private static boolean shouldTypeLink;
   private static final Scanner myScanner = new Scanner(System.in);
@@ -29,7 +29,6 @@ public class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    UpdateHandler.init();
     loadPatchNotesInBackground();
     System.out.println("Current Time = " + Tickets.currentTime());
     System.out.println("Initializing...");
@@ -143,18 +142,20 @@ public class PAXChecker {
       try {
         System.out.println("Checking for updates...");
         if (UpdateHandler.updateAvailable()) {
-          update = new Update();
-          while (update.isVisible() && !updateProgram) {
-            Thread.sleep(100);
+          CountDownLatch cdl = new CountDownLatch(1);
+          update = new Update(cdl);
+          try {
+            cdl.await();
+          } catch (InterruptedException iE) {
+            System.out.println("CDL interrupted, continuing...");
           }
-          if (updateProgram) {
+          if (UpdateHandler.shouldUpdateProgram()) {
             update.setStatusLabelText("Downloading update...");
             UpdateHandler.updateProgram();
             PAXChecker.startNewProgramInstance();
             update.dispose();
             System.exit(0);
           }
-          update.dispose();
         }
       } catch (Exception e) {
         ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
@@ -210,7 +211,7 @@ public class PAXChecker {
             Audio.playAlarm();
             break;
           }
-          status.setDataUsageText(Browser.getDataUsedMB());
+          status.setDataUsageText(DataTracker.getDataUsedMB());
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
             if (forceRefresh) {
               forceRefresh = false;
@@ -386,7 +387,7 @@ public class PAXChecker {
             break;
           }
           //status.setDataUsageText(Browser.getDataUsedMB());
-          System.out.println("Data used: " + Browser.getDataUsedMB() + "MB");
+          System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
             if (forceRefresh) {
               forceRefresh = false;
@@ -463,14 +464,6 @@ public class PAXChecker {
     if (status != null) {
       status.setButtonStatusText("Forced website check!");
     }
-  }
-
-  /**
-   * Set the updateProgram flag to true. This will start the program updating process. This should only be called by the Update GUI when the main()
-   * method is waiting for the prompt.
-   */
-  public static void startUpdatingProgram() {
-    updateProgram = true;
   }
 
   /**
