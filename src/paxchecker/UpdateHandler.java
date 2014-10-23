@@ -7,6 +7,7 @@ package paxchecker;
 
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -22,6 +23,7 @@ public class UpdateHandler {
   private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String BETA_UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
   private static final String PATCH_NOTES_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
+  public static paxchecker.GUI.Update update;
 
   /**
    * Returns the current Version Notes found. This returns all of the notes after the supplied version (useful for things like patch notes when
@@ -110,8 +112,8 @@ public class UpdateHandler {
         }
       }
       versionNotes = allText.trim();
-      if (PAXChecker.update != null) {
-        PAXChecker.update.setYesButtonText(getUpdateLevel());
+      if (update != null) {
+        update.setYesButtonText(getUpdateLevel());
       }
     } catch (Exception e) {
       System.out.println("Unable to load version notes!");
@@ -148,6 +150,57 @@ public class UpdateHandler {
   }
 
   /**
+   * Checks whether or not an update is available and prompts the user to update if there is.
+   *
+   * @param args The command-line arguments to use when starting a new program instance
+   */
+  public static void checkUpdate(String[] args) {
+    try {
+      System.out.println("Checking for updates...");
+      if (UpdateHandler.updateAvailable()) {
+        CountDownLatch cdl = new CountDownLatch(1);
+        update = new paxchecker.GUI.Update(cdl);
+        try {
+          cdl.await();
+        } catch (InterruptedException iE) {
+          System.out.println("CDL interrupted, continuing...");
+        }
+        if (UpdateHandler.shouldUpdateProgram()) {
+          update.setStatusLabelText("Downloading update...");
+          UpdateHandler.updateProgram();
+          PAXChecker.startNewProgramInstance(args);
+          update.dispose();
+          System.exit(0);
+        }
+      }
+    } catch (Exception e) {
+      ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
+      ErrorHandler.fatalError();
+    }
+  }
+
+  /**
+   * Checks for program updates and automatically updates if found.
+   *
+   * @param args The command-line arguments to use when starting a new program instance
+   */
+  public static void autoUpdate(String[] args) {
+    try {
+      System.out.println("Checking for updates...");
+      if (UpdateHandler.updateAvailable()) {
+        System.out.println("Update found, downloading update...");
+        UpdateHandler.updateProgram();
+        System.out.println("Update finished, restarting program...");
+        PAXChecker.startNewProgramInstance(args);
+        System.exit(0);
+      }
+    } catch (Exception e) {
+      ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
+      ErrorHandler.fatalError();
+    }
+  }
+
+  /**
    * Returns the size of the update file found online. This will return 0 if the size has not been loaded yet.
    *
    * @return The size of the update file found online, or 0 if the size has not been loaded yet
@@ -168,8 +221,8 @@ public class UpdateHandler {
   public static void setUpdateLevel(int level) {
     if (updateLevel < level) {
       updateLevel = level;
-      if (PAXChecker.update != null) {
-        PAXChecker.update.setYesButtonText(updateLevel);
+      if (update != null) {
+        update.setYesButtonText(updateLevel);
       }
     }
   }
@@ -255,18 +308,18 @@ public class UpdateHandler {
       while ((bytesRead = inputStream.read(buffer)) != -1) {
         in += bytesRead;
         buffOutputStream.write(buffer, 0, bytesRead);
-        if (PAXChecker.update != null) {
+        if (update != null) {
           if ((int) (((in * 100) / remoteFileSize)) != prevPercent) {
             prevPercent = (int) (((in * 100) / remoteFileSize));
-            PAXChecker.update.updateProgress(prevPercent);
+            update.updateProgress(prevPercent);
           }
         }
       }
       buffOutputStream.flush();
       buffOutputStream.close();
       inputStream.close();
-      if (PAXChecker.update != null) {
-        PAXChecker.update.setStatusLabelText("Finishing up...");
+      if (update != null) {
+        update.setStatusLabelText("Finishing up...");
       }
       try { // Code to make a copy of the current JAR file
         File inputFile = new File(path.substring(0, path.lastIndexOf(".jar")) + ".temp.jar");

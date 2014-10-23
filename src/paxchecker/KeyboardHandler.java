@@ -10,8 +10,10 @@ import java.awt.event.KeyEvent;
  */
 public class KeyboardHandler {
 
+  private static boolean shouldTypeLink;
   private static Robot myRobot;
   private static final char[] shiftChars = {'~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '{', '}', '|', ':', '"', '<', '>', '?'};
+  private static final String REDDIT_THREAD_LINK = "https://redd.it/2g9vo7";
 
   /**
    * Required to use KeyboardHandler. This initializes the KeyboardHandler and sets the Robot typing delay to 5ms between each key action.
@@ -24,6 +26,24 @@ public class KeyboardHandler {
       System.out.println("ERROR in KeyboardManager.init(): AWTException!");
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Sets whether or not to type the link found.
+   *
+   * @param type True to type the link, false to not
+   */
+  public static void setTypeLink(boolean type) {
+    shouldTypeLink = type;
+  }
+
+  /**
+   * Gets whether or not the program should type the link.
+   *
+   * @return True to type the link, false to not
+   */
+  public static boolean shouldTypeLink() {
+    return shouldTypeLink;
   }
 
   /**
@@ -183,14 +203,14 @@ public class KeyboardHandler {
    * @param link The link to type out
    */
   public static void typeLinkNotification(String link) {
-    if (!PAXChecker.shouldTypeLink()) {
+    if (!shouldTypeLink()) {
       return;
     }
     typeString("The PAXChecker has detected a new Showclix event for " + Browser.getExpo());
     newLine();
     typeString("Event link: " + link);
     newLine();
-    typeString("[PAXChecker v" + PAXChecker.VERSION + " information can be found here](" + PAXChecker.REDDIT_THREAD_LINK + ")");
+    typeString("[PAXChecker v" + PAXChecker.VERSION + " information can be found here](" + REDDIT_THREAD_LINK + ")");
     submitLine(30000);
   }
 

@@ -131,8 +131,8 @@ public class ErrorHandler {
     if (PAXChecker.status != null) {
       PAXChecker.status.dispose();
     }
-    if (PAXChecker.update != null) {
-      PAXChecker.update.dispose();
+    if (UpdateHandler.update != null) {
+      UpdateHandler.update.dispose();
     }
   }
 
@@ -156,8 +156,8 @@ public class ErrorHandler {
       } else {
         validCount++;
       }
-      if (PAXChecker.update != null) {
-        if (!PAXChecker.update.isVisible()) {
+      if (UpdateHandler.update != null) {
+        if (!UpdateHandler.update.isVisible()) {
           validCount++;
         }
       } else {

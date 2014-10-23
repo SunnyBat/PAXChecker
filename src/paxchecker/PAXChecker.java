@@ -12,162 +12,27 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.2.1";
-  public static final String REDDIT_THREAD_LINK = "https://redd.it/2g9vo7";
+  public static final String VERSION = "1.7.2.2";
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
   private static volatile java.awt.Image alertIcon;
-  private static boolean shouldTypeLink;
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
   protected static Setup setup;
   protected static Status status;
   protected static Tickets tickets;
-  protected static Update update;
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) {
     loadPatchNotesInBackground();
-    System.out.println("Current Time = " + Tickets.currentTime());
+    prefetchIconsInBackground();
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
-    boolean doUpdate = true;
-    boolean autoStart = false;
-    boolean commandLine = false;
-    if (args.length > 0) {
-      System.out.println("Args!");
-      boolean checkPax = true;
-      boolean checkShowclix = true;
-      argsCycle:
-      for (int a = 0; a < args.length; a++) {
-        System.out.println("args[" + a + "] = " + args[a]);
-        switch (args[a].toLowerCase()) {
-          case "-noupdate":
-            // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
-            doUpdate = false;
-            break;
-          case "-typelink":
-            shouldTypeLink = true;
-            break;
-          case "-email":
-            Email.setUsername(args[a + 1]);
-            System.out.println("Username set to " + Email.getUsername());
-            break;
-          case "-password":
-            Email.setPassword(args[a + 1]);
-            System.out.println("Password set");
-            break;
-          case "-cellnum":
-            for (int b = a + 1; b < args.length; b++) {
-              if (args[b].startsWith("-")) {
-                a = b - 1;
-                continue argsCycle;
-              }
-              System.out.println("Adding email address " + args[b]);
-              Email.addEmailAddress(args[b]);
-            }
-            break;
-          case "-expo":
-            Browser.setExpo(args[a + 1]);
-            System.out.println("Expo set to " + Browser.getExpo());
-            break;
-          case "-nopax":
-            System.out.println("Setting check PAX website to false");
-            checkPax = false;
-            break;
-          case "-noshowclix":
-            System.out.println("Setting check Showclix website to false");
-            checkShowclix = false;
-            break;
-          case "-alarm":
-            System.out.println("Alarm activated");
-            Audio.setPlayAlarm(true);
-            break;
-          case "-delay":
-            setRefreshTime(Integer.getInteger(args[a + 1], 15));
-            System.out.println("Set refresh time to " + getRefreshTime());
-            break;
-          case "-autostart":
-            autoStart = true;
-            break;
-          case "-cli":
-            commandLine = true;
-            break;
-          default:
-            if (args[a].startsWith("-")) {
-              System.out.println("Unknown argument: " + args[a]);
-            }
-            break;
-        }
-      }
-      if (checkPax) {
-        Browser.enablePaxWebsiteChecking();
-      }
-      if (checkShowclix) {
-        Browser.enableShowclixWebsiteChecking();
-      }
-      if (autoStart && !Browser.isCheckingPaxWebsite() && !Browser.isCheckingShowclix()) {
-        System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
-        System.exit(0);
-      }
-    }
     Email.init();
-    prefetchIconsInBackground();
-    if (commandLine) {
-      ErrorHandler.setCommandLine(true);
-      if (doUpdate) {
-        try {
-          System.out.println("Checking for updates...");
-          if (UpdateHandler.updateAvailable()) {
-            System.out.println("Update found, downloading update...");
-            UpdateHandler.updateProgram();
-            System.out.println("Update finished, restarting program...");
-            startNewProgramInstance(args);
-            System.exit(0);
-          }
-        } catch (Exception e) {
-          ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-          ErrorHandler.fatalError();
-          return;
-        }
-      }
-      commandLineSettingsInput();
-      startCommandLineWebsiteChecking();
-      return;
-    }
     KeyboardHandler.init();
-    if (doUpdate) {
-      try {
-        System.out.println("Checking for updates...");
-        if (UpdateHandler.updateAvailable()) {
-          CountDownLatch cdl = new CountDownLatch(1);
-          update = new Update(cdl);
-          try {
-            cdl.await();
-          } catch (InterruptedException iE) {
-            System.out.println("CDL interrupted, continuing...");
-          }
-          if (UpdateHandler.shouldUpdateProgram()) {
-            update.setStatusLabelText("Downloading update...");
-            UpdateHandler.updateProgram();
-            PAXChecker.startNewProgramInstance();
-            update.dispose();
-            System.exit(0);
-          }
-        }
-      } catch (Exception e) {
-        ErrorHandler.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-        ErrorHandler.fatalError();
-        return;
-      }
-    }
-    if (autoStart) {
-      startCheckingWebsites();
-    } else {
-      setup = new Setup();
-    }
+    parseCommandLineArgs(args);
   }
 
   /**
@@ -178,7 +43,6 @@ public class PAXChecker {
       @Override
       public void run() {
         setup = null;
-        update = null;
         savePrefsInBackground();
         if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
           SettingsHandler.saveLastEvent(Browser.getShowclixLink());
@@ -195,7 +59,7 @@ public class PAXChecker {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
             KeyboardHandler.typeLinkNotification(link);
             Browser.openLinkInBrowser(link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found: " + link);
             showTicketsWindow(link);
             status.dispose();
             Audio.playAlarm();
@@ -205,7 +69,7 @@ public class PAXChecker {
             final String link = Browser.getShowclixLink();
             KeyboardHandler.typeLinkNotification(link);
             Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found: " + link);
             showTicketsWindow(link);
             status.dispose();
             Audio.playAlarm();
@@ -373,7 +237,7 @@ public class PAXChecker {
           if (Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
             System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found (in case of false positives): " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found: " + link);
             Browser.openLinkInBrowser(link);
             Audio.playAlarm();
             break;
@@ -381,12 +245,11 @@ public class PAXChecker {
           if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
             System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found (in case of false positives): " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found: " + link);
             Browser.openLinkInBrowser(link);
             Audio.playAlarm();
             break;
           }
-          //status.setDataUsageText(Browser.getDataUsedMB());
           System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
             if (forceRefresh) {
@@ -395,14 +258,113 @@ public class PAXChecker {
             }
             try {
               Thread.sleep(100);
-            } catch (InterruptedException interruptedException) {
+            } catch (InterruptedException iE) {
             }
-            //status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
           }
         } while (true); // Change later
         System.out.println("Finished!");
       }
     });
+  }
+
+  public static void parseCommandLineArgs(String[] args) {
+    boolean doUpdate = true;
+    boolean autoStart = false;
+    boolean commandLine = false;
+    if (args.length > 0) {
+      System.out.println("Args!");
+      boolean checkPax = true;
+      boolean checkShowclix = true;
+      argsCycle:
+      for (int a = 0; a < args.length; a++) {
+        System.out.println("args[" + a + "] = " + args[a]);
+        switch (args[a].toLowerCase()) {
+          case "-noupdate":
+            // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
+            doUpdate = false;
+            break;
+          case "-typelink":
+            KeyboardHandler.setTypeLink(true);
+            break;
+          case "-email":
+            Email.setUsername(args[a + 1]);
+            System.out.println("Username set to " + Email.getUsername());
+            break;
+          case "-password":
+            Email.setPassword(args[a + 1]);
+            System.out.println("Password set");
+            break;
+          case "-cellnum":
+            for (int b = a + 1; b < args.length; b++) {
+              if (args[b].startsWith("-")) {
+                a = b - 1;
+                continue argsCycle;
+              }
+              System.out.println("Adding email address " + args[b]);
+              Email.addEmailAddress(args[b]);
+            }
+            break;
+          case "-expo":
+            Browser.setExpo(args[a + 1]);
+            System.out.println("Expo set to " + Browser.getExpo());
+            break;
+          case "-nopax":
+            System.out.println("Setting check PAX website to false");
+            checkPax = false;
+            break;
+          case "-noshowclix":
+            System.out.println("Setting check Showclix website to false");
+            checkShowclix = false;
+            break;
+          case "-alarm":
+            System.out.println("Alarm activated");
+            Audio.setPlayAlarm(true);
+            break;
+          case "-delay":
+            setRefreshTime(Integer.getInteger(args[a + 1], 15));
+            System.out.println("Set refresh time to " + getRefreshTime());
+            break;
+          case "-autostart":
+            autoStart = true;
+            break;
+          case "-cli":
+            commandLine = true;
+            break;
+          default:
+            if (args[a].startsWith("-")) {
+              System.out.println("Unknown argument: " + args[a]);
+            }
+            break;
+        }
+      }
+      if (checkPax) {
+        Browser.enablePaxWebsiteChecking();
+      }
+      if (checkShowclix) {
+        Browser.enableShowclixWebsiteChecking();
+      }
+      if (autoStart && !Browser.isCheckingPaxWebsite() && !Browser.isCheckingShowclix()) {
+        System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
+        System.exit(0);
+      }
+    }
+    if (commandLine) {
+      ErrorHandler.setCommandLine(true);
+      if (doUpdate) {
+        UpdateHandler.autoUpdate(args);
+      }
+      commandLineSettingsInput();
+      startCommandLineWebsiteChecking();
+      return;
+    }
+    if (doUpdate) {
+      UpdateHandler.checkUpdate(args);
+    }
+    if (autoStart) {
+      startCheckingWebsites();
+    } else {
+      setup = new Setup();
+    }
   }
 
   /**
@@ -412,15 +374,6 @@ public class PAXChecker {
    */
   public static int getRefreshTime() {
     return secondsBetweenRefresh;
-  }
-
-  /**
-   * Checks whether the program should type the Showclix link out when found
-   *
-   * @return
-   */
-  public static boolean shouldTypeLink() {
-    return shouldTypeLink;
   }
 
   /**
@@ -535,7 +488,7 @@ public class PAXChecker {
   /**
    * Starts a new daemon Thread.
    *
-   * @param run  The Runnable object to use
+   * @param run The Runnable object to use
    * @param name The name to give the Thread
    */
   public static void startBackgroundThread(Runnable run, String name) {
