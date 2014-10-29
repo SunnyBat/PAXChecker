@@ -34,238 +34,6 @@ public class PAXChecker {
     parseCommandLineArgs(args);
   }
 
-  /**
-   * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
-   */
-  public static void startCheckingWebsites() {
-    continueProgram(new Runnable() {
-      @Override
-      public void run() {
-        setup = null;
-        savePrefsInBackground();
-        if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
-          SettingsHandler.saveLastEvent(Browser.getShowclixLink());
-        }
-        //System.gc();
-        status = new Status();
-        setStatusIconInBackground(getIconName(Browser.getExpo()));
-        long startMS;
-        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
-        do {
-          //status.setLastCheckedText("Checking for updates...");
-          startMS = System.currentTimeMillis();
-          if (Browser.isPAXWebsiteUpdated()) {
-            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
-            KeyboardHandler.typeLinkNotification(link);
-            Browser.openLinkInBrowser(link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found: " + link);
-            showTicketsWindow(link);
-            status.dispose();
-            Audio.playAlarm();
-            break;
-          }
-          if (Browser.isShowclixUpdated()) {
-            final String link = Browser.getShowclixLink();
-            KeyboardHandler.typeLinkNotification(link);
-            Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found: " + link);
-            showTicketsWindow(link);
-            status.dispose();
-            Audio.playAlarm();
-            break;
-          }
-          status.setDataUsageText(DataTracker.getDataUsedMB());
-          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
-            if (forceRefresh) {
-              forceRefresh = false;
-              break;
-            }
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException interruptedException) {
-            }
-            status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
-          }
-        } while (status.isDisplayable());
-        System.out.println("Finished!");
-      }
-    });
-  }
-
-  /**
-   * Prompts the user for the required program information, including username, password, email, and other options. Note that this does NOT start the
-   * command-line website checking.
-   */
-  public static void commandLineSettingsInput() {
-    if (Email.getUsername() == null) {
-      System.out.print("Email: ");
-      try {
-        Email.setUsername(myScanner.next());
-        System.out.println("Password: ");
-        Email.setPassword(myScanner.next());
-      } catch (Exception e) {
-      }
-    }
-    if (Email.getAddressList().isEmpty()) {
-      System.out.print("Cell Number: ");
-      try {
-        Email.addEmailAddress(myScanner.next());
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-    if (Browser.isCheckingPaxWebsite()) {
-      System.out.print("Check PAX Website (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Browser.enablePaxWebsiteChecking();
-        }
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-    if (Browser.isCheckingPaxWebsite()) {
-      System.out.print("Check Showclix Website (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Browser.enableShowclixWebsiteChecking();
-        }
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-    if (getRefreshTime() == 10) {
-      System.out.print("Refresh Time (seconds, no input limit at the moment): ");
-      try {
-        setRefreshTime(Integer.parseInt(myScanner.next(), 10));
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-    if (!Browser.isCheckingPaxWebsite()) {
-      System.out.print("Play Alarm (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Audio.setPlayAlarm(true);
-        }
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-    if (Browser.getExpo() == null) {
-      System.out.print("Expo: ");
-      try {
-        String input = myScanner.next();
-        switch (input.toLowerCase()) {
-          case "prime":
-          case "paxprime":
-            Browser.setExpo("PAX Prime");
-          case "east":
-          case "paxeast":
-            Browser.setExpo("PAX East");
-          case "south":
-          case "paxsouth":
-            Browser.setExpo("PAX South");
-          case "aus":
-          case "australia":
-          case "paxaus":
-          case "paxaustralia":
-            Browser.setExpo("PAX Aus");
-          default:
-            System.out.println("Invalid expo! Setting to Prime...");
-            Browser.setExpo("PAX Prime");
-        }
-        System.out.println();
-      } catch (Exception e) {
-      }
-    }
-  }
-
-  /**
-   * Starts checking for website updates and listening for commands given through the console.
-   */
-  public static void startCommandLineWebsiteChecking() {
-    continueProgram(new Runnable() {
-      @Override
-      public void run() {
-        String input;
-        while (true) {
-          try {
-            input = myScanner.next();
-          } catch (Exception e) {
-            //e.printStackTrace();
-            System.out.println("Error parsing input -- please try again.");
-            continue;
-          }
-          switch (input.toLowerCase()) {
-            case "exit":
-              System.exit(0);
-              break;
-            case "testtext":
-              sendBackgroundTestEmail();
-              break;
-            case "testalarm":
-              Audio.playAlarm();
-              break;
-            case "refresh":
-            case "check":
-              forceRefresh = true;
-              break;
-            default:
-              System.out.println("Unknown command: " + input.toLowerCase());
-              System.out.println("Commands:");
-              System.out.println("exit        - Exit the program");
-              System.out.println("testtext    - Send a test text");
-              System.out.println("testalarm   - Play the alarm (if enabled)");
-              System.out.println("refresh     - Force check");
-              System.out.println("check       - Force check");
-              System.out.println("Commands are NOT case sensitive.");
-          }
-        }
-      }
-    });
-    continueProgram(new Runnable() {
-      @Override
-      public void run() {
-        //System.gc();
-        long startMS;
-        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
-        do {
-          //status.setLastCheckedText("Checking for updates...");
-          startMS = System.currentTimeMillis();
-          if (Browser.isPAXWebsiteUpdated()) {
-            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
-            System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found: " + link);
-            Browser.openLinkInBrowser(link);
-            Audio.playAlarm();
-            break;
-          }
-          if (Browser.isShowclixUpdated()) {
-            final String link = Browser.getShowclixLink();
-            System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found: " + link);
-            Browser.openLinkInBrowser(link);
-            Audio.playAlarm();
-            break;
-          }
-          System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
-          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
-            if (forceRefresh) {
-              forceRefresh = false;
-              break;
-            }
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException iE) {
-            }
-          }
-        } while (true); // Change later
-        System.out.println("Finished!");
-      }
-    });
-  }
-
   public static void parseCommandLineArgs(String[] args) {
     boolean doUpdate = true;
     boolean autoStart = false;
@@ -320,8 +88,8 @@ public class PAXChecker {
             Audio.setPlayAlarm(true);
             break;
           case "-delay":
-            setRefreshTime(Integer.getInteger(args[a + 1], 15));
-            System.out.println("Set refresh time to " + getRefreshTime());
+            Checker.setRefreshTime(Integer.getInteger(args[a + 1], 15));
+            System.out.println("Set refresh time to " + Checker.getRefreshTime());
             break;
           case "-autostart":
             autoStart = true;
@@ -352,37 +120,18 @@ public class PAXChecker {
       if (doUpdate) {
         UpdateHandler.autoUpdate(args);
       }
-      commandLineSettingsInput();
-      startCommandLineWebsiteChecking();
+      Checker.commandLineSettingsInput();
+      Checker.startCommandLineWebsiteChecking();
       return;
     }
     if (doUpdate) {
       UpdateHandler.checkUpdate(args);
     }
     if (autoStart) {
-      startCheckingWebsites();
+      Checker.startCheckingWebsites();
     } else {
       setup = new Setup();
     }
-  }
-
-  /**
-   * Gets the time (in seconds) between website checks. This method is thread-safe.
-   *
-   * @return The amount of time between website checks
-   */
-  public static int getRefreshTime() {
-    return secondsBetweenRefresh;
-  }
-
-  /**
-   * Maximizes the Status window.
-   */
-  public static void maximizeStatusWindow() {
-    if (status == null) {
-      return;
-    }
-    status.maximizeWindow();
   }
 
   /**
@@ -396,43 +145,6 @@ public class PAXChecker {
     newThread.setDaemon(false); // Prevent the JVM from stopping due to zero non-daemon threads running
     newThread.setPriority(Thread.NORM_PRIORITY);
     newThread.start(); // Start the Thread
-  }
-
-  /**
-   * Sets the time between checking the PAX Registration website for updates. This can be called at any time, however it is recommended to only call
-   * it during Setup.
-   *
-   * @param seconds The amount of seconds between website updates.
-   */
-  public static void setRefreshTime(int seconds) {
-    secondsBetweenRefresh = seconds;
-  }
-
-  /**
-   * Forces the program to check the PAX website for updates. Note that this resets the time since last check to 0.
-   */
-  public static void forceRefresh() {
-    forceRefresh = true;
-    if (status != null) {
-      status.setButtonStatusText("Forced website check!");
-    }
-  }
-
-  /**
-   * Creates the Tickets window and makes it visible. This should really only be called once, as subsequent calls will rewrite {@link #tickets} and
-   * lose the object reference to the previously opened tickets window.
-   *
-   * @param link The URL that was found by the program
-   */
-  public static void showTicketsWindow(String link) {
-    tickets = new Tickets(link);
-    try {
-      tickets.setIconImage(alertIcon);
-      tickets.setBackground(Color.RED);
-    } catch (Exception e) {
-      System.out.println("Unable to set IconImage!");
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -563,18 +275,6 @@ public class PAXChecker {
         }
       }
     }, "Load Patch Notes");
-  }
-
-  /**
-   * Saves program Preferences in the background. This uses the currently set values within the program (ex: current username, current password, etc).
-   */
-  public static void savePrefsInBackground() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        SettingsHandler.saveAllPrefs();
-      }
-    }, "Save Preferences");
   }
 
   /**

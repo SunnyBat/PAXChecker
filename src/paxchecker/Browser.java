@@ -101,10 +101,8 @@ public class Browser {
       System.out.println("OMG IT'S UPDATED: " + lineText);
       return true;
     } else {
-      if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink(parseHRef(lineText));
-      } else {
-        System.out.println("");
+      if (Checker.status != null) {
+        Checker.status.setWebsiteLink(parseHRef(lineText));
       }
       return false;
     }

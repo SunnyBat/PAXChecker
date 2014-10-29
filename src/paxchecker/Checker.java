@@ -20,8 +20,7 @@ public class Checker {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
-  private static Setup setup;
-  private static Status status;
+  public static Status status;
   private static Tickets tickets;
 
   /**
@@ -31,27 +30,20 @@ public class Checker {
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
-        setup = null;
-        PAXChecker.savePrefsInBackground();
+        SettingsHandler.saveAllPrefs();
         if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
           SettingsHandler.saveLastEvent(Browser.getShowclixLink());
           System.out.println("NOTE: Link has changed since last time!");
         }
-        //System.gc();
         status = new Status();
         PAXChecker.setStatusIconInBackground(PAXChecker.getIconName(Browser.getExpo()));
         long startMS;
-        int seconds = PAXChecker.getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
           //status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
           if (Browser.isShowclixUpdated() || Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
-            linkFound(link);
-            break;
-          }
-          if (Browser.isShowclixUpdated()) {
-            final String link = Browser.getShowclixLink();
             linkFound(link);
             break;
           }
@@ -115,10 +107,10 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (PAXChecker.getRefreshTime() == 10) {
+    if (getRefreshTime() == 10) {
       System.out.print("Refresh Time (seconds, no input limit at the moment): ");
       try {
-        PAXChecker.setRefreshTime(Integer.parseInt(myScanner.next(), 10));
+        setRefreshTime(Integer.parseInt(myScanner.next(), 10));
         System.out.println();
       } catch (Exception e) {
       }
@@ -209,23 +201,14 @@ public class Checker {
       @Override
       public void run() {
         //System.gc();
-        long startMS;
-        int seconds = PAXChecker.getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+        int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
           //status.setLastCheckedText("Checking for updates...");
-          startMS = System.currentTimeMillis();
-          if (Browser.isPAXWebsiteUpdated()) {
+          long startMS = System.currentTimeMillis();
+          if (Browser.isShowclixUpdated() || Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
             System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The PAX website has been updated! URL found: " + link);
-            Browser.openLinkInBrowser(link);
-            Audio.playAlarm();
-            break;
-          }
-          if (Browser.isShowclixUpdated()) {
-            final String link = Browser.getShowclixLink();
-            System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "The Showclix website has been updated! URL found: " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
             Browser.openLinkInBrowser(link);
             Audio.playAlarm();
             break;
@@ -248,14 +231,15 @@ public class Checker {
   }
 
   /**
+   * Does everything when a Showclix link is found. Opens a Tickets Found window, sends a text, plays an alarm, etc.
    *
-   * @param link
+   * @param link The link to use for everything
    */
   public static void linkFound(String link) {
     KeyboardHandler.typeLinkNotification(link);
     Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
-    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL found: " + link);
-    PAXChecker.showTicketsWindow(link);
+    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+    showTicketsWindow(link);
     status.dispose();
     Audio.playAlarm();
   }

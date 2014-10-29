@@ -29,7 +29,7 @@ public class IconMenu extends PopupMenu {
     maximizeButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        PAXChecker.maximizeStatusWindow();
+        Checker.maximizeStatusWindow();
       }
     });
     closeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -53,7 +53,7 @@ public class IconMenu extends PopupMenu {
     forceCheckButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        PAXChecker.forceRefresh();
+        Checker.forceRefresh();
       }
     });
     addAllComponents();

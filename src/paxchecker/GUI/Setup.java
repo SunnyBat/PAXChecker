@@ -632,7 +632,7 @@ public class Setup extends javax.swing.JFrame {
     }
     System.out.println("Final Text: " + text);
     Email.addEmailAddress(text);
-    PAXChecker.setRefreshTime(jSlider1.getValue());
+    Checker.setRefreshTime(jSlider1.getValue());
     SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
     if (JCBSavePreferences.isSelected()) {
       SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
@@ -644,7 +644,7 @@ public class Setup extends javax.swing.JFrame {
       SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
     }
     this.dispose();
-    PAXChecker.startCheckingWebsites();
+    Checker.startCheckingWebsites();
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void JCBSaveCellnumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSaveCellnumActionPerformed
