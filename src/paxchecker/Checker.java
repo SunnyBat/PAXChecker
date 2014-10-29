@@ -6,6 +6,7 @@
 package paxchecker;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.Scanner;
 import paxchecker.GUI.*;
 
@@ -36,7 +37,7 @@ public class Checker {
           System.out.println("NOTE: Link has changed since last time!");
         }
         status = new Status();
-        PAXChecker.setStatusIconInBackground(PAXChecker.getIconName(Browser.getExpo()));
+        setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
@@ -296,6 +297,77 @@ public class Checker {
       tickets.setBackground(Color.RED);
     } catch (Exception e) {
       System.out.println("Unable to set IconImage!");
+      e.printStackTrace();
+    }
+  }
+
+  public static void setStatusButtonText(String s) {
+    if (status != null) {
+      status.setButtonStatusText(s);
+    }
+  }
+
+  public static void setStatusWebsiteLink(String s) {
+    if (status != null) {
+      status.setWebsiteLink(s);
+    }
+  }
+
+  public static void setStatusShowclixLink(String s) {
+    if (status != null) {
+      status.setShowclixLink("Unable to to connect to the Showclix website!");
+    }
+  }
+
+  public static void loadAlertIcon() {
+    try {
+      alertIcon = javax.imageio.ImageIO.read(Checker.class.getResourceAsStream("/resources/alert.png"));
+    } catch (IOException iOException) {
+    }
+  }
+
+  /**
+   * Gets the icon name for the given expo.
+   *
+   * @param expo The name of the expo
+   * @return The name of the icon for the given expo
+   */
+  public static String getIconName(String expo) {
+    switch (expo.toLowerCase()) { // toLowerCase to lower the possibilities (and readability)
+      case "prime":
+      case "pax prime":
+        return "PAXPrime.png";
+      case "east":
+      case "pax east":
+        return "PAXEast.png";
+      case "south":
+      case "pax south":
+        return "PAXSouth.png";
+      case "aus":
+      case "pax aus":
+        return "PAXAus.png";
+      case "dev":
+      case "pax dev":
+        return "PAXDev.png";
+      default:
+        System.out.println("getIconName(): Unknown PAX expo: " + expo);
+        return "PAXPrime.png";
+    }
+  }
+
+  /**
+   * Sets the icon of the Status window. Note that this checks the /resources/ folder located in the JAR file for the filename, regardless of what the
+   * iconName is.
+   *
+   * @param iconName The name of the icon to load
+   */
+  public static void setStatusIconInBackground(final String iconName) {
+    try {
+      if (Checker.status != null) {
+        Checker.status.setIcon(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
+      }
+    } catch (Exception e) {
+      System.out.println("Unable to load PAX icon: " + iconName);
       e.printStackTrace();
     }
   }

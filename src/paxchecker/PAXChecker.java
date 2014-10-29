@@ -1,8 +1,6 @@
 package paxchecker;
 
-import java.awt.Color;
 import java.io.File;
-import java.util.Scanner;
 import paxchecker.GUI.*;
 
 /**
@@ -11,23 +9,17 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.2.2";
-  private static volatile int secondsBetweenRefresh = 10;
-  private static volatile boolean forceRefresh;
+  public static final String VERSION = "1.7.2.4";
   private static volatile java.awt.Image alertIcon;
-  private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
   protected static Setup setup;
-  protected static Status status;
-  protected static Tickets tickets;
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    loadPatchNotesInBackground();
-    prefetchIconsInBackground();
     System.out.println("Initializing...");
+    loadPatchNotesInBackground();
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     Email.init();
     KeyboardHandler.init();
@@ -132,6 +124,7 @@ public class PAXChecker {
     } else {
       setup = new Setup();
     }
+    Checker.loadAlertIcon();
   }
 
   /**
@@ -196,73 +189,6 @@ public class PAXChecker {
   }
 
   /**
-   * Loads the program icons in the background. Note that this starts a new Thread and therefore does not block.
-   */
-  public static void prefetchIconsInBackground() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          alertIcon = javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/alert.png"));
-        } catch (Exception e) {
-          System.out.println("Unable to fetch PAX Icon!");
-        }
-      }
-    }, "Prefetch Icons");
-  }
-
-  /**
-   * Gets the icon name for the given expo.
-   *
-   * @param expo The name of the expo
-   * @return The name of the icon for the given expo
-   */
-  public static String getIconName(String expo) {
-    switch (expo.toLowerCase()) { // toLowerCase to lower the possibilities (and readability)
-      case "prime":
-      case "pax prime":
-        return "PAXPrime.png";
-      case "east":
-      case "pax east":
-        return "PAXEast.png";
-      case "south":
-      case "pax south":
-        return "PAXSouth.png";
-      case "aus":
-      case "pax aus":
-        return "PAXAus.png";
-      case "dev":
-      case "pax dev":
-        return "PAXDev.png";
-      default:
-        System.out.println("getIconName(): Unknown PAX expo: " + expo);
-        return "PAXPrime.png";
-    }
-  }
-
-  /**
-   * Sets the icon of the Status window. Note that this checks the /resources/ folder located in the JAR file for the filename, regardless of what the
-   * iconName is.
-   *
-   * @param iconName The name of the icon to load
-   */
-  public static void setStatusIconInBackground(final String iconName) {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          if (status != null) {
-            status.setIcon(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
-          }
-        } catch (Exception e) {
-          System.out.println("Unable to load PAX icon: " + iconName);
-          e.printStackTrace();
-        }
-      }
-    }, "Set Status Icon");
-  }
-
-  /**
    * Loads the Patch Notes on a new daemon Thread. This also sets the Patch Notes in the Setup window if possible.
    */
   public static void loadPatchNotesInBackground() {
@@ -281,7 +207,7 @@ public class PAXChecker {
    * Sends a test email on a daemon Thread. Note that this also updates the Status window if possible.
    */
   public static void sendBackgroundTestEmail() {
-    if (status == null) {
+    if (Checker.status == null) {
       Email.testEmail();
       return;
     }
@@ -289,25 +215,25 @@ public class PAXChecker {
       @Override
       public void run() {
         try {
-          status.setTextButtonState(false);
-          status.setTextButtonText("Sending...");
+          Checker.status.setTextButtonState(false);
+          Checker.status.setTextButtonText("Sending...");
           if (!Email.testEmail()) {
-            status.setTextButtonText("Test Text");
-            status.setTextButtonState(true);
+            Checker.status.setTextButtonText("Test Text");
+            Checker.status.setTextButtonState(true);
             return;
           }
           long timeStarted = System.currentTimeMillis();
           while (System.currentTimeMillis() - timeStarted < 60000) {
-            status.setTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+            Checker.status.setTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
             Thread.sleep(200);
           }
-          status.setTextButtonText("Test Text");
-          status.setTextButtonState(true);
+          Checker.status.setTextButtonText("Test Text");
+          Checker.status.setTextButtonState(true);
         } catch (Exception e) {
           System.out.println("ERROR sending background test email!");
           e.printStackTrace();
-          status.setTextButtonText("Test Text");
-          status.setTextButtonState(true);
+          Checker.status.setTextButtonText("Test Text");
+          Checker.status.setTextButtonState(true);
         }
       }
     }, "Send Test Email");

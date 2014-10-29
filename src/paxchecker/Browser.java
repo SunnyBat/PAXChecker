@@ -77,25 +77,16 @@ public class Browser {
     }
     String lineText = getCurrentButtonLinkLine();
     if (lineText == null) {
-      if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink("ERROR connecting to the PAX website!");
-      } else {
-        System.out.println("ERROR connecting to the PAX website!");
-      }
+      Checker.setStatusWebsiteLink("ERROR connecting to the PAX website!");
+      System.out.println("ERROR connecting to the PAX website!");
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
-      if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink("Unable to connect: " + lineText);
-      } else {
-        System.out.println("Unable to connect: " + lineText);
-      }
+      Checker.setStatusWebsiteLink("Unable to connect: " + lineText);
+      System.out.println("Unable to connect: " + lineText);
       return false;
     } else if (lineText.equals("NoFind")) {
-      if (PAXChecker.status != null) {
-        PAXChecker.status.setWebsiteLink("Unable to find the Register Online button!");
-      } else {
-        System.out.println("Unable to find the Register Online button!");
-      }
+      Checker.setStatusWebsiteLink("Unable to find the Register Online button!");
+      System.out.println("Unable to find the Register Online button!");
       return false;
     } else if (!lineText.contains("\"" + websiteLink + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + lineText);
@@ -264,15 +255,11 @@ public class Browser {
     }
     int currEvent = getLatestShowclixID(getExpo());
     if (currEvent == -1) {
-      if (PAXChecker.status != null) {
-        PAXChecker.status.setShowclixLink("Unable to to connect to the Showclix website!");
-      }
+      Checker.setStatusShowclixLink("Unable to connect to the Showclix website!");
       return false;
     }
     String eventUrl = "https://showclix.com/event/" + currEvent;
-    if (PAXChecker.status != null) {
-      PAXChecker.status.setShowclixLink(eventUrl);
-    }
+    Checker.setStatusShowclixLink(eventUrl);
     return currEvent != lastShowclixEventID;
   }
 

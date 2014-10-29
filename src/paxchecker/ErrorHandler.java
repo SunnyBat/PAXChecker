@@ -125,12 +125,6 @@ public class ErrorHandler {
     if (PAXChecker.setup != null) {
       PAXChecker.setup.dispose();
     }
-    if (PAXChecker.tickets != null) {
-      PAXChecker.tickets.dispose();
-    }
-    if (PAXChecker.status != null) {
-      PAXChecker.status.dispose();
-    }
     if (UpdateHandler.update != null) {
       UpdateHandler.update.dispose();
     }
@@ -149,13 +143,6 @@ public class ErrorHandler {
       } else {
         validCount++;
       }
-      if (PAXChecker.tickets != null) {
-        if (!PAXChecker.tickets.isVisible()) {
-          validCount++;
-        }
-      } else {
-        validCount++;
-      }
       if (UpdateHandler.update != null) {
         if (!UpdateHandler.update.isVisible()) {
           validCount++;
@@ -163,14 +150,14 @@ public class ErrorHandler {
       } else {
         validCount++;
       }
-      if (PAXChecker.status != null) {
-        if (!PAXChecker.status.isDisplayable()) {
+      if (Checker.status != null) {
+        if (!Checker.status.isDisplayable()) {
           validCount++;
         }
       } else {
         validCount++;
       }
-      if (validCount == 4) {
+      if (validCount == 3) {
         return true;
       }
     }
