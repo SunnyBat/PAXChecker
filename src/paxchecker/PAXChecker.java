@@ -3,7 +3,6 @@ package paxchecker;
 import java.awt.Color;
 import java.io.File;
 import java.util.Scanner;
-import java.util.concurrent.CountDownLatch;
 import paxchecker.GUI.*;
 
 /**
@@ -416,21 +415,6 @@ public class PAXChecker {
     forceRefresh = true;
     if (status != null) {
       status.setButtonStatusText("Forced website check!");
-    }
-  }
-
-  /**
-   * Creates the Tickets window and makes it visible. This should really only be called once, as subsequent calls will rewrite {@link #tickets} and
-   * lose the object reference to the previously opened tickets window.
-   */
-  public static void showTicketsWindow() {
-    tickets = new Tickets();
-    try {
-      tickets.setIconImage(alertIcon);
-      tickets.setBackground(Color.RED);
-    } catch (Exception e) {
-      System.out.println("Unable to set IconImage!");
-      e.printStackTrace();
     }
   }
 
