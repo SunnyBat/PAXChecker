@@ -43,8 +43,12 @@ public class Checker {
         do {
           status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
-          if (Browser.isShowclixUpdated() || Browser.isPAXWebsiteUpdated()) {
+          if (Browser.isShowclixUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
+            linkFound(link);
+            break;
+          } else if (Browser.isPAXWebsiteUpdated()) {
+            final String link = Browser.getShowclixLink();
             linkFound(link);
             break;
           }
@@ -238,7 +242,7 @@ public class Checker {
    */
   public static void linkFound(String link) {
     KeyboardHandler.typeLinkNotification(link);
-    Browser.openLinkInBrowser(link); // Separate Thread because Browser.getShowclixLink() takes a while to do
+    Browser.openLinkInBrowser(link);
     Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
     showTicketsWindow(link);
     status.dispose();

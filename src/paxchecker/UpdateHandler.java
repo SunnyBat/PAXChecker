@@ -250,6 +250,7 @@ public class UpdateHandler {
 
   /**
    * Checks whether or not the program should update.
+   *
    * @return True if the program should update, false if not
    */
   public static boolean shouldUpdateProgram() {
