@@ -168,7 +168,7 @@ public class UpdateHandler {
         if (UpdateHandler.shouldUpdateProgram()) {
           update.setStatusLabelText("Downloading update...");
           UpdateHandler.updateProgram();
-          PAXChecker.startNewProgramInstance(args);
+          startNewProgramInstance(args);
           update.dispose();
           System.exit(0);
         }
@@ -191,7 +191,7 @@ public class UpdateHandler {
         System.out.println("Update found, downloading update...");
         UpdateHandler.updateProgram();
         System.out.println("Update finished, restarting program...");
-        PAXChecker.startNewProgramInstance(args);
+        startNewProgramInstance(args);
         System.exit(0);
       }
     } catch (Exception e) {
@@ -248,6 +248,10 @@ public class UpdateHandler {
     updateProgram = true;
   }
 
+  /**
+   * Checks whether or not the program should update.
+   * @return True if the program should update, false if not
+   */
   public static boolean shouldUpdateProgram() {
     return updateProgram;
   }
@@ -263,7 +267,7 @@ public class UpdateHandler {
     try {
       File mF = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
       long fileSize = mF.length();
-      if (fileSize == 4097) { // No, I do NOT want to update when I'm running in Netbeans
+      if (fileSize == 4096) { // No, I do NOT want to update when I'm running in Netbeans
         return false;
       }
       URL updateURL = new URL(UPDATE_LINK);
@@ -346,6 +350,31 @@ public class UpdateHandler {
       System.out.println("ERROR updating program!");
       ErrorHandler.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + UPDATE_LINK, e);
       ErrorHandler.fatalError();
+    }
+  }
+
+  /**
+   * Starts a new instance of the program with the given arguments.
+   *
+   * @param args
+   */
+  public static void startNewProgramInstance(String... args) {
+    try {
+      String[] nArgs;
+      String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+      if (args != null && args.length > 0) {
+        nArgs = new String[args.length + 3];
+        System.arraycopy(args, 0, nArgs, 3, args.length);
+      } else {
+        nArgs = new String[3];
+      }
+      nArgs[0] = System.getProperty("java.home") + "\\bin\\javaw.exe";
+      nArgs[1] = "-jar";
+      nArgs[2] = new File(path).getAbsolutePath(); // path can have leading / on it, getAbsolutePath() removes them
+      ProcessBuilder pb = new ProcessBuilder(nArgs);
+      pb.start();
+    } catch (Exception e) {
+      ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
     }
   }
 }

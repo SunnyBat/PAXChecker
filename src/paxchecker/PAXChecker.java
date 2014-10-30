@@ -1,6 +1,5 @@
 package paxchecker;
 
-import java.io.File;
 import paxchecker.GUI.*;
 
 /**
@@ -9,8 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.2.4";
-  private static volatile java.awt.Image alertIcon;
+  public static final String VERSION = "1.7.2.5";
   // GUIs
   protected static Setup setup;
 
@@ -141,31 +139,6 @@ public class PAXChecker {
   }
 
   /**
-   * Starts a new instance of the program with the given arguments.
-   *
-   * @param args
-   */
-  public static void startNewProgramInstance(String... args) {
-    try {
-      String[] nArgs;
-      String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-      if (args != null && args.length > 0) {
-        nArgs = new String[args.length + 3];
-        System.arraycopy(args, 0, nArgs, 3, args.length);
-      } else {
-        nArgs = new String[3];
-      }
-      nArgs[0] = System.getProperty("java.home") + "\\bin\\javaw.exe";
-      nArgs[1] = "-jar";
-      nArgs[2] = new File(path).getAbsolutePath(); // path can have leading / on it, getAbsolutePath() removes them
-      ProcessBuilder pb = new ProcessBuilder(nArgs);
-      pb.start();
-    } catch (Exception e) {
-      ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
-    }
-  }
-
-  /**
    * This makes a new daemon, low-priority Thread and runs it.
    *
    * @param run The Runnable to make into a Thread and run
@@ -204,36 +177,39 @@ public class PAXChecker {
   }
 
   /**
+   * Sends a test email. Uses the same Thread, blocks for about 10 seconds.
+   */
+  public static void sendTestEmail() {
+    Email.testEmail();
+  }
+
+  /**
    * Sends a test email on a daemon Thread. Note that this also updates the Status window if possible.
    */
   public static void sendBackgroundTestEmail() {
-    if (Checker.status == null) {
-      Email.testEmail();
-      return;
-    }
     startBackgroundThread(new Runnable() {
       @Override
       public void run() {
         try {
-          Checker.status.setTextButtonState(false);
-          Checker.status.setTextButtonText("Sending...");
+          Checker.setStatusTextButtonState(false);
+          Checker.setStatusTextButtonText("Sending...");
           if (!Email.testEmail()) {
-            Checker.status.setTextButtonText("Test Text");
-            Checker.status.setTextButtonState(true);
+            Checker.setStatusTextButtonText("Test Text");
+            Checker.setStatusTextButtonState(true);
             return;
           }
           long timeStarted = System.currentTimeMillis();
           while (System.currentTimeMillis() - timeStarted < 60000) {
-            Checker.status.setTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+            Checker.setStatusTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
             Thread.sleep(200);
           }
-          Checker.status.setTextButtonText("Test Text");
-          Checker.status.setTextButtonState(true);
+          Checker.setStatusTextButtonText("Test Text");
+          Checker.setStatusTextButtonState(true);
         } catch (Exception e) {
           System.out.println("ERROR sending background test email!");
           e.printStackTrace();
-          Checker.status.setTextButtonText("Test Text");
-          Checker.status.setTextButtonState(true);
+          Checker.setStatusTextButtonText("Test Text");
+          Checker.setStatusTextButtonState(true);
         }
       }
     }, "Send Test Email");

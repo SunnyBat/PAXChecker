@@ -38,7 +38,7 @@
                       <Component id="jButton2" min="-2" pref="185" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
-                  <Component id="JLButtonStatus" max="32767" attributes="0"/>
+                  <Component id="JLInformation" max="32767" attributes="0"/>
                   <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
                   <Component id="JLWebsiteLink" alignment="0" max="32767" attributes="0"/>
                   <Component id="JLShowclixLink" max="32767" attributes="0"/>
@@ -68,7 +68,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JLDataUsage" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="JLButtonStatus" min="-2" max="-2" attributes="0"/>
+              <Component id="JLInformation" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -128,9 +128,9 @@
         <Property name="text" type="java.lang.String" value="Time Until Check:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="JLButtonStatus">
+    <Component class="javax.swing.JLabel" name="JLInformation">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Button Status"/>
+        <Property name="text" type="java.lang.String" value="Information"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">

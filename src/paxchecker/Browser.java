@@ -92,9 +92,7 @@ public class Browser {
       System.out.println("OMG IT'S UPDATED: " + lineText);
       return true;
     } else {
-      if (Checker.status != null) {
-        Checker.status.setWebsiteLink(parseHRef(lineText));
-      }
+      Checker.setStatusWebsiteLink(parseHRef(lineText));
       return false;
     }
   }

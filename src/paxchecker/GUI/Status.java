@@ -70,7 +70,7 @@ public class Status extends javax.swing.JFrame {
     jButton2 = new javax.swing.JButton();
     jButton3 = new javax.swing.JButton();
     JLLastChecked = new javax.swing.JLabel();
-    JLButtonStatus = new javax.swing.JLabel();
+    JLInformation = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
     JLShowclixLink = new javax.swing.JLabel();
     JLDataUsage = new javax.swing.JLabel();
@@ -118,7 +118,7 @@ public class Status extends javax.swing.JFrame {
 
     JLLastChecked.setText("Time Until Check:");
 
-    JLButtonStatus.setText("Button Status");
+    JLInformation.setText("Information");
 
     jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
     jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -146,7 +146,7 @@ public class Status extends javax.swing.JFrame {
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(JLButtonStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JLInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(JLShowclixLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -172,7 +172,7 @@ public class Status extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLDataUsage)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(JLButtonStatus)
+        .addComponent(JLInformation)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jButton2)
@@ -210,11 +210,11 @@ public class Status extends javax.swing.JFrame {
     tray.remove(myIcon); // Fine if myIcon == null or myIcon isn't in tray
   }
 
-  public void setButtonStatusText(final String text) {
+  public void setInformationText(final String text) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        JLButtonStatus.setText(text);
+        JLInformation.setText(text);
       }
     });
   }
@@ -393,11 +393,11 @@ public class Status extends javax.swing.JFrame {
   private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     // TODO add your handling code here:
 //    Browser.openLinkInBrowser("http://prime.paxsite.com");
-//    setButtonStatusText("PAX Prime site opened.");
+//    setInformationText("PAX Prime site opened.");
     if (Audio.playAlarm()) {
-      setButtonStatusText("Alarm started.");
+      setInformationText("Alarm started.");
     } else {
-      setButtonStatusText("Unable to play alarm.");
+      setInformationText("Unable to play alarm.");
     }
   }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -421,8 +421,8 @@ public class Status extends javax.swing.JFrame {
   }//GEN-LAST:event_JLShowclixLinkMouseClicked
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JLabel JLButtonStatus;
   private javax.swing.JLabel JLDataUsage;
+  private javax.swing.JLabel JLInformation;
   private javax.swing.JLabel JLLastChecked;
   private javax.swing.JLabel JLShowclixLink;
   private javax.swing.JLabel JLTitle;

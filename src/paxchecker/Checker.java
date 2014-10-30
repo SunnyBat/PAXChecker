@@ -21,7 +21,7 @@ public class Checker {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
-  public static Status status;
+  private static Status status;
   private static Tickets tickets;
 
   /**
@@ -176,7 +176,7 @@ public class Checker {
               System.exit(0);
               break;
             case "testtext":
-              PAXChecker.sendBackgroundTestEmail();
+              PAXChecker.sendTestEmail();
               break;
             case "testalarm":
               Audio.playAlarm();
@@ -280,7 +280,7 @@ public class Checker {
   public static void forceRefresh() {
     forceRefresh = true;
     if (status != null) {
-      status.setButtonStatusText("Forced website check!");
+      status.setInformationText("Forced website check!");
     }
   }
 
@@ -303,7 +303,7 @@ public class Checker {
 
   public static void setStatusButtonText(String s) {
     if (status != null) {
-      status.setButtonStatusText(s);
+      status.setInformationText(s);
     }
   }
 
@@ -316,6 +316,18 @@ public class Checker {
   public static void setStatusShowclixLink(String s) {
     if (status != null) {
       status.setShowclixLink("Unable to to connect to the Showclix website!");
+    }
+  }
+
+  public static void setStatusTextButtonState(boolean enabled) {
+    if (status != null) {
+      status.setTextButtonState(enabled);
+    }
+  }
+
+  public static void setStatusTextButtonText(String s) {
+    if (status != null) {
+      status.setTextButtonText(s);
     }
   }
 

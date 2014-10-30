@@ -150,14 +150,7 @@ public class ErrorHandler {
       } else {
         validCount++;
       }
-      if (Checker.status != null) {
-        if (!Checker.status.isDisplayable()) {
-          validCount++;
-        }
-      } else {
-        validCount++;
-      }
-      if (validCount == 3) {
+      if (validCount == 2) {
         return true;
       }
     }
