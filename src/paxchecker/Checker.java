@@ -43,11 +43,11 @@ public class Checker {
         do {
           status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
-          if (Browser.isShowclixUpdated()) {
+          if (Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
             linkFound(link);
             break;
-          } else if (Browser.isPAXWebsiteUpdated()) {
+          } else if (Browser.isShowclixUpdated()) {
             final String link = Browser.getShowclixLink();
             linkFound(link);
             break;

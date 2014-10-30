@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.3";
+  public static final String VERSION = "1.7.3.1";
   // GUIs
   protected static Setup setup;
 
@@ -17,10 +17,12 @@ public class PAXChecker {
    */
   public static void main(String[] args) {
     System.out.println("Initializing...");
-    loadPatchNotesInBackground();
+    //loadPatchNotesInBackground();
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     Email.init();
     KeyboardHandler.init();
+    System.out.println("Loading patch notes...");
+    UpdateHandler.loadVersionNotes();
     parseCommandLineArgs(args);
   }
 

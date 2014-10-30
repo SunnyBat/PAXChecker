@@ -17,7 +17,7 @@ public class UpdateHandler {
 
   private static volatile String versionNotes;
   private static volatile boolean useBetaVersion;
-  private static volatile int updateLevel;
+  private static volatile int updateLevel = -1;
   private static volatile boolean updateProgram;
   private static long updateSize;
   private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
@@ -81,6 +81,7 @@ public class UpdateHandler {
         DataTracker.addDataUsed(line.length());
         line = line.trim();
         if (line.contains("~~~" + PAXChecker.VERSION + "~~~")) {
+          setUpdateLevel(0);
           versionFound = true;
         }
         if (line.startsWith("TOKEN:")) {
@@ -266,26 +267,31 @@ public class UpdateHandler {
    */
   public static boolean updateAvailable() {
     try {
-      File mF = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-      long fileSize = mF.length();
-      if (fileSize == 4096) { // No, I do NOT want to update when I'm running in Netbeans
+      if (getUpdateLevel() == -1) {
+        ErrorHandler.showErrorWindow("ERROR checking for updates!", "Unable to load version notes -- Unable to check for updates!", null);
+        return false;
+      } else if (getUpdateLevel() == 0) {
+        System.out.println("Using most recent version.");
         return false;
       }
-      URL updateURL = new URL(UPDATE_LINK);
+      URL updateURL;
+      if (getUpdateLevel() == 1) {
+        if (!SettingsHandler.getUseBetaVersion()) {
+          System.out.println("Update available, but not opted into BETA versions");
+          return false;
+        }
+        updateURL = new URL(BETA_UPDATE_LINK);
+      } else {
+        updateURL = new URL(UPDATE_LINK);
+      }
       URLConnection conn = updateURL.openConnection();
       updateSize = conn.getContentLengthLong();
-      System.out.println("Update size = " + updateSize + " -- Program size = " + fileSize);
-      if (getUpdateLevel() == 1 && !SettingsHandler.getUseBetaVersion()) {
-        System.out.println("Update available, but not opted into BETA versions");
-        return false;
-      }
+      System.out.println("Update size = " + updateSize);
       if (updateSize == -1) {
         ErrorHandler.showErrorWindow("ERROR checking for updates!", "Update size listed as -1 -- Program most likely unable to connect!", null);
         return false;
-      } else if (updateSize != fileSize) {
-        System.out.println("Update available!");
-        return true;
       }
+      return true;
     } catch (Exception e) {
       System.out.println("ERROR updating program!");
       ErrorHandler.showErrorWindow("ERROR updating program!", "The program was unable to check for new updates.", e);
@@ -299,7 +305,12 @@ public class UpdateHandler {
    */
   public static void updateProgram() {
     try {
-      URL updateURL = new URL(UPDATE_LINK);
+      URL updateURL;
+      if (getUpdateLevel() == 1) {
+        updateURL = new URL(BETA_UPDATE_LINK);
+      } else {
+        updateURL = new URL(UPDATE_LINK);
+      }
       URLConnection conn = updateURL.openConnection();
       InputStream inputStream = conn.getInputStream();
       long remoteFileSize = conn.getContentLength();

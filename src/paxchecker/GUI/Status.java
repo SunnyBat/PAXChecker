@@ -118,7 +118,7 @@ public class Status extends javax.swing.JFrame {
 
     JLLastChecked.setText("Time Until Check:");
 
-    JLInformation.setText("Information");
+    JLInformation.setText(" ");
 
     jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
     jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
