@@ -279,10 +279,10 @@ public class Email {
    */
   public static boolean testEmail() {
     if (sendMessage("Test", "The test is successful. The PAX Checker is now set up to text your phone when the website updates!")) {
-      Checker.setStatusButtonText("Text message successfully sent!");
+      Checker.setStatusInformationText("Text message successfully sent!");
       return true;
     } else {
-      Checker.setStatusButtonText("There was an error sending your text message.");
+      Checker.setStatusInformationText("There was an error sending your text message.");
     }
     return false;
   }

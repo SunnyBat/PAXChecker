@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package paxchecker;
 
 import java.awt.Color;
@@ -22,7 +17,6 @@ public class Checker {
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
   private static Status status;
-  private static Tickets tickets;
 
   /**
    * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
@@ -295,7 +289,7 @@ public class Checker {
    * @param link The URL that was found by the program
    */
   public static void showTicketsWindow(String link) {
-    tickets = new Tickets(link);
+    Tickets tickets = new Tickets(link);
     try {
       tickets.setIconImage(alertIcon);
       tickets.setBackground(Color.RED);
@@ -305,36 +299,64 @@ public class Checker {
     }
   }
 
-  public static void setStatusButtonText(String s) {
+  /**
+   * Sets the Status information text.
+   *
+   * @param s The text to use
+   */
+  public static void setStatusInformationText(String s) {
     if (status != null) {
       status.setInformationText(s);
     }
   }
 
+  /**
+   * Sets the PAX Website link text. Note that this automatically starts with "PAX Website link:"
+   *
+   * @param s The text to use
+   */
   public static void setStatusWebsiteLink(String s) {
     if (status != null) {
       status.setWebsiteLink(s);
     }
   }
 
+  /**
+   * Sets the Showclix link text. Note that this automatically starts with "Showclix link:"
+   *
+   * @param s The text to use
+   */
   public static void setStatusShowclixLink(String s) {
     if (status != null) {
       status.setShowclixLink(s);
     }
   }
 
+  /**
+   * Sets the Test Text button state.
+   *
+   * @param enabled True to enable, false to disable
+   */
   public static void setStatusTextButtonState(boolean enabled) {
     if (status != null) {
       status.setTextButtonState(enabled);
     }
   }
 
+  /**
+   * Sets the Test Text button text.
+   *
+   * @param s The text to use
+   */
   public static void setStatusTextButtonText(String s) {
     if (status != null) {
       status.setTextButtonText(s);
     }
   }
 
+  /**
+   * Loads the alert icon to use when tickets go on sale.
+   */
   public static void loadAlertIcon() {
     try {
       alertIcon = javax.imageio.ImageIO.read(Checker.class.getResourceAsStream("/resources/alert.png"));

@@ -141,15 +141,6 @@ public class PAXChecker {
   }
 
   /**
-   * This makes a new daemon, low-priority Thread and runs it.
-   *
-   * @param run The Runnable to make into a Thread and run
-   */
-  public static void startBackgroundThread(Runnable run) {
-    startBackgroundThread(run, "General Background Thread");
-  }
-
-  /**
    * Starts a new daemon Thread.
    *
    * @param run The Runnable object to use
@@ -161,21 +152,6 @@ public class PAXChecker {
     newThread.setDaemon(true); // Kill the JVM if only daemon threads are running
     newThread.setPriority(Thread.MIN_PRIORITY); // Let other Threads take priority, as this will probably not run for long
     newThread.start(); // Start the Thread
-  }
-
-  /**
-   * Loads the Patch Notes on a new daemon Thread. This also sets the Patch Notes in the Setup window if possible.
-   */
-  public static void loadPatchNotesInBackground() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        UpdateHandler.loadVersionNotes();
-        if (UpdateHandler.getVersionNotes() != null && setup != null) {
-          setup.setPatchNotesText(UpdateHandler.getVersionNotes());
-        }
-      }
-    }, "Load Patch Notes");
   }
 
   /**
