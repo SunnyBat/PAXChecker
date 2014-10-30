@@ -41,7 +41,7 @@ public class Checker {
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
-          //status.setLastCheckedText("Checking for updates...");
+          status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
           if (Browser.isShowclixUpdated() || Browser.isPAXWebsiteUpdated()) {
             final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
@@ -315,7 +315,7 @@ public class Checker {
 
   public static void setStatusShowclixLink(String s) {
     if (status != null) {
-      status.setShowclixLink("Unable to to connect to the Showclix website!");
+      status.setShowclixLink(s);
     }
   }
 
