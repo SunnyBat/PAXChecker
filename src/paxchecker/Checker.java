@@ -318,6 +318,8 @@ public class Checker {
   public static void setStatusWebsiteLink(String s) {
     if (status != null) {
       status.setWebsiteLink(s);
+    } else {
+      System.out.println("PAX Website Event URL = " + s);
     }
   }
 
@@ -329,6 +331,8 @@ public class Checker {
   public static void setStatusShowclixLink(String s) {
     if (status != null) {
       status.setShowclixLink(s);
+    } else {
+      System.out.println("Showclix Event URL    = " + s);
     }
   }
 

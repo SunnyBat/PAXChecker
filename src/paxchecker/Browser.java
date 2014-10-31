@@ -302,7 +302,6 @@ public class Browser {
       for (String s : (Iterable<String>) obj.keySet()) {
         maxId = Math.max(maxId, Integer.parseInt((String) s));
       }
-      System.out.println("Max ID = " + maxId);
       return maxId;
     } catch (Exception e) {
       e.printStackTrace();

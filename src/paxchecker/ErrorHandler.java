@@ -113,11 +113,6 @@ public class ErrorHandler {
    * windows are closed. This should ONLY be called when an error window is closed, otherwise unexpected results could occur.
    */
   public static void errWindowClosed() {
-    if (--errorWindowCount == 0) {
-      if (canExit()) {
-        System.exit(0); // Kill all threads
-      }
-    }
   }
 
   public static void fatalError() {
@@ -128,33 +123,6 @@ public class ErrorHandler {
     if (UpdateHandler.update != null) {
       UpdateHandler.update.dispose();
     }
-  }
-
-  private static boolean canExit() {
-    if (errorWindowCount == 0) {
-      if (fatalError) {
-        return true;
-      }
-      int validCount = 0;
-      if (PAXChecker.setup != null) {
-        if (!PAXChecker.setup.isVisible()) {
-          validCount++;
-        }
-      } else {
-        validCount++;
-      }
-      if (UpdateHandler.update != null) {
-        if (!UpdateHandler.update.isVisible()) {
-          validCount++;
-        }
-      } else {
-        validCount++;
-      }
-      if (validCount == 2) {
-        return true;
-      }
-    }
-    return false;
   }
 
   public static void setCommandLine(boolean cl) {

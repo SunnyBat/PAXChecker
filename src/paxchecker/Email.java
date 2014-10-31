@@ -424,6 +424,7 @@ public class Email {
       temp = temp.replace("-", ""); // Avoid replacing chars in @car.rier.ext
       temp = temp.replace("(", "");
       temp = temp.replace(")", "");
+      temp = temp.replace(" ", ""); // Emails can technically have "\ " in them, but that's a huge fringe case. If it comes up, fix it.
       address = temp + address.substring(address.indexOf("@"));
       System.out.println("New Number: " + address);
       completeAddress = address;

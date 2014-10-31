@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.3.1";
+  public static final String VERSION = "1.7.4";
   // GUIs
   protected static Setup setup;
 
@@ -155,7 +155,7 @@ public class PAXChecker {
   }
 
   /**
-   * Sends a test email. Uses the same Thread, blocks for about 10 seconds.
+   * Sends a test email. Uses the same Thread, blocks until completed.
    */
   public static void sendTestEmail() {
     Email.testEmail();
