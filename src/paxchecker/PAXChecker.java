@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.4.1";
+  public static final String VERSION = "1.7.4.2";
   // GUIs
   protected static Setup setup;
 
@@ -23,17 +23,17 @@ public class PAXChecker {
     KeyboardHandler.init();
     System.out.println("Loading patch notes...");
     UpdateHandler.loadVersionNotes();
-    parseCommandLineArgs(args);
+    startProgram(args);
   }
 
-  public static void parseCommandLineArgs(String[] args) {
+  public static void startProgram(String[] args) {
     boolean doUpdate = true;
+    boolean checkPax = true;
+    boolean checkShowclix = true;
     boolean autoStart = false;
     boolean commandLine = false;
     if (args.length > 0) {
       System.out.println("Args!");
-      boolean checkPax = true;
-      boolean checkShowclix = true;
       argsCycle:
       for (int a = 0; a < args.length; a++) {
         System.out.println("args[" + a + "] = " + args[a]);
@@ -96,17 +96,13 @@ public class PAXChecker {
             break;
         }
       }
-      if (checkPax) {
-        Paxsite.enablePaxWebsiteChecking();
-      }
-      if (checkShowclix) {
-        Showclix.enableShowclixWebsiteChecking();
-      }
       if (autoStart && !Paxsite.isCheckingPaxWebsite() && !Showclix.isCheckingShowclix()) {
         System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
         System.exit(0);
       }
     }
+    Paxsite.setCheckPax(checkPax);
+    Showclix.setCheckShowclix(checkShowclix);
     if (commandLine) {
       ErrorHandler.setCommandLine(true);
       if (doUpdate) {

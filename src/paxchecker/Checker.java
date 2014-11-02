@@ -73,7 +73,7 @@ public class Checker {
       System.out.print("Email: ");
       try {
         Email.setUsername(myScanner.next());
-        System.out.println("Password: ");
+        System.out.print("Password: ");
         Email.setPassword(myScanner.next());
       } catch (Exception e) {
       }
@@ -82,7 +82,6 @@ public class Checker {
       System.out.print("Cell Number: ");
       try {
         Email.addEmailAddress(myScanner.next());
-        System.out.println();
       } catch (Exception e) {
       }
     }
@@ -90,9 +89,10 @@ public class Checker {
       System.out.print("Check PAX Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Paxsite.enablePaxWebsiteChecking();
+          Paxsite.setCheckPax(true);
+        } else {
+          Paxsite.setCheckPax(false);
         }
-        System.out.println();
       } catch (Exception e) {
       }
     }
@@ -100,9 +100,10 @@ public class Checker {
       System.out.print("Check Showclix Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Showclix.enableShowclixWebsiteChecking();
+          Showclix.setCheckShowclix(true);
+        } else {
+          Showclix.setCheckShowclix(false);
         }
-        System.out.println();
       } catch (Exception e) {
       }
     }
@@ -110,19 +111,15 @@ public class Checker {
       System.out.print("Refresh Time (seconds, no input limit at the moment): ");
       try {
         setRefreshTime(Integer.parseInt(myScanner.next(), 10));
-        System.out.println();
       } catch (Exception e) {
       }
     }
-    if (!Paxsite.isCheckingPaxWebsite()) {
-      System.out.print("Play Alarm (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Audio.setPlayAlarm(true);
-        }
-        System.out.println();
-      } catch (Exception e) {
+    System.out.print("Play Alarm (Y/N): ");
+    try {
+      if (!myScanner.next().toLowerCase().startsWith("n")) {
+        Audio.setPlayAlarm(true);
       }
+    } catch (Exception e) {
     }
     if (Browser.getExpo() == null) {
       System.out.print("Expo: ");
@@ -170,9 +167,12 @@ public class Checker {
             continue;
           }
           switch (input.toLowerCase()) {
+            case "stop":
             case "exit":
+            case "finish":
               System.exit(0);
               break;
+            case "testemail":
             case "testtext":
               PAXChecker.sendTestEmail();
               break;
@@ -183,7 +183,14 @@ public class Checker {
             case "check":
               forceRefresh = true;
               break;
+            case "updateprogram":
+              System.out.println("Feature under development");
+              break;
             default:
+              if (input.toLowerCase().startsWith("addemail:")) {
+                Email.addEmailAddress(input.substring(input.indexOf(":") + 1));
+                continue;
+              }
               System.out.println("Unknown command: " + input.toLowerCase());
               System.out.println("Commands:");
               System.out.println("exit        - Exit the program");
@@ -192,6 +199,7 @@ public class Checker {
               System.out.println("refresh     - Force check");
               System.out.println("check       - Force check");
               System.out.println("Commands are NOT case sensitive.");
+              break;
           }
         }
       }

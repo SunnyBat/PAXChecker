@@ -18,12 +18,11 @@ public class Paxsite {
   private static String websiteLink;
 
   /**
-   * Enables the checking of the [expo].paxsite.com/registration page for the Register Online button.
-   *
-   * @see #isCheckingPaxWebsite()
+   * Sets whether or not to check the PAX website for ticket sales.
+   * @param check True to check, false to not
    */
-  public static void enablePaxWebsiteChecking() {
-    checkPAXWebsite = true;
+  public static void setCheckPax(boolean check) {
+    checkPAXWebsite = check;
   }
 
   /**

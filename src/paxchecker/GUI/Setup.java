@@ -585,17 +585,15 @@ public class Setup extends javax.swing.JFrame {
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     // TODO add your handling code here:
     jButton1.setText("Starting, please wait...");
-    jButton1.setEnabled(false);
     if (jCheckBox1.isSelected()) {
-      Paxsite.enablePaxWebsiteChecking();
+      Paxsite.setCheckPax(true);
     } else {
       if (!jCheckBox2.isSelected()) {
         return;
       }
+      Paxsite.setCheckPax(false);
     }
-    if (jCheckBox2.isSelected()) {
-      Showclix.enableShowclixWebsiteChecking();
-    }
+    Showclix.setCheckShowclix(jCheckBox2.isSelected());
     UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(jTextField1.getText());

@@ -17,6 +17,7 @@ import org.json.simple.parser.JSONParser;
  * @author Sunny
  */
 public class Showclix {
+
   private static boolean checkShowclix;
   private static int lastShowclixEventID = 3852445;
   private static final String SHOWCLIX_API_LINK_PRIME = "http://api.showclix.com/Seller/16886/events"; // Also for PAX Dev
@@ -25,11 +26,12 @@ public class Showclix {
   private static final String SHOWCLIX_API_LINK_AUS = "http://api.showclix.com/Seller/15374/events";
 
   /**
-   * Tells the program to check the Showclix website when checking for ticket sales. Note that this uses the Showclix API (api.showclix.com) to check
-   * for events.
+   * Sets whether or not to check the Showclix website for updates.
+   *
+   * @param check True to check, false to not
    */
-  public static void enableShowclixWebsiteChecking() {
-    checkShowclix = true;
+  public static void setCheckShowclix(boolean check) {
+    checkShowclix = check;
   }
 
   /**
