@@ -25,10 +25,10 @@ public class Status extends javax.swing.JFrame {
   private void customComponents() {
     tray = SystemTray.getSystemTray();
     myMenu = new IconMenu();
-    if (!Browser.isCheckingPaxWebsite()) {
+    if (!Paxsite.isCheckingPaxWebsite()) {
       hideWebsiteText();
     }
-    if (!Browser.isCheckingShowclix()) {
+    if (!Showclix.isCheckingShowclix()) {
       hideShowclixText();
     }
     JLTitle.setText(Browser.getExpo() + " Website Status");

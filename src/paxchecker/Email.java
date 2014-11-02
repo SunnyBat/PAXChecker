@@ -276,6 +276,8 @@ public class Email {
 
   /**
    * Sends a test email to every number put into the program and prints whether it was successful or not to the Status window.
+   *
+   * @return True if email is sent successfully, false if not
    */
   public static boolean testEmail() {
     if (sendMessage("Test", "The test is successful. The PAX Checker is now set up to text your phone when the website updates!")) {

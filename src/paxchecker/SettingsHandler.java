@@ -43,7 +43,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(Checker.getRefreshTime(), Browser.isCheckingPaxWebsite(), Browser.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    saveAllPrefs(Checker.getRefreshTime(), Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**
@@ -464,7 +464,7 @@ public class SettingsHandler {
    * @return The last Showclix link for the specific expo
    */
   public static String getLastEvent(String expo) {
-    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), Browser.getShowclixLink());
+    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), Showclix.getShowclixLink());
   }
 
   public static boolean getUseBetaVersion() {

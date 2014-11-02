@@ -85,7 +85,7 @@ public class UpdateHandler {
             if (d.startsWith("SETSHOWCLIXID:")) { // Obsolete, if I'm not mistaken
               String load = d.substring(14);
               System.out.println("Load = " + load);
-              Browser.setShowclixID(Integer.parseInt(load));
+              Showclix.setShowclixID(Integer.parseInt(load));
             } else if (d.startsWith("UPDATETYPE:")) {
               if (!versionFound) {
                 String load = d.substring(11);

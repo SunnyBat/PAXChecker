@@ -587,14 +587,14 @@ public class Setup extends javax.swing.JFrame {
     jButton1.setText("Starting, please wait...");
     jButton1.setEnabled(false);
     if (jCheckBox1.isSelected()) {
-      Browser.enablePaxWebsiteChecking();
+      Paxsite.enablePaxWebsiteChecking();
     } else {
       if (!jCheckBox2.isSelected()) {
         return;
       }
     }
     if (jCheckBox2.isSelected()) {
-      Browser.enableShowclixWebsiteChecking();
+      Showclix.enableShowclixWebsiteChecking();
     }
     UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
     Audio.setPlayAlarm(jCheckBox3.isSelected());

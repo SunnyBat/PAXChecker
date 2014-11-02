@@ -12,6 +12,7 @@ public class Audio {
 
   private static boolean playSound;
   private static Clip clip;
+  private static final lListener listener = new lListener();
 
   /**
    * Checks whether or not sound is currently enabled. This is set using {@link #setPlayAlarm(boolean)}.
@@ -47,6 +48,7 @@ public class Audio {
         clip.setFramePosition(0);
       }
       clip = AudioSystem.getClip();
+      clip.addLineListener(listener);
       InputStream audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
@@ -57,6 +59,19 @@ public class Audio {
       e.printStackTrace();
     }
     return false;
+  }
+
+  private static class lListener implements LineListener {
+
+    @Override
+    public void update(LineEvent le) {
+      if (le.getType() == LineEvent.Type.STOP) {
+        Checker.setStatusInformationText("Finished playing alarm.");
+        clip.removeLineListener(listener);
+        clip.close();
+      }
+    }
+
   }
 
 }

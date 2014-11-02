@@ -26,8 +26,8 @@ public class Checker {
       @Override
       public void run() {
         SettingsHandler.saveAllPrefs();
-        if (!Browser.checkShowclixLink(SettingsHandler.getLastEvent())) {
-          SettingsHandler.saveLastEvent(Browser.getShowclixLink());
+        if (!Showclix.checkShowclixLink(SettingsHandler.getLastEvent())) {
+          SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
           System.out.println("NOTE: Link has changed since last time!");
         }
         status = new Status();
@@ -37,12 +37,12 @@ public class Checker {
         do {
           status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
-          if (Browser.isPAXWebsiteUpdated()) {
-            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
+          if (Paxsite.isPAXWebsiteUpdated()) {
+            final String link = Paxsite.getCurrentButtonLink();
             linkFound(link);
             break;
-          } else if (Browser.isShowclixUpdated()) {
-            final String link = Browser.getShowclixLink();
+          } else if (Showclix.isShowclixUpdated()) {
+            final String link = Showclix.getShowclixLink();
             linkFound(link);
             break;
           }
@@ -86,21 +86,21 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (Browser.isCheckingPaxWebsite()) {
+    if (Paxsite.isCheckingPaxWebsite()) {
       System.out.print("Check PAX Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Browser.enablePaxWebsiteChecking();
+          Paxsite.enablePaxWebsiteChecking();
         }
         System.out.println();
       } catch (Exception e) {
       }
     }
-    if (Browser.isCheckingPaxWebsite()) {
+    if (Paxsite.isCheckingPaxWebsite()) {
       System.out.print("Check Showclix Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Browser.enableShowclixWebsiteChecking();
+          Showclix.enableShowclixWebsiteChecking();
         }
         System.out.println();
       } catch (Exception e) {
@@ -114,7 +114,7 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (!Browser.isCheckingPaxWebsite()) {
+    if (!Paxsite.isCheckingPaxWebsite()) {
       System.out.print("Play Alarm (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
@@ -204,8 +204,15 @@ public class Checker {
         do {
           //status.setLastCheckedText("Checking for updates...");
           long startMS = System.currentTimeMillis();
-          if (Browser.isShowclixUpdated() || Browser.isPAXWebsiteUpdated()) {
-            final String link = Browser.parseHRef(Browser.getCurrentButtonLinkLine());
+          if (Paxsite.isPAXWebsiteUpdated()) {
+            final String link = Paxsite.getCurrentButtonLink();
+            System.out.println("LINK FOUND: " + link);
+            Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+            Browser.openLinkInBrowser(link);
+            Audio.playAlarm();
+            break;
+          } else if (Showclix.isShowclixUpdated()) {
+            final String link = Showclix.getShowclixLink();
             System.out.println("LINK FOUND: " + link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
             Browser.openLinkInBrowser(link);

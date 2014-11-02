@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.4";
+  public static final String VERSION = "1.7.4.1";
   // GUIs
   protected static Setup setup;
 
@@ -97,12 +97,12 @@ public class PAXChecker {
         }
       }
       if (checkPax) {
-        Browser.enablePaxWebsiteChecking();
+        Paxsite.enablePaxWebsiteChecking();
       }
       if (checkShowclix) {
-        Browser.enableShowclixWebsiteChecking();
+        Showclix.enableShowclixWebsiteChecking();
       }
-      if (autoStart && !Browser.isCheckingPaxWebsite() && !Browser.isCheckingShowclix()) {
+      if (autoStart && !Paxsite.isCheckingPaxWebsite() && !Showclix.isCheckingShowclix()) {
         System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
         System.exit(0);
       }
