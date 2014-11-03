@@ -126,19 +126,23 @@ public class Checker {
       System.out.print("Expo: ");
       try {
         String input = myScanner.nextLine();
+        System.out.println("READ: " + input);
         switch (input.toLowerCase()) {
           case "prime":
           case "paxprime":
           case "pax prime":
             Browser.setExpo("PAX Prime");
+            break;
           case "east":
           case "paxeast":
           case "pax east":
             Browser.setExpo("PAX East");
+            break;
           case "south":
           case "paxsouth":
           case "pax south":
             Browser.setExpo("PAX South");
+            break;
           case "aus":
           case "australia":
           case "paxaus":
@@ -146,6 +150,7 @@ public class Checker {
           case "paxaustralia":
           case "pax australia":
             Browser.setExpo("PAX Aus");
+            break;
           default:
             System.out.println("Invalid expo (" + input + ")! Setting to Prime...");
             Browser.setExpo("PAX Prime");
@@ -197,6 +202,17 @@ public class Checker {
               //System.out.println("Feature under development");
               UpdateHandler.autoUpdate();
               break;
+            case "list":
+            case "listall":
+            case "listemails":
+            case "list all":
+            case "list emails":
+              System.out.println("Emails:");
+              java.util.Iterator<Email.EmailAddress> it = Email.getAddressList().iterator();
+              while (it.hasNext()) {
+                System.out.println(it.next().getCompleteAddress());
+              }
+              break;
             default:
               if (input.toLowerCase().startsWith("addemail:") || input.toLowerCase().startsWith("add email:")) {
                 Email.addEmailAddress(input.substring(input.indexOf(":") + 1));
@@ -209,6 +225,7 @@ public class Checker {
               System.out.println("testalarm     - Play the alarm (if enabled)");
               System.out.println("refresh       - Force check");
               System.out.println("check         - Force check");
+              System.out.println("list          - Lists all emails in the email list");
               System.out.println("addemail:     - Adds the specified email address to the program");
               System.out.println("updateprogram - Updates the program if an update is available");
               System.out.println("--Commands are NOT case sensitive--");
