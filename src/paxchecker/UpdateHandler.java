@@ -175,6 +175,27 @@ public class UpdateHandler {
     }
   }
 
+  public static void autoUpdate() {
+    String[] args = new String[16];
+    args[0] = "-cli";
+    args[1] = "-noupdate";
+    args[2] = "-username";
+    args[3] = Email.getUsername();
+    args[4] = "-password";
+    args[5] = Email.getPassword();
+    args[6] = "-cellnum";
+    args[7] = Email.convertToString(Email.getAddressList());
+    args[8] = "-expo";
+    args[9] = Browser.getExpo();
+    args[10] = "-delay";
+    args[11] = "" + Checker.getRefreshTime();
+    args[12] = "-autostart";
+    args[13] = Paxsite.isCheckingPaxWebsite() ? "" : "-nopax";
+    args[14] = Showclix.isCheckingShowclix() ? "" : "-noshowclix";
+    args[15] = Audio.soundEnabled() ? "-alarm" : "";
+    autoUpdate(args);
+  }
+
   /**
    * Checks for program updates and automatically updates if found.
    *

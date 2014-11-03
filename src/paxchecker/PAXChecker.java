@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.4.2";
+  public static final String VERSION = "1.7.4.3";
   // GUIs
   protected static Setup setup;
 

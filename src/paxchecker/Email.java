@@ -170,7 +170,7 @@ public class Email {
    * @return The plaintext password given to the program
    * @see #setPassword(java.lang.String)
    */
-  private static String getPassword() {
+  public static String getPassword() {
     try {
       return Encryption.decrypt(password);
     } catch (Exception e) {

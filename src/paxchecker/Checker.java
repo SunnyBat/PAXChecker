@@ -121,27 +121,33 @@ public class Checker {
       }
     } catch (Exception e) {
     }
+    myScanner.nextLine(); // Consume mysterious extra input
     if (Browser.getExpo() == null) {
       System.out.print("Expo: ");
       try {
-        String input = myScanner.next();
+        String input = myScanner.nextLine();
         switch (input.toLowerCase()) {
           case "prime":
           case "paxprime":
+          case "pax prime":
             Browser.setExpo("PAX Prime");
           case "east":
           case "paxeast":
+          case "pax east":
             Browser.setExpo("PAX East");
           case "south":
           case "paxsouth":
+          case "pax south":
             Browser.setExpo("PAX South");
           case "aus":
           case "australia":
           case "paxaus":
+          case "pax aus":
           case "paxaustralia":
+          case "pax australia":
             Browser.setExpo("PAX Aus");
           default:
-            System.out.println("Invalid expo! Setting to Prime...");
+            System.out.println("Invalid expo (" + input + ")! Setting to Prime...");
             Browser.setExpo("PAX Prime");
         }
         System.out.println();
@@ -160,7 +166,7 @@ public class Checker {
         String input;
         while (true) {
           try {
-            input = myScanner.next();
+            input = myScanner.nextLine();
           } catch (Exception e) {
             //e.printStackTrace();
             System.out.println("Error parsing input -- please try again.");
@@ -174,9 +180,12 @@ public class Checker {
               break;
             case "testemail":
             case "testtext":
+            case "test email":
+            case "test text":
               PAXChecker.sendTestEmail();
               break;
             case "testalarm":
+            case "test alarm":
               Audio.playAlarm();
               break;
             case "refresh":
@@ -184,21 +193,25 @@ public class Checker {
               forceRefresh = true;
               break;
             case "updateprogram":
-              System.out.println("Feature under development");
+            case "update program":
+              //System.out.println("Feature under development");
+              UpdateHandler.autoUpdate();
               break;
             default:
-              if (input.toLowerCase().startsWith("addemail:")) {
+              if (input.toLowerCase().startsWith("addemail:") || input.toLowerCase().startsWith("add email:")) {
                 Email.addEmailAddress(input.substring(input.indexOf(":") + 1));
                 continue;
               }
               System.out.println("Unknown command: " + input.toLowerCase());
-              System.out.println("Commands:");
-              System.out.println("exit        - Exit the program");
-              System.out.println("testtext    - Send a test text");
-              System.out.println("testalarm   - Play the alarm (if enabled)");
-              System.out.println("refresh     - Force check");
-              System.out.println("check       - Force check");
-              System.out.println("Commands are NOT case sensitive.");
+              System.out.println("-------------Commands-------------");
+              System.out.println("exit          - Exit the program");
+              System.out.println("testtext      - Send a test text");
+              System.out.println("testalarm     - Play the alarm (if enabled)");
+              System.out.println("refresh       - Force check");
+              System.out.println("check         - Force check");
+              System.out.println("addemail:     - Adds the specified email address to the program");
+              System.out.println("updateprogram - Updates the program if an update is available");
+              System.out.println("--Commands are NOT case sensitive--");
               break;
           }
         }
