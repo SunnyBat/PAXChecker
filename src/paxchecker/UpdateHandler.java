@@ -330,13 +330,14 @@ public class UpdateHandler {
       URLConnection conn = updateURL.openConnection();
       InputStream inputStream = conn.getInputStream();
       long remoteFileSize = conn.getContentLength();
-      System.out.println("Downloding file...\nUpdate Size(compressed): " + remoteFileSize + " Bytes");
+      System.out.println("Update Size(compressed): " + remoteFileSize + " Bytes");
       String path = PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
       BufferedOutputStream buffOutputStream = new BufferedOutputStream(new FileOutputStream(new File(path.substring(0, path.lastIndexOf(".jar")) + ".temp.jar")));
       byte[] buffer = new byte[32 * 1024];
       int bytesRead;
       int in = 0;
       int prevPercent = 0;
+      System.out.println("Downloading update...");
       while ((bytesRead = inputStream.read(buffer)) != -1) {
         in += bytesRead;
         buffOutputStream.write(buffer, 0, bytesRead);
@@ -396,13 +397,22 @@ public class UpdateHandler {
       } else {
         nArgs = new String[3];
       }
-      nArgs[0] = System.getProperty("java.home") + "\\bin\\javaw.exe";
+      File temp = new File(System.getProperty("java.home"));
+      temp = new File(temp, "bin");
+      File javaExe = new File(temp, "javaw.exe");
+      if (!javaExe.exists()) {
+        javaExe = new File(temp, "java.exe");
+        if (!javaExe.exists()) {
+          javaExe = new File(temp, "java");
+        }
+      }
+      nArgs[0] = javaExe.getAbsolutePath();
       nArgs[1] = "-jar";
       nArgs[2] = new File(path).getAbsolutePath(); // path can have leading / on it, getAbsolutePath() removes them
       ProcessBuilder pb = new ProcessBuilder(nArgs);
       pb.start();
     } catch (Exception e) {
-      ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", null);
+      ErrorHandler.showErrorWindow("Small Error", "Unable to automatically run update.", e);
     }
   }
 }

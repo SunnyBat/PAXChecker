@@ -58,7 +58,9 @@ public class ErrorHandler {
   public static void showErrorWindow(String windowTitle, String title, String message, Throwable t) {
     if (commandLine) {
       System.out.println(windowTitle + " -- " + title + " -- " + message);
-      t.printStackTrace();
+      if (t != null) {
+        t.printStackTrace();
+      }
       return;
     }
     if (errorWindowCount > 10) {

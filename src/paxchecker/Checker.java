@@ -280,9 +280,9 @@ public class Checker {
    * @param link The link to use for everything
    */
   public static void linkFound(String link) {
+    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
     KeyboardHandler.typeLinkNotification(link);
     Browser.openLinkInBrowser(link);
-    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
     showTicketsWindow(link);
     status.dispose();
     Audio.playAlarm();
