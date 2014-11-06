@@ -52,9 +52,8 @@ public class UpdateHandler {
 
   /**
    * Loads the current version notes from online. This retreives all of the version notes possible and stores them in one String, with each line
-   * separated by a line break (\n). Note that this method takes several seconds to load and should be run in a background Thread. Note that this also
-   * parses tokens from the version notes (and does not add them into the version notes String). Currently the only token read is SETSHOWCLIXID, which
-   * is obsolete due to the program loading the most recent Showclix ID after the version notes.
+   * separated by a line break (\n). Note that this method blocks until finished, which depends on the user's internet speed. This also parses tokens
+   * from the version notes (and does not add them into the version notes String).
    *
    * @see paxchecker.PAXChecker#loadPatchNotesInBackground()
    * @see #getVersionNotes()
@@ -117,7 +116,7 @@ public class UpdateHandler {
       }
       System.out.println("Finished loading version notes.");
     } catch (Exception e) {
-      System.out.println("Unable to load version notes!");
+      ErrorHandler.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);
       e.printStackTrace();
     } finally {
       try {

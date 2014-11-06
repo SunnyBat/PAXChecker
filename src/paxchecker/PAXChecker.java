@@ -8,9 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.4.6";
-  // GUIs
-  protected static Setup setup;
+  public static final String VERSION = "1.7.5";
 
   /**
    * @param args the command line arguments
@@ -19,7 +17,6 @@ public class PAXChecker {
     System.out.println("Initializing...");
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     Email.init();
-    KeyboardHandler.init();
     startProgram(args);
   }
 
@@ -65,10 +62,18 @@ public class PAXChecker {
             System.out.println("Expo set to " + Browser.getExpo());
             break;
           case "-nopax":
+            if (!checkShowclix) {
+              System.out.println("Already not checking Showclix website -- cannot set check PAX website to false");
+              break;
+            }
             System.out.println("Setting check PAX website to false");
             checkPax = false;
             break;
           case "-noshowclix":
+            if (!checkPax) {
+              System.out.println("Already not checking PAX website -- cannot set check Showclix website to false");
+              break;
+            }
             System.out.println("Setting check Showclix website to false");
             checkShowclix = false;
             break;
@@ -118,6 +123,7 @@ public class PAXChecker {
       Checker.startCommandLineWebsiteChecking();
       return;
     }
+    KeyboardHandler.init();
     if (doUpdate) {
       UpdateHandler.loadVersionNotes();
       UpdateHandler.checkUpdate(args);
@@ -132,7 +138,7 @@ public class PAXChecker {
     if (autoStart) {
       Checker.startCheckingWebsites();
     } else {
-      setup = new Setup();
+      new Setup();
     }
     Checker.loadAlertIcon();
   }

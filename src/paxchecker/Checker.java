@@ -200,10 +200,8 @@ public class Checker {
             case "updateprogram":
             case "update program":
               //System.out.println("Feature under development");
+              UpdateHandler.loadVersionNotes();
               UpdateHandler.autoUpdate();
-              break;
-            case "test":
-              Browser.openLinkInBrowser("https://www.google.com");
               break;
             case "list":
             case "listall":
@@ -216,22 +214,36 @@ public class Checker {
                 System.out.println(it.next().getCompleteAddress());
               }
               break;
+            case "test":
+              Browser.openLinkInBrowser("https://www.google.com");
+              break;
+            case "notes":
+            case "patchnotes":
+            case "versionnotes":
+            case "patch notes":
+            case "version notes":
+              System.out.println(UpdateHandler.getVersionNotes());
+              break;
             default:
               if (input.toLowerCase().startsWith("addemail:") || input.toLowerCase().startsWith("add email:")) {
-                Email.addEmailAddress(input.substring(input.indexOf(":") + 1));
+                Email.addEmailAddress(input.substring(input.indexOf(":") + 1).trim());
+                continue;
+              } else if (input.toLowerCase().startsWith("patchnotes:") || input.toLowerCase().startsWith("versionnotes:")) {
+                System.out.println(UpdateHandler.getVersionNotes(input.substring(input.indexOf(":") + 1)).trim());
                 continue;
               }
               System.out.println("Unknown command: " + input.toLowerCase());
-              System.out.println("-------------Commands-------------");
-              System.out.println("exit          - Exit the program");
-              System.out.println("testtext      - Send a test text");
-              System.out.println("testalarm     - Play the alarm (if enabled)");
-              System.out.println("refresh       - Force check");
-              System.out.println("check         - Force check");
-              System.out.println("list          - Lists all emails in the email list");
-              System.out.println("addemail:     - Adds the specified email address to the program");
-              System.out.println("updateprogram - Updates the program if an update is available");
-              System.out.println("--Commands are NOT case sensitive--");
+              System.out.println("------------------Commands------------------");
+              System.out.println("exit                - Exit the program");
+              System.out.println("testtext            - Send a test text");
+              System.out.println("testalarm           - Play the alarm (if enabled)");
+              System.out.println("refresh             - Force check");
+              System.out.println("check               - Force check");
+              System.out.println("list                - Lists all emails in the email list");
+              System.out.println("updateprogram       - Updates the program if an update is available");
+              System.out.println("addemail:EMAIL      - Adds the specified email address to the program");
+              System.out.println("patchnotes:VERSION  - Shows currently loaded Version Notes");
+              System.out.println("-------Commands are NOT case sensitive-------");
               break;
           }
         }

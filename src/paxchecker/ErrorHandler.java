@@ -119,9 +119,6 @@ public class ErrorHandler {
 
   public static void fatalError() {
     fatalError = true;
-    if (PAXChecker.setup != null) {
-      PAXChecker.setup.dispose();
-    }
     if (UpdateHandler.update != null) {
       UpdateHandler.update.dispose();
     }
