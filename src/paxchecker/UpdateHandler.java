@@ -95,6 +95,10 @@ public class UpdateHandler {
                   setUpdateLevel(2);
                 } else if (load.equals("MAJORUPDATE")) {
                   setUpdateLevel(3);
+                } else if (load.equals("INVALIDUPDATE")) {
+                  setUpdateLevel(4);
+                } else {
+                  System.out.println("Unknown updateType token: " + load);
                 }
               }
             } else {
@@ -111,6 +115,7 @@ public class UpdateHandler {
       if (update != null) {
         update.setYesButtonText(getUpdateLevel());
       }
+      System.out.println("Finished loading version notes.");
     } catch (Exception e) {
       System.out.println("Unable to load version notes!");
       e.printStackTrace();
@@ -288,6 +293,9 @@ public class UpdateHandler {
         return false;
       } else if (getUpdateLevel() == 0) {
         System.out.println("Using most recent version.");
+        return false;
+      } else if (getUpdateLevel() == 4) {
+        ErrorHandler.showErrorWindow("Error Updating", "Unable to determine update availability -- Version not found in version notes", null);
         return false;
       }
       URL updateURL;

@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.4.5";
+  public static final String VERSION = "1.7.4.6";
   // GUIs
   protected static Setup setup;
 
@@ -20,8 +20,6 @@ public class PAXChecker {
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     Email.init();
     KeyboardHandler.init();
-    System.out.println("Loading patch notes...");
-    UpdateHandler.loadVersionNotes();
     startProgram(args);
   }
 
@@ -100,19 +98,36 @@ public class PAXChecker {
         System.exit(0);
       }
     }
+    System.out.println("Loading patch notes...");
     Paxsite.setCheckPax(checkPax);
     Showclix.setCheckShowclix(checkShowclix);
     if (commandLine) {
       ErrorHandler.setCommandLine(true);
       if (doUpdate) {
+        UpdateHandler.loadVersionNotes();
         UpdateHandler.autoUpdate(args);
+      } else {
+        startBackgroundThread(new Runnable() {
+          @Override
+          public void run() {
+            UpdateHandler.loadVersionNotes();
+          }
+        }, "Patch Notes");
       }
       Checker.commandLineSettingsInput();
       Checker.startCommandLineWebsiteChecking();
       return;
     }
     if (doUpdate) {
+      UpdateHandler.loadVersionNotes();
       UpdateHandler.checkUpdate(args);
+    } else {
+      startBackgroundThread(new Runnable() {
+        @Override
+        public void run() {
+          UpdateHandler.loadVersionNotes();
+        }
+      }, "Patch Notes");
     }
     if (autoStart) {
       Checker.startCheckingWebsites();

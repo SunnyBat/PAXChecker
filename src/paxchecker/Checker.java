@@ -85,7 +85,7 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (Paxsite.isCheckingPaxWebsite()) {
+    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
       System.out.print("Check PAX Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
@@ -96,7 +96,7 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (Paxsite.isCheckingPaxWebsite()) {
+    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
       System.out.print("Check Showclix Website (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
@@ -201,6 +201,9 @@ public class Checker {
             case "update program":
               //System.out.println("Feature under development");
               UpdateHandler.autoUpdate();
+              break;
+            case "test":
+              Browser.openLinkInBrowser("https://www.google.com");
               break;
             case "list":
             case "listall":
