@@ -89,6 +89,7 @@ public class Paxsite {
       //is = url.openStream();
       HttpURLConnection httpCon1 = (HttpURLConnection) url.openConnection();
       httpCon1.addRequestProperty("User-Agent", "Mozilla/4.0");
+      httpCon1.setConnectTimeout(Math.min(Checker.getRefreshTime()*1000, 10000));
       is = httpCon1.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
@@ -117,7 +118,6 @@ public class Paxsite {
         ioe.printStackTrace();
       }
     }
-    System.out.println("Website \"Register Now\" button not found!");
     return "NoFind";
   }
 

@@ -92,6 +92,7 @@ public class Showclix {
       URL url = new URL(getShowclixAPILink(expo));
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
+      httpCon.setConnectTimeout(Math.min(Checker.getRefreshTime()*1000, 10000));
       BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
       String jsonText = "";
       String line;

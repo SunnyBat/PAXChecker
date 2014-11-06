@@ -8,7 +8,8 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.5";
+  public static final String VERSION = "1.7.5.1";
+  public static Setup setup;
 
   /**
    * @param args the command line arguments
@@ -138,7 +139,7 @@ public class PAXChecker {
     if (autoStart) {
       Checker.startCheckingWebsites();
     } else {
-      new Setup();
+      setup = new Setup();
     }
     Checker.loadAlertIcon();
   }
