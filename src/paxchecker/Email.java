@@ -12,7 +12,6 @@ import javax.mail.internet.MimeMessage;
 public class Email {
 
   private static String password;
-  private static Session l_session = null;
   private static final Properties props = System.getProperties();
   private static final List<EmailAddress> addressList = new ArrayList<>();
 
@@ -269,9 +268,11 @@ public class Email {
 
   /**
    * Gets the current instance of the JavaMail session for {@link #props}. This should be called every time you send an email.
+   *
+   * @return The JavaMail Session with the currently set properties
    */
-  public static void createSession() {
-    l_session = Session.getDefaultInstance(props);
+  public static Session createSession() {
+    return Session.getInstance(props);
   }
 
   /**
@@ -313,7 +314,7 @@ public class Email {
       System.out.println("Unable to send email: Program not properly configured.");
       return false;
     }
-    createSession();
+    Session l_session = createSession();
     try {
       System.out.println("Initializing message...");
       MimeMessage message = new MimeMessage(l_session);

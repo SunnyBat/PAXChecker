@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.5.1";
+  public static final String VERSION = "1.7.5.2";
   public static Setup setup;
 
   /**
@@ -120,7 +120,9 @@ public class PAXChecker {
           }
         }, "Patch Notes");
       }
-      Checker.commandLineSettingsInput();
+      if (!autoStart) {
+        Checker.commandLineSettingsInput();
+      }
       Checker.startCommandLineWebsiteChecking();
       return;
     }

@@ -111,8 +111,7 @@ public class ErrorHandler {
   }
 
   /**
-   * Calculates how many error windows are open once an error window is closed. This method unlocks the {@link Signin} window once ALL the error
-   * windows are closed. This should ONLY be called when an error window is closed, otherwise unexpected results could occur.
+   * Unused.
    */
   public static void errWindowClosed() {
   }

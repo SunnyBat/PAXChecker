@@ -25,7 +25,6 @@ public class Checker {
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
-        SettingsHandler.saveAllPrefs();
         if (!Showclix.checkShowclixLink(SettingsHandler.getLastEvent())) {
           SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
           System.out.println("NOTE: Link has changed since last time!");

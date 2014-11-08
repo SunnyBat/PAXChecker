@@ -87,10 +87,8 @@ public class Paxsite {
     try {
       url = new URL(websiteLink + "/registration");
       //is = url.openStream();
-      HttpURLConnection httpCon1 = (HttpURLConnection) url.openConnection();
-      httpCon1.addRequestProperty("User-Agent", "Mozilla/4.0");
-      httpCon1.setConnectTimeout(Math.min(Checker.getRefreshTime()*1000, 10000));
-      is = httpCon1.getInputStream();
+      HttpURLConnection httpCon = Browser.setUpConnection(url);
+      is = httpCon.getInputStream();
       br = new BufferedReader(new InputStreamReader(is));
       while ((line = br.readLine()) != null) {
         DataTracker.addDataUsed(line.length());
@@ -99,7 +97,7 @@ public class Paxsite {
           return line;
         }
       }
-    } catch (UnknownHostException | MalformedURLException uhe) {
+    } catch (UnknownHostException | MalformedURLException | SocketTimeoutException e) {
       return "NoConnection";
     } catch (IOException ioe) {
       return "IOException";

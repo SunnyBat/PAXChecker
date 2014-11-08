@@ -6,11 +6,13 @@
 package paxchecker;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -90,9 +92,7 @@ public class Showclix {
   public static int getLatestShowclixID(String expo) {
     try {
       URL url = new URL(getShowclixAPILink(expo));
-      HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-      httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
-      httpCon.setConnectTimeout(Math.min(Checker.getRefreshTime()*1000, 10000));
+      HttpURLConnection httpCon = Browser.setUpConnection(url);
       BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
       String jsonText = "";
       String line;
@@ -108,8 +108,11 @@ public class Showclix {
         maxId = Math.max(maxId, Integer.parseInt((String) s));
       }
       return maxId;
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (java.net.SocketTimeoutException ste) {
+      System.out.println("Unable to connect to Showclix website -- connection timed out");
+      return -1;
+    } catch (IOException | ParseException | NumberFormatException e) {
+      ErrorHandler.showErrorWindow("ERROR connecting to Showclix website!", e);
       return -1;
     }
   }
