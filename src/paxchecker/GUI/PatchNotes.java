@@ -16,14 +16,30 @@ public class PatchNotes extends javax.swing.JFrame {
    * @param uF The Update object that this patchNotes is attached to
    */
   public PatchNotes(Update uF) {
-    initComponents();
-    customComponents();
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        customComponents();
+        setVisible(true);
+      }
+    });
     updateFrom = uF;
   }
 
   private void customComponents() {
     loadNotes();
     setTitle("Patch Notes for Version " + PAXChecker.VERSION);
+  }
+
+  @Override
+  public void setVisible(final boolean vis) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setVisible(vis);
+      }
+    });
   }
 
   public void setWindowTitle(final String title) {

@@ -9,28 +9,20 @@ import java.util.Date;
  */
 public class Tickets extends javax.swing.JFrame {
 
-  /**
-   * Creates new form Tickets
-   */
-  public Tickets() {
-    initComponents();
-    String newline = System.getProperty("line.separator");
-    jTextArea1.append(newline + newline + "Tickets found at " + currentTime() + newline + "NOTE: The hours in this time may be off... The minutes and seconds are correct!");
-    setAlwaysOnTop(true);
-    setVisible(true);
-    toFront();
-    requestFocus();
-  }
-
-  public Tickets(String link) {
-    initComponents();
-    String newline = System.getProperty("line.separator");
-    jTextArea1.append(newline + newline + "Tickets found at " + currentTime() + newline + "NOTE: The hours in this time may be off... The minutes and seconds are correct!");
-    jTextArea1.append(newline + newline + "URL found: " + link);
-    setAlwaysOnTop(true);
-    setVisible(true);
-    toFront();
-    requestFocus();
+  public Tickets(final String link) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        String newline = System.getProperty("line.separator");
+        jTextArea1.append(newline + newline + "Tickets found at " + currentTime() + newline + "NOTE: The hours in this time may be off... The minutes and seconds are correct!");
+        jTextArea1.append(newline + newline + "URL found: " + link);
+        setAlwaysOnTop(true);
+        setVisible(true);
+        toFront();
+        requestFocus();
+      }
+    });
   }
 
   public static String currentTime() {

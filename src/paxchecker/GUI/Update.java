@@ -14,18 +14,24 @@ public class Update extends javax.swing.JFrame {
 
   /**
    * Creates a new Update form. Note that the CountDownLatch is only ticked down by one.
+   *
    * @param cdl The CountDownLatch object to tick down.
    */
   public Update(CountDownLatch cdl) {
     countdown = cdl;
-    initComponents();
-    //JLStatus.setVisible(false);
-    JPBProgressBar.setVisible(false);
-    pack();
-    setLocationRelativeTo(null);
-    setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
-    setVisible(true);
-    setYesButtonText(UpdateHandler.getUpdateLevel());
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        //JLStatus.setVisible(false);
+        JPBProgressBar.setVisible(false);
+        pack();
+        setLocationRelativeTo(null);
+        setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
+        setYesButtonText(UpdateHandler.getUpdateLevel());
+        setVisible(true);
+      }
+    });
   }
 
   /**

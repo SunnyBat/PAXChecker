@@ -17,9 +17,14 @@ public class Status extends javax.swing.JFrame {
    * Creates new form Status
    */
   public Status() {
-    initComponents();
-    customComponents();
-    setVisible(true);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        customComponents();
+        setVisible(true);
+      }
+    });
   }
 
   private void customComponents() {

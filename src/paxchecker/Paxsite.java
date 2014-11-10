@@ -49,15 +49,12 @@ public class Paxsite {
     String lineText = getCurrentButtonLinkLine();
     if (lineText == null) {
       Checker.setStatusWebsiteLink("ERROR connecting to the PAX website!");
-      System.out.println("ERROR connecting to the PAX website!");
       return false;
     } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
       Checker.setStatusWebsiteLink("Unable to connect: " + lineText);
-      System.out.println("Unable to connect: " + lineText);
       return false;
     } else if (lineText.equals("NoFind")) {
       Checker.setStatusWebsiteLink("Unable to find the Register Online button!");
-      System.out.println("Unable to find the Register Online button!");
       return false;
     } else if (!lineText.contains("\"" + websiteLink + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + lineText);
