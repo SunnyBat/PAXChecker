@@ -20,7 +20,9 @@ public class Email {
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
    */
   public static void init() {
-    emailSettings();
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.port", "587");
   }
 
   /**
@@ -257,15 +259,6 @@ public class Email {
         System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
         return getCarrierExtension("AT&T (MMS)");
     }
-  }
-
-  /**
-   * Sets the {@link #props} settings for the the current email address being used. Call every time the email provider (Yahoo, GMail) changes.
-   */
-  public static void emailSettings() {
-    props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.smtp.auth", "true");
-    props.put("mail.smtp.port", "587");
   }
 
   /**

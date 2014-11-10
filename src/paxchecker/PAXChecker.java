@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.5.3";
+  public static final String VERSION = "1.7.5.4";
   public static Setup setup;
 
   /**
@@ -27,6 +27,7 @@ public class PAXChecker {
     boolean checkShowclix = true;
     boolean autoStart = false;
     boolean commandLine = false;
+    boolean savePrefs = false;
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -94,12 +95,16 @@ public class PAXChecker {
             break;
           case "-property":
             try {
-              String key = args[a+1];
-              String value = args[a+2];
+              String key = args[a + 1];
+              String value = args[a + 2];
               Email.setProperty(key, value);
             } catch (Exception e) {
               ErrorHandler.showErrorWindow("ERROR setting custom property!", "Unable to set custom properties. See error details for more information.", e);
             }
+            break;
+          case "-savesettings":
+            savePrefs = true;
+            break;
           default:
             if (args[a].startsWith("-")) {
               System.out.println("Unknown argument: " + args[a]);
@@ -130,6 +135,10 @@ public class PAXChecker {
       }
       if (!autoStart) {
         Checker.commandLineSettingsInput();
+      }
+      if (savePrefs) {
+        SettingsHandler.setSaveAll(true, true, true, true, true, true, true);
+        SettingsHandler.saveAllPrefs();
       }
       Checker.startCommandLineWebsiteChecking();
       return;

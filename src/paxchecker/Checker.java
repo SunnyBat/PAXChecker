@@ -164,7 +164,7 @@ public class Checker {
    * Starts checking for website updates and listening for commands given through the console.
    */
   public static void startCommandLineWebsiteChecking() {
-    PAXChecker.continueProgram(new Runnable() {
+    PAXChecker.startBackgroundThread(new Runnable() {
       @Override
       public void run() {
         String input;
@@ -247,7 +247,7 @@ public class Checker {
           }
         }
       }
-    });
+    }, "CLI Input Listener");
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
