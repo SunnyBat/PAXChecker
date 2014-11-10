@@ -14,6 +14,7 @@ public class Email {
   private static String password;
   private static final Properties props = System.getProperties();
   private static final List<EmailAddress> addressList = new ArrayList<>();
+  private static final List<String> propList = new ArrayList<>();
 
   /**
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
@@ -111,6 +112,7 @@ public class Email {
       System.out.println("Cannot set host to null!");
       return;
     }
+    props.put("mail.smtp.host", h);
     props.put("mail.smtp.ssl.trust", h);
     System.out.println("Host set to " + h);
   }
@@ -121,7 +123,7 @@ public class Email {
    * @return The currently-set host, or null if none has been set.
    */
   public static String getHost() {
-    return (String) props.get("mail.smtp.ssl.trust");
+    return (String) props.get("mail.smtp.host");
   }
 
   /**
@@ -267,11 +269,51 @@ public class Email {
   }
 
   /**
+   * Sets a custom Property to use while sending an email. This overrides any program settings.
+   * @param key The property key
+   * @param value The property value
+   */
+  public static void setProperty(String key, String value) {
+    //props.put(key, value);
+    if (propList.contains(key)) {
+      System.out.println("CONTAINS KEY, REMOVING");
+      int place = propList.indexOf(key);
+      System.out.println("Place = " + place);
+      propList.remove(place);
+      propList.remove(place);
+    }
+    if (value.equals("")) {
+      return;
+    }
+    propList.add(key);
+    propList.add(value);
+  }
+
+  /**
+   * Sets the custom Properties that were specified using {@link #setProperty(java.lang.String, java.lang.String)}.
+   */
+  public static void loadProperties() {
+    Iterator<String> it = propList.iterator();
+    while (it.hasNext()) {
+      try {
+        String key = it.next();
+        String val = it.next();
+        System.out.println(key + " = " + val);
+        props.put(key, val);
+      } catch (Exception e) {
+        System.out.println("ERROR setting custom properties!");
+        return;
+      }
+    }
+  }
+
+  /**
    * Gets the current instance of the JavaMail session for {@link #props}. This should be called every time you send an email.
    *
    * @return The JavaMail Session with the currently set properties
    */
   public static Session createSession() {
+    loadProperties();
     return Session.getInstance(props);
   }
 

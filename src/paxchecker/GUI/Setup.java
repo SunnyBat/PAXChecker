@@ -504,7 +504,7 @@ public class Setup extends javax.swing.JFrame {
     JCBUseBeta.setText("Use BETA Versions");
     JCBUseBeta.setToolTipText("<html>\nBETA versions will most likely<br>\ninclude features that could, at any<br>\npoint in time, break the program<br>\nor parts of it. These versions will<br>\ncontain ideas that still need to be<br>\ndebugged, so any help in finding<br>\nthese is greatly appreciated.<br>\nChange information can be found<br>\nin the Patch Notes, and more<br>\ndetailed changes can be found in<br>\nthe GitHub commits.<br>\n<br>\nUse at your own risk.\n</html>");
 
-    jButton3.setText("Save Preferences");
+    jButton3.setText("Save Use BETA");
     jButton3.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jButton3ActionPerformed(evt);
@@ -685,7 +685,8 @@ public class Setup extends javax.swing.JFrame {
   }//GEN-LAST:event_jButton2ActionPerformed
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    savePreferences();
+    //savePreferences();
+    SettingsHandler.saveUseBeta(JCBUseBeta.isSelected());
   }//GEN-LAST:event_jButton3ActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables

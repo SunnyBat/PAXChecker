@@ -8,7 +8,7 @@ import paxchecker.GUI.*;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.5.2";
+  public static final String VERSION = "1.7.5.3";
   public static Setup setup;
 
   /**
@@ -92,6 +92,14 @@ public class PAXChecker {
           case "-cli":
             commandLine = true;
             break;
+          case "-property":
+            try {
+              String key = args[a+1];
+              String value = args[a+2];
+              Email.setProperty(key, value);
+            } catch (Exception e) {
+              ErrorHandler.showErrorWindow("ERROR setting custom property!", "Unable to set custom properties. See error details for more information.", e);
+            }
           default:
             if (args[a].startsWith("-")) {
               System.out.println("Unknown argument: " + args[a]);
