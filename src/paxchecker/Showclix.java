@@ -23,7 +23,7 @@ public class Showclix {
   private static boolean checkShowclix;
   private static int lastShowclixEventID = 3852445;
   private static final String SHOWCLIX_API_LINK_PRIME = "http://api.showclix.com/Seller/16886/events"; // Also for PAX Dev
-  private static final String SHOWCLIX_API_LINK_EAST = "http://api.showclix.com/Seller/17792/events";
+  private static final String SHOWCLIX_API_LINK_EAST = "http://api.showclix.com/Partner/48/events";
   private static final String SHOWCLIX_API_LINK_SOUTH = "http://api.showclix.com/Seller/19042/events";
   private static final String SHOWCLIX_API_LINK_AUS = "http://api.showclix.com/Seller/15374/events";
 
@@ -108,13 +108,14 @@ public class Showclix {
         maxId = Math.max(maxId, Integer.parseInt((String) s));
       }
       return maxId;
+    } catch (NumberFormatException nfe) {
+      System.out.println("ERROR parsing number from JSONObject!");
     } catch (java.net.SocketTimeoutException ste) {
       System.out.println("Unable to connect to Showclix website -- connection timed out");
-      return -1;
-    } catch (IOException | ParseException | NumberFormatException e) {
-      ErrorHandler.showErrorWindow("ERROR connecting to Showclix website!", e);
-      return -1;
+    } catch (IOException | ParseException e) {
+      e.printStackTrace();
     }
+    return -1;
   }
 
   /**

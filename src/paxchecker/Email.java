@@ -15,6 +15,7 @@ public class Email {
   private static final Properties props = System.getProperties();
   private static final List<EmailAddress> addressList = new ArrayList<>();
   private static final List<String> propList = new ArrayList<>();
+  private static long lastEmailSent;
 
   /**
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
@@ -349,6 +350,10 @@ public class Email {
       System.out.println("Unable to send email: Program not properly configured.");
       return false;
     }
+    if (System.currentTimeMillis() - lastEmailSent < 60000) {
+      System.out.println("ERROR: Email sent too soon!");
+      return false;
+    }
     Session l_session = createSession();
     try {
       System.out.println("Initializing message...");
@@ -374,6 +379,7 @@ public class Email {
       transport.sendMessage(message, message.getAllRecipients());
       System.out.println("Message Sent!");
       transport.close();
+      lastEmailSent = System.currentTimeMillis();
     } catch (MessagingException mex) {
       mex.printStackTrace();
       ErrorHandler.showErrorWindow("ERROR", "The message was unable to be sent.", mex);

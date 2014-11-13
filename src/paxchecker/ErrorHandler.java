@@ -1,6 +1,7 @@
 package paxchecker;
 
-import paxchecker.GUI.ErrorWindow;
+import paxchecker.update.UpdateHandler;
+import paxchecker.gui.ErrorWindow;
 
 /**
  *

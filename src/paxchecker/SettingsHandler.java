@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.update.UpdateHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 

@@ -1,5 +1,6 @@
-package paxchecker.GUI;
+package paxchecker.gui;
 
+import paxchecker.update.UpdateHandler;
 import paxchecker.*;
 
 /**
@@ -260,6 +261,7 @@ public class Setup extends javax.swing.JFrame {
 
     jCheckBox1.setSelected(true);
     jCheckBox1.setText("Scan PAX Registration website");
+    jCheckBox1.setToolTipText("<html>\nThis option will open the queue closer<br>\nto, if not after, the Showclix website.<br>\nIt may also be slower than the Twitter<br>\nnotification.<br>\nThis option uses a small amount of data.\n</html>");
     jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jCheckBox1ActionPerformed(evt);
@@ -268,6 +270,7 @@ public class Setup extends javax.swing.JFrame {
 
     jCheckBox2.setSelected(true);
     jCheckBox2.setText("Scan Showclix website");
+    jCheckBox2.setToolTipText("<html>\nIt is highly recommended that you<br>\nuse this option. It scans the Showclix<br>\nwebsite for updates and is generally the<br>\nfastest possible.<br>\nThis option uses a very small amount of data.\n</html>");
     jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jCheckBox2ActionPerformed(evt);

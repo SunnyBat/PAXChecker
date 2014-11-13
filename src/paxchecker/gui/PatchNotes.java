@@ -1,5 +1,7 @@
-package paxchecker.GUI;
+package paxchecker.gui;
 
+import paxchecker.update.Update;
+import paxchecker.update.UpdateHandler;
 import paxchecker.*;
 
 /**

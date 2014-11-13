@@ -1,9 +1,11 @@
 package paxchecker;
 
+import paxchecker.update.UpdateHandler;
+import paxchecker.gui.Status;
+import paxchecker.gui.Tickets;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Scanner;
-import paxchecker.GUI.*;
 
 /**
  *
@@ -39,11 +41,11 @@ public class Checker {
           if (Paxsite.isPAXWebsiteUpdated()) {
             final String link = Paxsite.getCurrentButtonLink();
             linkFound(link);
-            break;
-          } else if (Showclix.isShowclixUpdated()) {
+            Paxsite.setCheckPax(false);
+          }
+          if (Showclix.isShowclixUpdated()) {
             final String link = Showclix.getShowclixLink();
             linkFound(link);
-            break;
           }
           status.setDataUsageText(DataTracker.getDataUsedMB());
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
@@ -198,7 +200,6 @@ public class Checker {
               break;
             case "updateprogram":
             case "update program":
-              //System.out.println("Feature under development");
               UpdateHandler.loadVersionNotes();
               UpdateHandler.autoUpdate();
               break;
@@ -262,14 +263,12 @@ public class Checker {
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
             Browser.openLinkInBrowser(link);
             Audio.playAlarm();
-            break;
           } else if (Showclix.isShowclixUpdated()) {
             final String link = Showclix.getShowclixLink();
             System.out.println("LINK FOUND: " + link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
             Browser.openLinkInBrowser(link);
             Audio.playAlarm();
-            break;
           }
           System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
@@ -283,7 +282,6 @@ public class Checker {
             }
           }
         } while (true); // Change later
-        System.out.println("Finished!");
       }
     });
   }
@@ -298,7 +296,6 @@ public class Checker {
     KeyboardHandler.typeLinkNotification(link);
     Browser.openLinkInBrowser(link);
     showTicketsWindow(link);
-    status.dispose();
     Audio.playAlarm();
   }
 
@@ -366,6 +363,8 @@ public class Checker {
   public static void setStatusInformationText(String s) {
     if (status != null) {
       status.setInformationText(s);
+    } else {
+      System.out.println(s);
     }
   }
 

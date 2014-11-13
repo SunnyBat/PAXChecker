@@ -1,4 +1,4 @@
-package paxchecker.GUI;
+package paxchecker.gui;
 
 import paxchecker.*;
 import java.awt.*;

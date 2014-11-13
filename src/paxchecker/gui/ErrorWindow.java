@@ -1,4 +1,4 @@
-package paxchecker.GUI;
+package paxchecker.gui;
 
 import paxchecker.ErrorHandler;
 
@@ -106,8 +106,8 @@ public class ErrorWindow extends javax.swing.JFrame {
         .addContainerGap())
     );
 
-    java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-    setBounds((screenSize.width-766)/2, (screenSize.height-308)/2, 766, 308);
+    setSize(new java.awt.Dimension(766, 308));
+    setLocationRelativeTo(null);
   }// </editor-fold>//GEN-END:initComponents
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

@@ -1,8 +1,18 @@
-package paxchecker;
+package paxchecker.update;
 
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.CountDownLatch;
+import paxchecker.Audio;
+import paxchecker.Browser;
+import paxchecker.Checker;
+import paxchecker.DataTracker;
+import paxchecker.Email;
+import paxchecker.ErrorHandler;
+import paxchecker.PAXChecker;
+import paxchecker.Paxsite;
+import paxchecker.SettingsHandler;
+import paxchecker.Showclix;
 
 /**
  *
@@ -18,7 +28,7 @@ public class UpdateHandler {
   private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String BETA_UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
   private static final String PATCH_NOTES_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-  public static paxchecker.GUI.Update update;
+  public static paxchecker.update.Update update;
 
   /**
    * Returns the current Version Notes found. This returns all of the notes after the supplied version (useful for things like patch notes when
@@ -162,7 +172,7 @@ public class UpdateHandler {
       System.out.println("Checking for updates...");
       if (UpdateHandler.updateAvailable()) {
         CountDownLatch cdl = new CountDownLatch(1);
-        update = new paxchecker.GUI.Update(cdl);
+        update = new paxchecker.update.Update(cdl);
         try {
           cdl.await();
         } catch (InterruptedException iE) {
@@ -214,8 +224,8 @@ public class UpdateHandler {
       if (UpdateHandler.updateAvailable()) {
         System.out.println("Update found, downloading update...");
         UpdateHandler.updateProgram();
-        System.out.println("Update finished, restarting program...");
-        startNewProgramInstance(args);
+        System.out.println("Update finished.");
+        //startNewProgramInstance(args);
         System.exit(0);
       }
     } catch (Exception e) {
