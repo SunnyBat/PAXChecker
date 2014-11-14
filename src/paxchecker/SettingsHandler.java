@@ -1,5 +1,8 @@
 package paxchecker;
 
+import paxchecker.tickets.Paxsite;
+import paxchecker.tickets.Showclix;
+import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

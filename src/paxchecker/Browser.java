@@ -1,5 +1,8 @@
 package paxchecker;
 
+import paxchecker.tickets.Paxsite;
+import paxchecker.tickets.Showclix;
+import paxchecker.tickets.Checker;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.*;

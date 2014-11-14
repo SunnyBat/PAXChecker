@@ -1,4 +1,4 @@
-package paxchecker;
+package paxchecker.tickets;
 
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Status;
@@ -6,6 +6,13 @@ import paxchecker.gui.Tickets;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Scanner;
+import paxchecker.Audio;
+import paxchecker.Browser;
+import paxchecker.DataTracker;
+import paxchecker.Email;
+import paxchecker.KeyboardHandler;
+import paxchecker.PAXChecker;
+import paxchecker.SettingsHandler;
 
 /**
  *

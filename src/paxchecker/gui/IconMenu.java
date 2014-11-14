@@ -1,5 +1,6 @@
 package paxchecker.gui;
 
+import paxchecker.tickets.Checker;
 import java.awt.*;
 import paxchecker.*;
 

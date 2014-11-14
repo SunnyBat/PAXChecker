@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.tickets.Checker;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

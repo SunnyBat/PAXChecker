@@ -1,5 +1,8 @@
 package paxchecker;
 
+import paxchecker.tickets.Paxsite;
+import paxchecker.tickets.Showclix;
+import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
 import paxchecker.notification.NotificationHandler;
@@ -40,6 +43,10 @@ public class PAXChecker {
             // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
             doUpdate = false;
             break;
+          case "-notificationid":
+            NotificationHandler.setLastNotificationID(args[a + 1]);
+          case "-nonotifications":
+            NotificationHandler.setLastNotificationID("DISABLE");
           case "-typelink":
             KeyboardHandler.setTypeLink(true);
             break;

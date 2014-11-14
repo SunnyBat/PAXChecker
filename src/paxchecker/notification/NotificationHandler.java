@@ -96,6 +96,9 @@ public class NotificationHandler {
   }
 
   public static boolean isNewNotification() {
+    if (lastNotificationID.equals("DISABLE")) {
+      return false;
+    }
     return !newNotifications().isEmpty();
   }
 

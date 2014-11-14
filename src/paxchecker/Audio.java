@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.tickets.Checker;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import javax.sound.sampled.*;

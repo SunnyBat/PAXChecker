@@ -5,14 +5,14 @@ import java.net.*;
 import java.util.concurrent.CountDownLatch;
 import paxchecker.Audio;
 import paxchecker.Browser;
-import paxchecker.Checker;
+import paxchecker.tickets.Checker;
 import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.ErrorHandler;
 import paxchecker.PAXChecker;
-import paxchecker.Paxsite;
+import paxchecker.tickets.Paxsite;
 import paxchecker.SettingsHandler;
-import paxchecker.Showclix;
+import paxchecker.tickets.Showclix;
 
 /**
  *

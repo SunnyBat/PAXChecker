@@ -1,5 +1,8 @@
 package paxchecker.gui;
 
+import paxchecker.tickets.Paxsite;
+import paxchecker.tickets.Showclix;
+import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import paxchecker.*;
 
@@ -30,36 +33,36 @@ public class Setup extends javax.swing.JFrame {
     if (UpdateHandler.getVersionNotes() != null) {
       setPatchNotesText(UpdateHandler.getVersionNotes());
     }
-    jTextField1.setText(SettingsHandler.getEmail());
-    jComboBox2.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
-    jCheckBox1.setSelected(SettingsHandler.getCheckPaxWebsite());
-    jCheckBox2.setSelected(SettingsHandler.getCheckShowclix());
+    JTFEmail.setText(SettingsHandler.getEmail());
+    JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
+    JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
+    JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
     jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
-    jSlider1.setValue(SettingsHandler.getDelayTime());
-    if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) { // Disable START! button
-      jButton1.setEnabled(false);
+    JSCheckTime.setValue(SettingsHandler.getDelayTime());
+    if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) { // Disable START! button
+      JBStart.setEnabled(false);
     }
-    java.awt.Dimension d = jTextField2.getSize();
+    java.awt.Dimension d = JTFCellNum.getSize();
     String cellnum = SettingsHandler.getCellNumber();
     if (cellnum.contains(";")) {
       System.out.println("Debug: All = " + cellnum);
       String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
-      jComboBox1.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
+      JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
       if (Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@"))).equals("[Other]")) {
-        jTextField2.setText(specificNumbers[0].trim());
+        JTFCellNum.setText(specificNumbers[0].trim());
       } else {
-        jTextField2.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")).trim());
+        JTFCellNum.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")).trim());
       }
-      jTextField2.setCaretPosition(0);
+      JTFCellNum.setCaretPosition(0);
       for (int a = 1; a < specificNumbers.length; a++) {
         System.out.println("specificNumbers[" + a + "] = " + specificNumbers[a]);
         addPhonePanel(new ExtraPhonePanel(this, Email.splitEmail(specificNumbers[a])[0].trim(), Email.splitEmail(specificNumbers[a])[1].trim()));
       }
     } else {
       System.out.println("Normal address");
-      jTextField2.setText(cellnum);
+      JTFCellNum.setText(cellnum);
     }
-    jTextField2.setSize(d);
+    JTFCellNum.setSize(d);
     if (SettingsHandler.getSavePrefs()) {
       JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
       JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
@@ -179,23 +182,24 @@ public class Setup extends javax.swing.JFrame {
     jPanel1 = new javax.swing.JPanel();
     jLabel1 = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
-    jTextField1 = new javax.swing.JTextField();
-    jPasswordField1 = new javax.swing.JPasswordField();
+    JTFEmail = new javax.swing.JTextField();
+    JPFPassword = new javax.swing.JPasswordField();
     jLabel3 = new javax.swing.JLabel();
     jLabel4 = new javax.swing.JLabel();
-    jTextField2 = new javax.swing.JTextField();
-    jComboBox1 = new javax.swing.JComboBox();
+    JTFCellNum = new javax.swing.JTextField();
+    JCBCarrier = new javax.swing.JComboBox();
     jLabel6 = new javax.swing.JLabel();
-    jSlider1 = new javax.swing.JSlider();
-    jButton1 = new javax.swing.JButton();
-    jCheckBox1 = new javax.swing.JCheckBox();
-    jCheckBox2 = new javax.swing.JCheckBox();
+    JSCheckTime = new javax.swing.JSlider();
+    JBStart = new javax.swing.JButton();
+    JCBCheckWebsite = new javax.swing.JCheckBox();
+    JCBCheckShowclix = new javax.swing.JCheckBox();
     jCheckBox3 = new javax.swing.JCheckBox();
-    jComboBox2 = new javax.swing.JComboBox();
+    JCBExpo = new javax.swing.JComboBox();
     jLabel5 = new javax.swing.JLabel();
     jPanel2 = new javax.swing.JPanel();
     JPPhonePanel = new javax.swing.JPanel();
-    jButton2 = new javax.swing.JButton();
+    JBAddPhone = new javax.swing.JButton();
+    JCBCheckTwitter = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     jTextPane1 = new javax.swing.JTextPane();
@@ -229,58 +233,58 @@ public class Setup extends javax.swing.JFrame {
 
     jLabel2.setText("Email");
 
-    jTextField1.setToolTipText("<html>\nEmail address to send texts with. Currently,<br>\nonly Yahoo! and Gmail are supported.<br>\nPut your full email addres in, otherwise it<br>\ndefaults to @yahoo.com.<br>\nSee the Instructions tab for how to use emails<br>\nother than Yahoo! or Gmail.\n</html>");
+    JTFEmail.setToolTipText("<html>\nEmail address to send texts with. Currently,<br>\nonly Yahoo! and Gmail are supported.<br>\nPut your full email addres in, otherwise it<br>\ndefaults to @yahoo.com.<br>\nSee the Instructions tab for how to use emails<br>\nother than Yahoo! or Gmail.\n</html>");
 
     jLabel3.setText("Password");
 
     jLabel4.setText("Cell Num");
 
-    jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
+    JTFCellNum.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
-    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
+    JCBCarrier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
 
     jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel6.setText("Seconds Between Website Checks");
 
-    jSlider1.setMajorTickSpacing(10);
-    jSlider1.setMaximum(60);
-    jSlider1.setMinimum(10);
-    jSlider1.setMinorTickSpacing(2);
-    jSlider1.setPaintLabels(true);
-    jSlider1.setPaintTicks(true);
-    jSlider1.setPaintTrack(false);
-    jSlider1.setSnapToTicks(true);
-    jSlider1.setValue(10);
+    JSCheckTime.setMajorTickSpacing(10);
+    JSCheckTime.setMaximum(60);
+    JSCheckTime.setMinimum(10);
+    JSCheckTime.setMinorTickSpacing(2);
+    JSCheckTime.setPaintLabels(true);
+    JSCheckTime.setPaintTicks(true);
+    JSCheckTime.setPaintTrack(false);
+    JSCheckTime.setSnapToTicks(true);
+    JSCheckTime.setValue(10);
 
-    jButton1.setText("START!");
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
+    JBStart.setText("START!");
+    JBStart.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
+        JBStartActionPerformed(evt);
       }
     });
 
-    jCheckBox1.setSelected(true);
-    jCheckBox1.setText("Scan PAX Registration website");
-    jCheckBox1.setToolTipText("<html>\nThis option will open the queue closer<br>\nto, if not after, the Showclix website.<br>\nIt may also be slower than the Twitter<br>\nnotification.<br>\nThis option uses a small amount of data.\n</html>");
-    jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+    JCBCheckWebsite.setSelected(true);
+    JCBCheckWebsite.setText("Scan PAX Registration website");
+    JCBCheckWebsite.setToolTipText("<html>\nThis option will open the queue closer<br>\nto, if not after, the Showclix website.<br>\nIt may also be slower than the Twitter<br>\nnotification.<br>\nThis option uses a small amount of data.\n</html>");
+    JCBCheckWebsite.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jCheckBox1ActionPerformed(evt);
+        JCBCheckWebsiteActionPerformed(evt);
       }
     });
 
-    jCheckBox2.setSelected(true);
-    jCheckBox2.setText("Scan Showclix website");
-    jCheckBox2.setToolTipText("<html>\nIt is highly recommended that you<br>\nuse this option. It scans the Showclix<br>\nwebsite for updates and is generally the<br>\nfastest possible.<br>\nThis option uses a very small amount of data.\n</html>");
-    jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+    JCBCheckShowclix.setSelected(true);
+    JCBCheckShowclix.setText("Scan Showclix website");
+    JCBCheckShowclix.setToolTipText("<html>\nIt is highly recommended that you<br>\nuse this option. It scans the Showclix<br>\nwebsite for updates and is generally the<br>\nfastest possible.<br>\nThis option uses a very small amount of data.\n</html>");
+    JCBCheckShowclix.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jCheckBox2ActionPerformed(evt);
+        JCBCheckShowclixActionPerformed(evt);
       }
     });
 
     jCheckBox3.setText("Play Alarm when Tickets Found");
     jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
-    jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));
+    JCBExpo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));
 
     jLabel5.setText("PAX Expo to Check");
 
@@ -297,12 +301,14 @@ public class Setup extends javax.swing.JFrame {
       .addGap(0, 0, Short.MAX_VALUE)
     );
 
-    jButton2.setText("Add Another Phone Number");
-    jButton2.addActionListener(new java.awt.event.ActionListener() {
+    JBAddPhone.setText("Add Another Phone Number");
+    JBAddPhone.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton2ActionPerformed(evt);
+        JBAddPhoneActionPerformed(evt);
       }
     });
+
+    JCBCheckTwitter.setText("Scan @Offical_PAX Twitter");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -311,11 +317,11 @@ public class Setup extends javax.swing.JFrame {
       .addGroup(jPanel1Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(JBStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JSCheckTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-          .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -324,25 +330,25 @@ public class Setup extends javax.swing.JFrame {
               .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jTextField1)
-              .addComponent(jPasswordField1)
+              .addComponent(JTFEmail)
+              .addComponent(JPFPassword)
               .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jTextField2)
+                .addComponent(JTFCellNum)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addComponent(JCBCarrier, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))))
           .addComponent(JPPhonePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addComponent(JBAddPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(jPanel1Layout.createSequentialGroup()
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+              .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JCBExpo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
               .addComponent(jCheckBox3)
-              .addComponent(jCheckBox2)
-              .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                  .addComponent(jLabel5)
-                  .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                  .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING)))
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+              .addComponent(JCBCheckTwitter)
+              .addComponent(JCBCheckShowclix)
+              .addComponent(JCBCheckWebsite))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     jPanel1Layout.setVerticalGroup(
@@ -353,39 +359,41 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel2)
-          .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(JTFEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel3)
-          .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(JPFPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel4)
-          .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(JTFCellNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(JCBCarrier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addGap(0, 0, 0)
         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0)
         .addComponent(JPPhonePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jButton2)
+        .addComponent(JBAddPhone)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jCheckBox1)
+        .addComponent(JCBCheckWebsite)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jCheckBox2)
+        .addComponent(JCBCheckShowclix)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBCheckTwitter)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jCheckBox3)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel5)
-          .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(JCBExpo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jLabel6)
         .addGap(0, 0, 0)
-        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(JSCheckTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jButton1)
-        .addContainerGap())
+        .addComponent(JBStart)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     JPPhonePanel.setLayout(new javax.swing.BoxLayout(JPPhonePanel, javax.swing.BoxLayout.Y_AXIS));
@@ -415,7 +423,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel6Layout.setVerticalGroup(
       jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel6);
@@ -436,7 +444,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -465,7 +473,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -565,7 +573,7 @@ public class Setup extends javax.swing.JFrame {
           .addComponent(JCBSaveEvent)
           .addComponent(jButton3))
         .addGap(31, 31, 31)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -585,55 +593,55 @@ public class Setup extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+  private void JCBCheckShowclixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckShowclixActionPerformed
     // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-          jButton1.setEnabled(false);
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) {
+          JBStart.setEnabled(false);
         } else {
-          jButton1.setEnabled(true);
+          JBStart.setEnabled(true);
         }
       }
     });
-  }//GEN-LAST:event_jCheckBox2ActionPerformed
+  }//GEN-LAST:event_JCBCheckShowclixActionPerformed
 
-  private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+  private void JCBCheckWebsiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckWebsiteActionPerformed
     // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
-          jButton1.setEnabled(false);
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) {
+          JBStart.setEnabled(false);
         } else {
-          jButton1.setEnabled(true);
+          JBStart.setEnabled(true);
         }
       }
     });
-  }//GEN-LAST:event_jCheckBox1ActionPerformed
+  }//GEN-LAST:event_JCBCheckWebsiteActionPerformed
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+  private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
     // TODO add your handling code here:
-    jButton1.setText("Starting, please wait...");
-    if (jCheckBox1.isSelected()) {
+    JBStart.setText("Starting, please wait...");
+    if (JCBCheckWebsite.isSelected()) {
       Paxsite.setCheckPax(true);
     } else {
-      if (!jCheckBox2.isSelected()) {
+      if (!JCBCheckShowclix.isSelected()) {
         return;
       }
       Paxsite.setCheckPax(false);
     }
-    Showclix.setCheckShowclix(jCheckBox2.isSelected());
+    Showclix.setCheckShowclix(JCBCheckShowclix.isSelected());
     Audio.setPlayAlarm(jCheckBox3.isSelected());
-    Email.setUsername(jTextField1.getText());
-    Email.setPassword(new String(jPasswordField1.getPassword()));
-    Browser.setExpo(jComboBox2.getSelectedItem().toString());
-    String text = jTextField2.getText();
+    Email.setUsername(JTFEmail.getText());
+    Email.setPassword(new String(JPFPassword.getPassword()));
+    Browser.setExpo(JCBExpo.getSelectedItem().toString());
+    String text = JTFCellNum.getText();
     if (text == null || text.length() < 5) {
       text = "";
     } else if (!text.contains("@")) {
-      text += Email.getCarrierExtension(jComboBox1.getSelectedItem().toString());
+      text += Email.getCarrierExtension(JCBCarrier.getSelectedItem().toString());
     }
     String tempText;
     java.util.Iterator<ExtraPhonePanel> myIt = extraPhonePanelList.iterator();
@@ -660,11 +668,11 @@ public class Setup extends javax.swing.JFrame {
     }
     System.out.println("Final Text: " + text);
     Email.addEmailAddress(text);
-    Checker.setRefreshTime(jSlider1.getValue());
+    Checker.setRefreshTime(JSCheckTime.getValue());
     savePreferences();
     this.dispose();
     Checker.startCheckingWebsites();
-  }//GEN-LAST:event_jButton1ActionPerformed
+  }//GEN-LAST:event_JBStartActionPerformed
 
   private void JCBSaveCellnumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSaveCellnumActionPerformed
     // TODO add your handling code here:
@@ -682,10 +690,10 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveRefreshTime.setEnabled(selected);
   }//GEN-LAST:event_JCBSavePreferencesActionPerformed
 
-  private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+  private void JBAddPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAddPhoneActionPerformed
     // TODO add your handling code here:
     addPhonePanel(new ExtraPhonePanel(this));
-  }//GEN-LAST:event_jButton2ActionPerformed
+  }//GEN-LAST:event_JBAddPhoneActionPerformed
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
     //savePreferences();
@@ -693,6 +701,13 @@ public class Setup extends javax.swing.JFrame {
   }//GEN-LAST:event_jButton3ActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton JBAddPhone;
+  private javax.swing.JButton JBStart;
+  private javax.swing.JComboBox JCBCarrier;
+  private javax.swing.JCheckBox JCBCheckShowclix;
+  private javax.swing.JCheckBox JCBCheckTwitter;
+  private javax.swing.JCheckBox JCBCheckWebsite;
+  private javax.swing.JComboBox JCBExpo;
   private javax.swing.JCheckBox JCBSaveCellnum;
   private javax.swing.JCheckBox JCBSaveCheckPax;
   private javax.swing.JCheckBox JCBSaveCheckShowclix;
@@ -702,15 +717,13 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSavePreferences;
   private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JCheckBox JCBUseBeta;
+  private javax.swing.JPasswordField JPFPassword;
   private javax.swing.JPanel JPPhonePanel;
-  private javax.swing.JButton jButton1;
-  private javax.swing.JButton jButton2;
+  private javax.swing.JSlider JSCheckTime;
+  private javax.swing.JTextField JTFCellNum;
+  private javax.swing.JTextField JTFEmail;
   private javax.swing.JButton jButton3;
-  private javax.swing.JCheckBox jCheckBox1;
-  private javax.swing.JCheckBox jCheckBox2;
   private javax.swing.JCheckBox jCheckBox3;
-  private javax.swing.JComboBox jComboBox1;
-  private javax.swing.JComboBox jComboBox2;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
@@ -723,17 +736,13 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JPanel jPanel4;
   private javax.swing.JPanel jPanel5;
   private javax.swing.JPanel jPanel6;
-  private javax.swing.JPasswordField jPasswordField1;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JScrollPane jScrollPane4;
   private javax.swing.JScrollPane jScrollPane5;
   private javax.swing.JScrollPane jScrollPane6;
-  private javax.swing.JSlider jSlider1;
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTextArea jTextArea4;
-  private javax.swing.JTextField jTextField1;
-  private javax.swing.JTextField jTextField2;
   private javax.swing.JTextPane jTextPane1;
   private javax.swing.JTextPane jTextPane2;
   // End of variables declaration//GEN-END:variables
