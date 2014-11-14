@@ -11,16 +11,23 @@ package paxchecker.notification;
  */
 public class NotificationWindow extends javax.swing.JFrame {
 
+  private final Notification myNote;
+
   /**
    * Creates new form Notification
+   * @param n The Notification information object
    */
-  public NotificationWindow() {
+  public NotificationWindow(Notification n) {
+    myNote = n;
     initComponents();
     customComponents();
+    setVisible(true);
   }
 
   private void customComponents() {
-
+    JLTitle.setText(myNote.getTitle());
+    JBClose.setText(myNote.getButtonText());
+    JTAInformation.setText(myNote.getInfo());
   }
 
   /**
@@ -44,11 +51,19 @@ public class NotificationWindow extends javax.swing.JFrame {
     JLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     JLTitle.setText("Notification Title");
 
+    JTAInformation.setEditable(false);
     JTAInformation.setColumns(20);
+    JTAInformation.setLineWrap(true);
     JTAInformation.setRows(5);
+    JTAInformation.setWrapStyleWord(true);
     jScrollPane1.setViewportView(JTAInformation);
 
     JBClose.setText("Close");
+    JBClose.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JBCloseActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -57,7 +72,7 @@ public class NotificationWindow extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(JLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+          .addComponent(JLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jScrollPane1)
           .addComponent(JBClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addContainerGap())
@@ -76,6 +91,11 @@ public class NotificationWindow extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
+    // TODO add your handling code here:
+    dispose();
+  }//GEN-LAST:event_JBCloseActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBClose;

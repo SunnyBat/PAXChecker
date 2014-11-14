@@ -6,12 +6,14 @@ package paxchecker.notification;
  */
 public class Notification {
 
+  private final String ID;
   private String title;
   private String info;
   private String buttonText;
   private String buttonLink;
 
-  public Notification() {
+  public Notification(String i) {
+    ID = i;
   }
 
   public void setTitle(String t) {
@@ -37,6 +39,10 @@ public class Notification {
 
   public void setButtonLink(String bl) {
     buttonLink = bl;
+  }
+
+  public String getID() {
+    return ID;
   }
 
   public String getTitle() {

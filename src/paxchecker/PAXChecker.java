@@ -2,6 +2,7 @@ package paxchecker;
 
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
+import paxchecker.notification.NotificationHandler;
 
 /**
  *
@@ -9,7 +10,7 @@ import paxchecker.gui.Setup;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "1.7.6.2";
+  public static final String VERSION = "1.7.6.3";
   public static Setup setup;
 
   /**
@@ -160,6 +161,8 @@ public class PAXChecker {
       Checker.startCheckingWebsites();
     } else {
       setup = new Setup();
+      NotificationHandler.loadNotifications();
+      NotificationHandler.showNewNotifications();
     }
     Checker.loadAlertIcon();
   }
