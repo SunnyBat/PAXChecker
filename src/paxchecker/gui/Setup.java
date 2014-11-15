@@ -1,10 +1,9 @@
 package paxchecker.gui;
 
-import paxchecker.tickets.Paxsite;
-import paxchecker.tickets.Showclix;
-import paxchecker.tickets.Checker;
-import paxchecker.update.UpdateHandler;
 import paxchecker.*;
+import paxchecker.check.*;
+import paxchecker.tickets.*;
+import paxchecker.update.UpdateHandler;
 
 /**
  *
@@ -37,9 +36,10 @@ public class Setup extends javax.swing.JFrame {
     JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
     JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
     JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
+    JCBCheckTwitter.setSelected(SettingsHandler.getCheckTwitter());
     jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
     JSCheckTime.setValue(SettingsHandler.getDelayTime());
-    if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) { // Disable START! button
+    if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
       JBStart.setEnabled(false);
     }
     java.awt.Dimension d = JTFCellNum.getSize();
@@ -68,6 +68,7 @@ public class Setup extends javax.swing.JFrame {
       JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
       JCBSaveCheckPax.setSelected(SettingsHandler.getSavePax());
       JCBSaveCheckShowclix.setSelected(SettingsHandler.getSaveShowclix());
+      JCBSaveCheckTwitter.setSelected(SettingsHandler.getSaveTwitter());
       JCBSaveEvent.setSelected(SettingsHandler.getSaveEvent());
       JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
       JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
@@ -77,6 +78,7 @@ public class Setup extends javax.swing.JFrame {
       JCBSaveCellnum.setEnabled(false);
       JCBSaveCheckPax.setEnabled(false);
       JCBSaveCheckShowclix.setEnabled(false);
+      JCBSaveCheckTwitter.setEnabled(false);
       JCBSaveEvent.setEnabled(false);
       JCBSavePlayAlarm.setEnabled(false);
       JCBSaveRefreshTime.setEnabled(false);
@@ -162,6 +164,7 @@ public class Setup extends javax.swing.JFrame {
       SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
       SettingsHandler.setSavePax(JCBSaveCheckPax.isSelected());
       SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
+      SettingsHandler.setSaveTwitter(JCBSaveCheckTwitter.isSelected());
       SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
       SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
       SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
@@ -222,6 +225,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea1 = new javax.swing.JTextArea();
     JCBUseBeta = new javax.swing.JCheckBox();
     jButton3 = new javax.swing.JButton();
+    JCBSaveCheckTwitter = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -309,6 +313,11 @@ public class Setup extends javax.swing.JFrame {
     });
 
     JCBCheckTwitter.setText("Scan @Offical_PAX Twitter");
+    JCBCheckTwitter.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JCBCheckTwitterActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -423,7 +432,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel6Layout.setVerticalGroup(
       jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel6);
@@ -444,7 +453,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -473,7 +482,7 @@ public class Setup extends javax.swing.JFrame {
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
@@ -522,6 +531,8 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
+    JCBSaveCheckTwitter.setText("Save Twitter Checking");
+
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
     jPanel5Layout.setHorizontalGroup(
@@ -529,6 +540,10 @@ public class Setup extends javax.swing.JFrame {
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(jPanel5Layout.createSequentialGroup()
+            .addComponent(JCBSaveRefreshTime)
+            .addGap(149, 149, 149)
+            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
           .addGroup(jPanel5Layout.createSequentialGroup()
             .addComponent(JCBSavePreferences)
@@ -536,17 +551,14 @@ public class Setup extends javax.swing.JFrame {
             .addComponent(JCBUseBeta))
           .addGroup(jPanel5Layout.createSequentialGroup()
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(JCBSaveEmail)
-              .addComponent(JCBSaveCellnum)
-              .addComponent(JCBSaveCheckPax)
-              .addComponent(JCBSaveCheckShowclix)
               .addComponent(JCBSavePlayAlarm)
-              .addComponent(JCBSaveRefreshTime))
-            .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(jPanel5Layout.createSequentialGroup()
-            .addComponent(JCBSaveEvent)
-            .addGap(183, 183, 183)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+              .addComponent(JCBSaveEvent)
+              .addComponent(JCBSaveCellnum)
+              .addComponent(JCBSaveCheckShowclix)
+              .addComponent(JCBSaveCheckPax)
+              .addComponent(JCBSaveCheckTwitter)
+              .addComponent(JCBSaveEmail))
+            .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
@@ -565,15 +577,17 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSaveCheckShowclix)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JCBSaveCheckTwitter)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSavePlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBSaveRefreshTime)
+        .addComponent(JCBSaveEvent)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(JCBSaveEvent)
+          .addComponent(JCBSaveRefreshTime)
           .addComponent(jButton3))
-        .addGap(31, 31, 31)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+        .addGap(10, 10, 10)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -598,7 +612,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
           JBStart.setEnabled(false);
         } else {
           JBStart.setEnabled(true);
@@ -612,7 +626,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected()) {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
           JBStart.setEnabled(false);
         } else {
           JBStart.setEnabled(true);
@@ -624,19 +638,19 @@ public class Setup extends javax.swing.JFrame {
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
     // TODO add your handling code here:
     JBStart.setText("Starting, please wait...");
+    Browser.setExpo(JCBExpo.getSelectedItem().toString());
     if (JCBCheckWebsite.isSelected()) {
-      Paxsite.setCheckPax(true);
-    } else {
-      if (!JCBCheckShowclix.isSelected()) {
-        return;
-      }
-      Paxsite.setCheckPax(false);
+      TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
     }
-    Showclix.setCheckShowclix(JCBCheckShowclix.isSelected());
+    if (JCBCheckShowclix.isSelected()) {
+    TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
+    }
+    if (JCBCheckTwitter.isSelected()) {
+      TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+    }
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(JTFEmail.getText());
     Email.setPassword(new String(JPFPassword.getPassword()));
-    Browser.setExpo(JCBExpo.getSelectedItem().toString());
     String text = JTFCellNum.getText();
     if (text == null || text.length() < 5) {
       text = "";
@@ -684,6 +698,7 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveCellnum.setEnabled(selected);
     JCBSaveCheckPax.setEnabled(selected);
     JCBSaveCheckShowclix.setEnabled(selected);
+    JCBSaveCheckTwitter.setEnabled(selected);
     JCBSaveEmail.setEnabled(selected);
     JCBSaveEvent.setEnabled(selected);
     JCBSavePlayAlarm.setEnabled(selected);
@@ -700,6 +715,20 @@ public class Setup extends javax.swing.JFrame {
     SettingsHandler.saveUseBeta(JCBUseBeta.isSelected());
   }//GEN-LAST:event_jButton3ActionPerformed
 
+  private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed
+    // TODO add your handling code here:
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
+          JBStart.setEnabled(false);
+        } else {
+          JBStart.setEnabled(true);
+        }
+      }
+    });
+  }//GEN-LAST:event_JCBCheckTwitterActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBAddPhone;
   private javax.swing.JButton JBStart;
@@ -711,6 +740,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSaveCellnum;
   private javax.swing.JCheckBox JCBSaveCheckPax;
   private javax.swing.JCheckBox JCBSaveCheckShowclix;
+  private javax.swing.JCheckBox JCBSaveCheckTwitter;
   private javax.swing.JCheckBox JCBSaveEmail;
   private javax.swing.JCheckBox JCBSaveEvent;
   private javax.swing.JCheckBox JCBSavePlayAlarm;

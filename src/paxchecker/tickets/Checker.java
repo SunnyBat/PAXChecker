@@ -13,10 +13,12 @@ import paxchecker.Email;
 import paxchecker.KeyboardHandler;
 import paxchecker.PAXChecker;
 import paxchecker.SettingsHandler;
+import paxchecker.check.TicketChecker;
 
 /**
  *
  * @author Sunny
+ * @deprecated
  */
 public class Checker {
 
@@ -39,20 +41,15 @@ public class Checker {
           System.out.println("NOTE: Link has changed since last time!");
         }
         status = new Status();
+        TicketChecker.init(status);
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
           status.setLastCheckedText("Checking for updates...");
           startMS = System.currentTimeMillis();
-          if (Paxsite.isPAXWebsiteUpdated()) {
-            final String link = Paxsite.getCurrentButtonLink();
-            linkFound(link);
-            Paxsite.setCheckPax(false);
-          }
-          if (Showclix.isShowclixUpdated()) {
-            final String link = Showclix.getShowclixLink();
-            linkFound(link);
+          if (TicketChecker.isUpdated()) {
+            linkFound(TicketChecker.getLinkFound());
           }
           status.setDataUsageText(DataTracker.getDataUsedMB());
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {

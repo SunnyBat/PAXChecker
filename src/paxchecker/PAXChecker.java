@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.check.*;
 import paxchecker.tickets.Paxsite;
 import paxchecker.tickets.Showclix;
 import paxchecker.tickets.Checker;
@@ -30,6 +31,7 @@ public class PAXChecker {
     boolean doUpdate = true;
     boolean checkPax = true;
     boolean checkShowclix = true;
+    boolean checkTwitter = true;
     boolean autoStart = false;
     boolean commandLine = false;
     boolean savePrefs = false;
@@ -73,20 +75,28 @@ public class PAXChecker {
             System.out.println("Expo set to " + Browser.getExpo());
             break;
           case "-nopax":
-            if (!checkShowclix) {
-              System.out.println("Already not checking Showclix website -- cannot set check PAX website to false");
+            if (!checkShowclix && !checkTwitter) {
+              System.out.println("Already not checking Showclix or Twitter -- cannot set check PAX website to false");
               break;
             }
             System.out.println("Setting check PAX website to false");
             checkPax = false;
             break;
           case "-noshowclix":
-            if (!checkPax) {
-              System.out.println("Already not checking PAX website -- cannot set check Showclix website to false");
+            if (!checkPax && !checkTwitter) {
+              System.out.println("Already not checking PAX website or Twitter -- cannot set check Showclix website to false");
               break;
             }
             System.out.println("Setting check Showclix website to false");
             checkShowclix = false;
+            break;
+          case "-notwitter":
+            if (!checkPax && !checkShowclix) {
+              System.out.println("Already not checking PAX website or Showclix -- cannot set check Twitter to false");
+              break;
+            }
+            System.out.println("Setting check Twitter to false");
+            checkTwitter = false;
             break;
           case "-alarm":
             System.out.println("Alarm activated");
@@ -127,8 +137,15 @@ public class PAXChecker {
       }
     }
     System.out.println("Loading patch notes...");
-    Paxsite.setCheckPax(checkPax);
-    Showclix.setCheckShowclix(checkShowclix);
+    if (checkPax) {
+      TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
+    }
+    if (checkShowclix) {
+      TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
+    }
+    if (checkTwitter) {
+      TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+    }
     if (commandLine) {
       ErrorHandler.setCommandLine(true);
       if (doUpdate) {
@@ -146,7 +163,7 @@ public class PAXChecker {
         Checker.commandLineSettingsInput();
       }
       if (savePrefs) {
-        SettingsHandler.setSaveAll(true, true, true, true, true, true, true);
+        SettingsHandler.setSaveAll(true, true, true, true, true, true, true, true);
         SettingsHandler.saveAllPrefs();
       }
       Checker.startCommandLineWebsiteChecking();

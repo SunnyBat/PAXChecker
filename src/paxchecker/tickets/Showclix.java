@@ -20,6 +20,7 @@ import paxchecker.ErrorHandler;
 /**
  *
  * @author Sunny
+ * @deprecated
  */
 public class Showclix {
 

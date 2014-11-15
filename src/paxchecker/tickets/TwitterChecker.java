@@ -8,6 +8,7 @@ import twitter4j.conf.ConfigurationBuilder;
  * Using the Twitter4J library (3rd party TwitterChecker Library for Java).
  *
  * @author Andrew
+ * @deprecated
  */
 public class TwitterChecker {
 

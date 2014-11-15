@@ -33,20 +33,23 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="JLTitle" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jButton1" pref="185" max="32767" attributes="0"/>
+                      <Component id="jButton1" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" pref="185" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
-                  <Component id="JLInformation" max="32767" attributes="0"/>
                   <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
-                  <Component id="JLWebsiteLink" alignment="0" max="32767" attributes="0"/>
-                  <Component id="JLShowclixLink" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Component id="JLLastChecked" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="JLDataUsage" pref="380" max="32767" attributes="0"/>
+                          <Component id="JLShowclixLink" pref="380" max="32767" attributes="0"/>
+                          <Component id="JLWebsiteLink" alignment="0" pref="380" max="32767" attributes="0"/>
+                          <Component id="JLInformation" pref="380" max="32767" attributes="0"/>
+                          <Component id="JLTwitterLink" max="32767" attributes="0"/>
+                          <Component id="JLLastChecked" alignment="0" max="32767" attributes="0"/>
+                      </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="JLDataUsage" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -63,6 +66,8 @@
               <Component id="JLWebsiteLink" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JLShowclixLink" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="JLTwitterLink" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JLLastChecked" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -93,7 +98,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="JLWebsiteLink">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Current Website Link: "/>
+        <Property name="text" type="java.lang.String" value="Current Website Link: [DISABLED]"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLWebsiteLinkMouseClicked"/>
@@ -144,7 +149,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="JLShowclixLink">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Current Showclix Link:"/>
+        <Property name="text" type="java.lang.String" value="Current Showclix Link: [DISABLED]"/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLShowclixLinkMouseClicked"/>
@@ -153,6 +158,11 @@
     <Component class="javax.swing.JLabel" name="JLDataUsage">
       <Properties>
         <Property name="text" type="java.lang.String" value="Data Usage:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="JLTwitterLink">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Current Twitter Status: [DISABLED]"/>
       </Properties>
     </Component>
   </SubComponents>

@@ -1,8 +1,6 @@
 package paxchecker;
 
-import paxchecker.tickets.Paxsite;
-import paxchecker.tickets.Showclix;
-import paxchecker.tickets.Checker;
+import paxchecker.tickets.*;
 import paxchecker.update.UpdateHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -17,6 +15,7 @@ public class SettingsHandler {
   private static boolean saveRefreshTime;
   private static boolean saveCheckShowclix;
   private static boolean saveCheckPax;
+  private static boolean saveCheckTwitter;
   private static boolean savePlayAlarm;
   private static boolean saveEvent;
   private static boolean saveEmail;
@@ -32,10 +31,11 @@ public class SettingsHandler {
    * @param email True or false
    * @param cellnum  True or false
    */
-  public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean alarm, boolean event, boolean email, boolean cellnum) {
+  public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean twitter, boolean alarm, boolean event, boolean email, boolean cellnum) {
     setSaveRefreshTime(refreshTime);
     setSaveShowclix(showclix);
     setSavePax(pax);
+    setSaveTwitter(twitter);
     setSaveAlarm(alarm);
     setSaveEvent(event);
     setSaveEmail(email);
@@ -47,7 +47,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(Checker.getRefreshTime(), Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    saveAllPrefs(Checker.getRefreshTime(), Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), TwitterChecker.isCheckingPaxTwitter(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**
@@ -61,7 +61,7 @@ public class SettingsHandler {
    * @param expo The Expo being checked for. Note it should be in "PAX XXXX" format.
    * @param useBeta True to use BETA versions, false to not
    */
-  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean playAlarm, String expo, boolean useBeta) {
+  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean checkTwitter, boolean playAlarm, String expo, boolean useBeta) {
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
@@ -73,6 +73,7 @@ public class SettingsHandler {
       saveRefreshTime(refreshTime);
       saveCheckPax(checkPax);
       saveCheckShowclix(checkShowclix);
+      saveCheckTwitter(checkTwitter);
       savePlayAlarm(playAlarm);
       saveEvent(expo == null ? "" : expo);
       saveCellNum();
@@ -110,10 +111,20 @@ public class SettingsHandler {
    * Sets whether or not to save the Check PAX Website option. Note that you still must commit the changes using
    * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
    *
-   * @param save True to save refresh time, false to not
+   * @param save True to save check PAX website preference, false to not
    */
   public static void setSavePax(boolean save) {
     saveCheckPax = save;
+  }
+
+  /**
+   * Sets whether or not to save the Check Twitter option. Note that you still must commit the changes using
+   * {@link #saveAllPrefs(int, boolean, boolean, boolean, java.lang.String, java.lang.String) saveAllPrefs()}.
+   *
+   * @param save True to save check Twitter preference, false to not
+   */
+  public static void setSaveTwitter(boolean save) {
+    saveCheckTwitter = save;
   }
 
   /**
@@ -192,6 +203,19 @@ public class SettingsHandler {
       myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), check);
     } else {
       myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_PAX.name());
+    }
+  }
+
+  /**
+   * Saves the Check Twitter option to the Preferences.
+   *
+   * @param check True to check Twitter, false to not
+   */
+  private static void saveCheckTwitter(boolean check) {
+    if (saveCheckTwitter) {
+      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), check);
+    } else {
+      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_TWITTER.name());
     }
   }
 
@@ -353,6 +377,15 @@ public class SettingsHandler {
   }
 
   /**
+   * Checks whether or not the program saved the Twitter preference
+   *
+   * @return True if preference was saved, false if not
+   */
+  public static boolean getSaveTwitter() {
+    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), true));
+  }
+
+  /**
    * Checks whether or not the program saved the Play Alarm preference
    *
    * @return True if preference was saved, false if not
@@ -409,10 +442,19 @@ public class SettingsHandler {
   /**
    * Gets whether the program should check the PAX Website, or true if preference was not saved.
    *
-   * @return True if the program should check the PAX website, false if not
+   * @return True if the program should check the PAX website, true if not
    */
   public static boolean getCheckPaxWebsite() {
     return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true);
+  }
+
+  /**
+   * Gets whether the program should check Twitter, or false if preference was not saved.
+   *
+   * @return True if the program should check Twitter, false if not
+   */
+  public static boolean getCheckTwitter() {
+    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), false);
   }
 
   /**
@@ -488,7 +530,7 @@ public class SettingsHandler {
 
   private static enum PREFTYPES {
 
-    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_SAVE_PREFS, PAXCHECK_LAST_EVENT, PAXCHECK_USE_BETA;
+    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_CHECK_TWITTER, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_SAVE_PREFS, PAXCHECK_LAST_EVENT, PAXCHECK_USE_BETA;
   }
 
   /**
@@ -500,7 +542,7 @@ public class SettingsHandler {
   public static void setSavePrefs(boolean save) {
     myPrefs.putBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), save);
     if (!save) {
-      setSaveAll(false, false, false, false, false, false, false);
+      setSaveAll(false, false, false, false, false, false, false, false);
     }
   }
 }

@@ -79,7 +79,7 @@ public class Browser {
     try {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
-      httpCon.setConnectTimeout(Math.min(Checker.getRefreshTime() * 1000, 10000));
+      httpCon.setConnectTimeout(Math.min(Checker.getRefreshTime() * 1000, 15000));
       httpCon.setReadTimeout(2000);
       return httpCon;
     } catch (Exception e) {

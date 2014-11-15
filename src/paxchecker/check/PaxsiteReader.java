@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package paxchecker.tickets;
+package paxchecker.check;
 
 import java.io.*;
 import java.net.*;
@@ -14,79 +14,30 @@ import paxchecker.ErrorHandler;
 /**
  *
  * @author Sunny
- * @deprecated
  */
-public class Paxsite {
+public class PaxsiteReader {
 
-  private static boolean checkPAXWebsite;
   private static String websiteLink;
 
-  /**
-   * Sets whether or not to check the PAX website for ticket sales.
-   * @param check True to check, false to not
-   */
-  public static void setCheckPax(boolean check) {
-    checkPAXWebsite = check;
-  }
-
-  /**
-   * Checks whether or not the program should check the PAX Registration website.
-   *
-   * @return True if should check, false if not
-   */
-  public static boolean isCheckingPaxWebsite() {
-    return checkPAXWebsite;
-  }
-
-  /**
-   * Checks whether or not the PAX website is updated. This checks for the Register Online button on the [expo].paxsite.com/registration page. If
-   * found, it reads the current href (hyperlink) for the button, and if it doesn't link to the [expo].paxsite.com website (when tickets are all sold
-   * out, PAX switches it to that), it returns true. This method also sets the Status window website link text. Note that this returns false if
-   * {@link #enablePaxWebsiteChecking() enablePaxWebsiteChecking()} has not been called.
-   *
-   * @return True if the Register Now button link is updated, false if not
-   */
-  public static boolean isPAXWebsiteUpdated() {
-    if (!isCheckingPaxWebsite()) {
-      return false;
-    }
-    String lineText = getCurrentButtonLinkLine();
-    if (lineText == null) {
-      Checker.setStatusWebsiteLink("ERROR connecting to the PAX website!");
-      return false;
-    } else if (lineText.equals("IOException") || lineText.equals("NoConnection")) {
-      Checker.setStatusWebsiteLink("Unable to connect: " + lineText);
-      return false;
-    } else if (lineText.equals("NoFind")) {
-      Checker.setStatusWebsiteLink("Unable to find the Register Online button!");
-      return false;
-    } else if (!lineText.contains("\"" + websiteLink + "\"")) {
-      System.out.println("OMG IT'S UPDATED: " + lineText);
-      return true;
-    } else {
-      Checker.setStatusWebsiteLink(parseHRef(lineText));
-      return false;
-    }
-  }
-
-  public static String getCurrentButtonLink() {
-    return parseHRef(getCurrentButtonLinkLine());
+  public static String getCurrentButtonLink(String expo) {
+    return parseHRef(getCurrentButtonLinkLine(expo));
   }
 
   /**
    * Finds the link of the Register Now button on the PAX website. This scans EVENT.paxsite.com/registration for the Register Now button link, and
    * returns the ENTIRE line, HTML and all.
    *
+   * @param expo The expo to check
    * @return The line (HTML included) that the Register Now button link is on
    * @see #parseHRef(java.lang.String)
    */
-  public static String getCurrentButtonLinkLine() {
+  public static String getCurrentButtonLinkLine(String expo) {
     URL url;
     InputStream is = null;
     BufferedReader br;
     String line;
     try {
-      url = new URL(websiteLink + "/registration");
+      url = new URL(getWebsiteLink(websiteLink) + "/registration");
       //is = url.openStream();
       HttpURLConnection httpCon = Browser.setUpConnection(url);
       is = httpCon.getInputStream();
@@ -133,7 +84,7 @@ public class Paxsite {
   public static String parseHRef(String parse) {
     if (parse == null) {
       System.out.println("ERROR: parseHRef arg parse is null!");
-      return websiteLink;
+      return null;
     }
     try {
       parse = parse.trim(); // Remove white space
@@ -143,25 +94,15 @@ public class Paxsite {
         parse = parse.substring(1, parse.length() - 1);
       } else if (parse.length() < 10) {
         System.out.println("Unable to correctly parse link from button HTML.");
-        return websiteLink;
+        return null;
       }
       //System.out.println("Link parsed from Register Online button: " + parse);
       return parse.trim(); // PAX Aus currently has a space at the end of the registration button link... It doesn't sit well with Browser.java
     } catch (Exception e) {
       System.out.println("ERROR: Unable to parse link from button");
       e.printStackTrace();
-      return websiteLink;
+      return null;
     }
-  }
-
-  /**
-   * Sets the website link used for the program. Note that this does NOT check for invalid links, and therefore should be used with caution. Invalid
-   * links will result in failure to check the proper PAX website. Ex: http://prime.paxsite.com
-   *
-   * @param link The FULL address (http:// as well!) to check for updates.
-   */
-  public static void setWebsiteLink(String link) {
-    websiteLink = link;
   }
 
   /**
@@ -178,6 +119,8 @@ public class Paxsite {
     switch (expo.toLowerCase()) { // toLowerCase to lower the possibilities (and readability)
       case "prime":
       case "pax prime":
+      case "dev":
+      case "pax dev":
         return "http://prime.paxsite.com";
       case "east":
       case "pax east":
@@ -188,10 +131,8 @@ public class Paxsite {
       case "aus":
       case "pax aus":
         return "http://aus.paxsite.com";
-      case "dev":
-      case "pax dev":
-        return "http://dev.paxsite.com";
       default:
+        System.out.println("Expo not found: " + expo);
         return "http://prime.paxsite.com";
     }
   }
