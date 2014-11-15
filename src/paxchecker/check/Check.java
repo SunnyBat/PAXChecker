@@ -6,11 +6,9 @@ package paxchecker.check;
  */
 public abstract class Check {
 
-  protected String expoC;
   protected javax.swing.JLabel linkLabel;
 
-  public Check(String e) {
-    expoC = e;
+  public Check() {
   }
 
   public void init(paxchecker.gui.Status s) {

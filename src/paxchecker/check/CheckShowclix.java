@@ -1,5 +1,7 @@
 package paxchecker.check;
 
+import paxchecker.Browser;
+
 /**
  *
  * @author Sunny
@@ -10,15 +12,14 @@ public class CheckShowclix extends Check {
   private int currentShowclixEventID = -1;
   private static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
 
-  public CheckShowclix(String e) {
-    super(e);
-    System.out.println("expoC = " + expoC);
+  public CheckShowclix() {
+    super();
   }
 
   @Override
   public void init(paxchecker.gui.Status s) {
     super.init(s);
-    lastShowclixEventID = ShowclixReader.getLatestSellerEventID(expoC);
+    lastShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
     s.updateJLabel(linkLabel, "Showclix");
   }
 
@@ -29,7 +30,7 @@ public class CheckShowclix extends Check {
 
   @Override
   public void updateLink() {
-    currentShowclixEventID = ShowclixReader.getLatestSellerEventID(expoC);
+    currentShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
   }
 
   @Override

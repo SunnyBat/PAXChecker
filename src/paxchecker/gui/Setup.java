@@ -640,13 +640,13 @@ public class Setup extends javax.swing.JFrame {
     JBStart.setText("Starting, please wait...");
     Browser.setExpo(JCBExpo.getSelectedItem().toString());
     if (JCBCheckWebsite.isSelected()) {
-      TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
+      TicketChecker.addChecker(new CheckPaxsite());
     }
     if (JCBCheckShowclix.isSelected()) {
-    TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
+    TicketChecker.addChecker(new CheckShowclix());
     }
     if (JCBCheckTwitter.isSelected()) {
-      TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+      TicketChecker.addChecker(new CheckTwitter());
     }
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(JTFEmail.getText());

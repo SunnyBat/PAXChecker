@@ -14,9 +14,8 @@ public class CheckTwitter extends Check {
   private String lastTweet;
   private String lastTweetID;
 
-  public CheckTwitter(String e) {
-    super(e);
-    expoC = e;
+  public CheckTwitter() {
+    super();
   }
 
   @Override

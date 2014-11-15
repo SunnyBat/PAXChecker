@@ -45,7 +45,6 @@ public final class TicketChecker {
   }
 
   public static void resetLinkFound() {
-
+    linkFound = "";
   }
-
 }

@@ -46,8 +46,10 @@ public class PAXChecker {
             break;
           case "-notificationid":
             NotificationHandler.setLastNotificationID(args[a + 1]);
+            break;
           case "-nonotifications":
             NotificationHandler.setLastNotificationID("DISABLE");
+            break;
           case "-typelink":
             KeyboardHandler.setTypeLink(true);
             break;
@@ -138,13 +140,13 @@ public class PAXChecker {
     System.out.println("Loading patch notes...");
     if (autoStart) {
       if (checkPax) {
-        TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
+        TicketChecker.addChecker(new CheckPaxsite());
       }
       if (checkShowclix) {
-        TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
+        TicketChecker.addChecker(new CheckShowclix());
       }
       if (checkTwitter) {
-        TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+        TicketChecker.addChecker(new CheckTwitter());
       }
     }
     if (commandLine) {

@@ -5,6 +5,8 @@
  */
 package paxchecker.check;
 
+import paxchecker.Browser;
+
 /**
  *
  * @author Sunny
@@ -12,10 +14,10 @@ package paxchecker.check;
 public class CheckPaxsite extends Check {
 
   private String lastLinkFound;
+  private boolean hasFoundLink;
 
-  public CheckPaxsite(String e) {
-    super(e);
-    expoC = e;
+  public CheckPaxsite() {
+    super();
   }
 
   @Override
@@ -26,14 +28,17 @@ public class CheckPaxsite extends Check {
 
   @Override
   public boolean ticketsFound() {
-    if (lastLinkFound == null) {
+    if (hasFoundLink) {
+      return false;
+    } else if (lastLinkFound == null) {
       return false;
     } else if (lastLinkFound.equals("IOException") || lastLinkFound.equals("NoConnection")) {
       return false;
     } else if (lastLinkFound.equals("NoFind")) {
       return false;
-    } else if (!lastLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(expoC) + "\"")) {
+    } else if (!lastLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(Browser.getExpo()) + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + lastLinkFound);
+      hasFoundLink = true;
       return true;
     }
     return false;
@@ -41,7 +46,7 @@ public class CheckPaxsite extends Check {
 
   @Override
   public void updateLink() {
-    lastLinkFound = PaxsiteReader.getCurrentButtonLinkLine(expoC);
+    lastLinkFound = PaxsiteReader.parseHRef(PaxsiteReader.getCurrentButtonLinkLine(Browser.getExpo()));
   }
 
   @Override

@@ -22,13 +22,13 @@ public class Status extends javax.swing.JFrame {
       @Override
       public void run() {
         initComponents();
-        customComponents();
+        //customComponents();
         //setVisible(true);
       }
     });
   }
 
-  private void customComponents() {
+  public void customComponents() {
     tray = SystemTray.getSystemTray();
     myMenu = new IconMenu();
     JLTitle.setText(Browser.getExpo() + " Website Status");

@@ -44,6 +44,7 @@ public class Checker {
 //          SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
 //          System.out.println("NOTE: Link has changed since last time!");
 //        }
+        status.customComponents();
         status.setVisible(true);
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
