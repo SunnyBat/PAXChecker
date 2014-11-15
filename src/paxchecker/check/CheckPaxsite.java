@@ -19,7 +19,9 @@ public class CheckPaxsite extends Check {
   }
 
   @Override
-  public void init() {
+  public void init(paxchecker.gui.Status s) {
+    super.init(s);
+    s.updateJLabel(linkLabel, "PAXSite");
   }
 
   @Override
@@ -49,7 +51,7 @@ public class CheckPaxsite extends Check {
 
   @Override
   public void updateGUI(paxchecker.gui.Status s) {
-    s.setWebsiteLink(getLink());
+    s.updateJLabel(linkLabel, "Current Website Link: " + getLink());
   }
 
 }

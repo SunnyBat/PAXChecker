@@ -22,6 +22,7 @@ public class PAXChecker {
    */
   public static void main(String[] args) {
     System.out.println("Initializing...");
+    Checker.hackedAroundStatus();
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     Email.init();
     startProgram(args);
@@ -137,14 +138,16 @@ public class PAXChecker {
       }
     }
     System.out.println("Loading patch notes...");
-    if (checkPax) {
-      TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
-    }
-    if (checkShowclix) {
-      TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
-    }
-    if (checkTwitter) {
-      TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+    if (autoStart) {
+      if (checkPax) {
+        TicketChecker.addChecker(new CheckPaxsite(Browser.getExpo()));
+      }
+      if (checkShowclix) {
+        TicketChecker.addChecker(new CheckShowclix(Browser.getExpo()));
+      }
+      if (checkTwitter) {
+        TicketChecker.addChecker(new CheckTwitter(Browser.getExpo()));
+      }
     }
     if (commandLine) {
       ErrorHandler.setCommandLine(true);

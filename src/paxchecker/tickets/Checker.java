@@ -27,7 +27,11 @@ public class Checker {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
-  private static Status status;
+  private static final Status status = new Status();
+
+  public static void hackedAroundStatus() {
+    TicketChecker.init(status);
+  }
 
   /**
    * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
@@ -40,8 +44,7 @@ public class Checker {
           SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
           System.out.println("NOTE: Link has changed since last time!");
         }
-        status = new Status();
-        TicketChecker.init(status);
+        status.setVisible(true);
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running

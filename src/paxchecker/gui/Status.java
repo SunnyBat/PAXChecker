@@ -25,7 +25,7 @@ public class Status extends javax.swing.JFrame {
       public void run() {
         initComponents();
         customComponents();
-        setVisible(true);
+        //setVisible(true);
       }
     });
   }
@@ -61,6 +61,9 @@ public class Status extends javax.swing.JFrame {
       setSoundButtonState(false);
     }
     setDataUsageText(DataTracker.getDataUsedMB());
+    hideShowclixText();
+    hideWebsiteText();
+    hideTwitterText();
   }
 
   /**
@@ -82,6 +85,7 @@ public class Status extends javax.swing.JFrame {
     JLShowclixLink = new javax.swing.JLabel();
     JLDataUsage = new javax.swing.JLabel();
     JLTwitterLink = new javax.swing.JLabel();
+    JPLinks = new javax.swing.JPanel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAXChecker");
@@ -143,6 +147,10 @@ public class Status extends javax.swing.JFrame {
 
     JLTwitterLink.setText("Current Twitter Status: [DISABLED]");
 
+    JPLinks.setBackground(new java.awt.Color(255, 102, 153));
+    JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
+    JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -150,23 +158,22 @@ public class Status extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+            .addComponent(JLDataUsage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JLShowclixLink, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JLWebsiteLink, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JLInformation, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JLTwitterLink, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JLLastChecked, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(JPLinks, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(JLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(layout.createSequentialGroup()
             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
           .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-              .addComponent(JLDataUsage, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-              .addComponent(JLShowclixLink, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-              .addComponent(JLWebsiteLink, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-              .addComponent(JLInformation, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-              .addComponent(JLTwitterLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(JLLastChecked, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGap(0, 0, Short.MAX_VALUE)))
-        .addContainerGap())
+          .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addGap(10, 10, 10))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,6 +188,8 @@ public class Status extends javax.swing.JFrame {
         .addComponent(JLShowclixLink)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLTwitterLink)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JPLinks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLLastChecked)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -278,6 +287,9 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  /**
+   * @deprecated
+   */
   public void hideShowclixText() {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -288,11 +300,27 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  /**
+   * @deprecated
+   */
   public void hideWebsiteText() {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         JLWebsiteLink.setVisible(false);
+        pack();
+      }
+    });
+  }
+
+  /**
+   * @deprecated
+   */
+  public void hideTwitterText() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLTwitterLink.setVisible(false);
         pack();
       }
     });
@@ -316,6 +344,9 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  /**
+   * @deprecated @param link
+   */
   public void setWebsiteLink(final String link) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -325,6 +356,9 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  /**
+   * @deprecated @param link
+   */
   public void setShowclixLink(final String link) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -334,6 +368,9 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  /**
+   * @deprecated @param link
+   */
   public void setTwitterLink(final String link) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -341,6 +378,27 @@ public class Status extends javax.swing.JFrame {
         JLTwitterLink.setText("Current Twitter Link: " + link);
       }
     });
+  }
+
+  public void updateJLabel(final javax.swing.JLabel label, final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        label.setText(text);
+        label.repaint();
+      }
+    });
+  }
+
+  public javax.swing.JLabel addLinkJLabel() {
+    final javax.swing.JLabel jL = new javax.swing.JLabel();
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JPLinks.add(jL);
+      }
+    });
+    return jL;
   }
 
   public void setDataUsageText(final String text) {
@@ -451,6 +509,7 @@ public class Status extends javax.swing.JFrame {
   private javax.swing.JLabel JLTitle;
   private javax.swing.JLabel JLTwitterLink;
   private javax.swing.JLabel JLWebsiteLink;
+  private javax.swing.JPanel JPLinks;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
   private javax.swing.JButton jButton3;

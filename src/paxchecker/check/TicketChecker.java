@@ -18,7 +18,7 @@ public final class TicketChecker {
 
   public static void addChecker(Check c) {
     checks.add(c);
-    c.init(); // MOVE LATER
+    c.init(status); // MOVE LATER
   }
 
   public static boolean isUpdated() {

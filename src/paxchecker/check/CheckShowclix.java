@@ -16,8 +16,10 @@ public class CheckShowclix extends Check {
   }
 
   @Override
-  public void init() {
+  public void init(paxchecker.gui.Status s) {
+    super.init(s);
     lastShowclixEventID = ShowclixReader.getLatestSellerEventID(expoC);
+    s.updateJLabel(linkLabel, "Showclix");
   }
 
   @Override
@@ -37,7 +39,7 @@ public class CheckShowclix extends Check {
 
   @Override
   public void updateGUI(paxchecker.gui.Status s) {
-    s.setShowclixLink(getLink());
+    s.updateJLabel(linkLabel, "Current Showclix Link: " + getLink());
   }
 
   private static String getLink(int showclixID) {

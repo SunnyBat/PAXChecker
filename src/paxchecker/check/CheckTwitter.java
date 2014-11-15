@@ -20,7 +20,9 @@ public class CheckTwitter extends Check {
   }
 
   @Override
-  public void init() {
+  public void init(paxchecker.gui.Status s) {
+    super.init(s);
+    s.updateJLabel(linkLabel, "Twitter");
   }
 
   @Override
