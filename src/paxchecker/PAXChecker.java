@@ -1,8 +1,6 @@
 package paxchecker;
 
 import paxchecker.check.*;
-import paxchecker.tickets.Paxsite;
-import paxchecker.tickets.Showclix;
 import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;

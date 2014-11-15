@@ -170,7 +170,7 @@ public class Setup extends javax.swing.JFrame {
       SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
       SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
     }
-    SettingsHandler.saveAllPrefs();
+    SettingsHandler.saveAllPrefs(Checker.getRefreshTime(), JCBCheckWebsite.isSelected(), JCBCheckShowclix.isSelected(), JCBCheckTwitter.isSelected(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**

@@ -10,9 +10,7 @@ import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.ErrorHandler;
 import paxchecker.PAXChecker;
-import paxchecker.tickets.Paxsite;
 import paxchecker.SettingsHandler;
-import paxchecker.tickets.Showclix;
 
 /**
  *
@@ -91,11 +89,7 @@ public class UpdateHandler {
         if (line.startsWith("TOKEN:")) {
           try {
             String d = line.substring(6);
-            if (d.startsWith("SETSHOWCLIXID:")) { // Obsolete, if I'm not mistaken
-              String load = d.substring(14);
-              System.out.println("Load = " + load);
-              Showclix.setShowclixID(Integer.parseInt(load));
-            } else if (d.startsWith("UPDATETYPE:")) {
+            if (d.startsWith("UPDATETYPE:")) {
               if (!versionFound) {
                 String load = d.substring(11);
                 if (load.equals("BETA")) {
@@ -207,8 +201,8 @@ public class UpdateHandler {
     args[10] = "-delay";
     args[11] = "" + Checker.getRefreshTime();
     args[12] = "-autostart";
-    args[13] = Paxsite.isCheckingPaxWebsite() ? "" : "-nopax";
-    args[14] = Showclix.isCheckingShowclix() ? "" : "-noshowclix";
+    args[13] = "";//Paxsite.isCheckingPaxWebsite() ? "" : "-nopax";
+    args[14] = "";//Showclix.isCheckingShowclix() ? "" : "-noshowclix";
     args[15] = Audio.soundEnabled() ? "-alarm" : "";
     autoUpdate(args);
   }

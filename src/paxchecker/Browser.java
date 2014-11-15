@@ -1,7 +1,5 @@
 package paxchecker;
 
-import paxchecker.tickets.Paxsite;
-import paxchecker.tickets.Showclix;
 import paxchecker.tickets.Checker;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -24,8 +22,6 @@ public class Browser {
    */
   public static void setExpo(String e) {
     Expo = e;
-    Showclix.setShowclixID(Showclix.getLatestShowclixID(e));
-    Paxsite.setWebsiteLink(Paxsite.getWebsiteLink(getExpo()));
   }
 
   /**

@@ -33,10 +33,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                       <Component id="JLDataUsage" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JLShowclixLink" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JLWebsiteLink" alignment="0" max="32767" attributes="0"/>
                       <Component id="JLInformation" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JLTwitterLink" alignment="0" max="32767" attributes="0"/>
                       <Component id="JLLastChecked" alignment="0" max="32767" attributes="0"/>
                       <Component id="JPLinks" alignment="0" min="-2" pref="380" max="-2" attributes="0"/>
                   </Group>
@@ -60,12 +57,6 @@
               <Component id="JLTitle" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="JLWebsiteLink" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="JLShowclixLink" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="JLTwitterLink" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JPLinks" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -95,14 +86,6 @@
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="PAX Website Status"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="JLWebsiteLink">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Current Website Link: [DISABLED]"/>
-      </Properties>
-      <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLWebsiteLinkMouseClicked"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
@@ -147,22 +130,9 @@
         <Property name="text" type="java.lang.String" value="Email -- Phone"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="JLShowclixLink">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Current Showclix Link: [DISABLED]"/>
-      </Properties>
-      <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLShowclixLinkMouseClicked"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JLabel" name="JLDataUsage">
       <Properties>
         <Property name="text" type="java.lang.String" value="Data Usage:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="JLTwitterLink">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Current Twitter Status: [DISABLED]"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="JPLinks">

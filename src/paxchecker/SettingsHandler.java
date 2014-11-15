@@ -4,6 +4,7 @@ import paxchecker.tickets.*;
 import paxchecker.update.UpdateHandler;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import paxchecker.check.TicketChecker;
 
 /**
  *
@@ -26,6 +27,7 @@ public class SettingsHandler {
    * @param refreshTime True or false
    * @param showclix True or false
    * @param pax True or false
+   * @param twitter True or false
    * @param alarm True or false
    * @param event True or false
    * @param email True or false
@@ -47,7 +49,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(Checker.getRefreshTime(), Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), TwitterChecker.isCheckingPaxTwitter(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    saveAllPrefs(Checker.getRefreshTime(), true, true, true/*Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), TwitterChecker.isCheckingPaxTwitter()*/, Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**
@@ -510,7 +512,7 @@ public class SettingsHandler {
    * @return The last Showclix link for the specific expo
    */
   public static String getLastEvent(String expo) {
-    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), Showclix.getShowclixLink());
+    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), TicketChecker.getLinkFound()); // UPDATE
   }
 
   public static boolean getUseBetaVersion() {

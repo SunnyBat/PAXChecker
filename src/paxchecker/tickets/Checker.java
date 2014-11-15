@@ -40,10 +40,10 @@ public class Checker {
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
-        if (!Showclix.checkShowclixLink(SettingsHandler.getLastEvent())) {
-          SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
-          System.out.println("NOTE: Link has changed since last time!");
-        }
+//        if (!Showclix.checkShowclixLink(SettingsHandler.getLastEvent())) {
+//          SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
+//          System.out.println("NOTE: Link has changed since last time!");
+//        }
         status.setVisible(true);
         setStatusIconInBackground(getIconName(Browser.getExpo()));
         long startMS;
@@ -93,28 +93,28 @@ public class Checker {
       } catch (Exception e) {
       }
     }
-    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
-      System.out.print("Check PAX Website (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Paxsite.setCheckPax(true);
-        } else {
-          Paxsite.setCheckPax(false);
-        }
-      } catch (Exception e) {
+//    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
+    System.out.print("Check PAX Website (Y/N): ");
+    try {
+      if (!myScanner.next().toLowerCase().startsWith("n")) {
+//          Paxsite.setCheckPax(true);
+      } else {
+//          Paxsite.setCheckPax(false);
       }
+    } catch (Exception e) {
     }
-    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
-      System.out.print("Check Showclix Website (Y/N): ");
-      try {
-        if (!myScanner.next().toLowerCase().startsWith("n")) {
-          Showclix.setCheckShowclix(true);
-        } else {
-          Showclix.setCheckShowclix(false);
-        }
-      } catch (Exception e) {
+//    }
+//    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
+    System.out.print("Check Showclix Website (Y/N): ");
+    try {
+      if (!myScanner.next().toLowerCase().startsWith("n")) {
+//          Showclix.setCheckShowclix(true);
+      } else {
+//          Showclix.setCheckShowclix(false);
       }
+    } catch (Exception e) {
     }
+//    }
     if (getRefreshTime() == 10) {
       System.out.print("Refresh Time (seconds, no input limit at the moment): ");
       try {
@@ -264,14 +264,8 @@ public class Checker {
         do {
           //status.setLastCheckedText("Checking for updates...");
           long startMS = System.currentTimeMillis();
-          if (Paxsite.isPAXWebsiteUpdated()) {
-            final String link = Paxsite.getCurrentButtonLink();
-            System.out.println("LINK FOUND: " + link);
-            Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
-            Browser.openLinkInBrowser(link);
-            Audio.playAlarm();
-          } else if (Showclix.isShowclixUpdated()) {
-            final String link = Showclix.getShowclixLink();
+          if (TicketChecker.isUpdated()) {
+            final String link = TicketChecker.getLinkFound();
             System.out.println("LINK FOUND: " + link);
             Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
             Browser.openLinkInBrowser(link);
@@ -372,32 +366,6 @@ public class Checker {
       status.setInformationText(s);
     } else {
       System.out.println(s);
-    }
-  }
-
-  /**
-   * Sets the PAX Website link text. Note that this automatically starts with "PAX Website link:"
-   *
-   * @param s The text to use
-   */
-  public static void setStatusWebsiteLink(String s) {
-    if (status != null) {
-      status.setWebsiteLink(s);
-    } else {
-      System.out.println("PAX Website Event URL = " + s);
-    }
-  }
-
-  /**
-   * Sets the Showclix link text. Note that this automatically starts with "Showclix link:"
-   *
-   * @param s The text to use
-   */
-  public static void setStatusShowclixLink(String s) {
-    if (status != null) {
-      status.setShowclixLink(s);
-    } else {
-      System.out.println("Showclix Event URL    = " + s);
     }
   }
 

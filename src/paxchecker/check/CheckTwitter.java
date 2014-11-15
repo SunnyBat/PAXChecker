@@ -41,7 +41,6 @@ public class CheckTwitter extends Check {
 
   @Override
   public void updateGUI(paxchecker.gui.Status s) {
-    s.setTwitterLink(getLink());
   }
 
 }
