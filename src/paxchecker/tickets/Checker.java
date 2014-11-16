@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.Scanner;
 import paxchecker.Audio;
-import paxchecker.Browser;
+import paxchecker.browser.Browser;
 import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.KeyboardHandler;
@@ -27,9 +27,10 @@ public class Checker {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   // GUIs
-  private static final Status status = new Status();
+  private static Status status;
 
-  public static void hackedAroundStatus() {
+  public static void init() {
+    status = new Status();
     TicketChecker.init(status);
   }
 

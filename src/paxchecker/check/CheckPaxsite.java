@@ -5,7 +5,8 @@
  */
 package paxchecker.check;
 
-import paxchecker.Browser;
+import paxchecker.browser.PaxsiteReader;
+import paxchecker.browser.Browser;
 
 /**
  *
@@ -14,7 +15,7 @@ import paxchecker.Browser;
 public class CheckPaxsite extends Check {
 
   private String lastLinkFound;
-  private boolean hasFoundLink;
+  private String currentLinkFound;
 
   public CheckPaxsite() {
     super();
@@ -23,22 +24,22 @@ public class CheckPaxsite extends Check {
   @Override
   public void init(paxchecker.gui.Status s) {
     super.init(s);
-    s.updateJLabel(linkLabel, "PAXSite");
+    reset();
+    s.updateJLabel(linkLabel, getLink());
   }
 
   @Override
   public boolean ticketsFound() {
-    if (hasFoundLink) {
+    if (currentLinkFound.equals(lastLinkFound)) {
       return false;
-    } else if (lastLinkFound == null) {
+    } else if (currentLinkFound == null) {
       return false;
-    } else if (lastLinkFound.equals("IOException") || lastLinkFound.equals("NoConnection")) {
+    } else if (currentLinkFound.equals("IOException") || currentLinkFound.equals("NoConnection")) {
       return false;
-    } else if (lastLinkFound.equals("NoFind")) {
+    } else if (currentLinkFound.equals("NoFind")) {
       return false;
-    } else if (!lastLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(Browser.getExpo()) + "\"")) {
-      System.out.println("OMG IT'S UPDATED: " + lastLinkFound);
-      hasFoundLink = true;
+    } else if (!currentLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(Browser.getExpo()) + "\"")) {
+      System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
       return true;
     }
     return false;
@@ -46,12 +47,17 @@ public class CheckPaxsite extends Check {
 
   @Override
   public void updateLink() {
-    lastLinkFound = PaxsiteReader.parseHRef(PaxsiteReader.getCurrentButtonLinkLine(Browser.getExpo()));
+    currentLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
   }
 
   @Override
   public String getLink() {
-    return lastLinkFound;
+    return currentLinkFound;
+  }
+
+  @Override
+  public void reset() {
+    lastLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
   }
 
   @Override

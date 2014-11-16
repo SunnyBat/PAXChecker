@@ -1,18 +1,17 @@
-package paxchecker.tickets;
+package paxchecker.browser;
 
 import java.util.List;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 /**
- * Using the Twitter4J library (3rd party TwitterChecker Library for Java).
+ * Using the Twitter4J library (3rd party TwitterReader Library for Java).
  *
  * @author Andrew
  * @deprecated
  */
-public class TwitterChecker {
+public class TwitterReader {
 
-  private static boolean checkPAXTwitter;
   private static long lastStatusID;
   private static Twitter twitter;
   private static long officialPAXTwitterID;
@@ -53,23 +52,6 @@ public class TwitterChecker {
     ConsumerSecret = CS;
     AccessToken = AT;
     AccessSecret = AS;
-
-  }
-
-  /**
-   * Enables the checking of the official twitter account for the announcement of ticket sales.
-   */
-  public static void enablePaxTwitterChecking() {
-    checkPAXTwitter = true;
-  }
-
-  /**
-   * Checks whether or not the program should check the PAX official twitter.
-   *
-   * @return True if should check, false if not.
-   */
-  public static boolean isCheckingPaxTwitter() {
-    return checkPAXTwitter;
   }
 
   /**
@@ -82,9 +64,6 @@ public class TwitterChecker {
     /**
      * Here there be dragons.
      */
-    if (!isCheckingPaxTwitter()) {
-      return false;
-    }
     Paging paging = new Paging(lastStatusID);
     try {
       //User paxUser = twitter.showUser(officialPAXTwitter);

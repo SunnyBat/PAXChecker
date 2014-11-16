@@ -24,14 +24,15 @@ public final class TicketChecker {
   public static boolean isUpdated() {
     for (Check c : checks) {
       c.updateLink();
+      c.updateGUI(status);
       if (c.ticketsFound()) {
         System.out.println("FOUND LINK: " + c.getLink());
         setLinkFound(c.getLink());
+        c.reset();
         return true;
       } else {
         System.out.println("Link: " + c.getLink());
       }
-      c.updateGUI(status);
     }
     return false;
   }

@@ -39,6 +39,10 @@ public class CheckTwitter extends Check {
   }
 
   @Override
+  public void reset() {
+  }
+
+  @Override
   public void updateGUI(paxchecker.gui.Status s) {
   }
 

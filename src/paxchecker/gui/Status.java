@@ -1,5 +1,6 @@
 package paxchecker.gui;
 
+import paxchecker.browser.Browser;
 import paxchecker.tickets.Checker;
 import paxchecker.*;
 import java.awt.*;
@@ -277,8 +278,19 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  private void openLabelLink(String text) {
+    if (text.toLowerCase().contains("http")) {
+      Browser.openLinkInBrowser(text.substring(text.toLowerCase().indexOf("http")));
+    }
+  }
+
   public javax.swing.JLabel addLinkJLabel() {
     final javax.swing.JLabel jL = new javax.swing.JLabel();
+    jL.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        openLabelLink(jL.getText());
+      }
+    });
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -305,20 +317,6 @@ public class Status extends javax.swing.JFrame {
 
   public void setDataUsageText(double mb) {
     setDataUsageText("Data Used: " + mb + "MB");
-  }
-
-  @Deprecated // Hangs EDT/GUI
-  public void loadNewIcon(final String iconName) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          setIconImage(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
-        } catch (Exception e) {
-          System.out.println("ERROR loading PAX icon image: " + iconName);
-        }
-      }
-    });
   }
 
   public void setIcon(final java.awt.Image image) {

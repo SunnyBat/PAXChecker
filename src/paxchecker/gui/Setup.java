@@ -1,5 +1,6 @@
 package paxchecker.gui;
 
+import paxchecker.browser.Browser;
 import paxchecker.*;
 import paxchecker.check.*;
 import paxchecker.tickets.*;
@@ -36,7 +37,8 @@ public class Setup extends javax.swing.JFrame {
     JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
     JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
     JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
-    JCBCheckTwitter.setSelected(SettingsHandler.getCheckTwitter());
+    //JCBCheckTwitter.setSelected(SettingsHandler.getCheckTwitter());
+    JCBCheckTwitter.setSelected(false);
     jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
     JSCheckTime.setValue(SettingsHandler.getDelayTime());
     if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
@@ -313,6 +315,7 @@ public class Setup extends javax.swing.JFrame {
     });
 
     JCBCheckTwitter.setText("Scan @Offical_PAX Twitter");
+    JCBCheckTwitter.setEnabled(false);
     JCBCheckTwitter.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         JCBCheckTwitterActionPerformed(evt);

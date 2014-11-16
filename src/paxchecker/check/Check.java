@@ -21,6 +21,8 @@ public abstract class Check {
 
   public abstract String getLink();
 
+  public abstract void reset();
+
   public abstract void updateGUI(paxchecker.gui.Status s);
 
 }

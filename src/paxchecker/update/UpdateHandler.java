@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.CountDownLatch;
 import paxchecker.Audio;
-import paxchecker.Browser;
+import paxchecker.browser.Browser;
 import paxchecker.tickets.Checker;
 import paxchecker.DataTracker;
 import paxchecker.Email;

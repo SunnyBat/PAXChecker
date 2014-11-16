@@ -1,9 +1,10 @@
-package paxchecker;
+package paxchecker.browser;
 
 import paxchecker.tickets.Checker;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.*;
+import paxchecker.ErrorHandler;
 
 /**
  *
@@ -11,7 +12,7 @@ import java.net.*;
  */
 public class Browser {
 
-  private static String Expo;
+  private static volatile String Expo;
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or

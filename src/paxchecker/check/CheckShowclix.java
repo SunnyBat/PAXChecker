@@ -1,6 +1,7 @@
 package paxchecker.check;
 
-import paxchecker.Browser;
+import paxchecker.browser.ShowclixReader;
+import paxchecker.browser.Browser;
 
 /**
  *
@@ -19,8 +20,8 @@ public class CheckShowclix extends Check {
   @Override
   public void init(paxchecker.gui.Status s) {
     super.init(s);
-    lastShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
-    s.updateJLabel(linkLabel, "Showclix");
+    reset();
+    s.updateJLabel(linkLabel, getLink());
   }
 
   @Override
@@ -41,6 +42,11 @@ public class CheckShowclix extends Check {
   @Override
   public void updateGUI(paxchecker.gui.Status s) {
     s.updateJLabel(linkLabel, "Current Showclix Link: " + getLink());
+  }
+
+  @Override
+  public void reset() {
+    lastShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
   }
 
   private static String getLink(int showclixID) {

@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package paxchecker.check;
+package paxchecker.browser;
 
 import java.io.*;
 import java.net.*;
-import paxchecker.Browser;
 import paxchecker.DataTracker;
 import paxchecker.ErrorHandler;
 
@@ -16,8 +15,6 @@ import paxchecker.ErrorHandler;
  * @author Sunny
  */
 public class PaxsiteReader {
-
-  private static String websiteLink;
 
   public static String getCurrentButtonLink(String expo) {
     return parseHRef(getCurrentButtonLinkLine(expo));
@@ -31,13 +28,13 @@ public class PaxsiteReader {
    * @return The line (HTML included) that the Register Now button link is on
    * @see #parseHRef(java.lang.String)
    */
-  public static String getCurrentButtonLinkLine(String expo) {
+  private static String getCurrentButtonLinkLine(String expo) {
     URL url;
     InputStream is = null;
     BufferedReader br;
     String line;
     try {
-      url = new URL(getWebsiteLink(websiteLink) + "/registration");
+      url = new URL(getWebsiteLink(expo) + "/registration");
       //is = url.openStream();
       HttpURLConnection httpCon = Browser.setUpConnection(url);
       is = httpCon.getInputStream();
@@ -81,7 +78,7 @@ public class PaxsiteReader {
    * @see #getWebsiteLink(java.lang.String)
    * @see #getCurrentButtonLinkLine()
    */
-  public static String parseHRef(String parse) {
+  private static String parseHRef(String parse) {
     if (parse == null) {
       System.out.println("ERROR: parseHRef arg parse is null!");
       return null;

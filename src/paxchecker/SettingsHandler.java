@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.browser.Browser;
 import paxchecker.tickets.*;
 import paxchecker.update.UpdateHandler;
 import java.util.prefs.BackingStoreException;
