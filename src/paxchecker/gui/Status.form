@@ -136,11 +136,6 @@
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="JPLinks">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="99" green="66" red="ff" type="rgb"/>
-        </Property>
-      </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_LayoutCodePre" type="java.lang.String" value="JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));"/>
       </AuxValues>

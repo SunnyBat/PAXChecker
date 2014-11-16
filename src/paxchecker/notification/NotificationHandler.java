@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import paxchecker.ErrorHandler;
 import paxchecker.DataTracker;
+import paxchecker.SettingsHandler;
 
 /**
  *
@@ -21,7 +22,7 @@ public class NotificationHandler {
   private static String lastNotificationID;
 
   public static void init() {
-    setLastNotificationID("1"); // Change to SettingsHandler later
+    setLastNotificationID(SettingsHandler.getLastNotificationID());
   }
 
   public static void setLastNotificationID(String lNID) {
@@ -106,8 +107,13 @@ public class NotificationHandler {
     if (!isNewNotification()) {
       return;
     }
+    boolean first = false;
     ArrayList<Notification> newNotifications = newNotifications();
     for (Notification n : newNotifications) {
+      if (!first) {
+        SettingsHandler.saveLastNotificationID(n.getID());
+        first = true;
+      }
       NotificationWindow nW = new NotificationWindow(n);
     }
   }

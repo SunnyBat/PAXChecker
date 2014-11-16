@@ -29,6 +29,7 @@ public class PAXChecker {
   private static void initClasses() {
     Checker.init();
     Email.init();
+    NotificationHandler.init();
   }
 
   public static void startProgram(String[] args) {

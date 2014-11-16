@@ -119,7 +119,6 @@ public class Status extends javax.swing.JFrame {
 
     JLDataUsage.setText("Data Usage:");
 
-    JPLinks.setBackground(new java.awt.Color(255, 102, 153));
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));
 
@@ -294,7 +293,7 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        jL.setText(" "); // RACE CONDITION
+        jL.setText(" ");
         JPLinks.add(jL);
         pack();
       }

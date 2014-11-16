@@ -13,7 +13,7 @@ import paxchecker.check.TicketChecker;
  */
 public class SettingsHandler {
 
-  private static final Preferences myPrefs = Preferences.userRoot();
+  private static final Preferences myPrefs = Preferences.userRoot().node("paxchecker");
   private static boolean saveRefreshTime;
   private static boolean saveCheckShowclix;
   private static boolean saveCheckPax;
@@ -25,6 +25,7 @@ public class SettingsHandler {
 
   /**
    * Sets whether or not to save each preference.
+   *
    * @param refreshTime True or false
    * @param showclix True or false
    * @param pax True or false
@@ -32,7 +33,7 @@ public class SettingsHandler {
    * @param alarm True or false
    * @param event True or false
    * @param email True or false
-   * @param cellnum  True or false
+   * @param cellnum True or false
    */
   public static void setSaveAll(boolean refreshTime, boolean showclix, boolean pax, boolean twitter, boolean alarm, boolean event, boolean email, boolean cellnum) {
     setSaveRefreshTime(refreshTime);
@@ -177,9 +178,9 @@ public class SettingsHandler {
    */
   private static void saveRefreshTime(int time) {
     if (saveRefreshTime) {
-      myPrefs.putInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), time);
+      myPrefs.putInt(PREFTYPES.REFRESHTIME.name(), time);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_REFRESHTIME.name());
+      myPrefs.remove(PREFTYPES.REFRESHTIME.name());
     }
   }
 
@@ -190,9 +191,9 @@ public class SettingsHandler {
    */
   private static void saveCheckShowclix(boolean check) {
     if (saveCheckShowclix) {
-      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), check);
+      myPrefs.putBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name());
+      myPrefs.remove(PREFTYPES.CHECK_SHOWCLIX.name());
     }
   }
 
@@ -203,9 +204,9 @@ public class SettingsHandler {
    */
   private static void saveCheckPax(boolean check) {
     if (saveCheckPax) {
-      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), check);
+      myPrefs.putBoolean(PREFTYPES.CHECK_PAX.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_PAX.name());
+      myPrefs.remove(PREFTYPES.CHECK_PAX.name());
     }
   }
 
@@ -216,9 +217,9 @@ public class SettingsHandler {
    */
   private static void saveCheckTwitter(boolean check) {
     if (saveCheckTwitter) {
-      myPrefs.putBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), check);
+      myPrefs.putBoolean(PREFTYPES.CHECK_TWITTER.name(), check);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_CHECK_TWITTER.name());
+      myPrefs.remove(PREFTYPES.CHECK_TWITTER.name());
     }
   }
 
@@ -229,9 +230,9 @@ public class SettingsHandler {
    */
   private static void savePlayAlarm(boolean alarm) {
     if (savePlayAlarm) {
-      myPrefs.putBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), alarm);
+      myPrefs.putBoolean(PREFTYPES.PLAY_ALARM.name(), alarm);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_PLAY_ALARM.name());
+      myPrefs.remove(PREFTYPES.PLAY_ALARM.name());
     }
   }
 
@@ -242,9 +243,9 @@ public class SettingsHandler {
    */
   private static void saveEvent(String expo) {
     if (saveEvent) {
-      myPrefs.put(PREFTYPES.PAXCHECK_EVENT.name(), expo);
+      myPrefs.put(PREFTYPES.EVENT.name(), expo);
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_EVENT.name());
+      myPrefs.remove(PREFTYPES.EVENT.name());
     }
   }
 
@@ -258,16 +259,16 @@ public class SettingsHandler {
     if (saveEmail) {
       String email = Email.getUsername();
       if (email == null) {
-        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
+        myPrefs.put(PREFTYPES.EMAIL.name(), "");
       } else {
         if (email.equals("@yahoo.com")) {
-          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
+          myPrefs.put(PREFTYPES.EMAIL.name(), "");
         } else {
-          myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), Email.getUsername());
+          myPrefs.put(PREFTYPES.EMAIL.name(), Email.getUsername());
         }
       }
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_EMAIL.name());
+      myPrefs.remove(PREFTYPES.EMAIL.name());
     }
   }
 
@@ -279,12 +280,12 @@ public class SettingsHandler {
   public static void saveEmail(String email) {
     if (saveEmail) {
       if (email != null) {
-        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), email);
+        myPrefs.put(PREFTYPES.EMAIL.name(), email);
       } else {
-        myPrefs.put(PREFTYPES.PAXCHECK_EMAIL.name(), "");
+        myPrefs.put(PREFTYPES.EMAIL.name(), "");
       }
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_EMAIL.name());
+      myPrefs.remove(PREFTYPES.EMAIL.name());
     }
   }
 
@@ -296,12 +297,12 @@ public class SettingsHandler {
   public static void saveCellNum(String cellNum) {
     if (saveCellnum) {
       if (cellNum != null) {
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), cellNum);
+        myPrefs.put(PREFTYPES.CELLNUM.name(), cellNum);
       } else {
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
+        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
       }
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_CELLNUM.name());
+      myPrefs.remove(PREFTYPES.CELLNUM.name());
     }
   }
 
@@ -312,22 +313,23 @@ public class SettingsHandler {
   private static void saveCellNum() {
     if (saveCellnum) {
       if (Email.getAddressList().isEmpty()) {
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
+        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
       } else {
-        myPrefs.put(PREFTYPES.PAXCHECK_CELLNUM.name(), Email.convertToString(Email.getAddressList()));
+        myPrefs.put(PREFTYPES.CELLNUM.name(), Email.convertToString(Email.getAddressList()));
       }
     } else {
-      myPrefs.remove(PREFTYPES.PAXCHECK_CELLNUM.name());
+      myPrefs.remove(PREFTYPES.CELLNUM.name());
     }
   }
 
   /**
    * Saves the given expo's last event link.
+   *
    * @param expo The expo for which this link applies
    * @param link The link to save
    */
   public static void saveLastEvent(String expo, String link) {
-    myPrefs.put(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), link);
+    myPrefs.put(PREFTYPES.LAST_EVENT.name() + "_" + expo.toUpperCase(), link);
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
@@ -337,6 +339,7 @@ public class SettingsHandler {
 
   /**
    * Saves the given link for the currently set expo.
+   *
    * @param link The link to save
    */
   public static void saveLastEvent(String link) {
@@ -345,11 +348,20 @@ public class SettingsHandler {
 
   /**
    * Saves whether or not to use BETA versions.
+   *
    * @param use BETA version preference
    */
   public static void saveUseBeta(boolean use) {
-    System.out.println("Save beta: " + use);
-    myPrefs.putBoolean(PREFTYPES.PAXCHECK_USE_BETA.name(), use);
+    myPrefs.putBoolean(PREFTYPES.USE_BETA.name(), use);
+  }
+
+  /**
+   * Saves the last Notification ID found
+   *
+   * @param ID The last Notification ID found
+   */
+  public static void saveLastNotificationID(String ID) {
+    myPrefs.put(PREFTYPES.LAST_NOTIFICATION_ID.name(), ID);
   }
 
   /**
@@ -358,7 +370,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveRefreshTime() {
-    return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 61) != 61;
+    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 61) != 61;
   }
 
   /**
@@ -367,7 +379,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveShowclix() {
-    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), true));
   }
 
   /**
@@ -376,7 +388,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSavePax() {
-    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), true));
   }
 
   /**
@@ -385,7 +397,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveTwitter() {
-    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.CHECK_TWITTER.name(), false) && myPrefs.getBoolean(PREFTYPES.CHECK_TWITTER.name(), true));
   }
 
   /**
@@ -394,7 +406,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveAlarm() {
-    return !(!myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), true));
+    return !(!myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false) && myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), true));
   }
 
   /**
@@ -403,7 +415,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveEvent() {
-    return !myPrefs.get(PREFTYPES.PAXCHECK_EVENT.name(), "NOPE").equals("NOPE");
+    return !myPrefs.get(PREFTYPES.EVENT.name(), "NOPE").equals("NOPE");
   }
 
   /**
@@ -412,7 +424,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveEmail() {
-    return !myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "NOPE").equals("NOPE");
+    return !myPrefs.get(PREFTYPES.EMAIL.name(), "NOPE").equals("NOPE");
   }
 
   /**
@@ -421,7 +433,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSaveCellnum() {
-    return !myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "NOPE").equals("NOPE");
+    return !myPrefs.get(PREFTYPES.CELLNUM.name(), "NOPE").equals("NOPE");
   }
 
   /**
@@ -430,7 +442,7 @@ public class SettingsHandler {
    * @return True if preference was saved, false if not
    */
   public static boolean getSavePrefs() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.SAVE_PREFS.name(), true);
   }
 
   /**
@@ -439,7 +451,7 @@ public class SettingsHandler {
    * @return The delay time saved, or 15 if not saved
    */
   public static int getDelayTime() {
-    return myPrefs.getInt(PREFTYPES.PAXCHECK_REFRESHTIME.name(), 15);
+    return myPrefs.getInt(PREFTYPES.REFRESHTIME.name(), 15);
   }
 
   /**
@@ -448,7 +460,7 @@ public class SettingsHandler {
    * @return True if the program should check the PAX website, true if not
    */
   public static boolean getCheckPaxWebsite() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_PAX.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.CHECK_PAX.name(), true);
   }
 
   /**
@@ -457,7 +469,7 @@ public class SettingsHandler {
    * @return True if the program should check Twitter, false if not
    */
   public static boolean getCheckTwitter() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_TWITTER.name(), false);
+    return myPrefs.getBoolean(PREFTYPES.CHECK_TWITTER.name(), false);
   }
 
   /**
@@ -466,7 +478,7 @@ public class SettingsHandler {
    * @return True if the program should check the Showclix website, false if not
    */
   public static boolean getCheckShowclix() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_CHECK_SHOWCLIX.name(), true);
+    return myPrefs.getBoolean(PREFTYPES.CHECK_SHOWCLIX.name(), true);
   }
 
   /**
@@ -475,7 +487,7 @@ public class SettingsHandler {
    * @return True if the program should play the alarm, false if not
    */
   public static boolean getPlayAlarm() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_PLAY_ALARM.name(), false);
+    return myPrefs.getBoolean(PREFTYPES.PLAY_ALARM.name(), false);
   }
 
   /**
@@ -484,7 +496,7 @@ public class SettingsHandler {
    * @return The expo last selected
    */
   public static String getExpo() {
-    return myPrefs.get(PREFTYPES.PAXCHECK_EVENT.name(), "Prime");
+    return myPrefs.get(PREFTYPES.EVENT.name(), "Prime");
   }
 
   /**
@@ -493,7 +505,7 @@ public class SettingsHandler {
    * @return The email address last used
    */
   public static String getEmail() {
-    return myPrefs.get(PREFTYPES.PAXCHECK_EMAIL.name(), "");
+    return myPrefs.get(PREFTYPES.EMAIL.name(), "");
   }
 
   /**
@@ -503,7 +515,7 @@ public class SettingsHandler {
    * @return The cell number last used
    */
   public static String getCellNumber() {
-    return myPrefs.get(PREFTYPES.PAXCHECK_CELLNUM.name(), "");
+    return myPrefs.get(PREFTYPES.CELLNUM.name(), "");
   }
 
   /**
@@ -513,11 +525,25 @@ public class SettingsHandler {
    * @return The last Showclix link for the specific expo
    */
   public static String getLastEvent(String expo) {
-    return myPrefs.get(PREFTYPES.PAXCHECK_LAST_EVENT.name() + "_" + expo.toUpperCase(), TicketChecker.getLinkFound()); // UPDATE
+    return myPrefs.get(PREFTYPES.LAST_EVENT.name() + "_" + expo.toUpperCase(), TicketChecker.getLinkFound()); // UPDATE
   }
 
+  /**
+   * Gets whether or not to use BETA versions.
+   *
+   * @return True to use BETA versions, false to not
+   */
   public static boolean getUseBetaVersion() {
-    return myPrefs.getBoolean(PREFTYPES.PAXCHECK_USE_BETA.name(), false);
+    return myPrefs.getBoolean(PREFTYPES.USE_BETA.name(), false);
+  }
+
+  /**
+   * Gets the last Notification ID found by the program.
+   *
+   * @return The last Notification ID found
+   */
+  public static String getLastNotificationID() {
+    return myPrefs.get(PREFTYPES.LAST_NOTIFICATION_ID.name(), "");
   }
 
   /**
@@ -533,7 +559,7 @@ public class SettingsHandler {
 
   private static enum PREFTYPES {
 
-    PAXCHECK_REFRESHTIME, PAXCHECK_CHECK_SHOWCLIX, PAXCHECK_CHECK_PAX, PAXCHECK_CHECK_TWITTER, PAXCHECK_PLAY_ALARM, PAXCHECK_EVENT, PAXCHECK_EMAIL, PAXCHECK_CELLNUM, PAXCHECK_SAVE_PREFS, PAXCHECK_LAST_EVENT, PAXCHECK_USE_BETA;
+    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, CHECK_TWITTER, PLAY_ALARM, EVENT, EMAIL, CELLNUM, SAVE_PREFS, LAST_EVENT, USE_BETA, LAST_NOTIFICATION_ID;
   }
 
   /**
@@ -543,7 +569,7 @@ public class SettingsHandler {
    * @param save True to save preferences, false to not
    */
   public static void setSavePrefs(boolean save) {
-    myPrefs.putBoolean(PREFTYPES.PAXCHECK_SAVE_PREFS.name(), save);
+    myPrefs.putBoolean(PREFTYPES.SAVE_PREFS.name(), save);
     if (!save) {
       setSaveAll(false, false, false, false, false, false, false, false);
     }

@@ -31,7 +31,7 @@ public class CheckShowclix extends Check {
 
   @Override
   public void updateLink() {
-    currentShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
+    currentShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo()); // QUESTION: What if PAX makes a new event with a lower ID on their Seller page than on their Partner page?
   }
 
   @Override
@@ -46,7 +46,7 @@ public class CheckShowclix extends Check {
 
   @Override
   public void reset() {
-    lastShowclixEventID = ShowclixReader.getLatestSellerEventID(Browser.getExpo());
+    lastShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo());
   }
 
   private static String getLink(int showclixID) {
