@@ -72,8 +72,7 @@ public class NotificationHandler {
       }
       System.out.println("Finished loading notifications.");
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);
-      e.printStackTrace();
+      ErrorDisplay.showErrorWindow("Error Loading Notifications", "Unable to load notifications -- an unknown error has occurred.", e);
     } finally {
       try {
         if (myReader != null) {

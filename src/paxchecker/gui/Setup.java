@@ -159,6 +159,54 @@ public class Setup extends javax.swing.JFrame {
     });
   }
 
+  private void saveSettings() {
+    Browser.setExpo(JCBExpo.getSelectedItem().toString());
+    if (JCBCheckWebsite.isSelected()) {
+      TicketChecker.addChecker(new CheckPaxsite());
+    }
+    if (JCBCheckShowclix.isSelected()) {
+      TicketChecker.addChecker(new CheckShowclix());
+    }
+    if (JCBCheckTwitter.isSelected()) {
+      TicketChecker.addChecker(new CheckTwitter());
+    }
+    Audio.setPlayAlarm(jCheckBox3.isSelected());
+    Email.setUsername(JTFEmail.getText());
+    Email.setPassword(new String(JPFPassword.getPassword()));
+    String text = JTFCellNum.getText();
+    if (text == null || text.length() < 5) {
+      text = "";
+    } else if (!text.contains("@")) {
+      text += Email.getCarrierExtension(JCBCarrier.getSelectedItem().toString());
+    }
+    String tempText;
+    java.util.Iterator<ExtraPhonePanel> myIt = extraPhonePanelList.iterator();
+    while (myIt.hasNext()) {
+      ExtraPhonePanel panel = myIt.next();
+      tempText = panel.getNumber();
+      if (tempText.length() < 4) {
+        System.out.println("NOTE: Number is too short! Cannot use!");
+        continue;
+      }
+      String[] split = tempText.split(";");
+      tempText = "";
+      for (String split1 : split) {
+        split1 = split1.trim();
+        tempText += split1;
+        if (!split1.contains("@")) {
+          tempText += Email.getCarrierExtension(panel.getProvider());
+        }
+        tempText += ";";
+      }
+      //Validate tempText address?
+      text += ";" + tempText;
+      System.out.println("Debug: " + tempText);
+    }
+    System.out.println("Final Text: " + text);
+    Email.addEmailAddress(text);
+    Checker.setRefreshTime(JSCheckTime.getValue());
+  }
+
   private void savePreferences() {
     UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
     SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
@@ -172,7 +220,7 @@ public class Setup extends javax.swing.JFrame {
       SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
       SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
     }
-    SettingsHandler.saveAllPrefs(Checker.getRefreshTime(), JCBCheckWebsite.isSelected(), JCBCheckShowclix.isSelected(), JCBCheckTwitter.isSelected(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    SettingsHandler.saveAllPrefs();
   }
 
   /**
@@ -527,7 +575,7 @@ public class Setup extends javax.swing.JFrame {
     JCBUseBeta.setText("Use BETA Versions");
     JCBUseBeta.setToolTipText("<html>\nBETA versions will most likely<br>\ninclude features that could, at any<br>\npoint in time, break the program<br>\nor parts of it. These versions will<br>\ncontain ideas that still need to be<br>\ndebugged, so any help in finding<br>\nthese is greatly appreciated.<br>\nChange information can be found<br>\nin the Patch Notes, and more<br>\ndetailed changes can be found in<br>\nthe GitHub commits.<br>\n<br>\nUse at your own risk.\n</html>");
 
-    jButton3.setText("Save Use BETA");
+    jButton3.setText("Save Settings");
     jButton3.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         jButton3ActionPerformed(evt);
@@ -641,53 +689,9 @@ public class Setup extends javax.swing.JFrame {
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
     // TODO add your handling code here:
     JBStart.setText("Starting, please wait...");
-    Browser.setExpo(JCBExpo.getSelectedItem().toString());
-    if (JCBCheckWebsite.isSelected()) {
-      TicketChecker.addChecker(new CheckPaxsite());
-    }
-    if (JCBCheckShowclix.isSelected()) {
-    TicketChecker.addChecker(new CheckShowclix());
-    }
-    if (JCBCheckTwitter.isSelected()) {
-      TicketChecker.addChecker(new CheckTwitter());
-    }
-    Audio.setPlayAlarm(jCheckBox3.isSelected());
-    Email.setUsername(JTFEmail.getText());
-    Email.setPassword(new String(JPFPassword.getPassword()));
-    String text = JTFCellNum.getText();
-    if (text == null || text.length() < 5) {
-      text = "";
-    } else if (!text.contains("@")) {
-      text += Email.getCarrierExtension(JCBCarrier.getSelectedItem().toString());
-    }
-    String tempText;
-    java.util.Iterator<ExtraPhonePanel> myIt = extraPhonePanelList.iterator();
-    while (myIt.hasNext()) {
-      ExtraPhonePanel panel = myIt.next();
-      tempText = panel.getNumber();
-      if (tempText.length() < 4) {
-        System.out.println("NOTE: Number is too short! Cannot use!");
-        continue;
-      }
-      String[] split = tempText.split(";");
-      tempText = "";
-      for (String split1 : split) {
-        split1 = split1.trim();
-        tempText += split1;
-        if (!split1.contains("@")) {
-          tempText += Email.getCarrierExtension(panel.getProvider());
-        }
-        tempText += ";";
-      }
-      //Validate tempText address?
-      text += ";" + tempText;
-      System.out.println("Debug: " + tempText);
-    }
-    System.out.println("Final Text: " + text);
-    Email.addEmailAddress(text);
-    Checker.setRefreshTime(JSCheckTime.getValue());
+    saveSettings();
     savePreferences();
-    this.dispose();
+    dispose();
     Checker.startCheckingWebsites();
   }//GEN-LAST:event_JBStartActionPerformed
 
@@ -714,8 +718,9 @@ public class Setup extends javax.swing.JFrame {
   }//GEN-LAST:event_JBAddPhoneActionPerformed
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    //savePreferences();
-    SettingsHandler.saveUseBeta(JCBUseBeta.isSelected());
+    saveSettings();
+    savePreferences();
+    //SettingsHandler.saveUseBeta(JCBUseBeta.isSelected());
   }//GEN-LAST:event_jButton3ActionPerformed
 
   private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed

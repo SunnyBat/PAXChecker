@@ -2,7 +2,6 @@ package paxchecker.tickets;
 
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Status;
-import paxchecker.gui.Tickets;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Scanner;

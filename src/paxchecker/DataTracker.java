@@ -13,7 +13,7 @@ public class DataTracker {
    *
    * @param data The amount of data (in bytes) to add to the total data used
    */
-  public static void addDataUsed(long data) {
+  public static synchronized void addDataUsed(long data) {
     dataUsed += data;
   }
 
@@ -22,7 +22,7 @@ public class DataTracker {
    *
    * @return The amount of data (in bytes) used by the program
    */
-  public static long getDataUsed() {
+  public static synchronized long getDataUsed() {
     return dataUsed;
   }
 
@@ -31,7 +31,7 @@ public class DataTracker {
    *
    * @return The amount of data in megabytes used by the program
    */
-  public static double getDataUsedMB() {
+  public static synchronized double getDataUsedMB() {
     return (double) ((int) ((double) getDataUsed() / 1024 / 1024 * 100)) / 100; // *100 to make the double have two extra numbers, round with typecasting to integer, then divide that by 100 and typecast to double to get a double with two decimal places
   }
 }

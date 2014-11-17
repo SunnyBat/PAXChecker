@@ -52,7 +52,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(Checker.getRefreshTime(), true, true, true/*Paxsite.isCheckingPaxWebsite(), Showclix.isCheckingShowclix(), TwitterChecker.isCheckingPaxTwitter()*/, Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    saveAllPrefs(Checker.getRefreshTime(), TicketChecker.isCheckingPaxsite(), TicketChecker.isCheckingShowclix(), TicketChecker.isCheckingTwitter(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
   }
 
   /**

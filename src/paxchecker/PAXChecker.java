@@ -6,6 +6,7 @@ import paxchecker.check.*;
 import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
+import paxchecker.gui.Startup;
 import paxchecker.notification.NotificationHandler;
 
 /**
@@ -14,8 +15,9 @@ import paxchecker.notification.NotificationHandler;
  */
 public class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R1";
+  public static final String VERSION = "2.0.0 R2";
   public static Setup setup;
+  private static Startup start;
 
   /**
    * @param args the command line arguments
@@ -48,7 +50,6 @@ public class PAXChecker {
         System.out.println("args[" + a + "] = " + args[a]);
         switch (args[a].toLowerCase()) {
           case "-noupdate":
-            // Used by the program when starting the new version just downloaded. Can also be used if you don't want updates
             doUpdate = false;
             break;
           case "-notificationid":
@@ -179,8 +180,10 @@ public class PAXChecker {
       Checker.startCommandLineWebsiteChecking();
       return;
     }
+    start = new paxchecker.gui.Startup();
     KeyboardHandler.init();
     if (doUpdate) {
+      start.setStatus("Loading Version Notes...");
       UpdateHandler.loadVersionNotes();
       UpdateHandler.checkUpdate(args);
     } else {
@@ -194,7 +197,9 @@ public class PAXChecker {
     if (autoStart) {
       Checker.startCheckingWebsites();
     } else {
+      start.setStatus("Loading Notifications...");
       NotificationHandler.loadNotifications();
+      start.dispose();
       setup = new Setup();
       NotificationHandler.showNewNotifications();
     }
