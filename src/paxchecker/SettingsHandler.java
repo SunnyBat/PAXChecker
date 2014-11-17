@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
 import paxchecker.tickets.*;
 import paxchecker.update.UpdateHandler;
@@ -69,7 +70,7 @@ public class SettingsHandler {
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
-      ErrorHandler.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
+      ErrorDisplay.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
       bSE.printStackTrace();
       return;
     }

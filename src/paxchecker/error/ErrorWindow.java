@@ -1,6 +1,6 @@
-package paxchecker.gui;
+package paxchecker.error;
 
-import paxchecker.ErrorHandler;
+import paxchecker.error.ErrorDisplay;
 
 /**
  *
@@ -114,12 +114,12 @@ public class ErrorWindow extends javax.swing.JFrame {
     // TODO add your handling code here:
     this.setVisible(false);
     this.dispose();
-    ErrorHandler.errWindowClosed();
+    ErrorDisplay.errWindowClosed();
   }//GEN-LAST:event_jButton1ActionPerformed
 
   private void JBErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBErrorActionPerformed
     // TODO add your handling code here:
-    ErrorHandler.detailedReport(myError);
+    ErrorDisplay.detailedReport(myError);
   }//GEN-LAST:event_JBErrorActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables

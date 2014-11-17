@@ -10,6 +10,7 @@ import java.util.concurrent.*;
 public final class TicketChecker {
 
   private static final ArrayList<Check> checks = new ArrayList<>();
+  private static final ArrayList<String> openedLinks = new ArrayList<>();
   private static paxchecker.gui.Status status;
   private static String linkFound;
   private static ExecutorService threadPool;
@@ -36,7 +37,7 @@ public final class TicketChecker {
     for (Check c : checks) {
       //c.updateLink();
       c.updateGUI(status);
-      if (c.ticketsFound()) {
+      if (c.ticketsFound() && !hasOpenedLink(c.getLink())) {
         System.out.println("FOUND LINK: " + c.getLink());
         setLinkFound(c.getLink());
         c.reset();
@@ -50,6 +51,7 @@ public final class TicketChecker {
 
   private static void setLinkFound(String link) {
     linkFound = link;
+    openedLinks.add(linkFound);
   }
 
   public static String getLinkFound() {
@@ -57,6 +59,17 @@ public final class TicketChecker {
   }
 
   public static void resetLinkFound() {
+    openedLinks.add(linkFound);
     linkFound = "";
+  }
+
+  private static boolean hasOpenedLink(String s) {
+    for (String t : openedLinks) {
+      if (t.equalsIgnoreCase(s)) {
+        System.out.println("Already found link.");
+        return true;
+      }
+    }
+    return false;
   }
 }

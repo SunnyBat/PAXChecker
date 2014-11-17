@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import paxchecker.ErrorHandler;
+import paxchecker.error.ErrorDisplay;
 import paxchecker.DataTracker;
 import paxchecker.SettingsHandler;
 
@@ -72,7 +72,7 @@ public class NotificationHandler {
       }
       System.out.println("Finished loading notifications.");
     } catch (Exception e) {
-      ErrorHandler.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);
+      ErrorDisplay.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);
       e.printStackTrace();
     } finally {
       try {

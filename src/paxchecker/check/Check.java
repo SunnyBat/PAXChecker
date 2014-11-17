@@ -8,7 +8,6 @@ import java.util.concurrent.*;
  */
 public abstract class Check implements Runnable {
 
-  public static final Object LOCK = new Object();
   protected javax.swing.JLabel linkLabel;
   private Phaser cycBar;
 

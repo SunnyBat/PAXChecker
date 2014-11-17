@@ -1,13 +1,13 @@
-package paxchecker;
+package paxchecker.error;
 
 import paxchecker.update.UpdateHandler;
-import paxchecker.gui.ErrorWindow;
+import paxchecker.error.ErrorWindow;
 
 /**
  *
  * @author SunnyBat
  */
-public class ErrorHandler {
+public class ErrorDisplay {
 
   private static byte errorWindowCount = 0;
   private static ErrorWindow errorWindow;

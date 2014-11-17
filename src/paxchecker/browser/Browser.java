@@ -4,7 +4,7 @@ import paxchecker.tickets.Checker;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.*;
-import paxchecker.ErrorHandler;
+import paxchecker.error.ErrorDisplay;
 
 /**
  *
@@ -57,7 +57,7 @@ public class Browser {
    */
   public static void openLinkInBrowser(URL url) {
     if (url == null) {
-      ErrorHandler.showErrorWindow("ERROR", "Unable to open link in default browser -- link is null!", null);
+      ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- link is null!", null);
       return;
     }
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -65,10 +65,10 @@ public class Browser {
       try {
         desktop.browse(url.toURI());
       } catch (URISyntaxException | IOException e) {
-        ErrorHandler.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
+        ErrorDisplay.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
       }
     } else {
-      ErrorHandler.showErrorWindow("ERROR", "Unable to open link in default browser -- desktop is not supported", null);
+      ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- desktop is not supported", null);
     }
   }
 

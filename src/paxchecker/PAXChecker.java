@@ -1,5 +1,6 @@
 package paxchecker;
 
+import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
 import paxchecker.check.*;
 import paxchecker.tickets.Checker;
@@ -125,7 +126,7 @@ public class PAXChecker {
               String value = args[a + 2];
               Email.setProperty(key, value);
             } catch (Exception e) {
-              ErrorHandler.showErrorWindow("ERROR setting custom property!", "Unable to set custom properties. See error details for more information.", e);
+              ErrorDisplay.showErrorWindow("ERROR setting custom property!", "Unable to set custom properties. See error details for more information.", e);
             }
             break;
           case "-savesettings":
@@ -156,7 +157,7 @@ public class PAXChecker {
       }
     }
     if (commandLine) {
-      ErrorHandler.setCommandLine(true);
+      ErrorDisplay.setCommandLine(true);
       if (doUpdate) {
         UpdateHandler.loadVersionNotes();
         UpdateHandler.autoUpdate(args);

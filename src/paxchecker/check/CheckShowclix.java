@@ -25,8 +25,6 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    synchronized (LOCK) {
-    }
     return currentShowclixEventID > lastShowclixEventID;
   }
 

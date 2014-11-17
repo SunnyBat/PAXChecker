@@ -8,7 +8,7 @@ package paxchecker.browser;
 import java.io.*;
 import java.net.*;
 import paxchecker.DataTracker;
-import paxchecker.ErrorHandler;
+import paxchecker.error.ErrorDisplay;
 
 /**
  *
@@ -51,7 +51,7 @@ public class PaxsiteReader {
     } catch (IOException ioe) {
       return "IOException";
     } catch (Exception e) {
-      ErrorHandler.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
+      ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
       System.out.println("ERROR");
       return null;
     } finally {
