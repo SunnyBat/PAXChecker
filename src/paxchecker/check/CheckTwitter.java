@@ -19,31 +19,31 @@ public class CheckTwitter extends Check {
   }
 
   @Override
-  public void init(paxchecker.gui.Status s) {
-    super.init(s);
+  public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+    super.init(s, cB);
     s.updateJLabel(linkLabel, "Twitter");
   }
 
   @Override
-  public boolean ticketsFound() {
+  public synchronized boolean ticketsFound() {
     return false;
   }
 
   @Override
-  public void updateLink() {
+  public synchronized void updateLink() {
   }
 
   @Override
-  public String getLink() {
+  public synchronized String getLink() {
     return null;
   }
 
   @Override
-  public void reset() {
+  public synchronized void reset() {
   }
 
   @Override
-  public void updateGUI(paxchecker.gui.Status s) {
+  public synchronized void updateGUI(paxchecker.gui.Status s) {
   }
 
 }

@@ -193,8 +193,8 @@ public class PAXChecker {
     if (autoStart) {
       Checker.startCheckingWebsites();
     } else {
-      setup = new Setup();
       NotificationHandler.loadNotifications();
+      setup = new Setup();
       NotificationHandler.showNewNotifications();
     }
     Checker.loadAlertIcon();
@@ -250,8 +250,8 @@ public class PAXChecker {
             return;
           }
           long timeStarted = System.currentTimeMillis();
-          while (System.currentTimeMillis() - timeStarted < 60000) {
-            Checker.setStatusTextButtonText((60 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+          while (System.currentTimeMillis() - timeStarted < 300000) {
+            Checker.setStatusTextButtonText((300 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
             Thread.sleep(200);
           }
           Checker.setStatusTextButtonText("Test Text");

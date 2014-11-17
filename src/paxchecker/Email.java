@@ -13,10 +13,11 @@ import javax.mail.internet.MimeMessage;
 public class Email {
 
   private static String password;
-  private static final Properties props = System.getProperties();
-  private static final List<EmailAddress> addressList = new ArrayList<>();
-  private static final List<String> propList = new ArrayList<>();
   private static long lastEmailSent;
+  private static final int EMAIL_DELAY = 300;
+  private static final Properties props = System.getProperties();
+  private static final List<String> propList = new ArrayList<>();
+  private static final List<EmailAddress> addressList = new ArrayList<>();
 
   /**
    * Initializes the Email class. Note that this should be run before any other method in the Email class is used.
@@ -351,7 +352,7 @@ public class Email {
       System.out.println("Unable to send email: Program not properly configured.");
       return false;
     }
-    if (System.currentTimeMillis() - lastEmailSent < 60000) {
+    if (System.currentTimeMillis() - lastEmailSent < EMAIL_DELAY) {
       System.out.println("ERROR: Email sent too soon!");
       return false;
     }

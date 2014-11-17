@@ -164,7 +164,7 @@ public class UpdateHandler {
   public static void checkUpdate(String[] args) {
     try {
       System.out.println("Checking for updates...");
-      if (UpdateHandler.updateAvailable()) {
+      if (updateAvailable()) {
         CountDownLatch cdl = new CountDownLatch(1);
         update = new paxchecker.update.Update(cdl);
         try {
@@ -172,9 +172,9 @@ public class UpdateHandler {
         } catch (InterruptedException iE) {
           System.out.println("CDL interrupted, continuing...");
         }
-        if (UpdateHandler.shouldUpdateProgram()) {
+        if (shouldUpdateProgram()) {
           update.setStatusLabelText("Downloading update...");
-          UpdateHandler.updateProgram();
+          updateProgram();
           startNewProgramInstance(args);
           update.dispose();
           System.exit(0);
@@ -219,7 +219,7 @@ public class UpdateHandler {
         System.out.println("Update found, downloading update...");
         UpdateHandler.updateProgram();
         System.out.println("Update finished.");
-        //startNewProgramInstance(args);
+        startNewProgramInstance(args);
         System.exit(0);
       }
     } catch (Exception e) {

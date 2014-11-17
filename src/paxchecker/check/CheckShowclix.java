@@ -18,34 +18,35 @@ public class CheckShowclix extends Check {
   }
 
   @Override
-  public void init(paxchecker.gui.Status s) {
-    super.init(s);
-    reset();
-    s.updateJLabel(linkLabel, getLink());
+  public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+    super.init(s, cB);
+    s.updateJLabel(linkLabel, "Showclix");
   }
 
   @Override
-  public boolean ticketsFound() {
+  public synchronized boolean ticketsFound() {
+    synchronized (LOCK) {
+    }
     return currentShowclixEventID > lastShowclixEventID;
   }
 
   @Override
-  public void updateLink() {
+  public synchronized void updateLink() {
     currentShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo()); // QUESTION: What if PAX makes a new event with a lower ID on their Seller page than on their Partner page?
   }
 
   @Override
-  public String getLink() {
+  public synchronized String getLink() {
     return getLink(currentShowclixEventID);
   }
 
   @Override
-  public void updateGUI(paxchecker.gui.Status s) {
+  public synchronized void updateGUI(paxchecker.gui.Status s) {
     s.updateJLabel(linkLabel, "Current Showclix Link: " + getLink());
   }
 
   @Override
-  public void reset() {
+  public synchronized void reset() {
     lastShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo());
   }
 

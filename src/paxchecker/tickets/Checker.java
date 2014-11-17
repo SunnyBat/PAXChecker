@@ -55,6 +55,7 @@ public class Checker {
           startMS = System.currentTimeMillis();
           if (TicketChecker.isUpdated()) {
             linkFound(TicketChecker.getLinkFound());
+            continue; // Immediately re-check in case other services have found updates
           }
           status.setDataUsageText(DataTracker.getDataUsedMB());
           while (System.currentTimeMillis() - startMS < (seconds * 1000)) {

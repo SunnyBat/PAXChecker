@@ -1,6 +1,7 @@
 package paxchecker.check;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  *
@@ -11,19 +12,29 @@ public final class TicketChecker {
   private static final ArrayList<Check> checks = new ArrayList<>();
   private static paxchecker.gui.Status status;
   private static String linkFound;
+  private static ExecutorService threadPool;
+  private static Phaser cB;
 
   public static void init(paxchecker.gui.Status s) {
     status = s;
+    threadPool = Executors.newFixedThreadPool(3);
   }
 
   public static void addChecker(Check c) {
     checks.add(c);
-    c.init(status); // MOVE LATER
+    cB = new Phaser();
+    cB.register();
+    c.init(status, cB); // MOVE LATER
   }
 
   public static boolean isUpdated() {
     for (Check c : checks) {
-      c.updateLink();
+      threadPool.submit(c);
+    }
+    System.out.println("Waiting: TC");
+    cB.arriveAndAwaitAdvance();
+    for (Check c : checks) {
+      //c.updateLink();
       c.updateGUI(status);
       if (c.ticketsFound()) {
         System.out.println("FOUND LINK: " + c.getLink());

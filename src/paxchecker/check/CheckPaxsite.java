@@ -22,14 +22,13 @@ public class CheckPaxsite extends Check {
   }
 
   @Override
-  public void init(paxchecker.gui.Status s) {
-    super.init(s);
-    reset();
-    s.updateJLabel(linkLabel, getLink());
+  public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+    super.init(s, cB);
+    s.updateJLabel(linkLabel, "Paxsite");
   }
 
   @Override
-  public boolean ticketsFound() {
+  public synchronized boolean ticketsFound() {
     if (currentLinkFound.equals(lastLinkFound)) {
       return false;
     } else if (currentLinkFound == null) {
@@ -46,23 +45,23 @@ public class CheckPaxsite extends Check {
   }
 
   @Override
-  public void updateLink() {
+  public synchronized final void updateLink() {
     currentLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
   }
 
   @Override
-  public String getLink() {
+  public synchronized String getLink() {
     return currentLinkFound;
   }
 
   @Override
-  public void reset() {
-    lastLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
+  public synchronized void updateGUI(paxchecker.gui.Status s) {
+    s.updateJLabel(linkLabel, "Current Website Link: " + getLink());
   }
 
   @Override
-  public void updateGUI(paxchecker.gui.Status s) {
-    s.updateJLabel(linkLabel, "Current Website Link: " + getLink());
+  public synchronized void reset() {
+    lastLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
   }
 
 }

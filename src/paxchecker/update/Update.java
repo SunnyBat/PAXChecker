@@ -224,8 +224,13 @@ public class Update extends javax.swing.JFrame {
     if (patchNotes == null) {
       patchNotes = new PatchNotes(this);
     }
-    patchNotes.setVisible(true);
-    setPatchNotesButtonState(false);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        patchNotes.setVisible(true);
+        setPatchNotesButtonState(false);
+      }
+    });
   }//GEN-LAST:event_JBPatchNotesActionPerformed
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBNo;

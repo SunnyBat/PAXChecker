@@ -128,17 +128,17 @@ public class ShowclixReader {
       reader.close();
       JSONParser mP = new JSONParser();
       JSONObject obj = (JSONObject) mP.parse(jsonText);
-      int maxId = 0;
+      int maxID = 0;
       for (String s : (Iterable<String>) obj.keySet()) {
         try {
-          maxId = Math.max(maxId, Integer.parseInt((String) s));
+          maxID = Math.max(maxID, Integer.parseInt((String) s));
         } catch (NumberFormatException nfe) {
           System.out.println("Error parsing ID number from String: " + s);
         }
       }
-      return maxId;
-    } catch (java.net.SocketTimeoutException ste) {
-      System.out.println("Unable to connect to Showclix website -- connection timed out");
+      return maxID;
+    } catch (java.net.SocketTimeoutException ste) { // Return maxId for this?
+      System.out.println("Unable to complete information download -- connection timed out");
     } catch (IOException | ParseException e) {
       e.printStackTrace();
     }
