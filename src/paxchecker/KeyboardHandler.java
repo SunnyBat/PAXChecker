@@ -24,8 +24,7 @@ public class KeyboardHandler {
       myRobot = new Robot();
       myRobot.setAutoDelay(5);
     } catch (AWTException e) {
-      System.out.println("ERROR in KeyboardManager.init(): AWTException!");
-      e.printStackTrace();
+      System.out.println("KeyboardHandler unable to start.");
     }
   }
 

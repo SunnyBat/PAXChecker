@@ -5,6 +5,8 @@
  */
 package paxchecker.notification;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  *
  * @author Sunny
@@ -12,13 +14,16 @@ package paxchecker.notification;
 public class NotificationWindow extends javax.swing.JFrame {
 
   private final Notification myNote;
+  private final CountDownLatch countDown;
 
   /**
    * Creates new form Notification
+   *
    * @param n The Notification information object
    */
-  public NotificationWindow(Notification n) {
+  public NotificationWindow(Notification n, CountDownLatch cdl) {
     myNote = n;
+    countDown = cdl;
     initComponents();
     customComponents();
     setVisible(true);
@@ -95,6 +100,7 @@ public class NotificationWindow extends javax.swing.JFrame {
   private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
     // TODO add your handling code here:
     dispose();
+    countDown.countDown();
   }//GEN-LAST:event_JBCloseActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables

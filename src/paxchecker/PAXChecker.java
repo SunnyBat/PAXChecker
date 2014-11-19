@@ -13,7 +13,7 @@ import paxchecker.notification.NotificationHandler;
  *
  * @author SunnyBat
  */
-public class PAXChecker {
+public final class PAXChecker {
 
   public static final String VERSION = "2.0.0 R2";
   public static Setup setup;
@@ -32,6 +32,7 @@ public class PAXChecker {
   private static void initClasses() {
     Checker.init();
     Email.init();
+    KeyboardHandler.init();
     NotificationHandler.init();
   }
 
@@ -41,7 +42,7 @@ public class PAXChecker {
     boolean checkShowclix = true;
     boolean checkTwitter = true;
     boolean autoStart = false;
-    boolean commandLine = false;
+    boolean cLine = false;
     boolean savePrefs = false;
     if (args.length > 0) {
       System.out.println("Args!");
@@ -119,7 +120,7 @@ public class PAXChecker {
             autoStart = true;
             break;
           case "-cli":
-            commandLine = true;
+            cLine = true;
             break;
           case "-property":
             try {
@@ -157,7 +158,7 @@ public class PAXChecker {
         TicketChecker.addChecker(new CheckTwitter());
       }
     }
-    if (commandLine) {
+    if (cLine) {
       ErrorDisplay.setCommandLine(true);
       if (doUpdate) {
         UpdateHandler.loadVersionNotes();
@@ -181,7 +182,6 @@ public class PAXChecker {
       return;
     }
     start = new paxchecker.gui.Startup();
-    KeyboardHandler.init();
     if (doUpdate) {
       start.setStatus("Loading Version Notes...");
       UpdateHandler.loadVersionNotes();
@@ -200,8 +200,8 @@ public class PAXChecker {
       start.setStatus("Loading Notifications...");
       NotificationHandler.loadNotifications();
       start.dispose();
-      setup = new Setup();
       NotificationHandler.showNewNotifications();
+      setup = new Setup();
     }
     Checker.loadAlertIcon();
   }

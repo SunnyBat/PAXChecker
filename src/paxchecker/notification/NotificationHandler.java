@@ -1,12 +1,10 @@
 package paxchecker.notification;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.DataTracker;
 import paxchecker.SettingsHandler;
@@ -21,14 +19,25 @@ public class NotificationHandler {
   private static final ArrayList<Notification> notificationList = new ArrayList<>();
   private static String lastNotificationID;
 
+  /**
+   * Init.
+   */
   public static void init() {
     setLastNotificationID(SettingsHandler.getLastNotificationID());
   }
 
+  /**
+   * Sets the last Notification ID loaded. Set to DISABLE to disable notifications.
+   *
+   * @param lNID The last Notification ID loaded
+   */
   public static void setLastNotificationID(String lNID) {
     lastNotificationID = lNID;
   }
 
+  /**
+   * This loads all new notifications. This method will block until complete.
+   */
   public static void loadNotifications() {
     URLConnection inputConnection;
     InputStream textInputStream;
@@ -84,7 +93,12 @@ public class NotificationHandler {
     }
   }
 
-  public static ArrayList<Notification> newNotifications() {
+  /**
+   * Gets the currently loaded list of new notifications.
+   *
+   * @return An ArrayList with all new notifications
+   */
+  private static ArrayList<Notification> newNotifications() {
     ArrayList<Notification> list = new ArrayList<>();
     for (Notification n : notificationList) {
       if (n.getID().equals(lastNotificationID)) {
@@ -95,6 +109,11 @@ public class NotificationHandler {
     return list;
   }
 
+  /**
+   * Checks whether or not there are new notifications available.
+   *
+   * @return True for new notifications, false if none
+   */
   public static boolean isNewNotification() {
     if (lastNotificationID.equals("DISABLE")) {
       return false;
@@ -102,18 +121,29 @@ public class NotificationHandler {
     return !newNotifications().isEmpty();
   }
 
+  /**
+   * Shows all new notifications. This blocks the current Thread until all notifications have been closed.
+   */
   public static void showNewNotifications() {
     if (!isNewNotification()) {
       return;
     }
+    ArrayList<NotificationWindow> notList = new ArrayList<>();
     boolean first = false;
     ArrayList<Notification> newNotifications = newNotifications();
+    CountDownLatch cDL = new CountDownLatch(newNotifications.size());
     for (Notification n : newNotifications) {
       if (!first) {
         SettingsHandler.saveLastNotificationID(n.getID());
         first = true;
       }
-      NotificationWindow nW = new NotificationWindow(n);
+      NotificationWindow nW = new NotificationWindow(n, cDL);
+      notList.add(nW);
+    }
+    newNotifications.clear();
+    try {
+      cDL.await();
+    } catch (InterruptedException interruptedException) {
     }
   }
 

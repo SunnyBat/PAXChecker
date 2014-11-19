@@ -96,6 +96,9 @@ public class ErrorDisplay {
     errorWindow.setTitle("Error Information");
     errorWindow.JLTitle.setText("StackTrace Information:");
     errorWindow.JTAError.setLineWrap(false);
+    errorWindow.setCopyClipboard();
+    errorWindow.JBError.setText("Copy to Clipboard");
+    errorWindow.JBError.setEnabled(true);
     String message = t.toString() + "\n";
     StackTraceElement[] eE = t.getStackTrace();
     for (int a = 0; a < eE.length; a++) {
