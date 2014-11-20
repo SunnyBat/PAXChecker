@@ -30,7 +30,7 @@ public class TwitterReader {
    * tweet.
    */
   public static void init() {
-    if (consumerKey == null) {
+    if (consumerKey == null || consumerSecret == null || accessToken == null || accessSecret == null) {
       System.out.println("ERROR: Twitter API not configured correctly!");
       return;
     }
@@ -90,6 +90,9 @@ public class TwitterReader {
   }
 
   public static void setKeys(String CK, String CS, String AT, String AS) {
+    if (CK == null || CS == null || AT == null || AS == null) {
+      return;
+    }
     try {
       consumerKey = Encryption.encrypt(CK);
       consumerSecret = Encryption.encrypt(CS);
