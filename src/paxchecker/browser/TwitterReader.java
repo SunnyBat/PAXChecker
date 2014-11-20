@@ -1,6 +1,10 @@
 package paxchecker.browser;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.List;
+import paxchecker.Encryption;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -8,19 +12,17 @@ import twitter4j.conf.ConfigurationBuilder;
  * Using the Twitter4J library (3rd party TwitterReader Library for Java).
  *
  * @author Andrew
- * @deprecated
  */
 public class TwitterReader {
 
-  private static long lastStatusID;
   private static Twitter twitter;
   private static long officialPAXTwitterID;
-  private static String ConsumerKey;
-  private static String ConsumerSecret;
-  private static String AccessToken;
-  private static String AccessSecret;
-  private static final String officialPAXTwitter = "@Official_PAX";
-  private static final String[] keyWordArray = {"passes", "tickets", "sale", "showclix", "available"};
+  private static String consumerKey;
+  private static String consumerSecret;
+  private static String accessToken;
+  private static String accessSecret;
+  private static final String TWITTERHANDLE = "@Official_PAX";
+  private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available"};
 
   /**
    * Initialize the class Sets the lastStatusID to the latest tweet. The assumption is that tickets aren't already on sale. In case of false alarms
@@ -28,57 +30,73 @@ public class TwitterReader {
    * tweet.
    */
   public static void init() {
+    if (consumerKey == null) {
+      System.out.println("ERROR: Twitter API not configured correctly!");
+      return;
+    }
     ConfigurationBuilder cb = new ConfigurationBuilder();
-    cb.setDebugEnabled(true)
-        .setOAuthConsumerKey(ConsumerKey)
-        .setOAuthConsumerSecret(ConsumerSecret)
-        .setOAuthAccessToken(AccessToken)
-        .setOAuthAccessTokenSecret(AccessSecret);
+    try {
+      cb.setDebugEnabled(true)
+          .setOAuthConsumerKey(Encryption.decrypt(consumerKey))
+          .setOAuthConsumerSecret(Encryption.decrypt(consumerSecret))
+          .setOAuthAccessToken(Encryption.decrypt(accessToken))
+          .setOAuthAccessTokenSecret(Encryption.decrypt(accessSecret));
+    } catch (GeneralSecurityException | IOException generalSecurityException) {
+    }
 
     TwitterFactory tf = new TwitterFactory(cb.build());
     twitter = tf.getInstance();
 
     try {
-      List<Status> statuses = twitter.getUserTimeline(officialPAXTwitter);
-      lastStatusID = statuses.get(0).getId();
-      officialPAXTwitterID = statuses.get(0).getUser().getId();
+      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      officialPAXTwitterID = statuses.get(0).getUser().getId(); // Eventually replace this with hard-coded ID?
     } catch (Exception ex) {
-      System.out.println("Problem initializing twitter api");
+      System.out.println("Problem initializing Twitter API!");
     }
+    System.out.println("Twitter initialized!");
+  }
+
+  public static boolean isInitialized() {
+    System.out.println("Initialized: " + (twitter != null));
+    return twitter != null;
+  }
+
+  public static long getLatestTweetID() {
+    try {
+      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      return statuses.get(0).getId();
+    } catch (TwitterException twitterException) {
+    }
+    return -1;
+  }
+
+  public static String getTweet(long tweetID) {
+    try {
+      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      return statuses.get(0).getText();
+    } catch (Exception ex) {
+      System.out.println("Something went wrong with checking twitter..." + ex);
+      return "[ERROR]";
+    }
+  }
+
+  public static String getLinkFromTweet(long tweetID) {
+    try {
+      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      return parseLink(statuses.get(0).getText());
+    } catch (TwitterException twitterException) {
+    }
+    return "";
   }
 
   public static void setKeys(String CK, String CS, String AT, String AS) {
-    ConsumerKey = CK;
-    ConsumerSecret = CS;
-    AccessToken = AT;
-    AccessSecret = AS;
-  }
-
-  /**
-   * Checks whether or not the official PAX twitter has been updated. If it has, check to see if any of the keywords in @keyWordArray are contained
-   * within the tweet.
-   *
-   * @return True if the latest tweet contains any of the trigger keywords, False if not.
-   */
-  public static boolean isPaxTwitterUpdated() {
-    /**
-     * Here there be dragons.
-     */
-    Paging paging = new Paging(lastStatusID);
     try {
-      //User paxUser = twitter.showUser(officialPAXTwitter);
-      //long userID = paxUser.getId();
-      List<Status> statuses = twitter.getUserTimeline(officialPAXTwitterID, paging);
-      //List<Status> statuses = twitter.getUserTimeline(officialPAXTwitter);
-      if (checkStatusesForKeywords(statuses)) {
-        return true;
-      }
-    } catch (Exception ex) {
-      System.out.println("Something went wrong with checking twitter..." + ex);
-      return false;
+      consumerKey = Encryption.encrypt(CK);
+      consumerSecret = Encryption.encrypt(CS);
+      accessToken = Encryption.encrypt(AT);
+      accessSecret = Encryption.encrypt(AS);
+    } catch (GeneralSecurityException | UnsupportedEncodingException generalSecurityException) {
     }
-    //return false if nothing else, oh no, no, no, no false alarms here!
-    return false;
   }
 
   /**
@@ -87,16 +105,32 @@ public class TwitterReader {
    * @param statuses A Java List containing twitter Status objects.
    * @return True if any of the included statuses include any of the trigger keywords, false otherwise.
    */
-  public static boolean checkStatusesForKeywords(List<Status> statuses) {
-    for (Status status : statuses) {
-      for (String keyString : keyWordArray) {
-        if (status.getText().toLowerCase().contains(keyString.toLowerCase())) {
-          return true;
-        }
+  public static boolean hasKeyword(String status) {
+    for (String keyString : KEYWORDS) {
+      if (status.toLowerCase().contains(keyString.toLowerCase())) {
+        return true;
       }
     }
     //If nothing else, return false.
     return false;
+  }
+
+  public static String parseLink(String link) {
+    if (link == null) {
+      return "";
+    }
+    String linkFound = "";
+    if (link.contains("http://")) {
+      linkFound = link.substring(link.indexOf("http://"));
+    } else if (link.contains("https://")) {
+      linkFound = link.substring(link.indexOf("https://"));
+    } else if (link.contains("t.co/")) {
+      linkFound = link.substring(link.indexOf("t.co/"));
+    }
+    if (linkFound.contains(" ")) {
+      linkFound = linkFound.substring(0, linkFound.indexOf(" "));
+    }
+    return linkFound.trim();
   }
 
 }

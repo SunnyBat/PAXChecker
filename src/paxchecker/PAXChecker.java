@@ -2,6 +2,7 @@ package paxchecker;
 
 import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
+import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
 import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
@@ -15,7 +16,7 @@ import paxchecker.notification.NotificationHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R2";
+  public static final String VERSION = "2.0.0 R3";
   public static Setup setup;
   private static Startup start;
 
@@ -44,6 +45,7 @@ public final class PAXChecker {
     boolean autoStart = false;
     boolean cLine = false;
     boolean savePrefs = false;
+    String[] tokens = new String[4];
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -134,6 +136,18 @@ public final class PAXChecker {
           case "-savesettings":
             savePrefs = true;
             break;
+          case "-consumerkey":
+            tokens[0] = args[a + 1];
+            break;
+          case "-consumersecret":
+            tokens[1] = args[a + 1];
+            break;
+          case "-applicationkey":
+            tokens[2] = args[a + 1];
+            break;
+          case "-applicationsecret":
+            tokens[3] = args[a + 1];
+            break;
           default:
             if (args[a].startsWith("-")) {
               System.out.println("Unknown argument: " + args[a]);
@@ -147,6 +161,8 @@ public final class PAXChecker {
       }
     }
     System.out.println("Loading patch notes...");
+    TwitterReader.setKeys(tokens[0], tokens[1], tokens[2], tokens[3]);
+    TwitterReader.init();
     if (autoStart) {
       if (checkPax) {
         TicketChecker.addChecker(new CheckPaxsite());
@@ -154,7 +170,7 @@ public final class PAXChecker {
       if (checkShowclix) {
         TicketChecker.addChecker(new CheckShowclix());
       }
-      if (checkTwitter) {
+      if (checkTwitter && TwitterReader.isInitialized()) {
         TicketChecker.addChecker(new CheckTwitter());
       }
     }
