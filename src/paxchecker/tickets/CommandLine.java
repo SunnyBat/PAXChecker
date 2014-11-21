@@ -8,27 +8,132 @@ package paxchecker.tickets;
 import paxchecker.Audio;
 import paxchecker.Email;
 import paxchecker.browser.Browser;
-import java.util.Scanner;
+import paxchecker.DataTracker;
+import paxchecker.PAXChecker;
 import paxchecker.check.*;
+import paxchecker.update.UpdateHandler;
+import java.util.Scanner;
 
 /**
  *
  * @author Sunny
  */
-public class CommandLine extends TicketCheck {
+public class CommandLine extends CheckMethod {
+
+  private static final Scanner myScanner = new Scanner(System.in);
 
   public CommandLine() {
-    super(new Runnable() {
+    super();
+    checkRunnable = new Runnable() {
       @Override
       public void run() {
-        System.out.println("Stuff!");
+        PAXChecker.startBackgroundThread(new Runnable() {
+          @Override
+          public void run() {
+            String input;
+            while (true) {
+              try {
+                input = myScanner.nextLine();
+              } catch (Exception e) {
+                //e.printStackTrace();
+                System.out.println("Error parsing input -- please try again.");
+                continue;
+              }
+              switch (input.toLowerCase()) {
+                case "stop":
+                case "exit":
+                case "finish":
+                  System.exit(0);
+                  break;
+                case "testemail":
+                case "testtext":
+                case "test email":
+                case "test text":
+                  PAXChecker.sendTestEmail();
+                  break;
+                case "testalarm":
+                case "test alarm":
+                  Audio.playAlarm();
+                  break;
+                case "refresh":
+                case "check":
+                  forceRefresh();
+                  break;
+                case "updateprogram":
+                case "update program":
+                  UpdateHandler.loadVersionNotes();
+                  UpdateHandler.autoUpdate();
+                  break;
+                case "list":
+                case "listall":
+                case "listemails":
+                case "list all":
+                case "list emails":
+                  System.out.println("Emails:");
+                  java.util.Iterator<Email.EmailAddress> it = Email.getAddressList().iterator();
+                  while (it.hasNext()) {
+                    System.out.println(it.next().getCompleteAddress());
+                  }
+                  break;
+                case "test":
+                  Browser.openLinkInBrowser("https://www.google.com");
+                  break;
+                case "notes":
+                case "patchnotes":
+                case "versionnotes":
+                case "patch notes":
+                case "version notes":
+                  System.out.println(UpdateHandler.getVersionNotes());
+                  break;
+                default:
+                  if (input.toLowerCase().startsWith("addemail:") || input.toLowerCase().startsWith("add email:")) {
+                    Email.addEmailAddress(input.substring(input.indexOf(":") + 1).trim());
+                    continue;
+                  } else if (input.toLowerCase().startsWith("patchnotes:") || input.toLowerCase().startsWith("versionnotes:")) {
+                    System.out.println(UpdateHandler.getVersionNotes(input.substring(input.indexOf(":") + 1)).trim());
+                    continue;
+                  }
+                  System.out.println("Unknown command: " + input.toLowerCase());
+                  System.out.println("------------------Commands------------------");
+                  System.out.println("exit                - Exit the program");
+                  System.out.println("testtext            - Send a test text");
+                  System.out.println("testalarm           - Play the alarm (if enabled)");
+                  System.out.println("refresh             - Force check");
+                  System.out.println("check               - Force check");
+                  System.out.println("list                - Lists all emails in the email list");
+                  System.out.println("updateprogram       - Updates the program if an update is available");
+                  System.out.println("addemail:EMAIL      - Adds the specified email address to the program");
+                  System.out.println("patchnotes:VERSION  - Shows currently loaded Version Notes");
+                  System.out.println("-------Commands are NOT case sensitive-------");
+                  break;
+              }
+            }
+          }
+        }, "CLI Input Listener");
+        //System.gc();
+        do {
+          //status.setLastCheckedText("Checking for updates...");
+          long startMS = System.currentTimeMillis();
+          if (TicketChecker.isUpdated()) {
+          }
+          System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
+          while (System.currentTimeMillis() - startMS < (getRefreshTime() * 1000)) {
+            if (forceRefresh) {
+              forceRefresh = false;
+              break;
+            }
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException iE) {
+            }
+          }
+        } while (true); // Change later
       }
-    });
+    };
   }
 
   @Override
   public void init() {
-    Scanner myScanner = new Scanner(System.in);
     if (Email.getUsername() == null) {
       System.out.print("Email: ");
       try {
@@ -54,17 +159,24 @@ public class CommandLine extends TicketCheck {
       } catch (Exception e) {
       }
     }
-//    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
-    System.out.print("Check Showclix Website (Y/N): ");
-    try {
-      if (!myScanner.next().toLowerCase().startsWith("n")) {
-//          Showclix.setCheckShowclix(true);
-      } else {
-//          Showclix.setCheckShowclix(false);
+    if (!TicketChecker.isCheckingShowclix()) {
+      System.out.print("Check Showclix Website (Y/N): ");
+      try {
+        if (!myScanner.next().toLowerCase().startsWith("n")) {
+          TicketChecker.addChecker(new CheckShowclix());
+        }
+      } catch (Exception e) {
       }
-    } catch (Exception e) {
     }
-//    }
+    if (!TicketChecker.isCheckingTwitter()) {
+      System.out.print("Check Twitter (Y/N): ");
+      try {
+        if (!myScanner.next().toLowerCase().startsWith("n")) {
+          TicketChecker.addChecker(new CheckTwitter());
+        }
+      } catch (Exception e) {
+      }
+    }
     if (getRefreshTime() == 10) {
       System.out.print("Refresh Time (seconds, no input limit at the moment): ");
       try {
@@ -121,6 +233,11 @@ public class CommandLine extends TicketCheck {
 
   @Override
   public void ticketsFound() {
+    final String link = TicketChecker.getLinkFound();
+    System.out.println("LINK FOUND: " + link);
+    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+    Browser.openLinkInBrowser(link);
+    Audio.playAlarm();
   }
 
 }

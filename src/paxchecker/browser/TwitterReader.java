@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import paxchecker.Encryption;
+import paxchecker.error.ErrorDisplay;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -15,14 +16,24 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class TwitterReader {
 
-  private static long lastIDFound;
   private static Twitter twitter;
   private static String consumerKey;
   private static String consumerSecret;
   private static String accessToken;
   private static String accessSecret;
-  private static final String TWITTERHANDLE = "@Official_PAX";
   private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available"};
+  private long lastIDFound;
+  private final String TWITTER_HANDLE;
+
+  public TwitterReader(String handle) {
+    TWITTER_HANDLE = handle;
+    try {
+      List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
+      lastIDFound = statuses.get(0).getId();
+    } catch (Exception ex) {
+      System.out.println("Problem initializing Twitter API!");
+    }
+  }
 
   /**
    * Initialize the class Sets the lastStatusID to the latest tweet. The assumption is that tickets aren't already on sale. In case of false alarms
@@ -42,17 +53,11 @@ public class TwitterReader {
           .setOAuthAccessToken(Encryption.decrypt(accessToken))
           .setOAuthAccessTokenSecret(Encryption.decrypt(accessSecret));
     } catch (GeneralSecurityException | IOException generalSecurityException) {
+      ErrorDisplay.showErrorWindow("ERROR setting Twitter API keys -- API not initialized.");
+      return;
     }
-
     TwitterFactory tf = new TwitterFactory(cb.build());
     twitter = tf.getInstance();
-
-    try {
-      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
-      lastIDFound = statuses.get(0).getId();
-    } catch (Exception ex) {
-      System.out.println("Problem initializing Twitter API!");
-    }
     System.out.println("Twitter initialized!");
   }
 
@@ -61,10 +66,10 @@ public class TwitterReader {
     return twitter != null;
   }
 
-  public static long getLatestTweetID() {
+  public long getLatestTweetID() {
     try {
       Paging p = new Paging(lastIDFound);
-      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE, p);
+      List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE, p);
       System.out.println("Size: " + statuses.size());
       if (statuses.isEmpty()) {
         return lastIDFound;
@@ -76,9 +81,9 @@ public class TwitterReader {
     return -1;
   }
 
-  public static String getTweet(long tweetID) {
+  public String getTweet(long tweetID) {
     try {
-      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
       for (Status stat : statuses) {
         if (stat.getId() == tweetID) {
           return stat.getText();
@@ -92,7 +97,7 @@ public class TwitterReader {
     }
   }
 
-  public static String getLinkFromTweet(long tweetID) {
+  public String getLinkFromTweet(long tweetID) {
     return parseLink(getTweet(tweetID));
   }
 

@@ -5,10 +5,7 @@
  */
 package paxchecker.check;
 
-import java.util.List;
 import paxchecker.browser.TwitterReader;
-import twitter4j.Paging;
-import twitter4j.Status;
 
 /**
  *
@@ -19,6 +16,7 @@ public class CheckTwitter extends Check {
   private long lastTweetID = -1;
   private long currentTweetID = -1;
   private String linkFound = "[Twitter Not Updated]";
+  private TwitterReader twitter;
 
   public CheckTwitter() {
     super();
@@ -28,6 +26,7 @@ public class CheckTwitter extends Check {
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
     s.updateJLabel(linkLabel, "Twitter");
+    twitter = new TwitterReader("@Official_PAX");
   }
 
   @Override
@@ -37,9 +36,9 @@ public class CheckTwitter extends Check {
 
   @Override
   public synchronized void updateLink() {
-    currentTweetID = TwitterReader.getLatestTweetID();
+    currentTweetID = twitter.getLatestTweetID();
     if (currentTweetID != lastTweetID) {
-      linkFound = TwitterReader.getLinkFromTweet(currentTweetID);
+      linkFound = twitter.getLinkFromTweet(currentTweetID);
     }
   }
 
@@ -50,7 +49,7 @@ public class CheckTwitter extends Check {
 
   @Override
   public synchronized void reset() {
-    lastTweetID = TwitterReader.getLatestTweetID();
+    lastTweetID = twitter.getLatestTweetID();
     linkFound = "[Twitter Not Updated]";
   }
 

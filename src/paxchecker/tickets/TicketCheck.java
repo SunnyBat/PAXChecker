@@ -5,42 +5,84 @@
  */
 package paxchecker.tickets;
 
+import paxchecker.gui.Status;
+
 /**
  *
  * @author Sunny
  */
-public abstract class TicketCheck {
+public class TicketCheck {
 
-  protected int refreshTime;
-  private final Runnable checkRunnable;
+  private static CheckMethod myInstance;
+  private static Status status;
+  private static boolean isStarted;
 
-  public TicketCheck(Runnable r) {
-    checkRunnable = r;
+  public static final void startCommandLine() {
+    if (myInstance != null) {
+      System.out.println("Error: Already started!");
+    }
+    myInstance = new CommandLine();
+    start();
   }
 
-  public abstract void init();
+  public static final void startGUI() {
+    if (myInstance != null) {
+      System.out.println("Error: Already started!");
+    }
+    myInstance = new NormalGUI();
+    start();
+  }
 
-  public abstract void ticketsFound();
+  public static final boolean isCommandLine() {
+    return myInstance instanceof CommandLine;
+  }
 
-  public final void checkForTickets() {
-    if (checkRunnable == null) {
-      System.out.println("ERROR: Check for tickets not properly configured!");
+  public static final boolean isGUI() {
+    return myInstance instanceof NormalGUI;
+  }
+
+  /**
+   * Sets the Status information text.
+   *
+   * @param s The text to use
+   */
+  public static void setStatusInformationText(String s) {
+    if (status != null) {
+      status.setInformationText(s);
+    } else {
+      System.out.println(s);
+    }
+  }
+
+  /**
+   * Sets the Test Text button state.
+   *
+   * @param enabled True to enable, false to disable
+   */
+  public static void setStatusTextButtonState(boolean enabled) {
+    if (status != null) {
+      status.setTextButtonState(enabled);
+    }
+  }
+
+  /**
+   * Sets the Test Text button text.
+   *
+   * @param s The text to use
+   */
+  public static void setStatusTextButtonText(String s) {
+    if (status != null) {
+      status.setTextButtonText(s);
+    }
+  }
+
+  private static synchronized void start() {
+    if (isStarted) {
+      System.out.println("ERROR: Already started!");
       return;
     }
-    new Thread(checkRunnable).start();
+    myInstance.init();
+    myInstance.checkForTickets();
+    isStarted = true;
   }
-
-  public final void setRefreshTime(int time) {
-    if (time > 60) {
-      time = 60;
-    } else if (time < 10) {
-      time = 10;
-    }
-    refreshTime = time;
-  }
-
-  public final int getRefreshTime() {
-    return refreshTime;
-  }
-
 }
