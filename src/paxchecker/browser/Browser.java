@@ -2,8 +2,9 @@ package paxchecker.browser;
 
 import paxchecker.tickets.Checker;
 import java.awt.Desktop;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 import paxchecker.error.ErrorDisplay;
 
 /**
@@ -13,6 +14,7 @@ import paxchecker.error.ErrorDisplay;
 public class Browser {
 
   private static volatile String Expo;
+  private static final String UNSHORTEN_API_LINK = "http://api.longurl.org/v2/expand?url=";
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
@@ -83,5 +85,34 @@ public class Browser {
       e.printStackTrace();
       return null;
     }
+  }
+
+  /**
+   * Gets the actual link from the given shortened URL.
+   *
+   * @param toShorten The URL to unshorten
+   * @return The actual URL that will be served
+   */
+  public static String unshortenURL(String toShorten) {
+    URL fullURL;
+    URLConnection myConn;
+    try {
+      fullURL = new URL(UNSHORTEN_API_LINK + toShorten);
+      myConn = fullURL.openConnection();
+      myConn.connect();
+      Scanner scan = new Scanner(myConn.getInputStream());
+      String line;
+      while (scan.hasNext()) {
+        line = scan.nextLine().trim();
+        if (line.contains("<long-url>") && line.contains("]]></l")) {
+          System.out.print("URL Unshortened: ");
+          String found = line.substring(line.indexOf("http"), line.indexOf("]]></l"));
+          System.out.println(found);
+          return found;
+        }
+      }
+    } catch (Exception e) {
+    }
+    return toShorten;
   }
 }

@@ -330,6 +330,38 @@ public class Email {
   }
 
   /**
+   * Sends a test email on a daemon Thread. Note that this also updates the Status window if possible.
+   */
+  public static void sendBackgroundTestEmail() {
+    PAXChecker.startBackgroundThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          Checker.setStatusTextButtonState(false);
+          Checker.setStatusTextButtonText("Sending...");
+          if (!Email.testEmail()) {
+            Checker.setStatusTextButtonText("Test Text");
+            Checker.setStatusTextButtonState(true);
+            return;
+          }
+          long timeStarted = System.currentTimeMillis();
+          while (System.currentTimeMillis() - timeStarted < 300000) {
+            Checker.setStatusTextButtonText((300 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+            Thread.sleep(200);
+          }
+          Checker.setStatusTextButtonText("Test Text");
+          Checker.setStatusTextButtonState(true);
+        } catch (Exception e) {
+          System.out.println("ERROR sending background test email!");
+          e.printStackTrace();
+          Checker.setStatusTextButtonText("Test Text");
+          Checker.setStatusTextButtonState(true);
+        }
+      }
+    }, "Send Test Email");
+  }
+
+  /**
    * Checks whether the program should send an email. If the username OR the email to send to is null (no valid address/number was given), it returns
    * false. If both are valid, it returns true.
    *

@@ -255,36 +255,4 @@ public final class PAXChecker {
   public static void sendTestEmail() {
     Email.testEmail();
   }
-
-  /**
-   * Sends a test email on a daemon Thread. Note that this also updates the Status window if possible.
-   */
-  public static void sendBackgroundTestEmail() {
-    startBackgroundThread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Checker.setStatusTextButtonState(false);
-          Checker.setStatusTextButtonText("Sending...");
-          if (!Email.testEmail()) {
-            Checker.setStatusTextButtonText("Test Text");
-            Checker.setStatusTextButtonState(true);
-            return;
-          }
-          long timeStarted = System.currentTimeMillis();
-          while (System.currentTimeMillis() - timeStarted < 300000) {
-            Checker.setStatusTextButtonText((300 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
-            Thread.sleep(200);
-          }
-          Checker.setStatusTextButtonText("Test Text");
-          Checker.setStatusTextButtonState(true);
-        } catch (Exception e) {
-          System.out.println("ERROR sending background test email!");
-          e.printStackTrace();
-          Checker.setStatusTextButtonText("Test Text");
-          Checker.setStatusTextButtonState(true);
-        }
-      }
-    }, "Send Test Email");
-  }
 }

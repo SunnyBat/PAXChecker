@@ -37,7 +37,7 @@ public class IconMenu extends PopupMenu {
     testTextButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        PAXChecker.sendBackgroundTestEmail();
+        Email.sendBackgroundTestEmail();
       }
     });
     testAlarmButton.addActionListener(new java.awt.event.ActionListener() {

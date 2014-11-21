@@ -15,8 +15,8 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class TwitterReader {
 
+  private static long lastIDFound;
   private static Twitter twitter;
-  private static long officialPAXTwitterID;
   private static String consumerKey;
   private static String consumerSecret;
   private static String accessToken;
@@ -49,7 +49,7 @@ public class TwitterReader {
 
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
-      officialPAXTwitterID = statuses.get(0).getUser().getId(); // Eventually replace this with hard-coded ID?
+      lastIDFound = statuses.get(0).getId();
     } catch (Exception ex) {
       System.out.println("Problem initializing Twitter API!");
     }
@@ -63,8 +63,14 @@ public class TwitterReader {
 
   public static long getLatestTweetID() {
     try {
-      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
-      return statuses.get(0).getId();
+      Paging p = new Paging(lastIDFound);
+      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE, p);
+      System.out.println("Size: " + statuses.size());
+      if (statuses.isEmpty()) {
+        return lastIDFound;
+      }
+      lastIDFound = statuses.get(0).getId();
+      return lastIDFound;
     } catch (TwitterException twitterException) {
     }
     return -1;
@@ -73,6 +79,12 @@ public class TwitterReader {
   public static String getTweet(long tweetID) {
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
+      for (Status stat : statuses) {
+        if (stat.getId() == tweetID) {
+          return stat.getText();
+        }
+      }
+      System.out.println("ERROR: Unable to find Tweet ID " + tweetID);
       return statuses.get(0).getText();
     } catch (Exception ex) {
       System.out.println("Something went wrong with checking twitter..." + ex);
@@ -81,12 +93,7 @@ public class TwitterReader {
   }
 
   public static String getLinkFromTweet(long tweetID) {
-    try {
-      List<Status> statuses = twitter.getUserTimeline(TWITTERHANDLE);
-      return parseLink(statuses.get(0).getText());
-    } catch (TwitterException twitterException) {
-    }
-    return "";
+    return parseLink(getTweet(tweetID));
   }
 
   public static void setKeys(String CK, String CS, String AT, String AS) {
@@ -105,12 +112,12 @@ public class TwitterReader {
   /**
    * Iterates through the list of statuses, seeing if any match against the trigger keywords.
    *
-   * @param statuses A Java List containing twitter Status objects.
-   * @return True if any of the included statuses include any of the trigger keywords, false otherwise.
+   * @param tweet The Tweet to search through
+   * @return True if the tweet includes any of the trigger keywords, false otherwise.
    */
-  public static boolean hasKeyword(String status) {
+  public static boolean hasKeyword(String tweet) {
     for (String keyString : KEYWORDS) {
-      if (status.toLowerCase().contains(keyString.toLowerCase())) {
+      if (tweet.toLowerCase().contains(keyString.toLowerCase())) {
         return true;
       }
     }
@@ -129,6 +136,9 @@ public class TwitterReader {
       linkFound = link.substring(link.indexOf("https://"));
     } else if (link.contains("t.co/")) {
       linkFound = link.substring(link.indexOf("t.co/"));
+    }
+    if (link.contains("t.co/")) {
+      linkFound = Browser.unshortenURL(linkFound);
     }
     if (linkFound.contains(" ")) {
       linkFound = linkFound.substring(0, linkFound.indexOf(" "));
