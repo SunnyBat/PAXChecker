@@ -15,15 +15,15 @@ import paxchecker.update.UpdateHandler;
 public class Setup extends javax.swing.JFrame {
 
   public java.util.ArrayList<ExtraPhonePanel> extraPhonePanelList = new java.util.ArrayList<>();
-  private ErrorWindow twitterDisabledWindow = new ErrorWindow();
+  private final ErrorWindow twitterDisabledWindow = new ErrorWindow();
 
   /**
    * Creates new form Setup
    */
   public Setup() {
-    twitterDisabledWindow.setTitle("Twitter Disabled?");
-    twitterDisabledWindow.JLTitle.setText("Why is Twitter Disabled?");
-    twitterDisabledWindow.JTAError.setText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, you must create an application with the Twitter API: https://apps.twitter.com/app/new \rAfter that, you must specify your four keys using command-line arguments.");
+    twitterDisabledWindow.setTitleText("Twitter Disabled?");
+    twitterDisabledWindow.setErrorText("Why is Twitter Disabled?");
+    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, you must create an application with the Twitter API: https://apps.twitter.com/app/new \nAfter that, you must specify your four keys using command-line arguments.");
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -722,6 +722,7 @@ public class Setup extends javax.swing.JFrame {
     savePreferences();
     dispose();
     Checker.startCheckingWebsites();
+    //TicketCheck.startGUI();
   }//GEN-LAST:event_JBStartActionPerformed
 
   private void JCBSaveCellnumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSaveCellnumActionPerformed

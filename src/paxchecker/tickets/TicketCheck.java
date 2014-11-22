@@ -5,6 +5,7 @@
  */
 package paxchecker.tickets;
 
+import paxchecker.check.TicketChecker;
 import paxchecker.gui.Status;
 
 /**
@@ -16,6 +17,20 @@ public class TicketCheck {
   private static CheckMethod myInstance;
   private static Status status;
   private static boolean isStarted;
+
+  public static final void init() {
+  }
+
+  private static void showStatusWindow() {
+    if (status != null) {
+      System.out.println("ERROR: Status window already initialized!");
+      return;
+    }
+    status = new Status();
+    status.customComponents();
+    status.setVisible(true);
+    TicketChecker.init(status);
+  }
 
   public static final void startCommandLine() {
     if (myInstance != null) {
@@ -29,6 +44,7 @@ public class TicketCheck {
     if (myInstance != null) {
       System.out.println("Error: Already started!");
     }
+    showStatusWindow();
     myInstance = new NormalGUI();
     start();
   }

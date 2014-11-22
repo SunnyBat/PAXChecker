@@ -1,8 +1,5 @@
 package paxchecker.error;
 
-import paxchecker.update.UpdateHandler;
-import paxchecker.error.ErrorWindow;
-
 /**
  *
  * @author SunnyBat
@@ -10,8 +7,6 @@ import paxchecker.error.ErrorWindow;
 public class ErrorDisplay {
 
   private static byte errorWindowCount = 0;
-  private static ErrorWindow errorWindow;
-  private static boolean fatalError;
   private static boolean commandLine;
 
   /**
@@ -20,8 +15,8 @@ public class ErrorDisplay {
    *
    * @param message The error message to display to the user
    */
-  public static void showErrorWindow(String message) {
-    showErrorWindow("PAXChecker: Error", "ERROR", message, null);
+  public static ErrorWindow showErrorWindow(String message) {
+    return showErrorWindow("PAXChecker: Error", "ERROR", message, null);
   }
 
   /**
@@ -31,8 +26,8 @@ public class ErrorDisplay {
    * @param message The error message to display to the user
    * @param t The error to display
    */
-  public static void showErrorWindow(String message, Throwable t) {
-    showErrorWindow("PAXChecker: Error", "ERROR", message, t);
+  public static ErrorWindow showErrorWindow(String message, Throwable t) {
+    return showErrorWindow("PAXChecker: Error", "ERROR", message, t);
   }
 
   /**
@@ -43,8 +38,8 @@ public class ErrorDisplay {
    * @param message The error message to display to the user
    * @param t The error to display
    */
-  public static void showErrorWindow(String title, String message, Throwable t) {
-    showErrorWindow("PAXChecker: Error", title, message, t);
+  public static ErrorWindow showErrorWindow(String title, String message, Throwable t) {
+    return showErrorWindow("PAXChecker: Error", title, message, t);
   }
 
   /**
@@ -56,29 +51,31 @@ public class ErrorDisplay {
    * @param message The error message to display to the user
    * @param t The error to display
    */
-  public static void showErrorWindow(String windowTitle, String title, String message, Throwable t) {
+  public static synchronized ErrorWindow showErrorWindow(String windowTitle, String title, String message, Throwable t) {
+    ErrorWindow errorWindow;
     if (commandLine) {
       System.out.println(windowTitle + " -- " + title + " -- " + message);
       if (t != null) {
         t.printStackTrace();
       }
-      return;
+      return null;
     }
     if (errorWindowCount > 10) {
       System.out.println("Stopped showing error windows -- too many!");
-      return;
+      return null;
     }
     errorWindow = new ErrorWindow();
-    errorWindow.setTitle(windowTitle);
-    errorWindow.JLTitle.setText(title);
-    errorWindow.JTAError.setText(message);
+    errorWindow.setTitleText(windowTitle);
+    errorWindow.setErrorText(title);
+    errorWindow.setInformationText(message);
     errorWindow.setVisible(true);
     if (t != null) {
-      errorWindow.JBError.setEnabled(true);
+      errorWindow.setExtraButtonEnabled(true);
       errorWindow.myError = t;
       t.printStackTrace();
     }
     errorWindowCount++;
+    return errorWindow;
   }
 
   /**
@@ -87,18 +84,19 @@ public class ErrorDisplay {
    *
    * @param t The error object
    */
-  public static void detailedReport(Throwable t) {
+  public static synchronized ErrorWindow detailedReport(Throwable t) {
+    ErrorWindow errorWindow;
     if (commandLine) {
       t.printStackTrace();
-      return;
+      return null;
     }
     errorWindow = new ErrorWindow();
-    errorWindow.setTitle("Error Information");
-    errorWindow.JLTitle.setText("StackTrace Information:");
-    errorWindow.JTAError.setLineWrap(false);
+    errorWindow.setTitleText("Error Information");
+    errorWindow.setErrorText("StackTrace Information:");
+    errorWindow.setLineWrap(false);
     errorWindow.setCopyClipboard();
-    errorWindow.JBError.setText("Copy to Clipboard");
-    errorWindow.JBError.setEnabled(true);
+    errorWindow.setExtraButtonText("Copy to Clipboard");
+    errorWindow.setExtraButtonEnabled(true);
     String message = t.toString() + "\n";
     StackTraceElement[] eE = t.getStackTrace();
     for (int a = 0; a < eE.length; a++) {
@@ -106,28 +104,26 @@ public class ErrorDisplay {
       message += eE[a];
       message += "\n";
     }
-    errorWindow.JTAError.setText(message);
-    errorWindow.JTAError.setCaretPosition(0);
+    errorWindow.setInformationText(message);
     errorWindow.setVisible(true);
     errorWindowCount++;
     System.out.println(t.getMessage());
     t.printStackTrace();
+    return errorWindow;
   }
 
   /**
    * Unused.
    */
-  public static void errWindowClosed() {
+  public static synchronized void errWindowClosed() {
+    errorWindowCount--;
   }
 
   public static void fatalError() {
-    fatalError = true;
-    if (UpdateHandler.update != null) {
-      UpdateHandler.update.dispose();
-    }
+    System.out.println("ERROR: Fatal error!");
   }
 
-  public static void setCommandLine(boolean cl) {
+  public static synchronized void setCommandLine(boolean cl) {
     commandLine = cl;
     System.out.println("ErrorHandler: Command-Line Set to " + cl);
   }

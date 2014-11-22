@@ -81,7 +81,7 @@ public class PaxsiteReader {
   private static String parseHRef(String parse) {
     if (parse == null) {
       System.out.println("ERROR: parseHRef arg parse is null!");
-      return null;
+      return "[null?]";
     }
     try {
       parse = parse.trim(); // Remove white space
@@ -98,7 +98,7 @@ public class PaxsiteReader {
     } catch (Exception e) {
       System.out.println("ERROR: Unable to parse link from button");
       e.printStackTrace();
-      return null;
+      return "[Button Not Found]";
     }
   }
 

@@ -24,9 +24,9 @@ public class CheckTwitter extends Check {
 
   @Override
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+    twitter = new TwitterReader("@Official_PAX");
     super.init(s, cB);
     s.updateJLabel(linkLabel, "Twitter");
-    twitter = new TwitterReader("@Official_PAX");
   }
 
   @Override

@@ -11,7 +11,6 @@ import paxchecker.Email;
 import paxchecker.KeyboardHandler;
 import paxchecker.browser.Browser;
 import paxchecker.check.TicketChecker;
-import paxchecker.gui.Status;
 
 /**
  *
@@ -19,10 +18,8 @@ import paxchecker.gui.Status;
  */
 public class NormalGUI extends CheckMethod {
 
-  private Status status;
-
   public NormalGUI() {
-    super(null);
+    super();
   }
 
   @Override
