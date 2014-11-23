@@ -138,6 +138,10 @@ public class NotificationHandler {
         first = true;
       }
       NotificationWindow nW = new NotificationWindow(n, cDL);
+      nW.setMoreInfoButtonLink(n.getButtonLink());
+      if (n.getButtonText() != null) {
+        nW.setCloseButtonText(n.getButtonText());
+      }
       notList.add(nW);
     }
     newNotifications.clear();

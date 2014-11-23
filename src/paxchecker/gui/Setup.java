@@ -94,6 +94,25 @@ public class Setup extends javax.swing.JFrame {
       JCBSaveRefreshTime.setEnabled(false);
       JCBSaveEmail.setEnabled(false);
     }
+    JTPExtra.setText(loadHtml("/paxchecker/gui/Extra.html"));
+    JTPExtra.setCaretPosition(0);
+    JTPInstructions.setText(loadHtml("/paxchecker/gui/Instructions.html"));
+    JTPInstructions.setCaretPosition(0);
+  }
+
+  private static String loadHtml(String localPath) {
+    try {
+      java.io.InputStream in = Setup.class.getResourceAsStream(localPath);
+      java.util.Scanner scan = new java.util.Scanner(in);
+      String text = "";
+      while (scan.hasNext()) {
+        text += scan.nextLine();
+      }
+      return text;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "[ERROR LOADING " + localPath + "]";
+    }
   }
 
   public void addPhonePanel(ExtraPhonePanel panel) {
@@ -176,7 +195,7 @@ public class Setup extends javax.swing.JFrame {
       TicketChecker.addChecker(new CheckShowclix());
     }
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
-      TicketChecker.addChecker(new CheckTwitter());
+      Checker.queueTwitterHandles();
     }
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(JTFEmail.getText());
@@ -270,13 +289,13 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled = new javax.swing.JLabel();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
-    jTextPane1 = new javax.swing.JTextPane();
+    JTPInstructions = new javax.swing.JTextPane();
     jPanel4 = new javax.swing.JPanel();
     jScrollPane4 = new javax.swing.JScrollPane();
     jTextArea4 = new javax.swing.JTextArea();
     jPanel3 = new javax.swing.JPanel();
     jScrollPane6 = new javax.swing.JScrollPane();
-    jTextPane2 = new javax.swing.JTextPane();
+    JTPExtra = new javax.swing.JTextPane();
     jPanel5 = new javax.swing.JPanel();
     JCBSavePreferences = new javax.swing.JCheckBox();
     JCBSaveEmail = new javax.swing.JCheckBox();
@@ -489,20 +508,19 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Setup", jPanel1);
 
-    jTextPane1.setBorder(null);
-    jTextPane1.setContentType("text/html"); // NOI18N
-    jTextPane1.setEditable(false);
-    jTextPane1.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
-    jTextPane1.setText("<html>\n    <body>\n        <em>If there is a horizontal scrollbar here, please let\n            <a href=\"https://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a> know!</em>\n\n        <h1>Important Note</h1>\n        You should NOT rely on only one way of PAX Ticket sale notifications.\n        Sign up for the @Official_PAX Twitter notifications\n        <a href=\"https://support.twitter.com/articles/20170004-fast-following-on-sms\">via text</a>.\n        Watch the Reddit Live thread (if there is one). Make sure your friends\n        know to text you if they find out. Do NOT miss out because you relied on only\n        one form of notification!<br>\n        That being said, this program worked perfectly last year. It detected\n        the Showclix link as soon as it went up -- a few minutes before the\n        Twitter notification.\n\n        <h1>Email and Password</h1>\n        <b>If you do not want to receive a text message when tickets are found,\n            simply leave these fields blank.</b><br>\n        Your email is used to send a text message when tickets are found. Currently,\n        there are two internally supported email services: <b>Gmail</b> and <b>Yahoo!</b>.\n        Simply type in your email address to use these. For information on using\n        different email services, see the Additional Information section.<br>\n        Gmail generally takes 30-45 seconds to receive a sent text. <em>This is\n            the recommended option.</em><br>\n        Yahoo! is very inconsistent with texts -- it can take anywhere from 10\n        <em>seconds</em> to 15 <em>minutes</em> to receive a text from Yahoo!<br>\n        <em>For information on why your email is required, see the Additional\n            Information section.</em><br>\n\n        <h1>Cell Number (Texting)</h1>\n        Your cell number is required to text to your phone. The program natively\n        supports AT&T, Verizon, Sprint, T-Mobile, and U.S. Cellular. If you have\n        any of these carriers, simply select yours from the dropdown menu.\n        If you have a different carrier, you'll need to go to\n        <a href=\"http://www.emailtextmessages.com\">emailtextmessages.com</a> and\n        get the ending for your carrier.<br>\n        Please note that standard messaging rates most likely apply. Please\n        ensure that your plan either includes SMS/MMS messages or you're willing\n        to receive additional fees. Most smartphone plans come with unlimited\n        SMS/MMS messages.<br>\n        You can put dashes and parentheses into your number. For example, 012-345-6789\n        is just as valid as (012)-345-6789. Your number is converted\n        into a format with no dashes or parentheses -- just numbers. Overall,\n        the email is sent in the format of 0123456789@car.rier.net. For example,\n        if your number is 0123456789 and your provider is 3 River Wireless,\n        you would put 0123456789@sms.3rivers.net in the Cell Num field.<br>\n        To text multiple numbers, simply add another number using the button\n        provided. There is no hard-coded limit for how many numbers you may\n        text. Each additional number should follow all of the instructions above.<br>\n        <i><b>AH! What's the difference between \"AT&T (MMS)\" and \"AT&T (SMS)\"???</b></i><br>\n        Selecting the MMS option sends the message as a multimedia message.\n        This preserves the email sender information (you receive the text from\n        your email address) and shortens the length. This is the recommended\n        option to use. Unlimited texting plans <i>most likely</i> include\n        multimedia texts.<br>\n        The SMS option sends the message as a text message. You receive\n        it from a 210-extension number, and it includes \"FRM\", \"SUBJ\" and \"MSG\"\n        information, increasing the message length and decreasing readability.\n        Not recommended, as text messages have a character limit of 160\n        characters, and the text from the program is likely to go over 160\n        characters.<br>\n\n        <h1>Scan PAX Registration Website</h1>\n        This scans the selected PAX registration website for the \"Register Now\" button.\n        It checks PAX.paxsite.com/registration (obviously PAX is the expo you're checking).<br>\n        This uses the most bandwidth (still not very much). It's recommended to\n        use this option if you really want tickets.\n\n        <h1>Scan Showclix Website</h1>\n        This scans the Showclix API (<a href=\"https://api.showclix.com\">api.showclix.com</a>) for the\n        selected PAX expo's most recent ticket sale.<br>\n        <b>This option is highly recommended.</b> The Showclix website is updated first in order\n        to get the link to the ticket queue, which this program finds using the Showclix API. It\n        uses a small amount of bandwidth, and will mostly likely find the tickets before the PAX\n        Registration Website option.<br>\n        Credit goes to <a href=\"https://www.reddit.com/user/GrahamArthurBlair\">/u/GrahamArthurBlair</a>\n        for his original Showclix API scanning code.<br><br>\n\n\n        <h1>Additional Information</h1>\n\n        <h2>Why Does This Need my Password?</h2>\n        An email is required to send a text message. It's the simplest way to send\n        a text message, and anyone can use it.<br>\n        There are several reasons why your email and password is required:\n        <ul>\n            <li>You must authenticate your login to send an email using your account\n                username and password</li>\n            <li>This program is open-source. If there was a hard-coded username and\n                password, anyone would be able to find it in this program at any time and\n                disable texting for everyone. Using your email address prevents this from\n                happening.</li>\n            <li>Having one email address send out potentially dozens (modestly) of\n                emails within 60 seconds is very fishy, and multiple logins from different\n                locations will lock out the email after a few emails. This means only a few\n                people would actually get the text.</li>\n            <li>You will recognize the sender of your text</li>\n        </ul>\n\n        <h2>Using a Different Email Provider</h2>\n        For sending an email using a different email provider, several things are required:\n        <ul>\n            <li>The service must use SMTP and TLS</li>\n            <li>You must know the SMTP server address</li>\n            <li>You must know the SMTP server port</li>\n        </ul>\n        Once you have this information, you must input this after your email address\n        and two colons (::). If the server uses a port other than 587, you must\n        add the port after the server and a colon (:).<br>\n        An example:<br>\n        Emailaddress@someprovider.com::provider.smpt.server:999<br>\n        <b>Note that this is very experimental. Make sure to test your text message every time!</b>\n    </body>\n</html>");
-    jTextPane1.setCaretPosition(0);
-    jTextPane1.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+    JTPInstructions.setBorder(null);
+    JTPInstructions.setContentType("text/html"); // NOI18N
+    JTPInstructions.setEditable(false);
+    JTPInstructions.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
+    JTPInstructions.setText("[Located in Instructions.html]");
+    JTPInstructions.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
       public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {
         if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {
           Browser.openLinkInBrowser(e.getURL());
         }
       }
     });
-    jScrollPane5.setViewportView(jTextPane1);
+    jScrollPane5.setViewportView(JTPInstructions);
 
     javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
     jPanel6.setLayout(jPanel6Layout);
@@ -538,21 +556,20 @@ public class Setup extends javax.swing.JFrame {
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
 
-    jTextPane2.setBorder(null);
-    jTextPane2.setContentType("text/html"); // NOI18N
-    jTextPane2.setEditable(false);
-    jTextPane2.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
-    jTextPane2.setText("<html>\n    <body>\n        <em>If there is a horizontal scrollbar here, please let\n            <a href=\"https://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a> know!</em>\n\n        <h1>External Links</h1>\n        <ul>\n            <li>This program has been provided for free. If you have been charged for it, get your money back and contact SunnyBat immediately!</li>\n            <li>The source code can be found <a href=\"https://www.github.com/SunnyBat/PAXChecker\">on GitHub</a>.</li>\n            <li>Program published on <a href=\"https://www.github.com/SunnyBat/PAXChecker\">/r/PAX</a> -- If you see it somewhere else, please let SunnyBat know!</li>\n        </ul>\n\n        <h1>Credits</h1>\n        <ul>\n            <li>Program created by <a href=\"https://www.reddit.com/user/SunnyBat\">/u/SunnyBat</a></li>\n            <li>Showclix API scanning code originally created by <a href=\"https://www.reddit.com/user/GrahamArthurBlair\">/u/GrahamArthurBlair</a></li>\n            <li>Reddit Gold guilders: You're all awesome. If you want me to put your name here, let me know!</li>\n            <li><a href=\"https://java.net/projects/javamail/pages/Home\">JavaMail 1.4.7</a> -- For sending emails</li>\n            <li><a href=\"https://code.google.com/p/json-simple/\">JSON.simple</a> -- For parsing Showclix API JSON responses</li>\n        </ul>\n\n        <h1>Contact Me</h1>\n        To contact me, please use one of the following methods:\n        <ul>\n            <li><a href=\"mailto:Sunnybat@yahoo.com\">Email me</a></li>\n            <li><a href=\"https://www.reddit.com/message/compose/?to=SunnyBat\">Message me on Reddit</a></li>\n            <li><a href=\"https://github.com/SunnyBat\">Message me on Github</a></li>\n        </ul>\n    </body>\n</html>");
-    jTextPane2.setToolTipText("");
-    jTextPane2.setCaretPosition(0);
-    jTextPane2.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+    JTPExtra.setBorder(null);
+    JTPExtra.setContentType("text/html"); // NOI18N
+    JTPExtra.setEditable(false);
+    JTPExtra.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType("text/html"));
+    JTPExtra.setText("[Located in Extra.html]");
+    JTPExtra.setToolTipText("");
+    JTPExtra.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
       public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {
         if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {
           Browser.openLinkInBrowser(e.getURL());
         }
       }
     });
-    jScrollPane6.setViewportView(jTextPane2);
+    jScrollPane6.setViewportView(JTPExtra);
 
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
@@ -796,6 +813,8 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JSlider JSCheckTime;
   private javax.swing.JTextField JTFCellNum;
   private javax.swing.JTextField JTFEmail;
+  private javax.swing.JTextPane JTPExtra;
+  private javax.swing.JTextPane JTPInstructions;
   private javax.swing.JButton jButton3;
   private javax.swing.JCheckBox jCheckBox3;
   private javax.swing.JLabel jLabel1;
@@ -817,7 +836,5 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JTabbedPane jTabbedPane1;
   private javax.swing.JTextArea jTextArea1;
   private javax.swing.JTextArea jTextArea4;
-  private javax.swing.JTextPane jTextPane1;
-  private javax.swing.JTextPane jTextPane2;
   // End of variables declaration//GEN-END:variables
 }

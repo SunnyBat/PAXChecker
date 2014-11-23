@@ -17,14 +17,21 @@ public class CheckTwitter extends Check {
   private long currentTweetID = -1;
   private String linkFound = "[Twitter Not Updated]";
   private TwitterReader twitter;
+  private final String twitterHandle;
 
   public CheckTwitter() {
     super();
+    twitterHandle = "@Official_PAX";
+  }
+
+  public CheckTwitter(String handle) {
+    super();
+    twitterHandle = handle;
   }
 
   @Override
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
-    twitter = new TwitterReader("@Official_PAX");
+    twitter = new TwitterReader(twitterHandle);
     super.init(s, cB);
     s.updateJLabel(linkLabel, "Twitter");
   }

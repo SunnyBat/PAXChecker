@@ -27,6 +27,7 @@ public class TwitterReader {
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
+    System.out.println("Twitter handle: " + handle);
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
       lastIDFound = statuses.get(0).getId();

@@ -6,6 +6,7 @@
 package paxchecker.notification;
 
 import java.util.concurrent.CountDownLatch;
+import paxchecker.browser.Browser;
 
 /**
  *
@@ -20,19 +21,57 @@ public class NotificationWindow extends javax.swing.JFrame {
    * Creates new form Notification
    *
    * @param n The Notification information object
+   * @param cdl The CountDownLatch to count down when window is closed
    */
   public NotificationWindow(Notification n, CountDownLatch cdl) {
     myNote = n;
     countDown = cdl;
-    initComponents();
-    customComponents();
-    setVisible(true);
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        customComponents();
+        setVisible(true);
+      }
+    });
   }
 
   private void customComponents() {
     JLTitle.setText(myNote.getTitle());
     JBClose.setText(myNote.getButtonText());
     JTAInformation.setText(myNote.getInfo());
+    JBMoreInfo.setVisible(false);
+  }
+
+  @Override
+  public void dispose() {
+    if (countDown != null) {
+      countDown.countDown();
+    }
+    super.dispose();
+  }
+
+  public void setMoreInfoButtonLink(final String link) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        //JBMoreInfo.setVisible(true);
+        JBMoreInfo.addActionListener(new java.awt.event.ActionListener() {
+          public void actionPerformed(java.awt.event.ActionEvent evt) {
+            Browser.openLinkInBrowser(link);
+          }
+        });
+      }
+    });
+  }
+
+  public void setCloseButtonText(final String text) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JBClose.setText(text);
+      }
+    });
   }
 
   /**
@@ -47,6 +86,7 @@ public class NotificationWindow extends javax.swing.JFrame {
     jScrollPane1 = new javax.swing.JScrollPane();
     JTAInformation = new javax.swing.JTextArea();
     JBClose = new javax.swing.JButton();
+    JBMoreInfo = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Notification");
@@ -70,6 +110,8 @@ public class NotificationWindow extends javax.swing.JFrame {
       }
     });
 
+    JBMoreInfo.setText("More Info");
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -77,9 +119,14 @@ public class NotificationWindow extends javax.swing.JFrame {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(JLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(jScrollPane1)
-          .addComponent(JBClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(JLTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(JBClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addComponent(JBMoreInfo)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -90,7 +137,9 @@ public class NotificationWindow extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JBClose)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JBClose)
+          .addComponent(JBMoreInfo))
         .addContainerGap())
     );
 
@@ -100,11 +149,11 @@ public class NotificationWindow extends javax.swing.JFrame {
   private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
     // TODO add your handling code here:
     dispose();
-    countDown.countDown();
   }//GEN-LAST:event_JBCloseActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBClose;
+  private javax.swing.JButton JBMoreInfo;
   private javax.swing.JLabel JLTitle;
   private javax.swing.JTextArea JTAInformation;
   private javax.swing.JScrollPane jScrollPane1;

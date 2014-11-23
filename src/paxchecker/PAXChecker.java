@@ -9,6 +9,7 @@ import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
 import paxchecker.gui.Startup;
 import paxchecker.notification.NotificationHandler;
+import java.util.ArrayList;
 
 /**
  *
@@ -46,6 +47,8 @@ public final class PAXChecker {
     boolean cLine = false;
     boolean savePrefs = false;
     String[] tokens = new String[4];
+    ArrayList<String> handleList = new ArrayList<>();
+    handleList.add("@Official_PAX");
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -110,6 +113,9 @@ public final class PAXChecker {
             System.out.println("Setting check Twitter to false");
             checkTwitter = false;
             break;
+          case "-checktwitter":
+            String twitterHandle = args[a + 1];
+            handleList.add(twitterHandle);
           case "-alarm":
             System.out.println("Alarm activated");
             Audio.setPlayAlarm(true);
@@ -163,6 +169,9 @@ public final class PAXChecker {
     System.out.println("Loading patch notes...");
     TwitterReader.setKeys(tokens[0], tokens[1], tokens[2], tokens[3]);
     TwitterReader.init();
+    for (String s : handleList) {
+      Checker.addHandle(s);
+    }
     if (autoStart) {
       if (checkPax) {
         TicketChecker.addChecker(new CheckPaxsite());
@@ -171,7 +180,7 @@ public final class PAXChecker {
         TicketChecker.addChecker(new CheckShowclix());
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
-        TicketChecker.addChecker(new CheckTwitter());
+        Checker.queueTwitterHandles();
       }
     }
     if (cLine) {

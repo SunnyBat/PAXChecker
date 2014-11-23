@@ -16,6 +16,7 @@ import paxchecker.check.CheckPaxsite;
 import paxchecker.check.CheckShowclix;
 import paxchecker.check.CheckTwitter;
 import paxchecker.check.TicketChecker;
+import java.util.ArrayList;
 
 /**
  *
@@ -28,12 +29,23 @@ public class Checker {
   private static volatile boolean forceRefresh;
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
+  private static final ArrayList<String> handleList = new ArrayList<>();
   // GUIs
   private static Status status;
 
   public static void init() {
     status = new Status();
     TicketChecker.init(status);
+  }
+
+  public static void addHandle(String s) {
+    handleList.add(s);
+  }
+
+  public static void queueTwitterHandles() {
+    for (String s : handleList) {
+      TicketChecker.addChecker(new CheckTwitter(s));
+    }
   }
 
   /**

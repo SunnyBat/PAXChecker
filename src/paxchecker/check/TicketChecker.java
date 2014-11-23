@@ -27,12 +27,6 @@ public final class TicketChecker {
   }
 
   public static void addChecker(Check c) {
-    for (Check reg : checks) {
-      if (c.getClass().isInstance(reg)) {
-        System.out.println("Already registered " + c.getClass().getSimpleName() + "!");
-        return;
-      }
-    }
     c.init(status, threadWait); // MOVE LATER
     checks.add(c);
   }

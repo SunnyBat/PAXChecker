@@ -25,7 +25,7 @@ public abstract class Check implements Runnable {
   public final void run() {
     updateLink();
     System.out.println("Waiting: " + this.getClass().getSimpleName());
-    cycBar.arriveAndAwaitAdvance();
+    cycBar.arrive();
   }
 
   public abstract boolean ticketsFound();
