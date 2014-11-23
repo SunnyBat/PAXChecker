@@ -16,7 +16,7 @@ import paxchecker.notification.NotificationHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R3";
+  public static final String VERSION = "2.0.0 R4";
   public static Setup setup;
   private static Startup start;
 

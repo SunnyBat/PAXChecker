@@ -12,6 +12,9 @@ import paxchecker.Email;
 import paxchecker.KeyboardHandler;
 import paxchecker.PAXChecker;
 import paxchecker.SettingsHandler;
+import paxchecker.check.CheckPaxsite;
+import paxchecker.check.CheckShowclix;
+import paxchecker.check.CheckTwitter;
 import paxchecker.check.TicketChecker;
 
 /**
@@ -82,56 +85,19 @@ public class Checker {
     if (Email.getUsername() == null) {
       System.out.print("Email: ");
       try {
-        Email.setUsername(myScanner.next());
+        Email.setUsername(myScanner.nextLine());
         System.out.print("Password: ");
-        Email.setPassword(myScanner.next());
+        Email.setPassword(myScanner.nextLine());
       } catch (Exception e) {
       }
     }
     if (Email.getAddressList().isEmpty()) {
       System.out.print("Cell Number: ");
       try {
-        Email.addEmailAddress(myScanner.next());
+        Email.addEmailAddress(myScanner.nextLine());
       } catch (Exception e) {
       }
     }
-//    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
-    System.out.print("Check PAX Website (Y/N): ");
-    try {
-      if (!myScanner.next().toLowerCase().startsWith("n")) {
-//          Paxsite.setCheckPax(true);
-      } else {
-//          Paxsite.setCheckPax(false);
-      }
-    } catch (Exception e) {
-    }
-//    }
-//    if (Showclix.isCheckingShowclix() && Paxsite.isCheckingPaxWebsite()) {
-    System.out.print("Check Showclix Website (Y/N): ");
-    try {
-      if (!myScanner.next().toLowerCase().startsWith("n")) {
-//          Showclix.setCheckShowclix(true);
-      } else {
-//          Showclix.setCheckShowclix(false);
-      }
-    } catch (Exception e) {
-    }
-//    }
-    if (getRefreshTime() == 10) {
-      System.out.print("Refresh Time (seconds, no input limit at the moment): ");
-      try {
-        setRefreshTime(Integer.parseInt(myScanner.next(), 10));
-      } catch (Exception e) {
-      }
-    }
-    System.out.print("Play Alarm (Y/N): ");
-    try {
-      if (!myScanner.next().toLowerCase().startsWith("n")) {
-        Audio.setPlayAlarm(true);
-      }
-    } catch (Exception e) {
-    }
-    myScanner.nextLine(); // Consume mysterious extra input
     if (Browser.getExpo() == null) {
       System.out.print("Expo: ");
       try {
@@ -168,6 +134,50 @@ public class Checker {
         System.out.println();
       } catch (Exception e) {
       }
+    }
+    if (!TicketChecker.isCheckingPaxsite()) {
+      System.out.print("Check PAX Website (Y/N): ");
+      try {
+        if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
+          TicketChecker.addChecker(new CheckPaxsite());
+        }
+      } catch (Exception e) {
+      }
+    }
+    if (!TicketChecker.isCheckingShowclix()) {
+      System.out.print("Check Showclix Website (Y/N): ");
+      try {
+        if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
+          TicketChecker.addChecker(new CheckShowclix());
+          System.out.println("Added new Showclix.");
+        }
+      } catch (Exception e) {
+        System.out.println("ERROR!");
+        e.printStackTrace();
+      }
+    }
+    if (!TicketChecker.isCheckingTwitter()) {
+      System.out.print("Check Twitter (Y/N): ");
+      try {
+        if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
+          TicketChecker.addChecker(new CheckTwitter());
+        }
+      } catch (Exception e) {
+      }
+    }
+    if (getRefreshTime() == 10) {
+      System.out.print("Refresh Time (seconds, no input limit at the moment): ");
+      try {
+        setRefreshTime(Integer.parseInt(myScanner.nextLine(), 10));
+      } catch (Exception e) {
+      }
+    }
+    System.out.print("Play Alarm (Y/N): ");
+    try {
+      if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
+        Audio.setPlayAlarm(true);
+      }
+    } catch (Exception e) {
     }
   }
 

@@ -22,7 +22,7 @@ public abstract class Check implements Runnable {
   }
 
   @Override
-  public void run() {
+  public final void run() {
     updateLink();
     System.out.println("Waiting: " + this.getClass().getSimpleName());
     cycBar.arriveAndAwaitAdvance();

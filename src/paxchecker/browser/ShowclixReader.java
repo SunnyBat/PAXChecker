@@ -34,6 +34,7 @@ public class ShowclixReader {
 
   /**
    * Gets the complete Showclix Event Page link.
+   *
    * @param showclixID The Showclix Event ID
    * @return The complete link
    */
@@ -70,6 +71,7 @@ public class ShowclixReader {
 
   /**
    * Gets the latest Event ID for the given expo. Checks both the seller events and partner events.
+   *
    * @param expo The expo to check
    * @return The latest Event ID
    */
@@ -178,6 +180,9 @@ public class ShowclixReader {
   }
 
   private static int getSellerID(String expo) {
+    if (expo == null) {
+      return 48;
+    }
     switch (expo.toLowerCase()) {
       case "prime":
       case "pax prime":

@@ -70,7 +70,6 @@ public class TwitterReader {
     try {
       Paging p = new Paging(lastIDFound);
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE, p);
-      System.out.println("Size: " + statuses.size());
       if (statuses.isEmpty()) {
         return lastIDFound;
       }

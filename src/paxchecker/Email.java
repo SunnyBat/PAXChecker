@@ -41,6 +41,7 @@ public class Email {
    */
   public static void setUsername(String username) {
     if (username == null) {
+      System.out.println("ERROR: Username is null!");
       props.put("mail.smtp.user", "@yahoo.com");
       return;
     }
