@@ -1,5 +1,7 @@
 package paxchecker.browser;
 
+import paxchecker.check.TicketChecker;
+import paxchecker.tickets.Checker;
 import twitter4j.*;
 
 /**
@@ -11,6 +13,11 @@ public final class PrintUserStream {
     @Override
     public void onStatus(Status status) {
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
+      String link = TwitterReader.parseLink(status.getText());
+      if (!TicketChecker.hasOpenedLink(link)) {
+        Checker.linkFound(link);
+        TicketChecker.addLinkFound(link);
+      }
     }
 
     @Override

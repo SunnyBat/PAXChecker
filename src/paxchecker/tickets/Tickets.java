@@ -70,7 +70,7 @@ public class Tickets extends javax.swing.JFrame {
     jTextArea1.setForeground(new java.awt.Color(255, 51, 0));
     jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
-    jTextArea1.setText("PAX Tickets have gone on sale!\n\nAn attempt to open your browser to the PAX queue has been made. If it did not open, you will have to do so manually.\n\nGood luck buying tickets!\n- /u/SunnyBat (Sunnybat@yahoo.com)");
+    jTextArea1.setText("An update has been found!\n\nAn attempt to open the link found in your default browser has been made. If it did not open, you will have to do so manually.\n\nGood luck buying tickets!\n- /u/SunnyBat (Sunnybat@yahoo.com)");
     jTextArea1.setWrapStyleWord(true);
     jScrollPane1.setViewportView(jTextArea1);
 

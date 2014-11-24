@@ -63,21 +63,24 @@ public final class TicketChecker {
     return false;
   }
 
-  private static void setLinkFound(String link) {
+  private static synchronized void setLinkFound(String link) {
     linkFound = link;
-    openedLinks.add(linkFound);
   }
 
-  public static String getLinkFound() {
+  public static synchronized String getLinkFound() {
     return linkFound;
   }
 
-  public static void resetLinkFound() {
-    openedLinks.add(linkFound);
+  public static synchronized void resetLinkFound() {
+    addLinkFound(linkFound);
     linkFound = "";
   }
 
-  private static boolean hasOpenedLink(String s) {
+  public static synchronized void addLinkFound(String link) {
+    openedLinks.add(link);
+  }
+
+  public static synchronized boolean hasOpenedLink(String s) {
     for (String t : openedLinks) {
       if (t.equalsIgnoreCase(s)) {
         System.out.println("Already found link.");

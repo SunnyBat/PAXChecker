@@ -29,17 +29,20 @@ public class TwitterReader {
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
-    String[] temp  = HANDLES_TO_FOLLOW;
-    HANDLES_TO_FOLLOW = new String[HANDLES_TO_FOLLOW.length + 1];
-    System.arraycopy(temp, 0, HANDLES_TO_FOLLOW, 0, temp.length);
-    HANDLES_TO_FOLLOW[HANDLES_TO_FOLLOW.length - 1] = handle;
-    System.out.println("Twitter handle: " + handle);
+    addHandleToStream(handle);
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
       lastIDFound = statuses.get(0).getId();
     } catch (Exception ex) {
       System.out.println("Problem initializing Twitter API!");
     }
+  }
+
+  public static synchronized void addHandleToStream(String handle) {
+    String[] temp = HANDLES_TO_FOLLOW;
+    HANDLES_TO_FOLLOW = new String[HANDLES_TO_FOLLOW.length + 1];
+    System.arraycopy(temp, 0, HANDLES_TO_FOLLOW, 0, temp.length);
+    HANDLES_TO_FOLLOW[HANDLES_TO_FOLLOW.length - 1] = handle;
   }
 
   /**
@@ -178,7 +181,6 @@ public class TwitterReader {
     System.out.println(Arrays.toString(HANDLES_TO_FOLLOW));
     TwitterStream twitterStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
     twitterStream.addListener(PrintUserStream.listener);
-// user() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.
     twitterStream.user(HANDLES_TO_FOLLOW);
   }
 
