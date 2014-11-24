@@ -172,7 +172,7 @@ public class CommandLine extends CheckMethod {
       System.out.print("Check Twitter (Y/N): ");
       try {
         if (!myScanner.next().toLowerCase().startsWith("n")) {
-          TicketChecker.addChecker(new CheckTwitter());
+          Checker.startTwitterStreaming();
         }
       } catch (Exception e) {
       }

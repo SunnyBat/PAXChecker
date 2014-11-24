@@ -22,27 +22,19 @@ public class TwitterReader {
   private static String consumerSecret;
   private static String accessToken;
   private static String accessSecret;
+  private static TwitterStream myStream;
   private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available"};
-  private static String[] HANDLES_TO_FOLLOW = {};
   private long lastIDFound;
   private final String TWITTER_HANDLE;
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
-    addHandleToStream(handle);
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
       lastIDFound = statuses.get(0).getId();
     } catch (Exception ex) {
       System.out.println("Problem initializing Twitter API!");
     }
-  }
-
-  public static synchronized void addHandleToStream(String handle) {
-    String[] temp = HANDLES_TO_FOLLOW;
-    HANDLES_TO_FOLLOW = new String[HANDLES_TO_FOLLOW.length + 1];
-    System.arraycopy(temp, 0, HANDLES_TO_FOLLOW, 0, temp.length);
-    HANDLES_TO_FOLLOW[HANDLES_TO_FOLLOW.length - 1] = handle;
   }
 
   /**
@@ -124,7 +116,7 @@ public class TwitterReader {
    * @return The link from the tweet
    */
   public String getLinkFromTweet(long tweetID) {
-    return parseLink(getTweet(tweetID));
+    return Browser.parseLink(getTweet(tweetID));
   }
 
   public static void setKeys(String CK, String CS, String AT, String AS) {
@@ -156,32 +148,18 @@ public class TwitterReader {
     return false;
   }
 
-  public static String parseLink(String link) {
-    if (link == null) {
-      return "";
+  public static void runTwitterStream(String[] handles) {
+    if (isStreamingTwitter()) {
+      return;
     }
-    String linkFound = "";
-    if (link.contains("http://")) {
-      linkFound = link.substring(link.indexOf("http://"));
-    } else if (link.contains("https://")) {
-      linkFound = link.substring(link.indexOf("https://"));
-    } else if (link.contains("t.co/")) {
-      linkFound = link.substring(link.indexOf("t.co/"));
-    }
-    if (link.contains("t.co/")) {
-      linkFound = Browser.unshortenURL(linkFound);
-    }
-    if (linkFound.contains(" ")) {
-      linkFound = linkFound.substring(0, linkFound.indexOf(" "));
-    }
-    return linkFound.trim();
+    System.out.println(Arrays.toString(handles));
+    myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
+    myStream.addListener(PrintUserStream.listener);
+    myStream.user(handles);
   }
 
-  public static void runTwitterStream() {
-    System.out.println(Arrays.toString(HANDLES_TO_FOLLOW));
-    TwitterStream twitterStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
-    twitterStream.addListener(PrintUserStream.listener);
-    twitterStream.user(HANDLES_TO_FOLLOW);
+  public static boolean isStreamingTwitter() {
+    return myStream != null;
   }
 
 }

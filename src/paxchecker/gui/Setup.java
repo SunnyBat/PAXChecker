@@ -195,7 +195,7 @@ public class Setup extends javax.swing.JFrame {
       TicketChecker.addChecker(new CheckShowclix());
     }
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
-      Checker.queueTwitterHandles();
+      Checker.startTwitterStreaming();
     }
     Audio.setPlayAlarm(jCheckBox3.isSelected());
     Email.setUsername(JTFEmail.getText());

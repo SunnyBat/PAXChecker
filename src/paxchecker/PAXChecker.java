@@ -181,7 +181,7 @@ public final class PAXChecker {
         TicketChecker.addChecker(new CheckShowclix());
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
-        Checker.queueTwitterHandles();
+        Checker.startTwitterStreaming();
       }
     }
     if (cLine) {

@@ -14,14 +14,13 @@ import paxchecker.PAXChecker;
 import paxchecker.SettingsHandler;
 import paxchecker.check.CheckPaxsite;
 import paxchecker.check.CheckShowclix;
-import paxchecker.check.CheckTwitter;
 import paxchecker.check.TicketChecker;
 import java.util.ArrayList;
+import paxchecker.browser.TwitterReader;
 
 /**
  *
  * @author Sunny
- * @deprecated
  */
 public class Checker {
 
@@ -42,17 +41,14 @@ public class Checker {
     handleList.add(s);
   }
 
-  public static void queueTwitterHandles() {
-    for (String s : handleList) {
-      TicketChecker.addChecker(new CheckTwitter(s));
-    }
+  public static void startTwitterStreaming() {
+    TwitterReader.runTwitterStream(handleList.toArray(new String[handleList.size()]));
   }
 
   /**
    * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
    */
   public static void startCheckingWebsites() {
-    TicketChecker.preRun();
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
@@ -173,7 +169,7 @@ public class Checker {
       System.out.print("Check Twitter (Y/N): ");
       try {
         if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
-          TicketChecker.addChecker(new CheckTwitter());
+          startTwitterStreaming();
         }
       } catch (Exception e) {
       }

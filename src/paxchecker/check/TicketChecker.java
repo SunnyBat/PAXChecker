@@ -32,10 +32,6 @@ public final class TicketChecker {
     checks.add(c);
   }
 
-  public static void preRun() {
-    TwitterReader.runTwitterStream();
-  }
-
   public static boolean isUpdated() {
     for (Check c : checks) {
       threadPool.submit(c);
@@ -109,11 +105,12 @@ public final class TicketChecker {
   }
 
   public static boolean isCheckingTwitter() {
-    for (Check c : checks) {
-      if (CheckTwitter.class.isInstance(c)) {
-        return true;
-      }
-    }
-    return false;
+//    for (Check c : checks) {
+//      if (CheckTwitter.class.isInstance(c)) {
+//        return true;
+//      }
+//    }
+//    return false;
+    return TwitterReader.isStreamingTwitter();
   }
 }

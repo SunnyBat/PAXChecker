@@ -115,4 +115,30 @@ public class Browser {
     }
     return toShorten;
   }
+
+  /**
+   * Parses the link from the given String. Note that this cannot parse links with spaces.
+   * @param link The String with a link to extract
+   * @return The link
+   */
+  public static String parseLink(String link) {
+    if (link == null) {
+      return "";
+    }
+    String linkFound = "";
+    if (link.contains("http://")) {
+      linkFound = link.substring(link.indexOf("http://"));
+    } else if (link.contains("https://")) {
+      linkFound = link.substring(link.indexOf("https://"));
+    } else if (link.contains("t.co/")) {
+      linkFound = link.substring(link.indexOf("t.co/"));
+    }
+    if (link.contains("t.co/")) {
+      linkFound = Browser.unshortenURL(linkFound);
+    }
+    if (linkFound.contains(" ")) {
+      linkFound = linkFound.substring(0, linkFound.indexOf(" "));
+    }
+    return linkFound.trim();
+  }
 }

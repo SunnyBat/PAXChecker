@@ -13,7 +13,11 @@ public final class PrintUserStream {
     @Override
     public void onStatus(Status status) {
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
-      String link = TwitterReader.parseLink(status.getText());
+      if (!TwitterReader.hasKeyword(status.getText())) {
+        System.out.println("Tweet does not have keywords -- ignoring.");
+        return;
+      }
+      String link = Browser.parseLink(status.getText());
       if (!TicketChecker.hasOpenedLink(link)) {
         Checker.linkFound(link);
         TicketChecker.addLinkFound(link);

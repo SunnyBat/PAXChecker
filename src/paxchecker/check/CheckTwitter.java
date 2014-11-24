@@ -10,6 +10,7 @@ import paxchecker.browser.TwitterReader;
 /**
  *
  * @author Sunny
+ * @deprecated
  */
 public class CheckTwitter extends Check {
 
