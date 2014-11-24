@@ -16,6 +16,10 @@ public class Startup extends javax.swing.JFrame {
    */
   public Startup() {
     initComponents();
+    customComponents();
+  }
+
+  private void customComponents() {
     setLocationRelativeTo(null);
     try {
       javax.swing.JLabel picLabel = new javax.swing.JLabel(new javax.swing.ImageIcon(getClass().getResource("/resources/Loading.gif")));
@@ -24,7 +28,15 @@ public class Startup extends javax.swing.JFrame {
     } catch (Exception iOException) {
       iOException.printStackTrace();
     }
-    setVisible(true);
+  }
+
+  public void showWindow() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setVisible(true);
+      }
+    });
   }
 
   public void setStatus(final String text) {

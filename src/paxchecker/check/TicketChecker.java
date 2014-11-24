@@ -2,7 +2,7 @@ package paxchecker.check;
 
 import java.util.*;
 import java.util.concurrent.*;
-import paxchecker.browser.TwitterReader;
+import paxchecker.browser.TwitterStreamer;
 
 /**
  *
@@ -111,6 +111,6 @@ public final class TicketChecker {
 //      }
 //    }
 //    return false;
-    return TwitterReader.isStreamingTwitter();
+    return TwitterStreamer.isStreamingTwitter();
   }
 }

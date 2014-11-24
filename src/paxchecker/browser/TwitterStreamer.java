@@ -1,14 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package paxchecker.browser;
 
+import java.util.Arrays;
 import paxchecker.check.TicketChecker;
 import paxchecker.tickets.Checker;
 import twitter4j.*;
 
 /**
+ *
  * @author Sunny
  */
-public final class PrintUserStream {
+public class TwitterStreamer {
 
+  private static TwitterStream myStream;
   public static final UserStreamListener listener = new UserStreamListener() {
     @Override
     public void onStatus(Status status) {
@@ -114,4 +122,19 @@ public final class PrintUserStream {
       System.out.println("onException:" + ex.getMessage());
     }
   };
+
+  public static void runTwitterStream(Twitter twitter, String[] handles) {
+    if (isStreamingTwitter()) {
+      return;
+    }
+    System.out.println(Arrays.toString(handles));
+    myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
+    myStream.addListener(listener);
+    myStream.user(handles);
+  }
+
+  public static boolean isStreamingTwitter() {
+    return myStream != null;
+  }
+
 }

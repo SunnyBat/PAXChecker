@@ -9,8 +9,6 @@ import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
 import paxchecker.gui.Startup;
 import paxchecker.notification.NotificationHandler;
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -19,6 +17,8 @@ import java.util.concurrent.CountDownLatch;
 public final class PAXChecker {
 
   public static final String VERSION = "2.0.0 R4";
+  private static final Object LOCK = new Object();
+  private static boolean commandLine;
   public static Setup setup;
   private static Startup start;
 
@@ -27,9 +27,25 @@ public final class PAXChecker {
    */
   public static void main(String[] args) {
     System.out.println("Initializing...");
+    if (isCLine(args)) {
+      enableCommandLine();
+    } else {
+      start = new Startup();
+      start.setVisible(true);
+      start.setStatus("Initializing program...");
+    }
     initClasses();
     javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     startProgram(args);
+  }
+
+  private static boolean isCLine(String[] args) {
+    for (String s : args) {
+      if (s.equals("-cli")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static void initClasses() {
@@ -45,11 +61,9 @@ public final class PAXChecker {
     boolean checkShowclix = true;
     boolean checkTwitter = true;
     boolean autoStart = false;
-    boolean cLine = false;
     boolean savePrefs = false;
     String[] tokens = new String[4];
-    ArrayList<String> handleList = new ArrayList<>();
-    handleList.add("@Official_PAX");
+    Checker.addHandle("@Official_PAX");
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -116,7 +130,7 @@ public final class PAXChecker {
             break;
           case "-checktwitter":
             String twitterHandle = args[a + 1];
-            handleList.add(twitterHandle);
+            Checker.addHandle(twitterHandle);
           case "-alarm":
             System.out.println("Alarm activated");
             Audio.setPlayAlarm(true);
@@ -128,8 +142,8 @@ public final class PAXChecker {
           case "-autostart":
             autoStart = true;
             break;
-          case "-cli":
-            cLine = true;
+          case "-cli": // Redundant
+            enableCommandLine();
             break;
           case "-property":
             try {
@@ -170,9 +184,6 @@ public final class PAXChecker {
     System.out.println("Loading patch notes...");
     TwitterReader.setKeys(tokens[0], tokens[1], tokens[2], tokens[3]);
     TwitterReader.init();
-    for (String s : handleList) {
-      Checker.addHandle(s);
-    }
     if (autoStart) {
       if (checkPax) {
         TicketChecker.addChecker(new CheckPaxsite());
@@ -184,8 +195,7 @@ public final class PAXChecker {
         Checker.startTwitterStreaming();
       }
     }
-    if (cLine) {
-      ErrorDisplay.setCommandLine(true);
+    if (isCommandLine()) {
       if (doUpdate) {
         UpdateHandler.loadVersionNotes();
         if (UpdateHandler.updateAvailable()) {
@@ -209,7 +219,6 @@ public final class PAXChecker {
       Checker.startCommandLineWebsiteChecking();
       return;
     }
-    start = new paxchecker.gui.Startup();
     if (doUpdate) {
       start.setStatus("Loading Version Notes...");
       UpdateHandler.loadVersionNotes();
@@ -234,6 +243,18 @@ public final class PAXChecker {
       setup = new Setup();
     }
     Checker.loadAlertIcon();
+  }
+
+  public static void enableCommandLine() {
+    synchronized (LOCK) {
+      commandLine = true;
+    }
+  }
+
+  public static boolean isCommandLine() {
+    synchronized (LOCK) {
+      return commandLine;
+    }
   }
 
   /**
@@ -261,12 +282,5 @@ public final class PAXChecker {
     newThread.setDaemon(true); // Kill the JVM if only daemon threads are running
     newThread.setPriority(Thread.MIN_PRIORITY); // Let other Threads take priority, as this will probably not run for long
     newThread.start(); // Start the Thread
-  }
-
-  /**
-   * Sends a test email. Uses the same Thread, blocks until completed.
-   */
-  public static void sendTestEmail() {
-    Email.testEmail();
   }
 }

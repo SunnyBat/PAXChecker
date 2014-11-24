@@ -49,7 +49,7 @@ public class CommandLine extends CheckMethod {
                 case "testtext":
                 case "test email":
                 case "test text":
-                  PAXChecker.sendTestEmail();
+                  Email.testEmail();
                   break;
                 case "testalarm":
                 case "test alarm":

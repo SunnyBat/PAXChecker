@@ -1,5 +1,7 @@
 package paxchecker.error;
 
+import paxchecker.PAXChecker;
+
 /**
  *
  * @author SunnyBat
@@ -7,7 +9,6 @@ package paxchecker.error;
 public class ErrorDisplay {
 
   private static byte errorWindowCount = 0;
-  private static boolean commandLine;
 
   /**
    * Displays a window clearly indicating something has gone wrong. This should be used only when the program encounters an error that impedes its
@@ -53,7 +54,7 @@ public class ErrorDisplay {
    */
   public static ErrorWindow showErrorWindow(String windowTitle, String title, String message, Throwable t) {
     ErrorWindow errorWindow;
-    if (commandLine) {
+    if (PAXChecker.isCommandLine()) {
       System.out.println(windowTitle + " -- " + title + " -- " + message);
       if (t != null) {
         t.printStackTrace();
@@ -86,7 +87,7 @@ public class ErrorDisplay {
    */
   public static ErrorWindow detailedReport(Throwable t) {
     ErrorWindow errorWindow;
-    if (commandLine) {
+    if (PAXChecker.isCommandLine()) {
       t.printStackTrace();
       return null;
     }
@@ -121,10 +122,5 @@ public class ErrorDisplay {
 
   public static void fatalError() {
     System.out.println("ERROR: Fatal error!");
-  }
-
-  public static void setCommandLine(boolean cl) {
-    commandLine = cl;
-    System.out.println("ErrorHandler: Command-Line Set to " + cl);
   }
 }

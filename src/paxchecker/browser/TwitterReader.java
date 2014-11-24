@@ -3,7 +3,6 @@ package paxchecker.browser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.List;
 import paxchecker.Encryption;
 import paxchecker.error.ErrorDisplay;
@@ -149,17 +148,6 @@ public class TwitterReader {
   }
 
   public static void runTwitterStream(String[] handles) {
-    if (isStreamingTwitter()) {
-      return;
-    }
-    System.out.println(Arrays.toString(handles));
-    myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
-    myStream.addListener(PrintUserStream.listener);
-    myStream.user(handles);
+    TwitterStreamer.runTwitterStream(twitter, handles);
   }
-
-  public static boolean isStreamingTwitter() {
-    return myStream != null;
-  }
-
 }

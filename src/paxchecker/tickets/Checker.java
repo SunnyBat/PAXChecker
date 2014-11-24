@@ -11,7 +11,6 @@ import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.KeyboardHandler;
 import paxchecker.PAXChecker;
-import paxchecker.SettingsHandler;
 import paxchecker.check.CheckPaxsite;
 import paxchecker.check.CheckShowclix;
 import paxchecker.check.TicketChecker;
@@ -216,7 +215,7 @@ public class Checker {
             case "testtext":
             case "test email":
             case "test text":
-              PAXChecker.sendTestEmail();
+              Email.testEmail();
               break;
             case "testalarm":
             case "test alarm":

@@ -705,7 +705,6 @@ public class Setup extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void JCBCheckShowclixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckShowclixActionPerformed
-    // TODO add your handling code here:
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
