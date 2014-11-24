@@ -3,6 +3,7 @@ package paxchecker.browser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.List;
 import paxchecker.Encryption;
 import paxchecker.error.ErrorDisplay;
@@ -22,11 +23,16 @@ public class TwitterReader {
   private static String accessToken;
   private static String accessSecret;
   private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available"};
+  private static String[] HANDLES_TO_FOLLOW = {};
   private long lastIDFound;
   private final String TWITTER_HANDLE;
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
+    String[] temp  = HANDLES_TO_FOLLOW;
+    HANDLES_TO_FOLLOW = new String[HANDLES_TO_FOLLOW.length + 1];
+    System.arraycopy(temp, 0, HANDLES_TO_FOLLOW, 0, temp.length);
+    HANDLES_TO_FOLLOW[HANDLES_TO_FOLLOW.length - 1] = handle;
     System.out.println("Twitter handle: " + handle);
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
@@ -67,6 +73,11 @@ public class TwitterReader {
     return twitter != null;
   }
 
+  /**
+   * Gets the ID of the latest tweet.
+   *
+   * @return The ID of the latest tweet
+   */
   public long getLatestTweetID() {
     try {
       Paging p = new Paging(lastIDFound);
@@ -81,6 +92,12 @@ public class TwitterReader {
     return -1;
   }
 
+  /**
+   * Gets the text of the given Tweet
+   *
+   * @param tweetID The Tweet ID
+   * @return The tweet
+   */
   public String getTweet(long tweetID) {
     try {
       List<Status> statuses = twitter.getUserTimeline(TWITTER_HANDLE);
@@ -97,6 +114,12 @@ public class TwitterReader {
     }
   }
 
+  /**
+   * Gets the link from the given Tweet
+   *
+   * @param tweetID The tweet ID
+   * @return The link from the tweet
+   */
   public String getLinkFromTweet(long tweetID) {
     return parseLink(getTweet(tweetID));
   }
@@ -149,6 +172,14 @@ public class TwitterReader {
       linkFound = linkFound.substring(0, linkFound.indexOf(" "));
     }
     return linkFound.trim();
+  }
+
+  public static void runTwitterStream() {
+    System.out.println(Arrays.toString(HANDLES_TO_FOLLOW));
+    TwitterStream twitterStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
+    twitterStream.addListener(PrintUserStream.listener);
+// user() method internally creates a thread which manipulates TwitterStream and calls these adequate listener methods continuously.
+    twitterStream.user(HANDLES_TO_FOLLOW);
   }
 
 }

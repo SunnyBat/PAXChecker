@@ -52,6 +52,7 @@ public class Checker {
    * Starts a new non-daemon Thread that checks the websites for updates. This Thread also updates the Status GUI.
    */
   public static void startCheckingWebsites() {
+    TicketChecker.preRun();
     PAXChecker.continueProgram(new Runnable() {
       @Override
       public void run() {
@@ -317,7 +318,7 @@ public class Checker {
    * @param link The link to use for everything
    */
   public static void linkFound(String link) {
-    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+    Email.sendEmailInBackground("PAXChecker", "An update has been found! URL: " + link);
     KeyboardHandler.typeLinkNotification(link);
     Browser.openLinkInBrowser(link);
     showTicketsWindow(link);

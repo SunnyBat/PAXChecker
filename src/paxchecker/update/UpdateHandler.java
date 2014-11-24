@@ -21,7 +21,6 @@ public class UpdateHandler {
   private static volatile String versionNotes;
   private static volatile boolean useBetaVersion;
   private static volatile int updateLevel = -1;
-  private static volatile boolean updateProgram;
   private static long updateSize;
   private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String BETA_UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
@@ -156,54 +155,27 @@ public class UpdateHandler {
     return useBetaVersion;
   }
 
-  /**
-   * Checks whether or not an update is available and prompts the user to update if there is.
-   *
-   * @param args The command-line arguments to use when starting a new program instance
-   */
-  public static void checkUpdate(String[] args) {
-    try {
-      System.out.println("Checking for updates...");
-      if (updateAvailable()) {
-        CountDownLatch cdl = new CountDownLatch(1);
-        update = new paxchecker.update.Update(cdl);
-        try {
-          cdl.await();
-        } catch (InterruptedException iE) {
-          System.out.println("CDL interrupted, continuing...");
-        }
-        if (shouldUpdateProgram()) {
-          update.setStatusLabelText("Downloading update...");
-          updateProgram();
-          startNewProgramInstance(args);
-          update.dispose();
-          System.exit(0);
-        }
-      }
-    } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-      ErrorDisplay.fatalError();
-    }
-  }
-
   public static void autoUpdate() {
+    loadVersionNotes();
     String[] args = new String[16];
-    args[0] = "-cli";
-    args[1] = "-noupdate";
-    args[2] = "-username";
-    args[3] = Email.getUsername();
-    args[4] = "-password";
-    args[5] = Email.getPassword();
-    args[6] = "-cellnum";
-    args[7] = Email.convertToString(Email.getAddressList());
-    args[8] = "-expo";
-    args[9] = Browser.getExpo();
-    args[10] = "-delay";
-    args[11] = "" + Checker.getRefreshTime();
-    args[12] = "-autostart";
-    args[13] = "";//Paxsite.isCheckingPaxWebsite() ? "" : "-nopax";
-    args[14] = "";//Showclix.isCheckingShowclix() ? "" : "-noshowclix";
-    args[15] = Audio.soundEnabled() ? "-alarm" : "";
+    int a = 0;
+    args[a++] = "-cli";
+    args[a++] = "-noupdate";
+    args[a++] = "-username";
+    args[a++] = Email.getUsername();
+    args[a++] = "-password";
+    args[a++] = Email.getPassword();
+    args[a++] = "-cellnum";
+    args[a++] = Email.convertToString(Email.getAddressList());
+    args[a++] = "-expo";
+    args[a++] = Browser.getExpo();
+    args[a++] = "-delay";
+    args[a++] = "" + Checker.getRefreshTime();
+    args[a++] = "-autostart";
+    args[a++] = paxchecker.check.TicketChecker.isCheckingPaxsite() ? "" : "-nopax";
+    args[a++] = paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";
+    args[a++] = paxchecker.check.TicketChecker.isCheckingTwitter() ? "" : "-notwitter";
+    args[a++] = Audio.soundEnabled() ? "-alarm" : "";
     autoUpdate(args);
   }
 
@@ -215,9 +187,9 @@ public class UpdateHandler {
   public static void autoUpdate(String[] args) {
     try {
       System.out.println("Checking for updates...");
-      if (UpdateHandler.updateAvailable()) {
+      if (updateAvailable()) {
         System.out.println("Update found, downloading update...");
-        UpdateHandler.updateProgram();
+        updateProgram();
         System.out.println("Update finished.");
         startNewProgramInstance(args);
         System.exit(0);
@@ -268,21 +240,24 @@ public class UpdateHandler {
     return updateLevel;
   }
 
-  /**
-   * Set the updateProgram flag to true. This will start the program updating process. This should only be called by the Update GUI when the main()
-   * method is waiting for the prompt.
-   */
-  public static void startUpdatingProgram() {
-    updateProgram = true;
-  }
-
-  /**
-   * Checks whether or not the program should update.
-   *
-   * @return True if the program should update, false if not
-   */
-  public static boolean shouldUpdateProgram() {
-    return updateProgram;
+  public static boolean promptUpdate(String[] args) {
+    CountDownLatch cdl = new CountDownLatch(1);
+    update = new paxchecker.update.Update(cdl);
+    System.out.println("Update!");
+    try {
+      cdl.await();
+    } catch (InterruptedException iE) {
+      System.out.println("CDL interrupted, continuing...");
+    }
+    if (update.shouldUpdateProgram()) {
+      update.setStatusLabelText("Downloading update...");
+      UpdateHandler.updateProgram();
+      UpdateHandler.startNewProgramInstance(args);
+      System.exit(0);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**

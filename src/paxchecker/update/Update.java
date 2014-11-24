@@ -12,6 +12,7 @@ public class Update extends javax.swing.JFrame {
 
   private PatchNotes patchNotes;
   private CountDownLatch countdown;
+  private volatile boolean updateProgram;
 
   /**
    * Creates a new Update form. Note that the CountDownLatch is only ticked down by one.
@@ -33,6 +34,10 @@ public class Update extends javax.swing.JFrame {
         setVisible(true);
       }
     });
+  }
+
+  public boolean shouldUpdateProgram() {
+    return updateProgram;
   }
 
   /**
@@ -133,7 +138,8 @@ public class Update extends javax.swing.JFrame {
 
   private void JBYesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBYesActionPerformed
     // TODO add your handling code here:
-    UpdateHandler.startUpdatingProgram();
+    //UpdateHandler.startUpdatingProgram();
+    updateProgram = true;
     updateInit();
     JBYes.setVisible(false);
     JBNo.setVisible(false);

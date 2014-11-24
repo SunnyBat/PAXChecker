@@ -51,7 +51,7 @@ public class ErrorDisplay {
    * @param message The error message to display to the user
    * @param t The error to display
    */
-  public static synchronized ErrorWindow showErrorWindow(String windowTitle, String title, String message, Throwable t) {
+  public static ErrorWindow showErrorWindow(String windowTitle, String title, String message, Throwable t) {
     ErrorWindow errorWindow;
     if (commandLine) {
       System.out.println(windowTitle + " -- " + title + " -- " + message);
@@ -84,7 +84,7 @@ public class ErrorDisplay {
    *
    * @param t The error object
    */
-  public static synchronized ErrorWindow detailedReport(Throwable t) {
+  public static ErrorWindow detailedReport(Throwable t) {
     ErrorWindow errorWindow;
     if (commandLine) {
       t.printStackTrace();
@@ -115,7 +115,7 @@ public class ErrorDisplay {
   /**
    * Unused.
    */
-  public static synchronized void errWindowClosed() {
+  public static void errWindowClosed() {
     errorWindowCount--;
   }
 
@@ -123,7 +123,7 @@ public class ErrorDisplay {
     System.out.println("ERROR: Fatal error!");
   }
 
-  public static synchronized void setCommandLine(boolean cl) {
+  public static void setCommandLine(boolean cl) {
     commandLine = cl;
     System.out.println("ErrorHandler: Command-Line Set to " + cl);
   }

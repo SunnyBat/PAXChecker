@@ -40,6 +40,7 @@ public class NotificationWindow extends javax.swing.JFrame {
     JLTitle.setText(myNote.getTitle());
     JBClose.setText(myNote.getButtonText());
     JTAInformation.setText(myNote.getInfo());
+    JTAInformation.setCaretPosition(0);
     JBMoreInfo.setVisible(false);
   }
 
@@ -55,7 +56,7 @@ public class NotificationWindow extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        //JBMoreInfo.setVisible(true);
+        JBMoreInfo.setVisible(true);
         JBMoreInfo.addActionListener(new java.awt.event.ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent evt) {
             Browser.openLinkInBrowser(link);

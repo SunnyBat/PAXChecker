@@ -64,6 +64,7 @@ public class Tickets extends javax.swing.JFrame {
     setTitle("PAX On Sale!");
     setResizable(false);
 
+    jTextArea1.setEditable(false);
     jTextArea1.setColumns(20);
     jTextArea1.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
     jTextArea1.setForeground(new java.awt.Color(255, 51, 0));

@@ -2,6 +2,7 @@ package paxchecker.check;
 
 import java.util.*;
 import java.util.concurrent.*;
+import paxchecker.browser.TwitterReader;
 
 /**
  *
@@ -21,7 +22,7 @@ public final class TicketChecker {
 
   public static void init(paxchecker.gui.Status s) {
     status = s;
-    threadPool = Executors.newFixedThreadPool(3);
+    threadPool = Executors.newCachedThreadPool();
     threadWait = new Phaser();
     threadWait.register();
   }
@@ -29,6 +30,10 @@ public final class TicketChecker {
   public static void addChecker(Check c) {
     c.init(status, threadWait); // MOVE LATER
     checks.add(c);
+  }
+
+  public static void preRun() {
+    TwitterReader.runTwitterStream();
   }
 
   public static boolean isUpdated() {
@@ -41,11 +46,16 @@ public final class TicketChecker {
     for (Check c : checks) {
       //c.updateLink();
       c.updateGUI(status);
-      if (c.ticketsFound() && !hasOpenedLink(c.getLink())) {
-        System.out.println("FOUND LINK: " + c.getLink());
-        setLinkFound(c.getLink());
-        c.reset();
-        return true;
+      if (c.ticketsFound()) {
+        if (!hasOpenedLink(c.getLink())) {
+          System.out.println("FOUND LINK: " + c.getLink());
+          setLinkFound(c.getLink());
+          c.reset();
+          return true;
+        } else {
+          System.out.println("Link found, but already opened: " + c.getLink());
+          c.reset();
+        }
       } else {
         System.out.println("Link: " + c.getLink());
       }

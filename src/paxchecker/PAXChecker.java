@@ -10,6 +10,7 @@ import paxchecker.gui.Setup;
 import paxchecker.gui.Startup;
 import paxchecker.notification.NotificationHandler;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -187,7 +188,9 @@ public final class PAXChecker {
       ErrorDisplay.setCommandLine(true);
       if (doUpdate) {
         UpdateHandler.loadVersionNotes();
-        UpdateHandler.autoUpdate(args);
+        if (UpdateHandler.updateAvailable()) {
+          UpdateHandler.autoUpdate(args);
+        }
       } else {
         startBackgroundThread(new Runnable() {
           @Override
@@ -210,7 +213,9 @@ public final class PAXChecker {
     if (doUpdate) {
       start.setStatus("Loading Version Notes...");
       UpdateHandler.loadVersionNotes();
-      UpdateHandler.checkUpdate(args);
+      if (UpdateHandler.updateAvailable()) {
+        UpdateHandler.promptUpdate(args);
+      }
     } else {
       startBackgroundThread(new Runnable() {
         @Override
