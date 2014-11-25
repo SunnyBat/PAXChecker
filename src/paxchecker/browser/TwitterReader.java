@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import paxchecker.Encryption;
 import paxchecker.error.ErrorDisplay;
+import paxchecker.check.TwitterStreamer;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -37,9 +38,7 @@ public class TwitterReader {
   }
 
   /**
-   * Initialize the class Sets the lastStatusID to the latest tweet. The assumption is that tickets aren't already on sale. In case of false alarms
-   * (instances where the twitter uses one of the keywords, but tickets aren't on sale yet), after restarting the app it will not trigger on that
-   * tweet.
+   * Initialize the class. Sets the lastStatusID to the latest tweet. The assumption is that tickets aren't already on sale.
    */
   public static void init() {
     if (consumerKey == null || consumerSecret == null || accessToken == null || accessSecret == null) {
@@ -63,7 +62,6 @@ public class TwitterReader {
   }
 
   public static boolean isInitialized() {
-    System.out.println("Initialized: " + (twitter != null));
     return twitter != null;
   }
 
@@ -120,6 +118,7 @@ public class TwitterReader {
 
   public static void setKeys(String CK, String CS, String AT, String AS) {
     if (CK == null || CS == null || AT == null || AS == null) {
+      System.out.println("Twitter API keys not properly set!");
       return;
     }
     try {
@@ -148,6 +147,10 @@ public class TwitterReader {
   }
 
   public static void runTwitterStream(String[] handles) {
+    if (!isInitialized()) {
+      System.out.println("Unable to start Twitter stream -- Twitter not properly configured!");
+      return;
+    }
     TwitterStreamer.runTwitterStream(twitter, handles);
   }
 }

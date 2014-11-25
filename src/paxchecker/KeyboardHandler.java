@@ -20,11 +20,13 @@ public class KeyboardHandler {
    * Required to use KeyboardHandler. This initializes the KeyboardHandler and sets the Robot typing delay to 5ms between each key action.
    */
   public static void init() {
-    try {
-      myRobot = new Robot();
-      myRobot.setAutoDelay(5);
-    } catch (AWTException e) {
-      System.out.println("KeyboardHandler unable to start.");
+    if (!PAXChecker.isCommandLine()) {
+      try {
+        myRobot = new Robot();
+        myRobot.setAutoDelay(5);
+      } catch (AWTException e) {
+        System.out.println("KeyboardHandler unable to start.");
+      }
     }
   }
 

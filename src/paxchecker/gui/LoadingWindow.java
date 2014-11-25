@@ -9,14 +9,19 @@ package paxchecker.gui;
  *
  * @author Sunny
  */
-public class Startup extends javax.swing.JFrame {
+public class LoadingWindow extends javax.swing.JFrame {
 
   /**
    * Creates new form Startup
    */
-  public Startup() {
-    initComponents();
-    customComponents();
+  public LoadingWindow() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        customComponents();
+      }
+    });
   }
 
   private void customComponents() {
@@ -70,7 +75,7 @@ public class Startup extends javax.swing.JFrame {
     JLStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     JLStatus.setText("Starting up...");
 
-    JPPicture.setLayout(new java.awt.GridLayout());
+    JPPicture.setLayout(new java.awt.GridLayout(1, 0));
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);

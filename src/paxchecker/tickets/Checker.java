@@ -32,7 +32,10 @@ public class Checker {
   private static Status status;
 
   public static void init() {
-    status = new Status();
+    if (!PAXChecker.isCommandLine()) {
+      status = new Status();
+      loadAlertIcon();
+    }
     TicketChecker.init(status);
   }
 
@@ -55,32 +58,35 @@ public class Checker {
 //          SettingsHandler.saveLastEvent(Showclix.getShowclixLink());
 //          System.out.println("NOTE: Link has changed since last time!");
 //        }
-        status.customComponents();
-        status.setVisible(true);
-        setStatusIconInBackground(getIconName(Browser.getExpo()));
+        status.setupComponents();
+        status.showWindow();
+        setStatusIcon(getIconName(Browser.getExpo()));
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
-        do {
-          status.setLastCheckedText("Checking for updates...");
-          startMS = System.currentTimeMillis();
-          if (TicketChecker.isUpdated()) {
-            linkFound(TicketChecker.getLinkFound());
-            continue; // Immediately re-check in case other services have found updates
-          }
-          status.setDataUsageText(DataTracker.getDataUsedMB());
-          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
-            if (forceRefresh) {
-              forceRefresh = false;
-              break;
+        if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
+          status.setLastCheckedText("[Only Scanning Twitter]");
+        } else {
+          do {
+            status.setLastCheckedText("Checking for updates...");
+            startMS = System.currentTimeMillis();
+            if (TicketChecker.isUpdated()) {
+              linkFound(TicketChecker.getLinkFound());
+              continue; // Immediately re-check in case other services have found updates
             }
-            try {
-              Thread.sleep(100);
-            } catch (InterruptedException interruptedException) {
+            status.setDataUsageText(DataTracker.getDataUsedMB());
+            while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+              if (forceRefresh) {
+                forceRefresh = false;
+                break;
+              }
+              try {
+                Thread.sleep(100);
+              } catch (InterruptedException interruptedException) {
+              }
+              status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
             }
-            status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
-          }
-        } while (status.isDisplayable());
-        System.out.println("Finished!");
+          } while (status.isDisplayable());
+        }
       }
     });
   }
@@ -456,10 +462,10 @@ public class Checker {
    *
    * @param iconName The name of the icon to load
    */
-  public static void setStatusIconInBackground(final String iconName) {
+  public static void setStatusIcon(final String iconName) {
     try {
-      if (Checker.status != null) {
-        Checker.status.setIcon(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
+      if (status != null && iconName != null) {
+        status.setIcon(javax.imageio.ImageIO.read(PAXChecker.class.getResourceAsStream("/resources/" + iconName)));
       }
     } catch (Exception e) {
       System.out.println("Unable to load PAX icon: " + iconName);

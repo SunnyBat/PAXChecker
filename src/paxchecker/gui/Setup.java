@@ -29,50 +29,12 @@ public class Setup extends javax.swing.JFrame {
       public void run() {
         initComponents();
         customComponents();
-        setVisible(true);
       }
     });
   }
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-    if (UpdateHandler.getVersionNotes() != null) {
-      setPatchNotesText(UpdateHandler.getVersionNotes());
-    }
-    JTFEmail.setText(SettingsHandler.getEmail());
-    JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
-    JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
-    JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
-    JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? SettingsHandler.getCheckTwitter() : false);
-    JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
-    JLTwitterDisabled.setVisible(!TwitterReader.isInitialized());
-    //JCBCheckTwitter.setSelected(false);
-    jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
-    JSCheckTime.setValue(SettingsHandler.getDelayTime());
-    if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
-      JBStart.setEnabled(false);
-    }
-    java.awt.Dimension d = JTFCellNum.getSize();
-    String cellnum = SettingsHandler.getCellNumber();
-    if (cellnum.contains(";")) {
-      System.out.println("Debug: All = " + cellnum);
-      String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
-      JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
-      if (Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@"))).equals("[Other]")) {
-        JTFCellNum.setText(specificNumbers[0].trim());
-      } else {
-        JTFCellNum.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")).trim());
-      }
-      JTFCellNum.setCaretPosition(0);
-      for (int a = 1; a < specificNumbers.length; a++) {
-        System.out.println("specificNumbers[" + a + "] = " + specificNumbers[a]);
-        addPhonePanel(new ExtraPhonePanel(this, Email.splitEmail(specificNumbers[a])[0].trim(), Email.splitEmail(specificNumbers[a])[1].trim()));
-      }
-    } else {
-      System.out.println("Normal address");
-      JTFCellNum.setText(cellnum);
-    }
-    JTFCellNum.setSize(d);
     if (SettingsHandler.getSavePrefs()) {
       JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
       JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
@@ -98,6 +60,57 @@ public class Setup extends javax.swing.JFrame {
     JTPExtra.setCaretPosition(0);
     JTPInstructions.setText(loadHtml("/paxchecker/gui/Instructions.html"));
     JTPInstructions.setCaretPosition(0);
+  }
+
+  public void loadProgramSettings() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JTFEmail.setText(SettingsHandler.getEmail());
+        JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
+        JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
+        JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
+        JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? SettingsHandler.getCheckTwitter() : false);
+        JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
+        JLTwitterDisabled.setVisible(!TwitterReader.isInitialized());
+        //JCBCheckTwitter.setSelected(false);
+        jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
+        JSCheckTime.setValue(SettingsHandler.getDelayTime());
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
+          JBStart.setEnabled(false);
+        }
+        java.awt.Dimension d = JTFCellNum.getSize();
+        String cellnum = SettingsHandler.getCellNumber();
+        if (cellnum.contains(";")) {
+          System.out.println("Debug: All = " + cellnum);
+          String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
+          JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
+          if (Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@"))).equals("[Other]")) {
+            JTFCellNum.setText(specificNumbers[0].trim());
+          } else {
+            JTFCellNum.setText(specificNumbers[0].substring(0, specificNumbers[0].indexOf("@")).trim());
+          }
+          JTFCellNum.setCaretPosition(0);
+          for (int a = 1; a < specificNumbers.length; a++) {
+            System.out.println("specificNumbers[" + a + "] = " + specificNumbers[a]);
+            addPhonePanel(new ExtraPhonePanel(Setup.this, Email.splitEmail(specificNumbers[a])[0].trim(), Email.splitEmail(specificNumbers[a])[1].trim()));
+          }
+        } else {
+          System.out.println("Normal address");
+          JTFCellNum.setText(cellnum);
+        }
+        JTFCellNum.setSize(d);
+      }
+    });
+  }
+
+  public void showWindow() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setVisible(true);
+      }
+    });
   }
 
   private static String loadHtml(String localPath) {
@@ -310,6 +323,9 @@ public class Setup extends javax.swing.JFrame {
     JCBUseBeta = new javax.swing.JCheckBox();
     jButton3 = new javax.swing.JButton();
     JCBSaveCheckTwitter = new javax.swing.JCheckBox();
+    JCBLoadNotifications = new javax.swing.JCheckBox();
+    JCBCheckUpdates = new javax.swing.JCheckBox();
+    jCheckBox1 = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -630,6 +646,16 @@ public class Setup extends javax.swing.JFrame {
 
     JCBSaveCheckTwitter.setText("Save Twitter Checking");
 
+    JCBLoadNotifications.setText("Load Notificaitons");
+    JCBLoadNotifications.setEnabled(false);
+
+    JCBCheckUpdates.setText("Check for Updates");
+    JCBCheckUpdates.setEnabled(false);
+
+    jCheckBox1.setText("Save Twitter Keys");
+    jCheckBox1.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
+    jCheckBox1.setEnabled(false);
+
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
     jPanel5Layout.setHorizontalGroup(
@@ -641,13 +667,10 @@ public class Setup extends javax.swing.JFrame {
             .addComponent(JCBSaveRefreshTime)
             .addGap(149, 149, 149)
             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-          .addGroup(jPanel5Layout.createSequentialGroup()
-            .addComponent(JCBSavePreferences)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(JCBUseBeta))
-          .addGroup(jPanel5Layout.createSequentialGroup()
+          .addComponent(jScrollPane1)
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(JCBSavePreferences)
               .addComponent(JCBSavePlayAlarm)
               .addComponent(JCBSaveEvent)
               .addComponent(JCBSaveCellnum)
@@ -655,24 +678,35 @@ public class Setup extends javax.swing.JFrame {
               .addComponent(JCBSaveCheckPax)
               .addComponent(JCBSaveCheckTwitter)
               .addComponent(JCBSaveEmail))
-            .addGap(0, 0, Short.MAX_VALUE)))
+            .addGap(125, 125, 125)
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(JCBLoadNotifications, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(JCBCheckUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+              .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(JCBUseBeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
       jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(JCBSavePreferences)
-          .addComponent(JCBUseBeta))
+        .addComponent(JCBSavePreferences)
         .addGap(18, 18, 18)
-        .addComponent(JCBSaveEmail)
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBSaveEmail)
+          .addComponent(JCBLoadNotifications))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBSaveCellnum)
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBSaveCellnum)
+          .addComponent(JCBCheckUpdates))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBSaveCheckPax)
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBSaveCheckPax)
+          .addComponent(jCheckBox1))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBSaveCheckShowclix)
+        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBSaveCheckShowclix)
+          .addComponent(JCBUseBeta))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSaveCheckTwitter)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -794,8 +828,10 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JComboBox JCBCarrier;
   private javax.swing.JCheckBox JCBCheckShowclix;
   private javax.swing.JCheckBox JCBCheckTwitter;
+  private javax.swing.JCheckBox JCBCheckUpdates;
   private javax.swing.JCheckBox JCBCheckWebsite;
   private javax.swing.JComboBox JCBExpo;
+  private javax.swing.JCheckBox JCBLoadNotifications;
   private javax.swing.JCheckBox JCBSaveCellnum;
   private javax.swing.JCheckBox JCBSaveCheckPax;
   private javax.swing.JCheckBox JCBSaveCheckShowclix;
@@ -815,6 +851,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JTextPane JTPExtra;
   private javax.swing.JTextPane JTPInstructions;
   private javax.swing.JButton jButton3;
+  private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JCheckBox jCheckBox3;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;

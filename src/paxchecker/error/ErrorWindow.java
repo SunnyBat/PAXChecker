@@ -18,6 +18,15 @@ public class ErrorWindow extends javax.swing.JFrame {
     initComponents();
   }
 
+  public void showWindow() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        setVisible(true);
+      }
+    });
+  }
+
   public void setCopyClipboard() {
     clipboard = true;
   }

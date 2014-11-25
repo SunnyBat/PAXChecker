@@ -53,7 +53,6 @@ public class ErrorDisplay {
    * @param t The error to display
    */
   public static ErrorWindow showErrorWindow(String windowTitle, String title, String message, Throwable t) {
-    ErrorWindow errorWindow;
     if (PAXChecker.isCommandLine()) {
       System.out.println(windowTitle + " -- " + title + " -- " + message);
       if (t != null) {
@@ -61,6 +60,7 @@ public class ErrorDisplay {
       }
       return null;
     }
+    ErrorWindow errorWindow;
     if (errorWindowCount > 10) {
       System.out.println("Stopped showing error windows -- too many!");
       return null;
@@ -69,7 +69,7 @@ public class ErrorDisplay {
     errorWindow.setTitleText(windowTitle);
     errorWindow.setErrorText(title);
     errorWindow.setInformationText(message);
-    errorWindow.setVisible(true);
+    errorWindow.showWindow();
     if (t != null) {
       errorWindow.setExtraButtonEnabled(true);
       errorWindow.myError = t;
@@ -86,11 +86,11 @@ public class ErrorDisplay {
    * @param t The error object
    */
   public static ErrorWindow detailedReport(Throwable t) {
-    ErrorWindow errorWindow;
     if (PAXChecker.isCommandLine()) {
       t.printStackTrace();
       return null;
     }
+    ErrorWindow errorWindow;
     errorWindow = new ErrorWindow();
     errorWindow.setTitleText("Error Information");
     errorWindow.setErrorText("StackTrace Information:");
@@ -106,7 +106,7 @@ public class ErrorDisplay {
       message += "\n";
     }
     errorWindow.setInformationText(message);
-    errorWindow.setVisible(true);
+    errorWindow.showWindow();
     errorWindowCount++;
     System.out.println(t.getMessage());
     t.printStackTrace();

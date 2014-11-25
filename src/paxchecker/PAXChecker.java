@@ -7,7 +7,7 @@ import paxchecker.check.*;
 import paxchecker.tickets.Checker;
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
-import paxchecker.gui.Startup;
+import paxchecker.gui.LoadingWindow;
 import paxchecker.notification.NotificationHandler;
 
 /**
@@ -16,11 +16,11 @@ import paxchecker.notification.NotificationHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R4";
+  public static Setup setup;
+  public static final String VERSION = "2.0.0 R5";
   private static final Object LOCK = new Object();
   private static boolean commandLine;
-  public static Setup setup;
-  private static Startup start;
+  private static LoadingWindow start;
 
   /**
    * @param args the command line arguments
@@ -28,14 +28,16 @@ public final class PAXChecker {
   public static void main(String[] args) {
     System.out.println("Initializing...");
     if (isCLine(args)) {
+      start.setStatus("Initializing program...");
       enableCommandLine();
     } else {
-      start = new Startup();
-      start.setVisible(true);
+      start = new LoadingWindow();
       start.setStatus("Initializing program...");
+      start.showWindow();
+      javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
+      setup = new Setup();
     }
     initClasses();
-    javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
     startProgram(args);
   }
 
@@ -51,6 +53,7 @@ public final class PAXChecker {
   private static void initClasses() {
     Checker.init();
     Email.init();
+    UpdateHandler.init();
     KeyboardHandler.init();
     NotificationHandler.init();
   }
@@ -62,7 +65,7 @@ public final class PAXChecker {
     boolean checkTwitter = true;
     boolean autoStart = false;
     boolean savePrefs = false;
-    String[] tokens = new String[4];
+    String[] twitterTokens = new String[4];
     Checker.addHandle("@Official_PAX");
     if (args.length > 0) {
       System.out.println("Args!");
@@ -158,16 +161,16 @@ public final class PAXChecker {
             savePrefs = true;
             break;
           case "-consumerkey":
-            tokens[0] = args[a + 1];
+            twitterTokens[0] = args[a + 1];
             break;
           case "-consumersecret":
-            tokens[1] = args[a + 1];
+            twitterTokens[1] = args[a + 1];
             break;
           case "-applicationkey":
-            tokens[2] = args[a + 1];
+            twitterTokens[2] = args[a + 1];
             break;
           case "-applicationsecret":
-            tokens[3] = args[a + 1];
+            twitterTokens[3] = args[a + 1];
             break;
           default:
             if (args[a].startsWith("-")) {
@@ -182,7 +185,7 @@ public final class PAXChecker {
       }
     }
     System.out.println("Loading patch notes...");
-    TwitterReader.setKeys(tokens[0], tokens[1], tokens[2], tokens[3]);
+    TwitterReader.setKeys(twitterTokens[0], twitterTokens[1], twitterTokens[2], twitterTokens[3]);
     TwitterReader.init();
     if (autoStart) {
       if (checkPax) {
@@ -240,9 +243,9 @@ public final class PAXChecker {
       NotificationHandler.loadNotifications();
       start.dispose();
       NotificationHandler.showNewNotifications();
-      setup = new Setup();
+      setup.loadProgramSettings();
+      setup.showWindow();
     }
-    Checker.loadAlertIcon();
   }
 
   public static void enableCommandLine() {

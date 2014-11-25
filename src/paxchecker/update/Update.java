@@ -1,6 +1,5 @@
 package paxchecker.update;
 
-import paxchecker.*;
 import java.util.concurrent.CountDownLatch;
 import paxchecker.gui.PatchNotes;
 
@@ -11,7 +10,7 @@ import paxchecker.gui.PatchNotes;
 public class Update extends javax.swing.JFrame {
 
   private PatchNotes patchNotes;
-  private CountDownLatch countdown;
+  private final CountDownLatch countdown = new CountDownLatch(1);
   private volatile boolean updateProgram;
 
   /**
@@ -19,21 +18,36 @@ public class Update extends javax.swing.JFrame {
    *
    * @param cdl The CountDownLatch object to tick down.
    */
-  public Update(CountDownLatch cdl) {
-    countdown = cdl;
+  public Update() {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         initComponents();
-        //JLStatus.setVisible(false);
-        JPBProgressBar.setVisible(false);
-        pack();
-        setLocationRelativeTo(null);
-        setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
-        setYesButtonText(UpdateHandler.getUpdateLevel());
+        customComponents();
+      }
+    });
+  }
+
+  private void customComponents() {
+    //JLStatus.setVisible(false);
+    JPBProgressBar.setVisible(false);
+    pack();
+    setLocationRelativeTo(null);
+    setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
+    setYesButtonText(UpdateHandler.getUpdateLevel());
+  }
+
+  public void showWindow() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
         setVisible(true);
       }
     });
+  }
+
+  public void await() throws InterruptedException {
+    countdown.await();
   }
 
   public boolean shouldUpdateProgram() {

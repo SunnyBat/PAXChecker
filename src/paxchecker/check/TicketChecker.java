@@ -2,7 +2,6 @@ package paxchecker.check;
 
 import java.util.*;
 import java.util.concurrent.*;
-import paxchecker.browser.TwitterStreamer;
 
 /**
  *
