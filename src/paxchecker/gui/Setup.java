@@ -23,7 +23,7 @@ public class Setup extends javax.swing.JFrame {
   public Setup() {
     twitterDisabledWindow.setTitleText("Twitter Disabled?");
     twitterDisabledWindow.setErrorText("Why is Twitter Disabled?");
-    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, you must create an application with the Twitter API: https://apps.twitter.com/app/new \nAfter that, you must specify your four keys using command-line arguments.");
+    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, follow the instructions here: https://redd.it/2nct50");
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
