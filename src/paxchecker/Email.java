@@ -268,11 +268,16 @@ public class Email {
 
   /**
    * Sets a custom Property to use while sending an email. This overrides any program settings.
+   *
    * @param key The property key
    * @param value The property value
    */
   public static void setProperty(String key, String value) {
     //props.put(key, value);
+    if (key == null || value == null) {
+      System.out.println("Unable to set key+value -- null detected");
+      return;
+    }
     if (propList.contains(key)) {
       System.out.println("CONTAINS KEY, REMOVING");
       int place = propList.indexOf(key);

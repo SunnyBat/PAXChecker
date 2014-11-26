@@ -112,6 +112,8 @@ public class Browser {
         }
       }
     } catch (Exception e) {
+      System.out.println("ERROR: Unable to shorten link: " + toShorten);
+      e.printStackTrace();
     }
     return toShorten;
   }

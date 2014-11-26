@@ -8,17 +8,25 @@ import java.util.concurrent.*;
  */
 public abstract class Check implements Runnable {
 
-  protected javax.swing.JLabel linkLabel;
+  private javax.swing.JLabel linkLabel;
   private Phaser cycBar;
 
   public Check() {
   }
 
   public void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
-    linkLabel = s.addLinkJLabel();
+    if (s != null) {
+      linkLabel = s.addLinkJLabel();
+    }
     cycBar = cB;
     cycBar.register();
     reset();
+  }
+
+  public final void updateLabel(paxchecker.gui.Status s, String text) {
+    if (s != null) {
+      s.updateJLabel(linkLabel, text);
+    }
   }
 
   @Override

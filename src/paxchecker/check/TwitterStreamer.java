@@ -8,7 +8,6 @@ package paxchecker.check;
 import java.util.Arrays;
 import paxchecker.browser.Browser;
 import paxchecker.browser.TwitterReader;
-import paxchecker.check.TicketChecker;
 import paxchecker.tickets.Checker;
 import twitter4j.*;
 

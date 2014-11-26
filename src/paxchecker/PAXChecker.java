@@ -17,7 +17,7 @@ import paxchecker.notification.NotificationHandler;
 public final class PAXChecker {
 
   public static Setup setup;
-  public static final String VERSION = "2.0.0 R5";
+  public static final String VERSION = "2.0.0 R5-1";
   private static final Object LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
@@ -28,7 +28,6 @@ public final class PAXChecker {
   public static void main(String[] args) {
     System.out.println("Initializing...");
     if (isCLine(args)) {
-      start.setStatus("Initializing program...");
       enableCommandLine();
     } else {
       start = new LoadingWindow();

@@ -47,9 +47,9 @@ public class PaxsiteReader {
         }
       }
     } catch (UnknownHostException | MalformedURLException | SocketTimeoutException e) {
-      return "NoConnection";
+      return "[NoConnection]";
     } catch (IOException ioe) {
-      return "IOException";
+      return "[IOException]";
     } catch (Exception e) {
       ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
       System.out.println("ERROR");
@@ -65,7 +65,7 @@ public class PaxsiteReader {
         ioe.printStackTrace();
       }
     }
-    return "NoFind";
+    return "[NoFind]";
   }
 
   /**
@@ -98,7 +98,7 @@ public class PaxsiteReader {
     } catch (Exception e) {
       System.out.println("ERROR: Unable to parse link from button");
       e.printStackTrace();
-      return "[Button Not Found]";
+      return "[Button Parsing Error]";
     }
   }
 

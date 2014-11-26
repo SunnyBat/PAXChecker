@@ -34,7 +34,7 @@ public class CheckTwitter extends Check {
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     twitter = new TwitterReader(twitterHandle);
     super.init(s, cB);
-    s.updateJLabel(linkLabel, "Twitter");
+    updateLabel(s, "Twitter");
   }
 
   @Override
@@ -63,6 +63,6 @@ public class CheckTwitter extends Check {
 
   @Override
   public synchronized void updateGUI(paxchecker.gui.Status s) {
-    s.updateJLabel(linkLabel, "Current Tweet ID: " + currentTweetID);
+    updateLabel(s, "Current Tweet ID: " + currentTweetID);
   }
 }

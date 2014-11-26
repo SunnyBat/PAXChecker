@@ -20,7 +20,7 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    s.updateJLabel(linkLabel, "Showclix");
+    updateLabel(s, "Showclix");
   }
 
   @Override
@@ -40,7 +40,7 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized void updateGUI(paxchecker.gui.Status s) {
-    s.updateJLabel(linkLabel, "Current Showclix Link: " + getLink());
+    updateLabel(s, "Current Showclix Link: " + getLink());
   }
 
   @Override

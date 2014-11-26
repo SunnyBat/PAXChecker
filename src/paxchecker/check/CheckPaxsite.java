@@ -24,7 +24,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized void init(paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    s.updateJLabel(linkLabel, "Paxsite");
+    updateLabel(s, "Paxsite");
   }
 
   @Override
@@ -33,9 +33,9 @@ public class CheckPaxsite extends Check {
       return false;
     } else if (currentLinkFound == null) {
       return false;
-    } else if (currentLinkFound.equals("IOException") || currentLinkFound.equals("NoConnection")) {
+    } else if (currentLinkFound.equals("[IOException]") || currentLinkFound.equals("[NoConnection]")) {
       return false;
-    } else if (currentLinkFound.equals("NoFind")) {
+    } else if (currentLinkFound.equals("[NoFind]") || currentLinkFound.equals("[Button Parsing Error]")) {
       return false;
     } else if (!currentLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(Browser.getExpo()) + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
@@ -56,7 +56,7 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized void updateGUI(paxchecker.gui.Status s) {
-    s.updateJLabel(linkLabel, "Current Website Link: " + getLink());
+    updateLabel(s, "Current Website Link: " + getLink());
   }
 
   @Override

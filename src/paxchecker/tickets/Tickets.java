@@ -61,7 +61,7 @@ public class Tickets extends javax.swing.JFrame {
     jTextArea1 = new javax.swing.JTextArea();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-    setTitle("PAX On Sale!");
+    setTitle("PAX Update Found!");
     setResizable(false);
 
     jTextArea1.setEditable(false);
