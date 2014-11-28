@@ -99,6 +99,7 @@ public class Browser {
     try {
       fullURL = new URL(UNSHORTEN_API_LINK + toShorten);
       myConn = fullURL.openConnection();
+      myConn.setConnectTimeout(3000);
       myConn.connect();
       Scanner scan = new Scanner(myConn.getInputStream());
       String line;
@@ -120,6 +121,7 @@ public class Browser {
 
   /**
    * Parses the link from the given String. Note that this cannot parse links with spaces.
+   *
    * @param link The String with a link to extract
    * @return The link
    */
@@ -140,6 +142,10 @@ public class Browser {
     }
     if (linkFound.contains(" ")) {
       linkFound = linkFound.substring(0, linkFound.indexOf(" "));
+    }
+    if (linkFound.endsWith("/")) {
+      linkFound = linkFound.substring(0, linkFound.length() - 1);
+      System.out.println("New link: " + linkFound);
     }
     return linkFound.trim();
   }

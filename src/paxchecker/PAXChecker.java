@@ -16,8 +16,8 @@ import paxchecker.notification.NotificationHandler;
  */
 public final class PAXChecker {
 
-  public static Setup setup;
   public static final String VERSION = "2.0.0 R5-1";
+  private static Setup setup;
   private static final Object LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
@@ -30,11 +30,16 @@ public final class PAXChecker {
     if (isCLine(args)) {
       enableCommandLine();
     } else {
-      start = new LoadingWindow();
-      start.setStatus("Initializing program...");
-      start.showWindow();
-      javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
-      setup = new Setup();
+      try {
+        start = new LoadingWindow();
+        start.setStatus("Initializing program...");
+        start.showWindow();
+        javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
+        setup = new Setup();
+      } catch (java.awt.HeadlessException e) {
+        System.out.println("Headless environment detected: Switching to CLI mode.");
+        enableCommandLine();
+      }
     }
     initClasses();
     startProgram(args);
@@ -58,7 +63,7 @@ public final class PAXChecker {
   }
 
   public static void startProgram(String[] args) {
-    boolean doUpdate = true;
+    boolean doUpdate = SettingsHandler.getLoadUpdates();
     boolean checkPax = true;
     boolean checkShowclix = true;
     boolean checkTwitter = true;
@@ -178,14 +183,17 @@ public final class PAXChecker {
             break;
         }
       }
-      if (autoStart && !checkPax && !checkShowclix) {
-        System.out.println("ERROR: Program is not checking PAX or Showclix website. Program will now exit.");
+      if (autoStart && !checkPax && !checkShowclix && !checkTwitter) {
+        System.out.println("ERROR: Program is not checking PAX website, Showclix website, or Twitter. Program will now exit.");
         System.exit(0);
       }
     }
-    System.out.println("Loading patch notes...");
+    if (!SettingsHandler.getLoadNotifications()) {
+      NotificationHandler.setLastNotificationID("DISABLE");
+    }
     TwitterReader.setKeys(twitterTokens[0], twitterTokens[1], twitterTokens[2], twitterTokens[3]);
     TwitterReader.init();
+    System.out.println("Loading patch notes...");
     if (autoStart) {
       if (checkPax) {
         TicketChecker.addChecker(new CheckPaxsite());
@@ -227,21 +235,25 @@ public final class PAXChecker {
       if (UpdateHandler.updateAvailable()) {
         UpdateHandler.promptUpdate(args);
       }
+      setup.setPatchNotesText(UpdateHandler.getVersionNotes());
     } else {
       startBackgroundThread(new Runnable() {
         @Override
         public void run() {
           UpdateHandler.loadVersionNotes();
+          setup.setPatchNotesText(UpdateHandler.getVersionNotes());
         }
       }, "Patch Notes");
     }
+    start.setStatus("Loading Notifications...");
+    NotificationHandler.loadNotifications();
+    start.setStatus("Program loaded!");
+    start.dispose();
+    NotificationHandler.showNewNotifications();
     if (autoStart) {
+      start.dispose();
       Checker.startCheckingWebsites();
     } else {
-      start.setStatus("Loading Notifications...");
-      NotificationHandler.loadNotifications();
-      start.dispose();
-      NotificationHandler.showNewNotifications();
       setup.loadProgramSettings();
       setup.showWindow();
     }

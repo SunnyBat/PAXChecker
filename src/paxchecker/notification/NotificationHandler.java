@@ -39,6 +39,9 @@ public class NotificationHandler {
    * This loads all new notifications. This method will block until complete.
    */
   public static void loadNotifications() {
+    if (lastNotificationID != null && lastNotificationID.equals("DISABLE")) {
+      return;
+    }
     URLConnection inputConnection;
     InputStream textInputStream;
     BufferedReader myReader = null;
@@ -128,7 +131,6 @@ public class NotificationHandler {
     if (!isNewNotification()) {
       return;
     }
-    ArrayList<NotificationWindow> notList = new ArrayList<>();
     boolean first = false;
     ArrayList<Notification> newNotifications = newNotifications();
     CountDownLatch cDL = new CountDownLatch(newNotifications.size());
@@ -142,7 +144,6 @@ public class NotificationHandler {
       if (n.getButtonText() != null) {
         nW.setCloseButtonText(n.getButtonText());
       }
-      notList.add(nW);
     }
     newNotifications.clear();
     try {

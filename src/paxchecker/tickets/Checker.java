@@ -99,16 +99,19 @@ public class Checker {
     if (Email.getUsername() == null) {
       System.out.print("Email: ");
       try {
-        Email.setUsername(myScanner.nextLine());
-        System.out.print("Password: ");
-        Email.setPassword(myScanner.nextLine());
-      } catch (Exception e) {
-      }
-    }
-    if (Email.getAddressList().isEmpty()) {
-      System.out.print("Cell Number: ");
-      try {
-        Email.addEmailAddress(myScanner.nextLine());
+        String name = myScanner.nextLine();
+        if (name.length() < 5) {
+          System.out.println("Invalid username.");
+        } else {
+          Email.setUsername(name);
+          System.out.print("Password: ");
+          Email.setPassword(new String(System.console().readPassword()));
+          System.out.print("Cell Number: ");
+          try {
+            Email.addEmailAddress(myScanner.nextLine());
+          } catch (Exception e) {
+          }
+        }
       } catch (Exception e) {
       }
     }

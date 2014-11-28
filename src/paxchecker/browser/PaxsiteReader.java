@@ -18,6 +18,7 @@ public class PaxsiteReader {
 
   public static String getCurrentButtonLink(String expo) {
     return parseHRef(getCurrentButtonLinkLine(expo));
+    //return Browser.parseLink(getCurrentButtonLinkLine(expo)); // Adds " to end of link
   }
 
   /**

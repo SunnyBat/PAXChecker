@@ -122,9 +122,6 @@ public class UpdateHandler {
       if (update != null) {
         update.setYesButtonText(getUpdateLevel());
       }
-      if (PAXChecker.setup != null) {
-        PAXChecker.setup.setPatchNotesText(versionNotes);
-      }
       System.out.println("Finished loading version notes.");
     } catch (Exception e) {
       ErrorDisplay.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);

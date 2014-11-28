@@ -52,7 +52,7 @@ public class SettingsHandler {
    * Preferences will likely be incorrect.
    */
   public static void saveAllPrefs() {
-    saveAllPrefs(Checker.getRefreshTime(), TicketChecker.isCheckingPaxsite(), TicketChecker.isCheckingShowclix(), TicketChecker.isCheckingTwitter(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta());
+    saveAllPrefs(Email.getUsername(), Email.convertToString(Email.getAddressList()), Checker.getRefreshTime(), TicketChecker.isCheckingPaxsite(), TicketChecker.isCheckingShowclix(), TicketChecker.isCheckingTwitter(), Audio.soundEnabled(), Browser.getExpo(), UpdateHandler.getUseBeta(), true, true);
   }
 
   /**
@@ -66,12 +66,11 @@ public class SettingsHandler {
    * @param expo The Expo being checked for. Note it should be in "PAX XXXX" format.
    * @param useBeta True to use BETA versions, false to not
    */
-  public static void saveAllPrefs(int refreshTime, boolean checkPax, boolean checkShowclix, boolean checkTwitter, boolean playAlarm, String expo, boolean useBeta) {
+  public static void saveAllPrefs(String email, String cNum, int refreshTime, boolean checkPax, boolean checkShowclix, boolean checkTwitter, boolean playAlarm, String expo, boolean useBeta, boolean lNotifs, boolean lUpdts) {
     try {
       myPrefs.sync();
     } catch (BackingStoreException bSE) {
       ErrorDisplay.showErrorWindow("Unable to sync Preferences! Preferences will not be saved.");
-      bSE.printStackTrace();
       return;
     }
     try {
@@ -81,14 +80,14 @@ public class SettingsHandler {
       saveCheckTwitter(checkTwitter);
       savePlayAlarm(playAlarm);
       saveEvent(expo == null ? "" : expo);
-      saveCellNum();
-      saveEmail();
+      saveCellNum(cNum);
+      saveEmail(email);
       saveUseBeta(useBeta);
-      System.out.println("Pax = " + checkPax + ", Showclix = " + checkShowclix + ", playAlarm = " + playAlarm + ", Expo = " + expo);
+      saveLoadNotifications(lNotifs);
+      saveLoadUpdates(lUpdts);
       myPrefs.flush();
     } catch (BackingStoreException bSE) {
-      System.out.println("Unable to save settings!");
-      bSE.printStackTrace();
+      ErrorDisplay.showErrorWindow("Unable to save Preferences! Preferences might not be saved.");
     }
   }
 
@@ -308,22 +307,6 @@ public class SettingsHandler {
   }
 
   /**
-   * Saves the current cell number (address) to the Preferences file. Note that this gets the email from {@link paxchecker.Email#getTextEmail()} or
-   * {@link paxchecker.Email#getEmailList()}.
-   */
-  private static void saveCellNum() {
-    if (saveCellnum) {
-      if (Email.getAddressList().isEmpty()) {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), "");
-      } else {
-        myPrefs.put(PREFTYPES.CELLNUM.name(), Email.convertToString(Email.getAddressList()));
-      }
-    } else {
-      myPrefs.remove(PREFTYPES.CELLNUM.name());
-    }
-  }
-
-  /**
    * Saves the given expo's last event link.
    *
    * @param expo The expo for which this link applies
@@ -363,6 +346,24 @@ public class SettingsHandler {
    */
   public static void saveLastNotificationID(String ID) {
     myPrefs.put(PREFTYPES.LAST_NOTIFICATION_ID.name(), ID);
+  }
+
+  /**
+   * Saves whether or not to load notifications.
+   *
+   * @param use Load notifications preference
+   */
+  public static void saveLoadNotifications(boolean use) {
+    myPrefs.putBoolean(PREFTYPES.LOAD_NOTIFICATIONS.name(), use);
+  }
+
+  /**
+   * Saves whether or not to load program updates.
+   *
+   * @param use Load updates preference
+   */
+  public static void saveLoadUpdates(boolean use) {
+    myPrefs.putBoolean(PREFTYPES.LOAD_UPDATES.name(), use);
   }
 
   /**
@@ -548,19 +549,26 @@ public class SettingsHandler {
   }
 
   /**
-   * Gets the last Showclix link found for the program's current expo. Note that this returns in the following format:
-   * https://www.showclix.com/Event/EVENTID
+   * Gets whether or not to load notifications
    *
-   * @return The last Showclix link for the specific expo
-   * @see paxchecker.Browser#getExpo()
+   * @return True to load notifications, false to not
    */
-  public static String getLastEvent() {
-    return getLastEvent(Browser.getExpo());
+  public static boolean getLoadNotifications() {
+    return myPrefs.getBoolean(PREFTYPES.LOAD_NOTIFICATIONS.name(), true);
+  }
+
+  /**
+   * Gets whether or not to load program updates
+   *
+   * @return True to load updates, false to not
+   */
+  public static boolean getLoadUpdates() {
+    return myPrefs.getBoolean(PREFTYPES.LOAD_UPDATES.name(), true);
   }
 
   private static enum PREFTYPES {
 
-    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, CHECK_TWITTER, PLAY_ALARM, EVENT, EMAIL, CELLNUM, SAVE_PREFS, LAST_EVENT, USE_BETA, LAST_NOTIFICATION_ID;
+    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, CHECK_TWITTER, PLAY_ALARM, EVENT, EMAIL, CELLNUM, SAVE_PREFS, LAST_EVENT, USE_BETA, LAST_NOTIFICATION_ID, LOAD_NOTIFICATIONS, LOAD_UPDATES;
   }
 
   /**

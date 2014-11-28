@@ -35,6 +35,9 @@ public class Setup extends javax.swing.JFrame {
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
+    JCBUseBeta.setSelected(SettingsHandler.getUseBetaVersion());
+    JCBLoadNotifications.setSelected(SettingsHandler.getLoadNotifications());
+    JCBCheckUpdates.setSelected(SettingsHandler.getLoadUpdates());
     if (SettingsHandler.getSavePrefs()) {
       JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
       JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
@@ -45,7 +48,6 @@ public class Setup extends javax.swing.JFrame {
       JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
       JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
       JCBSaveEmail.setSelected(SettingsHandler.getSaveEmail());
-      JCBUseBeta.setSelected(SettingsHandler.getUseBetaVersion());
     } else {
       JCBSaveCellnum.setEnabled(false);
       JCBSaveCheckPax.setEnabled(false);
@@ -199,20 +201,31 @@ public class Setup extends javax.swing.JFrame {
     });
   }
 
-  private void saveSettings() {
-    Browser.setExpo(JCBExpo.getSelectedItem().toString());
-    if (JCBCheckWebsite.isSelected()) {
-      TicketChecker.addChecker(new CheckPaxsite());
+  private void savePreferences() {
+    UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
+    SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
+    if (JCBSavePreferences.isSelected()) {
+      SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
+      SettingsHandler.setSavePax(JCBSaveCheckPax.isSelected());
+      SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
+      SettingsHandler.setSaveTwitter(JCBSaveCheckTwitter.isSelected());
+      SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
+      SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
+      SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
+      SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
     }
-    if (JCBCheckShowclix.isSelected()) {
-      TicketChecker.addChecker(new CheckShowclix());
-    }
-    if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
-      Checker.startTwitterStreaming();
-    }
-    Audio.setPlayAlarm(jCheckBox3.isSelected());
-    Email.setUsername(JTFEmail.getText());
-    Email.setPassword(new String(JPFPassword.getPassword()));
+    SettingsHandler.saveLoadUpdates(JCBCheckUpdates.isSelected());
+    SettingsHandler.saveLoadNotifications(JCBLoadNotifications.isSelected());
+    SettingsHandler.saveAllPrefs(JTFEmail.getText(), getEmailString(), JSCheckTime.getValue(), JCBCheckWebsite.isSelected(), JCBCheckShowclix.isEnabled(), JCBCheckTwitter.isSelected(), jCheckBox3.isSelected(), JCBCarrier.getSelectedItem().toString(), JCBUseBeta.isSelected(), JCBLoadNotifications.isSelected(), JCBCheckUpdates.isSelected());
+  }
+
+  public void disableTwitter() {
+    JCBCheckTwitter.setSelected(false);
+    JCBCheckTwitter.setEnabled(false);
+    JLTwitterDisabled.setVisible(true);
+  }
+
+  private String getEmailString() {
     String text = JTFCellNum.getText();
     if (text == null || text.length() < 5) {
       text = "";
@@ -243,30 +256,7 @@ public class Setup extends javax.swing.JFrame {
       System.out.println("Debug: " + tempText);
     }
     System.out.println("Final Text: " + text);
-    Email.addEmailAddress(text);
-    Checker.setRefreshTime(JSCheckTime.getValue());
-  }
-
-  private void savePreferences() {
-    UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
-    SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
-    if (JCBSavePreferences.isSelected()) {
-      SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
-      SettingsHandler.setSavePax(JCBSaveCheckPax.isSelected());
-      SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
-      SettingsHandler.setSaveTwitter(JCBSaveCheckTwitter.isSelected());
-      SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
-      SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
-      SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
-      SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
-    }
-    SettingsHandler.saveAllPrefs();
-  }
-
-  public void disableTwitter() {
-    JCBCheckTwitter.setSelected(false);
-    JCBCheckTwitter.setEnabled(false);
-    JLTwitterDisabled.setVisible(true);
+    return text;
   }
 
   /**
@@ -646,11 +636,11 @@ public class Setup extends javax.swing.JFrame {
 
     JCBSaveCheckTwitter.setText("Save Twitter Checking");
 
+    JCBLoadNotifications.setSelected(true);
     JCBLoadNotifications.setText("Load Notificaitons");
-    JCBLoadNotifications.setEnabled(false);
 
+    JCBCheckUpdates.setSelected(true);
     JCBCheckUpdates.setText("Check for Updates");
-    JCBCheckUpdates.setEnabled(false);
 
     jCheckBox1.setText("Save Twitter Keys");
     jCheckBox1.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
@@ -742,7 +732,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && (!TwitterReader.isInitialized() || !JCBCheckTwitter.isSelected())) {
           JBStart.setEnabled(false);
         } else {
           JBStart.setEnabled(true);
@@ -756,7 +746,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && (!TwitterReader.isInitialized() || !JCBCheckTwitter.isSelected())) {
           JBStart.setEnabled(false);
         } else {
           JBStart.setEnabled(true);
@@ -768,7 +758,21 @@ public class Setup extends javax.swing.JFrame {
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
     // TODO add your handling code here:
     JBStart.setText("Starting, please wait...");
-    saveSettings();
+    Browser.setExpo(JCBExpo.getSelectedItem().toString());
+    if (JCBCheckWebsite.isSelected()) {
+      TicketChecker.addChecker(new CheckPaxsite());
+    }
+    if (JCBCheckShowclix.isSelected()) {
+      TicketChecker.addChecker(new CheckShowclix());
+    }
+    if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
+      Checker.startTwitterStreaming();
+    }
+    Audio.setPlayAlarm(jCheckBox3.isSelected());
+    Email.setUsername(JTFEmail.getText());
+    Email.setPassword(new String(JPFPassword.getPassword()));
+    Email.addEmailAddress(getEmailString());
+    Checker.setRefreshTime(JSCheckTime.getValue());
     savePreferences();
     dispose();
     Checker.startCheckingWebsites();
@@ -798,9 +802,7 @@ public class Setup extends javax.swing.JFrame {
   }//GEN-LAST:event_JBAddPhoneActionPerformed
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    saveSettings();
     savePreferences();
-    //SettingsHandler.saveUseBeta(JCBUseBeta.isSelected());
   }//GEN-LAST:event_jButton3ActionPerformed
 
   private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed
@@ -808,7 +810,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) {
+        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && (!TwitterReader.isInitialized() || !JCBCheckTwitter.isSelected())) {
           JBStart.setEnabled(false);
         } else {
           JBStart.setEnabled(true);

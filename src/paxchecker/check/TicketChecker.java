@@ -16,9 +16,6 @@ public final class TicketChecker {
   private static ExecutorService threadPool;
   private static Phaser threadWait;
 
-  private TicketChecker() {
-  }
-
   public static void init(paxchecker.gui.Status s) {
     status = s;
     threadPool = Executors.newCachedThreadPool();

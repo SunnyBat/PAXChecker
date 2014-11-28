@@ -644,14 +644,14 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBLoadNotifications">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Load Notificaitons"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBCheckUpdates">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Check for Updates"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox1">
