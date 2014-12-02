@@ -92,13 +92,13 @@ public class TicketCheck {
     }
   }
 
-  private static synchronized void start() {
+  private static void start() {
     if (isStarted) {
       System.out.println("ERROR: Already started!");
       return;
     }
     myInstance.init();
-    myInstance.checkForTickets();
+    new Thread(myInstance).start();
     isStarted = true;
   }
 }

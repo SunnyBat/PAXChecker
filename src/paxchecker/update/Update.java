@@ -1,7 +1,6 @@
 package paxchecker.update;
 
 import java.util.concurrent.CountDownLatch;
-import paxchecker.gui.PatchNotes;
 
 /**
  *

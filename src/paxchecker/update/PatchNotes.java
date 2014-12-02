@@ -1,4 +1,4 @@
-package paxchecker.gui;
+package paxchecker.update;
 
 import paxchecker.update.Update;
 import paxchecker.update.UpdateHandler;

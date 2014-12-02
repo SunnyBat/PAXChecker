@@ -139,10 +139,16 @@ public class NotificationHandler {
         SettingsHandler.saveLastNotificationID(n.getID());
         first = true;
       }
-      NotificationWindow nW = new NotificationWindow(n, cDL);
-      nW.setMoreInfoButtonLink(n.getButtonLink());
-      if (n.getButtonText() != null) {
-        nW.setCloseButtonText(n.getButtonText());
+      if (paxchecker.PAXChecker.isCommandLine()) {
+        System.out.println("NOTIFICATION " + n.getID());
+        System.out.println(n.getInfo());
+        cDL.countDown();
+      } else {
+        NotificationWindow nW = new NotificationWindow(n, cDL);
+        nW.setMoreInfoButtonLink(n.getButtonLink());
+        if (n.getButtonText() != null) {
+          nW.setCloseButtonText(n.getButtonText());
+        }
       }
     }
     newNotifications.clear();

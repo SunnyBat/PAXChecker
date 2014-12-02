@@ -44,10 +44,12 @@ public class Browser {
    * @param link The link to open in the computer's default browser
    */
   public static void openLinkInBrowser(String link) {
+    if (link == null) {
+      return;
+    }
     try {
       openLinkInBrowser(new URL(link));
     } catch (MalformedURLException mue) {
-      mue.printStackTrace();
     }
   }
 

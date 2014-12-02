@@ -7,10 +7,12 @@ package paxchecker.tickets;
 
 import java.awt.Color;
 import paxchecker.Audio;
+import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.KeyboardHandler;
 import paxchecker.browser.Browser;
 import paxchecker.check.TicketChecker;
+import paxchecker.gui.Status;
 
 /**
  *
@@ -18,13 +20,74 @@ import paxchecker.check.TicketChecker;
  */
 public class NormalGUI extends CheckMethod {
 
+  private Status status;
+
   public NormalGUI() {
     super();
   }
 
   @Override
   public void init() {
+    status.setupComponents();
+    status.showWindow();
+    //Checker.setStatusIcon(Checker.getIconName(Browser.getExpo()));
+  }
 
+  @Override
+  public void run() {
+    long startMS;
+    int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+    if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
+      status.setLastCheckedText("[Only Scanning Twitter]");
+    } else {
+      do {
+        status.setLastCheckedText("Checking for updates...");
+        startMS = System.currentTimeMillis();
+        if (TicketChecker.isUpdated()) {
+          ticketsFound();
+          continue; // Immediately re-check in case other services have found updates
+        }
+        status.setDataUsageText(DataTracker.getDataUsedMB());
+        while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+          if (forceRefresh) {
+            forceRefresh = false;
+            break;
+          }
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException interruptedException) {
+          }
+          status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+        }
+      } while (status.isDisplayable());
+    }
+  }
+
+  @Override
+  public void checkTickets() {
+    long startMS;
+    int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
+    if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
+      status.setLastCheckedText("[Only Scanning Twitter]");
+    } else {
+      status.setLastCheckedText("Checking for updates...");
+      startMS = System.currentTimeMillis();
+      if (TicketChecker.isUpdated()) {
+        ticketsFound();
+      }
+      status.setDataUsageText(DataTracker.getDataUsedMB());
+      while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+        if (forceRefresh) {
+          forceRefresh = false;
+          break;
+        }
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException interruptedException) {
+        }
+        status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+      }
+    }
   }
 
   @Override

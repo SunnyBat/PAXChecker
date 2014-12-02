@@ -9,35 +9,22 @@ package paxchecker.tickets;
  *
  * @author Sunny
  */
-public abstract class CheckMethod {
+public abstract class CheckMethod implements Runnable {
 
   private int refreshTime;
   protected boolean forceRefresh;
-  protected Runnable checkRunnable;
-  private Thread running;
 
   public CheckMethod() {
   }
 
-  public CheckMethod(Runnable r) {
-    checkRunnable = r;
-  }
+  @Override
+  public abstract void run();
 
   public abstract void init();
 
   public abstract void ticketsFound();
 
-  public final void checkForTickets() {
-    if (checkRunnable == null) {
-      System.out.println("ERROR: Check for tickets not properly configured!");
-      return;
-    }
-    if (running == null || !running.isAlive()) {
-      new Thread(checkRunnable).start();
-    } else {
-      System.out.println("ERROR: Thread is currently running!");
-    }
-  }
+  public abstract void checkTickets();
 
   public final void setRefreshTime(int time) {
     if (time > 60) {

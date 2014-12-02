@@ -191,8 +191,19 @@ public final class PAXChecker {
     if (!SettingsHandler.getLoadNotifications()) {
       NotificationHandler.setLastNotificationID("DISABLE");
     }
-    TwitterReader.setKeys(twitterTokens[0], twitterTokens[1], twitterTokens[2], twitterTokens[3]);
-    TwitterReader.init();
+    if (twitterTokens[0] != null) {
+      TwitterReader.setKeys(twitterTokens[0], twitterTokens[1], twitterTokens[2], twitterTokens[3]);
+      TwitterReader.init();
+    }
+    if (!TwitterReader.isInitialized()) {
+      if (SettingsHandler.getSaveTwitterKeys()) {
+        System.out.println("Loading keys");
+        String[] keys = SettingsHandler.getTwitterKeys();
+        TwitterReader.setKeys(keys[0], keys[1], keys[2], keys[3]);
+        TwitterReader.init();
+      } else
+        System.out.println("NOT loading keys");
+    }
     System.out.println("Loading patch notes...");
     if (autoStart) {
       if (checkPax) {
@@ -219,6 +230,10 @@ public final class PAXChecker {
           }
         }, "Patch Notes");
       }
+      System.out.println("Loading notifications...");
+      NotificationHandler.loadNotifications();
+      System.out.println("Finished loading notifications.");
+      NotificationHandler.showNewNotifications();
       if (!autoStart) {
         Checker.commandLineSettingsInput();
       }

@@ -1,5 +1,9 @@
 package paxchecker;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
 import paxchecker.tickets.*;
@@ -23,6 +27,7 @@ public class SettingsHandler {
   private static boolean saveEvent;
   private static boolean saveEmail;
   private static boolean saveCellnum;
+  private static boolean saveTwitterAPIKeys;
 
   /**
    * Sets whether or not to save each preference.
@@ -169,6 +174,15 @@ public class SettingsHandler {
    */
   public static void setSaveCellnum(boolean save) {
     saveCellnum = save;
+  }
+
+  /**
+   * Sets whether or not to save the Twitter API keys.
+   *
+   * @param save True to save the API keys, false to not
+   */
+  public static void setSaveTwitterAPIKeys(boolean save) {
+    saveTwitterAPIKeys = save;
   }
 
   /**
@@ -367,6 +381,37 @@ public class SettingsHandler {
   }
 
   /**
+   * Saves the Twitter API keys. Note that this requires a String[] of length 4.
+   *
+   * @param keys The Twitter API keys to save
+   */
+  public static void saveTwitterKeys(String[] keys) {
+    if (!saveTwitterAPIKeys) {
+      System.out.println("NOT saving API keys.");
+      myPrefs.remove(PREFTYPES.TWITTER_CONSUMER_KEY.name());
+      myPrefs.remove(PREFTYPES.TWITTER_CONSUMER_SECRET.name());
+      myPrefs.remove(PREFTYPES.TWITTER_APP_KEY.name());
+      myPrefs.remove(PREFTYPES.TWITTER_APP_SECRET.name());
+      return;
+    }
+    if (keys.length != 4) {
+      System.out.println("ERROR saving Twitter API keys: Length is " + keys.length + ", not 4!");
+      return;
+    }
+    try {
+      System.out.println("Save: " + Arrays.toString(keys));
+      myPrefs.put(Encryption.encrypt(PREFTYPES.TWITTER_CONSUMER_KEY.name()), keys[0]);
+      myPrefs.put(Encryption.encrypt(PREFTYPES.TWITTER_CONSUMER_SECRET.name()), keys[1]);
+      myPrefs.put(Encryption.encrypt(PREFTYPES.TWITTER_APP_KEY.name()), keys[2]);
+      myPrefs.put(Encryption.encrypt(PREFTYPES.TWITTER_APP_SECRET.name()), keys[3]);
+    } catch (NullPointerException npe) {
+      System.out.println("ERROR saving Twitter API keys: A key is null!");
+    } catch (GeneralSecurityException | UnsupportedEncodingException ex) {
+      System.out.println("ERROR encrypting Twitter API keys!");
+    }
+  }
+
+  /**
    * Checks whether or not the program saved the Refresh Time preference
    *
    * @return True if preference was saved, false if not
@@ -445,6 +490,15 @@ public class SettingsHandler {
    */
   public static boolean getSavePrefs() {
     return myPrefs.getBoolean(PREFTYPES.SAVE_PREFS.name(), true);
+  }
+
+  /**
+   * Checks whether or not to save the Twitter API keys.
+   *
+   * @return True to save them, false to not
+   */
+  public static boolean getSaveTwitterKeys() {
+    return !myPrefs.get(PREFTYPES.TWITTER_CONSUMER_KEY.name(), "NOPE").equals("NOPE");
   }
 
   /**
@@ -566,9 +620,30 @@ public class SettingsHandler {
     return myPrefs.getBoolean(PREFTYPES.LOAD_UPDATES.name(), true);
   }
 
+  /**
+   * Gets the saved Twitter API keys. The String[] returned is guaranteed to be size 4.
+   *
+   * @return The Twitter API keys, or null for each if not saved.
+   */
+  public static String[] getTwitterKeys() {
+    String[] keys = new String[4];
+    try {
+      keys[0] = Encryption.decrypt(myPrefs.get(PREFTYPES.TWITTER_CONSUMER_KEY.name(), null));
+      keys[1] = Encryption.decrypt(myPrefs.get(PREFTYPES.TWITTER_CONSUMER_SECRET.name(), null));
+      keys[2] = Encryption.decrypt(myPrefs.get(PREFTYPES.TWITTER_APP_KEY.name(), null));
+      keys[3] = Encryption.decrypt(myPrefs.get(PREFTYPES.TWITTER_APP_SECRET.name(), null));
+    } catch (GeneralSecurityException | IOException gse) {
+      System.out.println("ERROR decrypting Twitter API keys!");
+    }
+    System.out.println("Load: " + Arrays.toString(keys));
+    return keys;
+  }
+
   private static enum PREFTYPES {
 
-    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, CHECK_TWITTER, PLAY_ALARM, EVENT, EMAIL, CELLNUM, SAVE_PREFS, LAST_EVENT, USE_BETA, LAST_NOTIFICATION_ID, LOAD_NOTIFICATIONS, LOAD_UPDATES;
+    REFRESHTIME, CHECK_SHOWCLIX, CHECK_PAX, CHECK_TWITTER, PLAY_ALARM, EVENT, EMAIL, CELLNUM,
+    SAVE_PREFS, LAST_EVENT, USE_BETA, LAST_NOTIFICATION_ID, LOAD_NOTIFICATIONS, LOAD_UPDATES,
+    TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_APP_KEY, TWITTER_APP_SECRET;
   }
 
   /**

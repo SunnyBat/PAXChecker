@@ -315,6 +315,7 @@ public class Status extends javax.swing.JFrame {
     jLabel2.setText("Email -- Phone");
 
     JLDataUsage.setText("Data Usage:");
+    JLDataUsage.setToolTipText("<html>\nNote that this does NOT include Twitter<br>\ndata usage.<br>\nThis is only a rough estimate of data used.<br>\nFor more accurate data usage, download<br>\nWireShark (or similar software) and mointor<br>\nusage through that.\n</html>");
 
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));

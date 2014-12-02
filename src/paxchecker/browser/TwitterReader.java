@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import paxchecker.Encryption;
+import paxchecker.SettingsHandler;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.check.TwitterStreamer;
 import twitter4j.*;
@@ -22,8 +23,7 @@ public class TwitterReader {
   private static String consumerSecret;
   private static String accessToken;
   private static String accessSecret;
-  private static TwitterStream myStream;
-  private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available"};
+  private static final String[] KEYWORDS = {"passes", "tickets", "sale", "showclix", "available", "byoc"};
   private long lastIDFound;
   private final String TWITTER_HANDLE;
 
@@ -152,5 +152,15 @@ public class TwitterReader {
       return;
     }
     TwitterStreamer.runTwitterStream(twitter, handles);
+  }
+
+  public static void saveKeysInSettings() {
+    try {
+      System.out.println("Saving keys");
+      SettingsHandler.saveTwitterKeys(new String[]{Encryption.decrypt(consumerKey), Encryption.decrypt(consumerSecret), Encryption.decrypt(accessToken), Encryption.decrypt(accessSecret)});
+    } catch (GeneralSecurityException | IOException ex) {
+      System.out.println("ERROR Saving keys");
+      ex.printStackTrace();
+    }
   }
 }
