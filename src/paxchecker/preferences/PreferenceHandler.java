@@ -52,6 +52,10 @@ public class PreferenceHandler {
     }
   }
 
+  public static synchronized String getStringPreference(Preference.TYPES type) {
+    return myPrefs.get(type.name(), null);
+  }
+
   protected static synchronized boolean isInPrefs(Preference.TYPES pref) {
     try {
       String prefT = pref.name();
@@ -95,12 +99,13 @@ public class PreferenceHandler {
   }
 
   public static synchronized void savePreferences() {
+    boolean shouldSave = getPreferenceObject(Preference.TYPES.SAVE_PREFS).shouldSave();
     try {
       for (Preference p : prefArray) {
-        if (p.getValue() == null) {
+        if (p.getValue() == null || !shouldSave) {
           myPrefs.remove(p.getPrefType().name());
         } else {
-          myPrefs.put(p.getPrefType().name(), (String) p.getValue());
+          myPrefs.put(p.getPrefType().name(), String.valueOf(p.getValue()));
         }
       }
       myPrefs.sync();

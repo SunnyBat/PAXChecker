@@ -9,7 +9,8 @@ import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.PAXChecker;
-import paxchecker.SettingsHandler;
+import paxchecker.preferences.Preference;
+import paxchecker.preferences.PreferenceHandler;
 
 /**
  *
@@ -281,7 +282,7 @@ public class UpdateHandler {
       }
       URL updateURL;
       if (getUpdateLevel() == 1) {
-        if (!SettingsHandler.getUseBetaVersion()) {
+        if (!PreferenceHandler.getBooleanPreference(Preference.TYPES.USE_BETA)) {
           System.out.println("Update available, but not opted into BETA versions");
           return false;
         }

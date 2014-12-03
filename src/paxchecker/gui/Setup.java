@@ -5,8 +5,9 @@ import paxchecker.*;
 import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
 import paxchecker.error.*;
+import paxchecker.preferences.Preference;
+import paxchecker.preferences.PreferenceHandler;
 import paxchecker.tickets.*;
-import paxchecker.update.UpdateHandler;
 
 /**
  *
@@ -35,20 +36,20 @@ public class Setup extends javax.swing.JFrame {
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-    JCBUseBeta.setSelected(SettingsHandler.getUseBetaVersion());
-    JCBLoadNotifications.setSelected(SettingsHandler.getLoadNotifications());
-    JCBCheckUpdates.setSelected(SettingsHandler.getLoadUpdates());
-    //JCBSaveTwitterKeys.setSelected(SettingsHandler.getSaveTwitterKeys());
-    if (SettingsHandler.getSavePrefs()) {
-      JCBSavePreferences.setSelected(SettingsHandler.getSavePrefs());
-      JCBSaveCellnum.setSelected(SettingsHandler.getSaveCellnum());
-      JCBSaveCheckPax.setSelected(SettingsHandler.getSavePax());
-      JCBSaveCheckShowclix.setSelected(SettingsHandler.getSaveShowclix());
-      JCBSaveCheckTwitter.setSelected(SettingsHandler.getSaveTwitter());
-      JCBSaveEvent.setSelected(SettingsHandler.getSaveEvent());
-      JCBSavePlayAlarm.setSelected(SettingsHandler.getSaveAlarm());
-      JCBSaveRefreshTime.setSelected(SettingsHandler.getSaveRefreshTime());
-      JCBSaveEmail.setSelected(SettingsHandler.getSaveEmail());
+    JCBUseBeta.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.USE_BETA));
+    JCBLoadNotifications.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS));
+    JCBCheckUpdates.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES));
+    JCBSaveTwitterKeys.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).shouldSave());
+    if (PreferenceHandler.getBooleanPreference(Preference.TYPES.SAVE_PREFS)) {
+      JCBSavePreferences.setSelected(true);
+      JCBSaveCellnum.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.CELLNUM).shouldSave());
+      JCBSaveCheckPax.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_PAX).shouldSave());
+      JCBSaveCheckShowclix.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).shouldSave());
+      JCBSaveCheckTwitter.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).shouldSave());
+      JCBSaveEvent.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).shouldSave());
+      JCBSavePlayAlarm.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.PLAY_ALARM).shouldSave());
+      JCBSaveRefreshTime.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.REFRESHTIME).shouldSave());
+      JCBSaveEmail.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.EMAIL).shouldSave());
     } else {
       JCBSaveCellnum.setEnabled(false);
       JCBSaveCheckPax.setEnabled(false);
@@ -69,22 +70,20 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        JTFEmail.setText(SettingsHandler.getEmail());
-        JCBExpo.setSelectedIndex(getIndexOfEvent(SettingsHandler.getExpo()));
-        JCBCheckWebsite.setSelected(SettingsHandler.getCheckPaxWebsite());
-        JCBCheckShowclix.setSelected(SettingsHandler.getCheckShowclix());
-        JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? SettingsHandler.getCheckTwitter() : false);
+        JTFEmail.setText(PreferenceHandler.getStringPreference(Preference.TYPES.EMAIL));
+        JCBExpo.setSelectedIndex(getIndexOfEvent(PreferenceHandler.getStringPreference(Preference.TYPES.EVENT)));
+        JCBCheckWebsite.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_PAX));
+        JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+        JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
         JLTwitterDisabled.setVisible(!TwitterReader.isInitialized());
-        //JCBCheckTwitter.setSelected(false);
-        jCheckBox3.setSelected(SettingsHandler.getPlayAlarm());
-        JSCheckTime.setValue(SettingsHandler.getDelayTime());
-        JCBSaveTwitterKeys.setSelected(SettingsHandler.getSaveTwitterKeys());
+        JCBPlayAlarm.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.PLAY_ALARM));
+        JSCheckTime.setValue(PreferenceHandler.getIntegerPreference(Preference.TYPES.REFRESHTIME));
         if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
           JBStart.setEnabled(false);
         }
         java.awt.Dimension d = JTFCellNum.getSize();
-        String cellnum = SettingsHandler.getCellNumber();
+        String cellnum = PreferenceHandler.getStringPreference(Preference.TYPES.CELLNUM);
         if (cellnum.contains(";")) {
           System.out.println("Debug: All = " + cellnum);
           String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
@@ -102,6 +101,7 @@ public class Setup extends javax.swing.JFrame {
         } else {
           System.out.println("Normal address");
           JTFCellNum.setText(cellnum);
+          JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(cellnum.substring(cellnum.indexOf("@")))));
         }
         JTFCellNum.setSize(d);
       }
@@ -204,23 +204,35 @@ public class Setup extends javax.swing.JFrame {
   }
 
   private void savePreferences() {
-    UpdateHandler.setUseBeta(JCBUseBeta.isSelected());
-    SettingsHandler.setSavePrefs(JCBSavePreferences.isSelected());
-    if (JCBSavePreferences.isSelected()) {
-      SettingsHandler.setSaveCellnum(JCBSaveCellnum.isSelected());
-      SettingsHandler.setSavePax(JCBSaveCheckPax.isSelected());
-      SettingsHandler.setSaveShowclix(JCBSaveCheckShowclix.isSelected());
-      SettingsHandler.setSaveTwitter(JCBSaveCheckTwitter.isSelected());
-      SettingsHandler.setSaveEvent(JCBSaveEvent.isSelected());
-      SettingsHandler.setSaveAlarm(JCBSavePlayAlarm.isSelected());
-      SettingsHandler.setSaveRefreshTime(JCBSaveRefreshTime.isSelected());
-      SettingsHandler.setSaveEmail(JCBSaveEmail.isSelected());
-    }
-    SettingsHandler.saveLoadUpdates(JCBCheckUpdates.isSelected());
-    SettingsHandler.saveLoadNotifications(JCBLoadNotifications.isSelected());
-    SettingsHandler.saveAllPrefs(JTFEmail.getText(), getEmailString(), JSCheckTime.getValue(), JCBCheckWebsite.isSelected(), JCBCheckShowclix.isEnabled(), JCBCheckTwitter.isSelected(), jCheckBox3.isSelected(), JCBCarrier.getSelectedItem().toString(), JCBUseBeta.isSelected(), JCBLoadNotifications.isSelected(), JCBCheckUpdates.isSelected());
-    SettingsHandler.setSaveTwitterAPIKeys(JCBSaveTwitterKeys.isSelected());
-    TwitterReader.saveKeysInSettings();
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.SAVE_PREFS).setShouldSave(true);
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.SAVE_PREFS).setValue(JCBSavePreferences.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.USE_BETA).setShouldSave(true);
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.USE_BETA).setValue(JCBUseBeta.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_UPDATES).setShouldSave(true);
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_UPDATES).setValue(JCBCheckUpdates.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).setShouldSave(true);
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).setValue(JCBLoadNotifications.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CELLNUM).setShouldSave(JCBSaveCellnum.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CELLNUM).setValue(getCellNumString());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_PAX).setShouldSave(JCBSaveCheckPax.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_PAX).setValue(JCBCheckWebsite.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).setShouldSave(JCBSaveCheckShowclix.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).setValue(JCBCheckShowclix.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setShouldSave(JCBCheckTwitter.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setValue(JCBCheckTwitter.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).setShouldSave(JCBSaveEvent.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).setValue(JCBExpo.getSelectedItem().toString());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.PLAY_ALARM).setShouldSave(JCBSavePlayAlarm.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.PLAY_ALARM).setValue(JCBPlayAlarm.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.REFRESHTIME).setShouldSave(JCBSaveRefreshTime.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.REFRESHTIME).setValue(JSCheckTime.getValue());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.EMAIL).setShouldSave(JCBSaveEmail.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.EMAIL).setValue(JTFEmail.getText());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).setShouldSave(JCBSaveTwitterKeys.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_SECRET).setShouldSave(JCBSaveTwitterKeys.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_KEY).setShouldSave(JCBSaveTwitterKeys.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_SECRET).setShouldSave(JCBSaveTwitterKeys.isSelected());
+    PreferenceHandler.savePreferences();
   }
 
   public void disableTwitter() {
@@ -229,7 +241,7 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled.setVisible(true);
   }
 
-  private String getEmailString() {
+  private String getCellNumString() {
     String text = JTFCellNum.getText();
     if (text == null || text.length() < 5) {
       text = "";
@@ -286,7 +298,7 @@ public class Setup extends javax.swing.JFrame {
     JBStart = new javax.swing.JButton();
     JCBCheckWebsite = new javax.swing.JCheckBox();
     JCBCheckShowclix = new javax.swing.JCheckBox();
-    jCheckBox3 = new javax.swing.JCheckBox();
+    JCBPlayAlarm = new javax.swing.JCheckBox();
     JCBExpo = new javax.swing.JComboBox();
     jLabel5 = new javax.swing.JLabel();
     jPanel2 = new javax.swing.JPanel();
@@ -379,8 +391,8 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    jCheckBox3.setText("Play Alarm when Tickets Found");
-    jCheckBox3.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
+    JCBPlayAlarm.setText("Play Alarm when Tickets Found");
+    JCBPlayAlarm.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
 
     JCBExpo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));
 
@@ -457,7 +469,7 @@ public class Setup extends javax.swing.JFrame {
                   .addComponent(jLabel5)
                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                   .addComponent(JCBExpo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addComponent(jCheckBox3)
+                .addComponent(JCBPlayAlarm)
                 .addComponent(JCBCheckShowclix)
                 .addComponent(JCBCheckWebsite))
               .addGroup(jPanel1Layout.createSequentialGroup()
@@ -500,7 +512,7 @@ public class Setup extends javax.swing.JFrame {
           .addComponent(JCBCheckTwitter)
           .addComponent(JLTwitterDisabled))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jCheckBox3)
+        .addComponent(JCBPlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(jLabel5)
@@ -648,7 +660,6 @@ public class Setup extends javax.swing.JFrame {
 
     JCBSaveTwitterKeys.setText("Save Twitter Keys");
     JCBSaveTwitterKeys.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
-    JCBSaveTwitterKeys.setEnabled(false);
 
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
@@ -772,10 +783,10 @@ public class Setup extends javax.swing.JFrame {
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
       Checker.startTwitterStreaming();
     }
-    Audio.setPlayAlarm(jCheckBox3.isSelected());
+    Audio.setPlayAlarm(JCBPlayAlarm.isSelected());
     Email.setUsername(JTFEmail.getText());
     Email.setPassword(new String(JPFPassword.getPassword()));
-    Email.addEmailAddress(getEmailString());
+    Email.addEmailAddress(getCellNumString());
     Checker.setRefreshTime(JSCheckTime.getValue());
     savePreferences();
     dispose();
@@ -838,6 +849,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBCheckWebsite;
   private javax.swing.JComboBox JCBExpo;
   private javax.swing.JCheckBox JCBLoadNotifications;
+  private javax.swing.JCheckBox JCBPlayAlarm;
   private javax.swing.JCheckBox JCBSaveCellnum;
   private javax.swing.JCheckBox JCBSaveCheckPax;
   private javax.swing.JCheckBox JCBSaveCheckShowclix;
@@ -858,7 +870,6 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JTextPane JTPExtra;
   private javax.swing.JTextPane JTPInstructions;
   private javax.swing.JButton jButton3;
-  private javax.swing.JCheckBox jCheckBox3;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;

@@ -1,5 +1,6 @@
 package paxchecker;
 
+import java.io.IOException;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
 import paxchecker.browser.TwitterReader;
@@ -9,6 +10,8 @@ import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
 import paxchecker.gui.LoadingWindow;
 import paxchecker.notification.NotificationHandler;
+import paxchecker.preferences.Preference;
+import paxchecker.preferences.PreferenceHandler;
 
 /**
  *
@@ -55,6 +58,7 @@ public final class PAXChecker {
   }
 
   private static void initClasses() {
+    PreferenceHandler.init();
     Checker.init();
     Email.init();
     UpdateHandler.init();
@@ -63,7 +67,7 @@ public final class PAXChecker {
   }
 
   public static void startProgram(String[] args) {
-    boolean doUpdate = SettingsHandler.getLoadUpdates();
+    boolean doUpdate = PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES);
     boolean checkPax = true;
     boolean checkShowclix = true;
     boolean checkTwitter = true;
@@ -188,7 +192,7 @@ public final class PAXChecker {
         System.exit(0);
       }
     }
-    if (!SettingsHandler.getLoadNotifications()) {
+    if (!(boolean) PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).getValue()) {
       NotificationHandler.setLastNotificationID("DISABLE");
     }
     if (twitterTokens[0] != null) {
@@ -196,13 +200,20 @@ public final class PAXChecker {
       TwitterReader.init();
     }
     if (!TwitterReader.isInitialized()) {
-      if (SettingsHandler.getSaveTwitterKeys()) {
-        System.out.println("Loading keys");
-        String[] keys = SettingsHandler.getTwitterKeys();
-        TwitterReader.setKeys(keys[0], keys[1], keys[2], keys[3]);
+      if (PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY) != null) {
+        System.out.println("Loading Twitter keys from Prefrences");
+        try {
+          TwitterReader.setKeys(Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_KEY)),
+              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_SECRET)),
+              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_APP_KEY)),
+              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_APP_SECRET)));
+        } catch (Exception exception) {
+          System.out.println("ERROR: Unable to load Twitter keys from Preferences!");
+        }
         TwitterReader.init();
-      } else
-        System.out.println("NOT loading keys");
+      } else {
+        System.out.println("No Twitter keys found!");
+      }
     }
     System.out.println("Loading patch notes...");
     if (autoStart) {
@@ -238,8 +249,7 @@ public final class PAXChecker {
         Checker.commandLineSettingsInput();
       }
       if (savePrefs) {
-        SettingsHandler.setSaveAll(true, true, true, true, true, true, true, true);
-        SettingsHandler.saveAllPrefs();
+        PreferenceHandler.savePreferences();
       }
       Checker.startCommandLineWebsiteChecking();
       return;

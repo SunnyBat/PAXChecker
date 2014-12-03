@@ -88,7 +88,7 @@
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="JCBExpo" max="32767" attributes="0"/>
                                       </Group>
-                                      <Component id="jCheckBox3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JCBPlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                                       <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -142,7 +142,7 @@
                           <Component id="JLTwitterDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jCheckBox3" min="-2" max="-2" attributes="0"/>
+                      <Component id="JCBPlayAlarm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -258,7 +258,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckShowclixActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jCheckBox3">
+            <Component class="javax.swing.JCheckBox" name="JCBPlayAlarm">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Play Alarm when Tickets Found"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;If checked, the program will play a sound when an update to&lt;br&gt;&#xa;the PAX Prime website OR the Showclix website (whichever one(s)&lt;br&gt;&#xa;you have enabled) is found.&#xa;&lt;/html&gt;"/>
@@ -658,7 +658,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save Twitter Keys"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;NOTE: This saves your Twitter API&lt;br&gt;&#xa;keys in an encrypted format. Your&lt;br&gt;&#xa;keys will still be obtainable if you or&lt;br&gt;&#xa;someone else has access to this&lt;br&gt;&#xa;program&apos;s source code (which is&lt;br&gt;&#xa;publicly available). Save at your&lt;br&gt;&#xa;own risk!&#xa;&lt;/html&gt;"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -33,6 +33,10 @@ public class Preference {
     return PreferenceHandler.isInPrefs(type);
   }
 
+  public TYPES getPrefType() {
+    return type;
+  }
+
   /**
    * Checks whether or not the given Preference should be saved.
    *
@@ -46,14 +50,6 @@ public class Preference {
     shouldSave = save && value != null;
   }
 
-  public void setValue(Object val) {
-    if (val == null) {
-      System.out.println("NOTE: Object val set to null!");
-    }
-    value = val;
-    System.out.println("Value = " + value);
-  }
-
   /**
    * Returns the expected Object from the preference. This currently returns a boolean, integer, or String.
    *
@@ -63,8 +59,12 @@ public class Preference {
     return value;
   }
 
-  public TYPES getPrefType() {
-    return type;
+  public void setValue(Object val) {
+    if (val == null) {
+      System.out.println("NOTE: Object val set to null!");
+    }
+    value = val;
+    System.out.println("Value = " + value);
   }
 
   @Override

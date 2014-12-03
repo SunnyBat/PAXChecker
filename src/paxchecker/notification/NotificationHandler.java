@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.DataTracker;
-import paxchecker.SettingsHandler;
+import paxchecker.preferences.Preference;
+import paxchecker.preferences.PreferenceHandler;
 
 /**
  *
@@ -23,7 +24,7 @@ public class NotificationHandler {
    * Init.
    */
   public static void init() {
-    setLastNotificationID(SettingsHandler.getLastNotificationID());
+    setLastNotificationID(PreferenceHandler.getStringPreference(Preference.TYPES.LAST_NOTIFICATION_ID));
   }
 
   /**
@@ -136,7 +137,7 @@ public class NotificationHandler {
     CountDownLatch cDL = new CountDownLatch(newNotifications.size());
     for (Notification n : newNotifications) {
       if (!first) {
-        SettingsHandler.saveLastNotificationID(n.getID());
+        PreferenceHandler.getPreferenceObject(Preference.TYPES.LAST_NOTIFICATION_ID).setValue(n.getID());
         first = true;
       }
       if (paxchecker.PAXChecker.isCommandLine()) {

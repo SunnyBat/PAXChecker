@@ -5,9 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import paxchecker.Encryption;
-import paxchecker.SettingsHandler;
 import paxchecker.error.ErrorDisplay;
 import paxchecker.check.TwitterStreamer;
+import paxchecker.preferences.Preference;
+import paxchecker.preferences.PreferenceHandler;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -126,6 +127,10 @@ public class TwitterReader {
       consumerSecret = Encryption.encrypt(CS);
       accessToken = Encryption.encrypt(AT);
       accessSecret = Encryption.encrypt(AS);
+      PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).setValue(consumerKey);
+      PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_SECRET).setValue(consumerSecret);
+      PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_KEY).setValue(accessToken);
+      PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_SECRET).setValue(accessSecret);
     } catch (GeneralSecurityException | UnsupportedEncodingException generalSecurityException) {
     }
   }
@@ -152,15 +157,5 @@ public class TwitterReader {
       return;
     }
     TwitterStreamer.runTwitterStream(twitter, handles);
-  }
-
-  public static void saveKeysInSettings() {
-    try {
-      System.out.println("Saving keys");
-      SettingsHandler.saveTwitterKeys(new String[]{Encryption.decrypt(consumerKey), Encryption.decrypt(consumerSecret), Encryption.decrypt(accessToken), Encryption.decrypt(accessSecret)});
-    } catch (GeneralSecurityException | IOException ex) {
-      System.out.println("ERROR Saving keys");
-      ex.printStackTrace();
-    }
   }
 }
