@@ -48,7 +48,7 @@ public class Preference {
   }
 
   public void setShouldSave(boolean save) {
-    shouldSave = save && value != null;
+    shouldSave = save;
   }
 
   /**

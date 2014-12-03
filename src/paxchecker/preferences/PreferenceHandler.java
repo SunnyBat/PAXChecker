@@ -111,7 +111,7 @@ public class PreferenceHandler {
     System.out.println("shouldSave = " + shouldSave);
     try {
       for (Preference p : prefArray) {
-        if (p.getValue() == null || (!shouldSave && !p.forceSave())) {
+        if (p.getValue() == null || ((!shouldSave || !p.shouldSave()) && !p.forceSave())) {
           myPrefs.remove(p.getPrefType().name());
         } else {
           myPrefs.put(p.getPrefType().name(), String.valueOf(p.getValue()));
