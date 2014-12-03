@@ -19,7 +19,7 @@ import paxchecker.preferences.PreferenceHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R5-1";
+  public static final String VERSION = "2.0.0 R6";
   private static Setup setup;
   private static final Object LOCK = new Object();
   private static boolean commandLine;
@@ -192,7 +192,7 @@ public final class PAXChecker {
         System.exit(0);
       }
     }
-    if (!(boolean) PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).getValue()) {
+    if (!PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS)) {
       NotificationHandler.setLastNotificationID("DISABLE");
     }
     if (twitterTokens[0] != null) {
@@ -200,7 +200,7 @@ public final class PAXChecker {
       TwitterReader.init();
     }
     if (!TwitterReader.isInitialized()) {
-      if (PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY) != null) {
+      if (PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_KEY) != null) {
         System.out.println("Loading Twitter keys from Prefrences");
         try {
           TwitterReader.setKeys(Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_KEY)),

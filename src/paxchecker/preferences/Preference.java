@@ -23,6 +23,7 @@ public class Preference {
   private final TYPES type;
   private Object value;
   private boolean shouldSave;
+  private boolean forceSave;
 
   /**
    * Checks whether or not the given Preference is saved within the Preferences framework.
@@ -64,7 +65,15 @@ public class Preference {
       System.out.println("NOTE: Object val set to null!");
     }
     value = val;
-    System.out.println("Value = " + value);
+    System.out.println(type.name() + " -- Value = " + value);
+  }
+
+  public boolean forceSave() {
+    return forceSave;
+  }
+
+  public void setForceSave(boolean fSave) {
+    forceSave = fSave;
   }
 
   @Override

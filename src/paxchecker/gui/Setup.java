@@ -36,10 +36,6 @@ public class Setup extends javax.swing.JFrame {
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-    JCBUseBeta.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.USE_BETA));
-    JCBLoadNotifications.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS));
-    JCBCheckUpdates.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES));
-    JCBSaveTwitterKeys.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).shouldSave());
     if (PreferenceHandler.getBooleanPreference(Preference.TYPES.SAVE_PREFS)) {
       JCBSavePreferences.setSelected(true);
       JCBSaveCellnum.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.CELLNUM).shouldSave());
@@ -50,7 +46,12 @@ public class Setup extends javax.swing.JFrame {
       JCBSavePlayAlarm.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.PLAY_ALARM).shouldSave());
       JCBSaveRefreshTime.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.REFRESHTIME).shouldSave());
       JCBSaveEmail.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.EMAIL).shouldSave());
+      JCBUseBeta.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.USE_BETA));
+      JCBLoadNotifications.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS));
+      JCBCheckUpdates.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES));
+      JCBSaveTwitterKeys.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).shouldSave());
     } else {
+      JCBSavePreferences.setSelected(false);
       JCBSaveCellnum.setEnabled(false);
       JCBSaveCheckPax.setEnabled(false);
       JCBSaveCheckShowclix.setEnabled(false);
@@ -59,6 +60,10 @@ public class Setup extends javax.swing.JFrame {
       JCBSavePlayAlarm.setEnabled(false);
       JCBSaveRefreshTime.setEnabled(false);
       JCBSaveEmail.setEnabled(false);
+      JCBUseBeta.setEnabled(false);
+      JCBCheckUpdates.setEnabled(false);
+      JCBLoadNotifications.setEnabled(false);
+      JCBSaveTwitterKeys.setEnabled(false);
     }
     JTPExtra.setText(loadHtml("/paxchecker/gui/Extra.html"));
     JTPExtra.setCaretPosition(0);
@@ -72,8 +77,12 @@ public class Setup extends javax.swing.JFrame {
       public void run() {
         JTFEmail.setText(PreferenceHandler.getStringPreference(Preference.TYPES.EMAIL));
         JCBExpo.setSelectedIndex(getIndexOfEvent(PreferenceHandler.getStringPreference(Preference.TYPES.EVENT)));
-        JCBCheckWebsite.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_PAX));
-        JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+        if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_PAX).isSavedInPreferences()) {
+          JCBCheckWebsite.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_PAX));
+        }
+        if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
+          JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+        }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
         JLTwitterDisabled.setVisible(!TwitterReader.isInitialized());
@@ -84,7 +93,9 @@ public class Setup extends javax.swing.JFrame {
         }
         java.awt.Dimension d = JTFCellNum.getSize();
         String cellnum = PreferenceHandler.getStringPreference(Preference.TYPES.CELLNUM);
-        if (cellnum.contains(";")) {
+        if (cellnum == null) {
+          System.out.println("cellnum == null");
+        } else if (cellnum.contains(";")) {
           System.out.println("Debug: All = " + cellnum);
           String[] specificNumbers = cellnum.replaceAll("; ", ";").split(";");
           JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(specificNumbers[0].substring(specificNumbers[0].indexOf("@")))));
@@ -100,8 +111,15 @@ public class Setup extends javax.swing.JFrame {
           }
         } else {
           System.out.println("Normal address");
-          JTFCellNum.setText(cellnum);
-          JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(cellnum.substring(cellnum.indexOf("@")))));
+          if (cellnum.contains("@")) {
+            JCBCarrier.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(cellnum.substring(cellnum.indexOf("@")))));
+            if (JCBCarrier.getSelectedIndex() != 6) {
+              JTFCellNum.setText(cellnum.substring(0, cellnum.indexOf("@")).trim());
+            } else {
+              JTFCellNum.setText(cellnum.trim());
+            }
+            JTFCellNum.setCaretPosition(0);
+          }
         }
         JTFCellNum.setSize(d);
       }
@@ -153,6 +171,9 @@ public class Setup extends javax.swing.JFrame {
    * @return The index of the given expo, or 0 for incorrect inputs.
    */
   public static final int getIndexOfEvent(String eventName) {
+    if (eventName == null) {
+      return 0;
+    }
     switch (eventName.toLowerCase()) {
       case "pax prime":
       default:
@@ -174,6 +195,9 @@ public class Setup extends javax.swing.JFrame {
    * @return The index of the given provider, or 0 for incorrect inputs.
    */
   public static final int getIndexOfProvider(String provider) {
+    if (provider == null) {
+      return 0;
+    }
     switch (provider.toLowerCase()) {
       case "at&t (mms)":
       default:
@@ -809,6 +833,10 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveEvent.setEnabled(selected);
     JCBSavePlayAlarm.setEnabled(selected);
     JCBSaveRefreshTime.setEnabled(selected);
+    JCBUseBeta.setEnabled(selected);
+    JCBCheckUpdates.setEnabled(selected);
+    JCBLoadNotifications.setEnabled(selected);
+    JCBSaveTwitterKeys.setEnabled(selected);
   }//GEN-LAST:event_JCBSavePreferencesActionPerformed
 
   private void JBAddPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAddPhoneActionPerformed

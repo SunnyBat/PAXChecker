@@ -18,7 +18,7 @@ public class NotificationHandler {
 
   private static final String NOTIFICATIONS_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
   private static final ArrayList<Notification> notificationList = new ArrayList<>();
-  private static String lastNotificationID;
+  private static String lastNotificationID = "";
 
   /**
    * Init.
@@ -33,6 +33,9 @@ public class NotificationHandler {
    * @param lNID The last Notification ID loaded
    */
   public static void setLastNotificationID(String lNID) {
+    if (lNID == null) {
+      return;
+    }
     lastNotificationID = lNID;
   }
 

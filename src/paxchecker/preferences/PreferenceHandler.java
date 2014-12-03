@@ -14,6 +14,18 @@ public class PreferenceHandler {
   private static final Preferences myPrefs = Preferences.userRoot().node("paxchecker");
   private static final List<Preference> prefArray = new ArrayList<>();
 
+  /**
+   * Creates all Preference objects that the program will use. Feels somewhat hacked together at the moment. Can be run more than once without
+   * repercussion.
+   */
+  public static synchronized void init() {
+    for (Preference.TYPES pTypes : Preference.TYPES.values()) {
+      getPreferenceObject(pTypes);
+    }
+    getPreferenceObject(Preference.TYPES.LAST_NOTIFICATION_ID).setForceSave(true);
+    getPreferenceObject(Preference.TYPES.SAVE_PREFS).setForceSave(true);
+  }
+
   protected static synchronized Object loadPreferenceValue(Preference pref) {
     return loadPreferenceValue(pref.getPrefType());
   }
@@ -35,7 +47,8 @@ public class PreferenceHandler {
   }
 
   public static synchronized boolean getBooleanPreference(Preference.TYPES type) {
-    return Boolean.parseBoolean(String.valueOf(loadPreferenceValue(type)));
+    System.out.println("Boolean value of " + type.name() + " = " + Boolean.parseBoolean(String.valueOf(getPreferenceObject(type).getValue())));
+    return Boolean.parseBoolean(String.valueOf(getPreferenceObject(type).getValue()));
   }
 
   /**
@@ -46,14 +59,18 @@ public class PreferenceHandler {
    */
   public static synchronized int getIntegerPreference(Preference.TYPES type) {
     try {
-      return Integer.parseInt(String.valueOf(loadPreferenceValue(type)));
+      return Integer.parseInt(String.valueOf(getPreferenceObject(type).getValue()));
     } catch (NumberFormatException numberFormatException) {
       return -1;
     }
   }
 
   public static synchronized String getStringPreference(Preference.TYPES type) {
-    return myPrefs.get(type.name(), null);
+    String str = String.valueOf(getPreferenceObject(type).getValue());
+    if (str.equalsIgnoreCase("null")) {
+      str = null;
+    }
+    return str;
   }
 
   protected static synchronized boolean isInPrefs(Preference.TYPES pref) {
@@ -62,6 +79,7 @@ public class PreferenceHandler {
       String[] keys = myPrefs.keys();
       for (String k : keys) {
         if (k.equalsIgnoreCase(prefT)) {
+          System.out.println("Found " + pref.name() + " in Preferences!");
           return true;
         }
       }
@@ -69,16 +87,6 @@ public class PreferenceHandler {
       bse.printStackTrace();
     }
     return false;
-  }
-
-  /**
-   * Creates all Preference objects that the program will use. Feels somewhat hacked together at the moment. Can be run more than once without
-   * repercussion.
-   */
-  public static synchronized void init() {
-    for (Preference.TYPES pTypes : Preference.TYPES.values()) {
-      getPreferenceObject(pTypes);
-    }
   }
 
   /**
@@ -99,10 +107,11 @@ public class PreferenceHandler {
   }
 
   public static synchronized void savePreferences() {
-    boolean shouldSave = getPreferenceObject(Preference.TYPES.SAVE_PREFS).shouldSave();
+    boolean shouldSave = getBooleanPreference(Preference.TYPES.SAVE_PREFS);
+    System.out.println("shouldSave = " + shouldSave);
     try {
       for (Preference p : prefArray) {
-        if (p.getValue() == null || !shouldSave) {
+        if (p.getValue() == null || (!shouldSave && !p.forceSave())) {
           myPrefs.remove(p.getPrefType().name());
         } else {
           myPrefs.put(p.getPrefType().name(), String.valueOf(p.getValue()));
