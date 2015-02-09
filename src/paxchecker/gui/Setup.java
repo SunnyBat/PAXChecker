@@ -4,7 +4,6 @@ import paxchecker.browser.Browser;
 import paxchecker.*;
 import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
-import paxchecker.error.*;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
 import paxchecker.tickets.*;
@@ -16,15 +15,15 @@ import paxchecker.tickets.*;
 public class Setup extends javax.swing.JFrame {
 
   public java.util.ArrayList<ExtraPhonePanel> extraPhonePanelList = new java.util.ArrayList<>();
-  private final ErrorWindow twitterDisabledWindow = new ErrorWindow();
+  //private final ErrorWindow twitterDisabledWindow = new ErrorWindow();
 
   /**
    * Creates new form Setup
    */
   public Setup() {
-    twitterDisabledWindow.setTitleText("Twitter Disabled?");
-    twitterDisabledWindow.setErrorText("Why is Twitter Disabled?");
-    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, follow the instructions here: https://redd.it/2nct50");
+//    twitterDisabledWindow.setTitleText("Twitter Disabled?");
+//    twitterDisabledWindow.setErrorText("Why is Twitter Disabled?");
+//    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, follow the instructions here: https://redd.it/2nct50");
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -363,7 +362,7 @@ public class Setup extends javax.swing.JFrame {
 
     jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
     jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel1.setText("PAX Checker Setup");
+    jLabel1.setText("PAXChecker Setup");
 
     jLabel2.setText("Email");
 
@@ -452,6 +451,7 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
     JLTwitterDisabled.setForeground(new java.awt.Color(0, 0, 238));
     JLTwitterDisabled.setText("(Why is this disabled?)");
+    JLTwitterDisabled.setToolTipText("<html>\nTwitter is disabled because the Twitter API<br>\nis not able to be secured in an open-source<br>\napplication.\\nIf you want to check Twitter,<br>\nfollow the instructions here:<br>\nhttps://redd.it/2nct50\n</html>");
     JLTwitterDisabled.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLTwitterDisabledMousePressed(evt);
@@ -660,7 +660,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea1.setColumns(20);
     jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
-    jTextArea1.setText("Preferences are saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.\n\nNote that your password is NEVER saved using Preferences.");
+    jTextArea1.setText("Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.\n\nNote that your password is NEVER saved using Preferences.");
     jTextArea1.setWrapStyleWord(true);
     jScrollPane1.setViewportView(jTextArea1);
 
@@ -864,7 +864,7 @@ public class Setup extends javax.swing.JFrame {
 
   private void JLTwitterDisabledMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLTwitterDisabledMousePressed
     // TODO add your handling code here:
-    twitterDisabledWindow.setVisible(true);
+    //twitterDisabledWindow.setVisible(true);
   }//GEN-LAST:event_JLTwitterDisabledMousePressed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables

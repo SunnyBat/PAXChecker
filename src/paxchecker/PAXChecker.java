@@ -1,7 +1,6 @@
 package paxchecker;
 
 import java.io.IOException;
-import paxchecker.error.ErrorDisplay;
 import paxchecker.browser.Browser;
 import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
@@ -12,6 +11,7 @@ import paxchecker.gui.LoadingWindow;
 import paxchecker.notification.NotificationHandler;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 
 /**
  *

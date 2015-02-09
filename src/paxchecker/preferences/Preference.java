@@ -72,8 +72,8 @@ public class Preference {
     return forceSave;
   }
 
-  public void setForceSave(boolean fSave) {
-    forceSave = fSave;
+  public void setForceSave() {
+    forceSave = true;
   }
 
   @Override

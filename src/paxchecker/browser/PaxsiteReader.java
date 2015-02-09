@@ -8,7 +8,7 @@ package paxchecker.browser;
 import java.io.*;
 import java.net.*;
 import paxchecker.DataTracker;
-import paxchecker.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 
 /**
  *

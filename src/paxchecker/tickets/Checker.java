@@ -114,6 +114,14 @@ public class Checker {
         }
       } catch (Exception e) {
       }
+    } else {
+      System.out.print("Password: ");
+      Email.setPassword(new String(System.console().readPassword()));
+      System.out.print("Cell Number: ");
+      try {
+        Email.addEmailAddress(myScanner.nextLine());
+      } catch (Exception e) {
+      }
     }
     if (Browser.getExpo() == null) {
       System.out.print("Expo: ");

@@ -123,6 +123,10 @@ public class CommandLine extends CheckMethod {
       } catch (Exception e) {
       }
     }
+  }
+
+  @Override
+  public void run() {
     PAXChecker.startBackgroundThread(new Runnable() {
       @Override
       public void run() {
@@ -212,27 +216,8 @@ public class CommandLine extends CheckMethod {
         }
       }
     }, "CLI Input Listener");
-  }
-
-  @Override
-  public void run() {
     do {
-      long startMS = System.currentTimeMillis();
-      if (TicketChecker.isUpdated()) {
-        System.out.println("Tickets found!");
-        ticketsFound();
-      }
-      System.out.println("Data used: " + DataTracker.getDataUsedMB() + "MB");
-      while (System.currentTimeMillis() - startMS < (getRefreshTime() * 1000)) {
-        if (forceRefresh) {
-          forceRefresh = false;
-          break;
-        }
-        try {
-          Thread.sleep(100);
-        } catch (InterruptedException iE) {
-        }
-      }
+      checkTickets();
     } while (true);
   }
 

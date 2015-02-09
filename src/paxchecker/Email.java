@@ -1,6 +1,6 @@
 package paxchecker;
 
-import paxchecker.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import paxchecker.tickets.Checker;
 import java.util.*;
 import javax.mail.*;

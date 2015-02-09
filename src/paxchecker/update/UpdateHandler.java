@@ -7,10 +7,10 @@ import paxchecker.browser.Browser;
 import paxchecker.tickets.Checker;
 import paxchecker.DataTracker;
 import paxchecker.Email;
-import paxchecker.error.ErrorDisplay;
 import paxchecker.PAXChecker;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 
 /**
  *

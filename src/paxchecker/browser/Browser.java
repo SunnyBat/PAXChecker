@@ -5,7 +5,7 @@ import java.awt.Desktop;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
-import paxchecker.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 
 /**
  *

@@ -5,10 +5,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-import paxchecker.error.ErrorDisplay;
 import paxchecker.DataTracker;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
+import com.github.sunnybat.commoncode.error.*;
 
 /**
  *

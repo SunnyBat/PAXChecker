@@ -22,8 +22,8 @@ public class PreferenceHandler {
     for (Preference.TYPES pTypes : Preference.TYPES.values()) {
       getPreferenceObject(pTypes);
     }
-    getPreferenceObject(Preference.TYPES.LAST_NOTIFICATION_ID).setForceSave(true);
-    getPreferenceObject(Preference.TYPES.SAVE_PREFS).setForceSave(true);
+    getPreferenceObject(Preference.TYPES.LAST_NOTIFICATION_ID).setForceSave();
+    getPreferenceObject(Preference.TYPES.SAVE_PREFS).setForceSave();
   }
 
   protected static synchronized Object loadPreferenceValue(Preference pref) {
