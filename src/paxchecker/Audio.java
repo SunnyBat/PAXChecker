@@ -13,7 +13,7 @@ public class Audio {
 
   private static boolean playSound;
   private static Clip clip;
-  private static final lListener listener = new lListener();
+  private static final LListener listener = new LListener();
 
   /**
    * Checks whether or not sound is currently enabled. This is set using {@link #setPlayAlarm(boolean)}.
@@ -62,7 +62,7 @@ public class Audio {
     return false;
   }
 
-  private static class lListener implements LineListener {
+  private static class LListener implements LineListener {
 
     @Override
     public void update(LineEvent le) {

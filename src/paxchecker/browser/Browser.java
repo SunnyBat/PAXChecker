@@ -131,24 +131,24 @@ public class Browser {
     if (link == null) {
       return "";
     }
-    String linkFound = "";
     if (link.contains("http://")) {
-      linkFound = link.substring(link.indexOf("http://"));
+      link = link.substring(link.indexOf("http://"));
     } else if (link.contains("https://")) {
-      linkFound = link.substring(link.indexOf("https://"));
+      link = link.substring(link.indexOf("https://"));
     } else if (link.contains("t.co/")) {
-      linkFound = link.substring(link.indexOf("t.co/"));
+      link = link.substring(link.indexOf("t.co/"));
     }
+    link = link.trim();
     if (link.contains("t.co/")) {
-      linkFound = Browser.unshortenURL(linkFound);
+      link = Browser.unshortenURL(link);
     }
-    if (linkFound.contains(" ")) {
-      linkFound = linkFound.substring(0, linkFound.indexOf(" "));
+    if (link.contains(" ")) {
+      link = link.substring(0, link.indexOf(" "));
     }
-    if (linkFound.endsWith("/")) {
-      linkFound = linkFound.substring(0, linkFound.length() - 1);
-      System.out.println("New link: " + linkFound);
+    if (link.endsWith("/")) {
+      link = link.substring(0, link.length() - 1);
+      System.out.println("New link: " + link);
     }
-    return linkFound.trim();
+    return link.trim();
   }
 }

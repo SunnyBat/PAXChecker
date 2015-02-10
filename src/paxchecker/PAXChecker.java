@@ -45,7 +45,7 @@ public final class PAXChecker {
       }
     }
     initClasses();
-    startProgram(args);
+    setupProgram(args);
   }
 
   private static boolean isCLine(String[] args) {
@@ -66,7 +66,7 @@ public final class PAXChecker {
     NotificationHandler.init();
   }
 
-  public static void startProgram(String[] args) {
+  public static void setupProgram(String[] args) {
     boolean doUpdate = PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES);
     boolean checkPax = true;
     boolean checkShowclix = true;

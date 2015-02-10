@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package paxchecker.tickets;
 
 import paxchecker.Audio;
@@ -245,7 +240,7 @@ public class CommandLine extends CheckMethod {
   public void ticketsFound() {
     final String link = TicketChecker.getLinkFound();
     System.out.println("LINK FOUND: " + link);
-    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+    Email.sendEmailInBackground("PAXChecker", "An update has been found! URL: " + link);
     Browser.openLinkInBrowser(link);
     Audio.playAlarm();
   }

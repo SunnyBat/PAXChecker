@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package paxchecker.tickets;
 
 import java.awt.Color;
@@ -93,7 +88,7 @@ public class NormalGUI extends CheckMethod {
   @Override
   public void ticketsFound() {
     String link = TicketChecker.getLinkFound();
-    Email.sendEmailInBackground("PAX Tickets ON SALE!", "PAX Tickets have been found! URL: " + link);
+    Email.sendEmailInBackground("PAXChecker", "An update has been found! URL: " + link);
     KeyboardHandler.typeLinkNotification(link);
     Browser.openLinkInBrowser(link);
     showTicketsWindow(link);
