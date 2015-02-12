@@ -68,9 +68,9 @@ public class Setup extends javax.swing.JFrame {
       JCBLoadNotifications.setEnabled(false);
       JCBSaveTwitterKeys.setEnabled(false);
     }
-    JTPExtra.setText(loadHtml("/paxchecker/gui/Extra.html"));
+    JTPExtra.setText(loadHtml("/com/github/sunnybat/paxchecker/gui/Extra.html"));
     JTPExtra.setCaretPosition(0);
-    JTPInstructions.setText(loadHtml("/paxchecker/gui/Instructions.html"));
+    JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/gui/Instructions.html"));
     JTPInstructions.setCaretPosition(0);
   }
 
