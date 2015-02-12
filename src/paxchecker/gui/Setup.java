@@ -1,12 +1,12 @@
 package paxchecker.gui;
 
+import paxchecker.check.CheckSetup;
 import paxchecker.browser.Browser;
 import paxchecker.*;
 import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
-import paxchecker.tickets.*;
 
 /**
  *
@@ -805,16 +805,16 @@ public class Setup extends javax.swing.JFrame {
       TicketChecker.addChecker(new CheckShowclix());
     }
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
-      Checker.startTwitterStreaming();
+      CheckSetup.startTwitterStreaming();
     }
     Audio.setPlayAlarm(JCBPlayAlarm.isSelected());
     Email.setUsername(JTFEmail.getText());
     Email.setPassword(new String(JPFPassword.getPassword()));
     Email.addEmailAddress(getCellNumString());
-    Checker.setRefreshTime(JSCheckTime.getValue());
+    CheckSetup.setRefreshTime(JSCheckTime.getValue());
     savePreferences();
     dispose();
-    Checker.startCheckingWebsites();
+    CheckSetup.startCheckingWebsites();
     //TicketCheck.startGUI();
   }//GEN-LAST:event_JBStartActionPerformed
 

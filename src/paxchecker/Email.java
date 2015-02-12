@@ -1,7 +1,8 @@
 package paxchecker;
 
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
-import paxchecker.tickets.Checker;
+import com.github.sunnybat.commoncode.encryption.Encryption;
+import paxchecker.check.CheckSetup;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -327,10 +328,10 @@ public class Email {
    */
   public static boolean testEmail() {
     if (sendMessage("Test", "The test is successful. The PAX Checker is now set up to text your phone when the website updates!")) {
-      Checker.setStatusInformationText("Text message successfully sent!");
+      CheckSetup.setStatusInformationText("Text message successfully sent!");
       return true;
     } else {
-      Checker.setStatusInformationText("There was an error sending your text message.");
+      CheckSetup.setStatusInformationText("There was an error sending your text message.");
     }
     return false;
   }
@@ -343,25 +344,25 @@ public class Email {
       @Override
       public void run() {
         try {
-          Checker.setStatusTextButtonState(false);
-          Checker.setStatusTextButtonText("Sending...");
+          CheckSetup.setStatusTextButtonState(false);
+          CheckSetup.setStatusTextButtonText("Sending...");
           if (!Email.testEmail()) {
-            Checker.setStatusTextButtonText("Test Text");
-            Checker.setStatusTextButtonState(true);
+            CheckSetup.setStatusTextButtonText("Test Text");
+            CheckSetup.setStatusTextButtonState(true);
             return;
           }
           long timeStarted = System.currentTimeMillis();
           while (System.currentTimeMillis() - timeStarted < 300000) {
-            Checker.setStatusTextButtonText((300 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
+            CheckSetup.setStatusTextButtonText((300 - (int) ((System.currentTimeMillis() - timeStarted) / 1000)) + "");
             Thread.sleep(200);
           }
-          Checker.setStatusTextButtonText("Test Text");
-          Checker.setStatusTextButtonState(true);
+          CheckSetup.setStatusTextButtonText("Test Text");
+          CheckSetup.setStatusTextButtonState(true);
         } catch (Exception e) {
           System.out.println("ERROR sending background test email!");
           e.printStackTrace();
-          Checker.setStatusTextButtonText("Test Text");
-          Checker.setStatusTextButtonState(true);
+          CheckSetup.setStatusTextButtonText("Test Text");
+          CheckSetup.setStatusTextButtonState(true);
         }
       }
     }, "Send Test Email");

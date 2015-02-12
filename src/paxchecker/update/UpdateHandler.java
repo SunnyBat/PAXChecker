@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import paxchecker.Audio;
 import paxchecker.browser.Browser;
-import paxchecker.tickets.Checker;
+import paxchecker.check.CheckSetup;
 import paxchecker.DataTracker;
 import paxchecker.Email;
 import paxchecker.PAXChecker;
@@ -173,7 +173,7 @@ public class UpdateHandler {
     args[a++] = "-expo";
     args[a++] = Browser.getExpo();
     args[a++] = "-delay";
-    args[a++] = "" + Checker.getRefreshTime();
+    args[a++] = "" + CheckSetup.getRefreshTime();
     args[a++] = "-autostart";
     args[a++] = paxchecker.check.TicketChecker.isCheckingPaxsite() ? "" : "-nopax";
     args[a++] = paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";

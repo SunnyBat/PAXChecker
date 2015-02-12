@@ -1,4 +1,4 @@
-package paxchecker.tickets;
+package paxchecker.check;
 
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Status;
@@ -16,24 +16,24 @@ import paxchecker.check.CheckShowclix;
 import paxchecker.check.TicketChecker;
 import java.util.ArrayList;
 import paxchecker.browser.TwitterReader;
+import paxchecker.gui.Tickets;
 
 /**
  *
  * @author Sunny
  */
-public class Checker {
+public class CheckSetup {
 
   private static volatile int secondsBetweenRefresh = 10;
   private static volatile boolean forceRefresh;
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   private static final ArrayList<String> handleList = new ArrayList<>();
-  private static CheckMethod checkMethod;
   // GUIs
   private static Status status;
 
   /**
-   * Initializes the Checker class and various subclasses.
+   * Initializes the CheckSetup class and various subclasses.
    */
   public static void init() {
     if (!PAXChecker.isCommandLine()) {
@@ -444,7 +444,7 @@ public class Checker {
    */
   public static void loadAlertIcon() {
     try {
-      alertIcon = javax.imageio.ImageIO.read(Checker.class.getResourceAsStream("/resources/alert.png"));
+      alertIcon = javax.imageio.ImageIO.read(CheckSetup.class.getResourceAsStream("/resources/alert.png"));
     } catch (IOException iOException) {
     }
   }

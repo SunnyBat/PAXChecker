@@ -1,4 +1,4 @@
-package paxchecker.tickets;
+package paxchecker.gui;
 
 import java.util.Calendar;
 import java.util.Date;

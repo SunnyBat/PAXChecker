@@ -1,6 +1,6 @@
 package paxchecker;
 
-import paxchecker.tickets.Checker;
+import paxchecker.check.CheckSetup;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import javax.sound.sampled.*;
@@ -67,7 +67,7 @@ public class Audio {
     @Override
     public void update(LineEvent le) {
       if (le.getType() == LineEvent.Type.STOP) {
-        Checker.setStatusInformationText("Finished playing alarm.");
+        CheckSetup.setStatusInformationText("Finished playing alarm.");
         clip.removeLineListener(listener);
         clip.close();
       }

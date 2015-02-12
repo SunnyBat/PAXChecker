@@ -1,7 +1,7 @@
 package paxchecker.gui;
 
 import paxchecker.browser.Browser;
-import paxchecker.tickets.Checker;
+import paxchecker.check.CheckSetup;
 import paxchecker.*;
 import java.awt.*;
 
@@ -370,7 +370,7 @@ public class Status extends javax.swing.JFrame {
 
   private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
     // TODO add your handling code here:
-    Checker.forceRefresh();
+    CheckSetup.forceRefresh();
   }//GEN-LAST:event_jButton3ActionPerformed
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

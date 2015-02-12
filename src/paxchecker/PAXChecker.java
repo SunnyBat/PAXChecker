@@ -1,10 +1,11 @@
 package paxchecker;
 
 import java.io.IOException;
+import com.github.sunnybat.commoncode.encryption.Encryption;
 import paxchecker.browser.Browser;
 import paxchecker.browser.TwitterReader;
 import paxchecker.check.*;
-import paxchecker.tickets.Checker;
+import paxchecker.check.CheckSetup;
 import paxchecker.update.UpdateHandler;
 import paxchecker.gui.Setup;
 import paxchecker.gui.LoadingWindow;
@@ -19,7 +20,7 @@ import com.github.sunnybat.commoncode.error.ErrorDisplay;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.0 R6";
+  public static final String VERSION = "2.0.1 R1";
   private static Setup setup;
   private static final Object LOCK = new Object();
   private static boolean commandLine;
@@ -59,7 +60,7 @@ public final class PAXChecker {
 
   private static void initClasses() {
     PreferenceHandler.init();
-    Checker.init();
+    CheckSetup.init();
     Email.init();
     UpdateHandler.init();
     KeyboardHandler.init();
@@ -74,7 +75,7 @@ public final class PAXChecker {
     boolean autoStart = false;
     boolean savePrefs = false;
     String[] twitterTokens = new String[4];
-    Checker.addHandle("@Official_PAX");
+    CheckSetup.addHandle("@Official_PAX");
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -141,14 +142,14 @@ public final class PAXChecker {
             break;
           case "-checktwitter":
             String twitterHandle = args[a + 1];
-            Checker.addHandle(twitterHandle);
+            CheckSetup.addHandle(twitterHandle);
           case "-alarm":
             System.out.println("Alarm activated");
             Audio.setPlayAlarm(true);
             break;
           case "-delay":
-            Checker.setRefreshTime(Integer.getInteger(args[a + 1], 15));
-            System.out.println("Set refresh time to " + Checker.getRefreshTime());
+            CheckSetup.setRefreshTime(Integer.getInteger(args[a + 1], 15));
+            System.out.println("Set refresh time to " + CheckSetup.getRefreshTime());
             break;
           case "-autostart":
             autoStart = true;
@@ -224,7 +225,7 @@ public final class PAXChecker {
         TicketChecker.addChecker(new CheckShowclix());
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
-        Checker.startTwitterStreaming();
+        CheckSetup.startTwitterStreaming();
       }
     }
     if (isCommandLine()) {
@@ -246,12 +247,12 @@ public final class PAXChecker {
       System.out.println("Finished loading notifications.");
       NotificationHandler.showNewNotifications();
       if (!autoStart) {
-        Checker.commandLineSettingsInput();
+        CheckSetup.commandLineSettingsInput();
       }
       if (savePrefs) {
         PreferenceHandler.savePreferences();
       }
-      Checker.startCommandLineWebsiteChecking();
+      CheckSetup.startCommandLineWebsiteChecking();
       return;
     }
     if (doUpdate) {
@@ -277,7 +278,7 @@ public final class PAXChecker {
     NotificationHandler.showNewNotifications();
     if (autoStart) {
       start.dispose();
-      Checker.startCheckingWebsites();
+      CheckSetup.startCheckingWebsites();
     } else {
       setup.loadProgramSettings();
       setup.showWindow();

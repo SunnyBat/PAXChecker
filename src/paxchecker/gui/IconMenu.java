@@ -1,6 +1,6 @@
 package paxchecker.gui;
 
-import paxchecker.tickets.Checker;
+import paxchecker.check.CheckSetup;
 import java.awt.*;
 import paxchecker.*;
 
@@ -25,7 +25,7 @@ public class IconMenu extends PopupMenu {
     maximizeButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        Checker.maximizeStatusWindow();
+        CheckSetup.maximizeStatusWindow();
       }
     });
     closeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -49,7 +49,7 @@ public class IconMenu extends PopupMenu {
     forceCheckButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        Checker.forceRefresh();
+        CheckSetup.forceRefresh();
       }
     });
     addAllComponents();

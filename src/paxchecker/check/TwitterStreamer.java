@@ -3,7 +3,6 @@ package paxchecker.check;
 import java.util.Arrays;
 import paxchecker.browser.Browser;
 import paxchecker.browser.TwitterReader;
-import paxchecker.tickets.Checker;
 import twitter4j.*;
 
 /**
@@ -23,7 +22,7 @@ public class TwitterStreamer {
       }
       String link = Browser.parseLink(status.getText());
       if (!TicketChecker.hasOpenedLink(link)) {
-        Checker.linkFound(link);
+        CheckSetup.linkFound(link);
         TicketChecker.addLinkFound(link);
       }
     }

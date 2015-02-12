@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import paxchecker.Encryption;
 import paxchecker.check.TwitterStreamer;
 import paxchecker.preferences.Preference;
 import paxchecker.preferences.PreferenceHandler;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.encryption.Encryption;
 
 /**
  * Using the Twitter4J library (3rd party TwitterReader Library for Java).
