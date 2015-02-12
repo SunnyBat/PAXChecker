@@ -133,7 +133,7 @@
     <Component class="javax.swing.JLabel" name="JLDataUsage">
       <Properties>
         <Property name="text" type="java.lang.String" value="Data Usage:"/>
-        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Note that this does NOT include Twitter&lt;br&gt;&#xa;data usage.&lt;br&gt;&#xa;This is only a rough estimate of data used.&lt;br&gt;&#xa;For more accurate data usage, download&lt;br&gt;&#xa;WireShark (or similar software) and mointor&lt;br&gt;&#xa;usage through that.&#xa;&lt;/html&gt;"/>
+        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Note that this does NOT include Twitter&lt;br&gt;&#xa;data usage.&lt;br&gt;&#xa;This is only a rough estimate of data used.&lt;br&gt;&#xa;For more accurate data usage, download&lt;br&gt;&#xa;WireShark (or similar software) and monitor&lt;br&gt;&#xa;usage through that.&#xa;&lt;/html&gt;"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="JPLinks">

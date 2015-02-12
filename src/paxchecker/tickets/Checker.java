@@ -28,9 +28,13 @@ public class Checker {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   private static final ArrayList<String> handleList = new ArrayList<>();
+  private static CheckMethod checkMethod;
   // GUIs
   private static Status status;
 
+  /**
+   * Initializes the Checker class and various subclasses.
+   */
   public static void init() {
     if (!PAXChecker.isCommandLine()) {
       status = new Status();
@@ -39,10 +43,17 @@ public class Checker {
     TicketChecker.init(status);
   }
 
+  /**
+   * Adds a Twitter handle to the list of handles to check.
+   * @param s The handle to check
+   */
   public static void addHandle(String s) {
     handleList.add(s);
   }
 
+  /**
+   * Starts streaming Twitter.
+   */
   public static void startTwitterStreaming() {
     TwitterReader.runTwitterStream(handleList.toArray(new String[handleList.size()]));
   }

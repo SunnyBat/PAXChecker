@@ -14,7 +14,6 @@ import java.net.URL;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import paxchecker.browser.Browser;
 import paxchecker.DataTracker;
 
 /**
