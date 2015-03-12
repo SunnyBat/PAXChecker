@@ -73,6 +73,7 @@ public final class PAXChecker {
     boolean checkPax = true;
     boolean checkShowclix = true;
     boolean checkTwitter = true;
+    boolean verifyShowclix = false;
     boolean autoStart = false;
     boolean savePrefs = false;
     String[] twitterTokens = new String[4];
@@ -132,6 +133,9 @@ public final class PAXChecker {
             }
             System.out.println("Setting check Showclix website to false");
             checkShowclix = false;
+            break;
+          case "-verifyshowclix":
+            verifyShowclix = true;
             break;
           case "-notwitter":
             if (!checkPax && !checkShowclix) {
@@ -223,7 +227,11 @@ public final class PAXChecker {
         TicketChecker.addChecker(new CheckPaxsite());
       }
       if (checkShowclix) {
-        TicketChecker.addChecker(new CheckShowclix());
+        CheckShowclix c = new CheckShowclix();
+        if (checkShowclix) {
+          c.enablePageFiltering();
+        }
+        TicketChecker.addChecker(c);
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
         CheckSetup.startTwitterStreaming();

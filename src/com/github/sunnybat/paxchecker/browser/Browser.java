@@ -24,7 +24,12 @@ public class Browser {
    * @param e The String to set as the expo
    */
   public static void setExpo(String e) {
-    Expo = e;
+    if (e != null) {
+      if (!e.toLowerCase().startsWith("pax ")) {
+        e = "PAX " + e;
+      }
+      Expo = e;
+    }
   }
 
   /**

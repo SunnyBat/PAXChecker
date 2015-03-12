@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.sunnybat.paxchecker.browser;
 
 import java.io.BufferedReader;
@@ -114,6 +109,25 @@ public class ShowclixReader {
    */
   public static int getLatestPartnerEventID(String expo) {
     return getLatestPartnerEventID(getSellerID(expo));
+  }
+
+  public static boolean isPaxPage(int showclixID) {
+    try {
+      HttpURLConnection connect = Browser.setUpConnection(new URL("http://www.showclix.com/event/" + showclixID));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
+      String text = "";
+      String line;
+      while ((line = reader.readLine()) != null) {
+        DataTracker.addDataUsed(line.length());
+        text += line.toLowerCase();
+      }
+      if (text.contains(Browser.getExpo().toLowerCase())) {
+        System.out.println("Expo found on page.");
+        return true; // This blocks the data from the BufferedReader from being fully added to the total data
+      }
+    } catch (IOException iOException) {
+    }
+    return false;
   }
 
   private static int getLatestID(URL url) {

@@ -11,6 +11,7 @@ public class CheckShowclix extends Check {
 
   private int lastShowclixEventID = -1;
   private int currentShowclixEventID = -1;
+  private boolean pageFiltering;
   private static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
 
   public CheckShowclix() {
@@ -25,7 +26,15 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    return currentShowclixEventID > lastShowclixEventID;
+    if (currentShowclixEventID > lastShowclixEventID) {
+      if (pageFiltering) {
+        return ShowclixReader.isPaxPage(currentShowclixEventID);
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -46,6 +55,10 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void reset() {
     lastShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo());
+  }
+
+  public synchronized void enablePageFiltering() {
+    pageFiltering = true;
   }
 
   private static String getLink(int showclixID) {

@@ -89,13 +89,17 @@
                                           <Component id="JCBExpo" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="JCBPlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                                       <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JLTwitterDisabled" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="JCBVerifyShowclix" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -135,7 +139,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckWebsite" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="JCBCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBVerifyShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -333,6 +340,11 @@
               <Events>
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLTwitterDisabledMousePressed"/>
               </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBVerifyShowclix">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Verify Showclix Page"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

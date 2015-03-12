@@ -85,6 +85,7 @@ public class Setup extends javax.swing.JFrame {
         }
         if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
           JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+          JCBVerifyShowclix.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
@@ -333,6 +334,7 @@ public class Setup extends javax.swing.JFrame {
     JBAddPhone = new javax.swing.JButton();
     JCBCheckTwitter = new javax.swing.JCheckBox();
     JLTwitterDisabled = new javax.swing.JLabel();
+    JCBVerifyShowclix = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -462,6 +464,8 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
+    JCBVerifyShowclix.setText("Verify Showclix Page");
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -498,12 +502,15 @@ public class Setup extends javax.swing.JFrame {
                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                   .addComponent(JCBExpo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addComponent(JCBPlayAlarm)
-                .addComponent(JCBCheckShowclix)
                 .addComponent(JCBCheckWebsite))
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckTwitter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JLTwitterDisabled)))
+                .addComponent(JLTwitterDisabled))
+              .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(JCBCheckShowclix)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JCBVerifyShowclix)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -534,7 +541,9 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBCheckWebsite)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBCheckShowclix)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBCheckShowclix)
+          .addComponent(JCBVerifyShowclix))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
@@ -775,11 +784,8 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && (!TwitterReader.isInitialized() || !JCBCheckTwitter.isSelected())) {
-          JBStart.setEnabled(false);
-        } else {
-          JBStart.setEnabled(true);
-        }
+        JBStart.setEnabled(JCBCheckWebsite.isSelected() || !JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
+        JCBVerifyShowclix.setEnabled(JCBCheckShowclix.isSelected());
       }
     });
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
@@ -789,11 +795,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && (!TwitterReader.isInitialized() || !JCBCheckTwitter.isSelected())) {
-          JBStart.setEnabled(false);
-        } else {
-          JBStart.setEnabled(true);
-        }
+        JBStart.setEnabled(JCBCheckWebsite.isSelected() || !JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
       }
     });
   }//GEN-LAST:event_JCBCheckWebsiteActionPerformed
@@ -806,7 +808,11 @@ public class Setup extends javax.swing.JFrame {
       TicketChecker.addChecker(new CheckPaxsite());
     }
     if (JCBCheckShowclix.isSelected()) {
-      TicketChecker.addChecker(new CheckShowclix());
+      CheckShowclix c = new CheckShowclix();
+      if (JCBVerifyShowclix.isSelected()) {
+        c.enablePageFiltering();
+      }
+      TicketChecker.addChecker(c);
     }
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
       CheckSetup.startTwitterStreaming();
@@ -893,6 +899,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JCheckBox JCBSaveTwitterKeys;
   private javax.swing.JCheckBox JCBUseBeta;
+  private javax.swing.JCheckBox JCBVerifyShowclix;
   private javax.swing.JLabel JLTwitterDisabled;
   private javax.swing.JPasswordField JPFPassword;
   private javax.swing.JPanel JPPhonePanel;
