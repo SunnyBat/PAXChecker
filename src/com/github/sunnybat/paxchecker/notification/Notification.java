@@ -1,6 +1,7 @@
 package com.github.sunnybat.paxchecker.notification;
 
 /**
+ * A class for storing information about a Notification.
  *
  * @author Sunny
  */
@@ -14,6 +15,7 @@ public class Notification {
 
   /**
    * A new Notification object.
+   *
    * @param i The ID of the notification
    */
   public Notification(String i) {
@@ -22,6 +24,7 @@ public class Notification {
 
   /**
    * Sets the title of the notification.
+   *
    * @param t The title
    */
   public void setTitle(String t) {
@@ -30,6 +33,7 @@ public class Notification {
 
   /**
    * Sets the main information of the notification.
+   *
    * @param i The main information
    */
   public void setInfo(String i) {
@@ -37,8 +41,8 @@ public class Notification {
   }
 
   /**
-   * Adds another line of information. This automatically adds
-   * a line break BEFORE appending the information.
+   * Adds another line of information. This automatically adds a line break BEFORE appending the information.
+   *
    * @param i The information to append
    */
   public void addInfo(String i) {
@@ -48,6 +52,7 @@ public class Notification {
 
   /**
    * Sets the close button text.
+   *
    * @param bt The text to set
    */
   public void setButtonText(String bt) {
@@ -56,6 +61,7 @@ public class Notification {
 
   /**
    * Sets the More Information button link.
+   *
    * @param bl The link to set
    */
   public void setButtonLink(String bl) {
@@ -64,6 +70,7 @@ public class Notification {
 
   /**
    * Gets the ID of this notification.
+   *
    * @return The ID
    */
   public String getID() {
@@ -72,6 +79,7 @@ public class Notification {
 
   /**
    * Gets the title of this notification.
+   *
    * @return The title
    */
   public String getTitle() {
@@ -80,6 +88,7 @@ public class Notification {
 
   /**
    * Gets the main information of this notification.
+   *
    * @return The main information
    */
   public String getInfo() {
@@ -88,6 +97,7 @@ public class Notification {
 
   /**
    * Gets the close button text of this notification.
+   *
    * @return The close button text
    */
   public String getButtonText() {
@@ -96,6 +106,7 @@ public class Notification {
 
   /**
    * Gets the More Information button link of this notification.
+   *
    * @return The More Information button link
    */
   public String getButtonLink() {

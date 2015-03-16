@@ -111,6 +111,12 @@ public class ShowclixReader {
     return getLatestPartnerEventID(getSellerID(expo));
   }
 
+  /**
+   * Checks whether or not the page associated with the given ShowclixID is a PAX ticket page.
+   *
+   * @param showclixID The Showclix ID to check
+   * @return True if it is, false if not
+   */
   public static boolean isPaxPage(int showclixID) {
     try {
       HttpURLConnection connect = Browser.setUpConnection(new URL("http://www.showclix.com/event/" + showclixID));
@@ -201,10 +207,8 @@ public class ShowclixReader {
       case "pax prime":
       case "dev":
       case "pax dev":
-        return 48;
       case "east":
       case "pax east":
-        return 48;
       case "south":
       case "pax south":
         return 48;

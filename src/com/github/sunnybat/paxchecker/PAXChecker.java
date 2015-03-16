@@ -14,6 +14,7 @@ import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.commoncode.encryption.Encryption;
+import com.oracle.xmlns.internal.webservices.jaxws_databinding.SoapBindingParameterStyle;
 
 /**
  *
@@ -37,8 +38,8 @@ public final class PAXChecker {
     } else {
       try {
         start = new LoadingWindow();
-        start.setStatus("Initializing program...");
-        start.showWindow();
+        start.showWindow(); // Will throw HeadlessException if in headless environment
+        Thread.setDefaultUncaughtExceptionHandler(new com.github.sunnybat.commoncode.error.ExceptionHandler());
         javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
         setup = new Setup();
       } catch (java.awt.HeadlessException e) {
@@ -73,9 +74,10 @@ public final class PAXChecker {
     boolean checkPax = true;
     boolean checkShowclix = true;
     boolean checkTwitter = true;
-    boolean verifyShowclix = false;
+    boolean deepCheckShowclix = false;
     boolean autoStart = false;
     boolean savePrefs = false;
+    boolean startMinimized = false;
     String[] twitterTokens = new String[4];
     CheckSetup.addHandle("@Official_PAX");
     if (args.length > 0) {
@@ -134,8 +136,8 @@ public final class PAXChecker {
             System.out.println("Setting check Showclix website to false");
             checkShowclix = false;
             break;
-          case "-verifyshowclix":
-            verifyShowclix = true;
+          case "-deepcheckshowclix":
+            deepCheckShowclix = true;
             break;
           case "-notwitter":
             if (!checkPax && !checkShowclix) {
@@ -158,6 +160,9 @@ public final class PAXChecker {
             break;
           case "-autostart":
             autoStart = true;
+            break;
+          case "-startminimized":
+            startMinimized = true;
             break;
           case "-cli": // Redundant
             enableCommandLine();
@@ -228,8 +233,8 @@ public final class PAXChecker {
       }
       if (checkShowclix) {
         CheckShowclix c = new CheckShowclix();
-        if (checkShowclix) {
-          c.enablePageFiltering();
+        if (deepCheckShowclix) {
+          c.enableDeepChecking();
         }
         TicketChecker.addChecker(c);
       }

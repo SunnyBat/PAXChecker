@@ -99,7 +99,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JCBVerifyShowclix" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JCBDeepShowclixChecking" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -141,7 +141,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBVerifyShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBDeepShowclixChecking" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -335,15 +335,16 @@
                   <Color blue="ee" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="(Why is this disabled?)"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Twitter is disabled because the Twitter API&lt;br&gt;&#xa;is not able to be secured in an open-source&lt;br&gt;&#xa;application.\u005cnIf you want to check Twitter,&lt;br&gt;&#xa;follow the instructions here:&lt;br&gt;&#xa;https://redd.it/2nct50&#xa;&lt;/html&gt;" containsInvalidXMLChars="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Twitter is disabled because the Twitter API&lt;br&gt;&#xa;is not able to be secured in an open-source&lt;br&gt;&#xa;application. If you want to check Twitter,&lt;br&gt;&#xa;follow the instructions here:&lt;br&gt;&#xa;https://redd.it/2nct50&#xa;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLTwitterDisabledMousePressed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBVerifyShowclix">
+            <Component class="javax.swing.JCheckBox" name="JCBDeepShowclixChecking">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Verify Showclix Page"/>
+                <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very, very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses exponentially more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage and have a decent ping and connection speed.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

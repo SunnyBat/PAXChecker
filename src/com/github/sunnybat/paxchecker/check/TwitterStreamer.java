@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import java.util.Arrays;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
@@ -11,19 +12,29 @@ import twitter4j.*;
  */
 public class TwitterStreamer {
 
+  private static String[] usersToCheck;
   private static TwitterStream myStream;
   public static final UserStreamListener listener = new UserStreamListener() {
     @Override
     public void onStatus(Status status) {
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
-      if (!TwitterReader.hasKeyword(status.getText())) {
+      if (!TwitterReader.hasKeyword(status.getText())) { // TODO: Check if screenName is in the list of users to check for
         System.out.println("Tweet does not have keywords -- ignoring.");
-        return;
-      }
-      String link = Browser.parseLink(status.getText());
-      if (!TicketChecker.hasOpenedLink(link)) {
-        CheckSetup.linkFound(link);
-        TicketChecker.addLinkFound(link);
+      } else {
+        for (String s : usersToCheck) {
+          if (s.startsWith("@")) {
+            s = s.replaceFirst("@", "");
+          }
+          if (s.toLowerCase().equals(status.getUser().getScreenName().toLowerCase())) {
+            String link = Browser.parseLink(status.getText());
+            if (!TicketChecker.hasOpenedLink(link)) {
+              CheckSetup.linkFound(link);
+              TicketChecker.addLinkFound(link);
+            }
+            return;
+          }
+        }
+        System.out.println("Tweet is not in list of names to check -- ignoring");
       }
     }
 
@@ -115,6 +126,8 @@ public class TwitterStreamer {
     public void onException(Exception ex) {
       ex.printStackTrace();
       System.out.println("onException:" + ex.getMessage());
+      ErrorDisplay.showErrorWindow("Error Enabling Twitter", "A connection to the Twitter Streaming API was unable to be established. "
+          + "This is probably due to an expired or invalid Twitter API key. Please double-check your API keys.", ex);
     }
   };
 
@@ -126,6 +139,7 @@ public class TwitterStreamer {
     myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
     myStream.addListener(listener);
     myStream.user(handles);
+    usersToCheck = handles.clone();
   }
 
   public static boolean isStreamingTwitter() {

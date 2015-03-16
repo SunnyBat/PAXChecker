@@ -85,7 +85,7 @@ public class Setup extends javax.swing.JFrame {
         }
         if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
           JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
-          JCBVerifyShowclix.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+          JCBDeepShowclixChecking.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
@@ -334,7 +334,7 @@ public class Setup extends javax.swing.JFrame {
     JBAddPhone = new javax.swing.JButton();
     JCBCheckTwitter = new javax.swing.JCheckBox();
     JLTwitterDisabled = new javax.swing.JLabel();
-    JCBVerifyShowclix = new javax.swing.JCheckBox();
+    JCBDeepShowclixChecking = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -457,14 +457,15 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
     JLTwitterDisabled.setForeground(new java.awt.Color(0, 0, 238));
     JLTwitterDisabled.setText("(Why is this disabled?)");
-    JLTwitterDisabled.setToolTipText("<html>\nTwitter is disabled because the Twitter API<br>\nis not able to be secured in an open-source<br>\napplication.\\nIf you want to check Twitter,<br>\nfollow the instructions here:<br>\nhttps://redd.it/2nct50\n</html>");
+    JLTwitterDisabled.setToolTipText("<html>\nTwitter is disabled because the Twitter API<br>\nis not able to be secured in an open-source<br>\napplication. If you want to check Twitter,<br>\nfollow the instructions here:<br>\nhttps://redd.it/2nct50\n</html>");
     JLTwitterDisabled.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLTwitterDisabledMousePressed(evt);
       }
     });
 
-    JCBVerifyShowclix.setText("Verify Showclix Page");
+    JCBDeepShowclixChecking.setText("Deep Showclix Checking");
+    JCBDeepShowclixChecking.setToolTipText("<html>\nThis option is a very, very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses exponentially more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage and have a decent ping and connection speed.\n</html>");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -510,7 +511,7 @@ public class Setup extends javax.swing.JFrame {
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckShowclix)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JCBVerifyShowclix)))
+                .addComponent(JCBDeepShowclixChecking)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -543,7 +544,7 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckShowclix)
-          .addComponent(JCBVerifyShowclix))
+          .addComponent(JCBDeepShowclixChecking))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
@@ -785,7 +786,7 @@ public class Setup extends javax.swing.JFrame {
       @Override
       public void run() {
         JBStart.setEnabled(JCBCheckWebsite.isSelected() || !JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
-        JCBVerifyShowclix.setEnabled(JCBCheckShowclix.isSelected());
+        JCBDeepShowclixChecking.setEnabled(JCBCheckShowclix.isSelected());
       }
     });
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
@@ -809,8 +810,8 @@ public class Setup extends javax.swing.JFrame {
     }
     if (JCBCheckShowclix.isSelected()) {
       CheckShowclix c = new CheckShowclix();
-      if (JCBVerifyShowclix.isSelected()) {
-        c.enablePageFiltering();
+      if (JCBDeepShowclixChecking.isSelected()) {
+        c.enableDeepChecking();
       }
       TicketChecker.addChecker(c);
     }
@@ -885,6 +886,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBCheckTwitter;
   private javax.swing.JCheckBox JCBCheckUpdates;
   private javax.swing.JCheckBox JCBCheckWebsite;
+  private javax.swing.JCheckBox JCBDeepShowclixChecking;
   private javax.swing.JComboBox JCBExpo;
   private javax.swing.JCheckBox JCBLoadNotifications;
   private javax.swing.JCheckBox JCBPlayAlarm;
@@ -899,7 +901,6 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JCheckBox JCBSaveTwitterKeys;
   private javax.swing.JCheckBox JCBUseBeta;
-  private javax.swing.JCheckBox JCBVerifyShowclix;
   private javax.swing.JLabel JLTwitterDisabled;
   private javax.swing.JPasswordField JPFPassword;
   private javax.swing.JPanel JPPhonePanel;
