@@ -16,7 +16,7 @@ public class TwitterStreamer {
   private static TwitterStream myStream;
   public static final UserStreamListener listener = new UserStreamListener() {
     @Override
-    public void onStatus(Status status) {
+    public void onStatus(Status status) { // Feels SO hacked together right now
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
       if (!TwitterReader.hasKeyword(status.getText())) { // TODO: Check if screenName is in the list of users to check for
         System.out.println("Tweet does not have keywords -- ignoring.");
@@ -26,12 +26,26 @@ public class TwitterStreamer {
             s = s.replaceFirst("@", "");
           }
           if (s.toLowerCase().equals(status.getUser().getScreenName().toLowerCase())) {
-            String link = Browser.parseLink(status.getText());
-            if (!TicketChecker.hasOpenedLink(link)) {
-              CheckSetup.linkFound(link);
-              TicketChecker.addLinkFound(link);
+            if (status.getText().contains("t.co/")) {
+              String tStatus = status.getText();
+              String link = Browser.parseLink(tStatus);
+              while (link != null) { // Continuously parse through tweet
+                String toOpen = Browser.unshortenURL(link);
+                if (!toOpen.contains("showclix") && !toOpen.contains("t.co")) {
+                  System.out.println("Link is not Showclix or unshortened -- ignoring.");
+                } else if (!TicketChecker.hasOpenedLink(toOpen)) {
+                  CheckSetup.linkFound(toOpen);
+                  TicketChecker.addLinkFound(toOpen);
+                } else {
+                  System.out.println("Link already found -- ignoring.");
+                }
+                tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
+                link = Browser.parseLink(tStatus); // Get next link, or null if none
+              }
+              return;
+            } else {
+              System.out.println("Tweet does not contain link -- ignoring.");
             }
-            return;
           }
         }
         System.out.println("Tweet is not in list of names to check -- ignoring");
@@ -126,8 +140,8 @@ public class TwitterStreamer {
     public void onException(Exception ex) {
       ex.printStackTrace();
       System.out.println("onException:" + ex.getMessage());
-      ErrorDisplay.showErrorWindow("Error Enabling Twitter", "A connection to the Twitter Streaming API was unable to be established. "
-          + "This is probably due to an expired or invalid Twitter API key. Please double-check your API keys.", ex);
+      ErrorDisplay.showErrorWindow("Error with Twitter", "An error has occurred with Twitter checking. If this error occurred right as you started "
+          + "the program, it's probably an issue with your Twitter API keys. Otherwise, an internal program error has occurred.", ex);
     }
   };
 

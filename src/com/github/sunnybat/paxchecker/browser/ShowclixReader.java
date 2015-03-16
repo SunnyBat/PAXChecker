@@ -1,11 +1,14 @@
 package com.github.sunnybat.paxchecker.browser;
 
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -219,5 +222,48 @@ public class ShowclixReader {
         System.out.println("Unknown expo: " + expo);
         return 48;
     }
+  }
+
+  // Need to use http://api.showclix.com/Partner/48/sellers?follow[]=events instead.
+  public static List<Integer> getAllRelatedIDs() {
+    List<Integer> myList = new ArrayList<>();
+    int maxPartnerID = 99;
+    for (int i = 0; i <= maxPartnerID; i++) {
+      try {
+        HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + i + "/sellers"));
+        httpCon.connect();
+        if (i == maxPartnerID) {
+          if (httpCon.getResponseCode() < 300) { // Is 2XX request (page found, or a variation of it)
+            maxPartnerID++;
+            System.out.println("Max PartnerID increased by 1!");
+            ErrorDisplay.showErrorWindow("DEBUG: Partner Found", "This is not an error. This is to let you know that a new Partner has been found. "
+                + "You may close this window at any time.", null);
+            i--;
+          }
+        } else {
+          BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+          String jsonText = "";
+          String line;
+          while ((line = reader.readLine()) != null) {
+            DataTracker.addDataUsed(line.length());
+            jsonText += line;
+          }
+          reader.close();
+          JSONParser mP = new JSONParser();
+          JSONObject obj = (JSONObject) mP.parse(jsonText);
+          for (String s : (Iterable<String>) obj.keySet()) {
+            try {
+              int sellerID = Integer.parseInt(s);
+              // TODO: Verify seller info, get event info if found
+            } catch (NumberFormatException nfe) {
+              System.out.println("Error parsing ID number from String: " + s);
+            }
+          }
+        }
+      } catch (IOException | ParseException e) {
+        e.printStackTrace();
+      }
+    }
+    return myList;
   }
 }

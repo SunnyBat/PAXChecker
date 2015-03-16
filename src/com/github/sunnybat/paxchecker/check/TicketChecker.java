@@ -107,6 +107,9 @@ public final class TicketChecker {
    * @param link The link to add to the list
    */
   public static synchronized void addLinkFound(String link) {
+    if (link.endsWith("/") || link.endsWith("\\")) {
+      link = link.substring(0, link.length() - 1);
+    }
     openedLinks.add(link);
   }
 
@@ -117,8 +120,11 @@ public final class TicketChecker {
    * @return True if the link has already been opened, false if not
    */
   public static synchronized boolean hasOpenedLink(String s) {
-    for (String t : openedLinks) {
-      if (t.equalsIgnoreCase(s)) {
+    for (String link : openedLinks) {
+      if (link.endsWith("/") || link.endsWith("\\")) {
+        link = link.substring(0, link.length() - 1);
+      }
+      if (link.equalsIgnoreCase(s)) {
         System.out.println("Already found link.");
         return true;
       }

@@ -345,6 +345,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very, very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses exponentially more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage and have a decent ping and connection speed.&#xa;&lt;/html&gt;"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -85,7 +85,7 @@ public class Setup extends javax.swing.JFrame {
         }
         if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
           JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
-          JCBDeepShowclixChecking.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+          //JCBDeepShowclixChecking.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
@@ -466,6 +466,7 @@ public class Setup extends javax.swing.JFrame {
 
     JCBDeepShowclixChecking.setText("Deep Showclix Checking");
     JCBDeepShowclixChecking.setToolTipText("<html>\nThis option is a very, very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses exponentially more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage and have a decent ping and connection speed.\n</html>");
+    JCBDeepShowclixChecking.setEnabled(false);
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -785,8 +786,8 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || !JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
-        JCBDeepShowclixChecking.setEnabled(JCBCheckShowclix.isSelected());
+        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
+        //JCBDeepShowclixChecking.setEnabled(JCBCheckShowclix.isSelected());
       }
     });
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
@@ -796,7 +797,7 @@ public class Setup extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || !JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
+        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
       }
     });
   }//GEN-LAST:event_JCBCheckWebsiteActionPerformed

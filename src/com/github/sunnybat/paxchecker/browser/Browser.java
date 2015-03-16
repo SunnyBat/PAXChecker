@@ -136,24 +136,26 @@ public class Browser {
     if (link == null) {
       return "";
     }
-    if (link.contains("http://")) {
+    if (link.contains("http://")) { // Trim link to start of address
       link = link.substring(link.indexOf("http://"));
     } else if (link.contains("https://")) {
       link = link.substring(link.indexOf("https://"));
     } else if (link.contains("t.co/")) {
       link = link.substring(link.indexOf("t.co/"));
+    } else {
+      return null; // Link not recognized
     }
-    link = link.trim();
-    if (link.contains("t.co/")) {
-      link = Browser.unshortenURL(link);
-    }
-    if (link.contains(" ")) {
+    if (link.contains(" ")) { // There are words after the link, so remove them
       link = link.substring(0, link.indexOf(" "));
     }
+    link = link.trim();
+//    if (link.contains("t.co/")) { // Link to unshorten
+//      link = Browser.unshortenURL(link);
+//    }
     if (link.endsWith("/")) {
       link = link.substring(0, link.length() - 1);
-      System.out.println("New link: " + link);
     }
+    System.out.println("Link parsed: " + link);
     return link.trim();
   }
 }
