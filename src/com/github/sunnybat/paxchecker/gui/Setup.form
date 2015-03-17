@@ -345,7 +345,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very, very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses exponentially more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage and have a decent ping and connection speed.&#xa;&lt;/html&gt;"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -519,9 +518,10 @@
                               <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBLoadNotifications" max="32767" attributes="0"/>
-                                  <Component id="JCBCheckUpdates" alignment="0" pref="127" max="32767" attributes="0"/>
+                                  <Component id="JCBCheckUpdates" alignment="0" max="32767" attributes="0"/>
                                   <Component id="JCBSaveTwitterKeys" max="32767" attributes="0"/>
                                   <Component id="JCBUseBeta" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jCheckBox1" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -555,7 +555,10 @@
                           <Component id="JCBUseBeta" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="JCBSaveCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -632,8 +635,9 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences."/>
+                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences.&#xa;&#xa;Anonymous statistics are collected whenever you load Patch Notes (every time the program is first run) or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
+                    <Property name="caretPosition" type="int" value="0"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -673,6 +677,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save Twitter Keys"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;NOTE: This saves your Twitter API&lt;br&gt;&#xa;keys in an encrypted format. Your&lt;br&gt;&#xa;keys will still be obtainable if you or&lt;br&gt;&#xa;someone else has access to this&lt;br&gt;&#xa;program&apos;s source code (which is&lt;br&gt;&#xa;publicly available). Save at your&lt;br&gt;&#xa;own risk!&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Anonymous Statistics"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;When enabled, the program goes through Orangedox&lt;br&gt;&#xa;to collect non-personally identifiable statistics about&lt;br&gt;&#xa;file downloads, such as the date downloaded and&lt;br&gt;&#xa;the specific file downloaded.&#xa;&lt;/html&gt;"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

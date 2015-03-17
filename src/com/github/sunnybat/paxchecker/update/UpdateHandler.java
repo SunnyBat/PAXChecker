@@ -22,10 +22,10 @@ public class UpdateHandler {
   private static volatile boolean useBetaVersion;
   private static volatile int updateLevel = -1;
   private static long updateSize;
-  private static final String UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
-  private static final String BETA_UPDATE_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
-  private static final String PATCH_NOTES_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-  public static com.github.sunnybat.paxchecker.update.Update update;
+  private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar";
+  private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar";
+  private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt";
+  private static com.github.sunnybat.paxchecker.update.Update update;
 
   public static void init() {
     if (!PAXChecker.isCommandLine()) {

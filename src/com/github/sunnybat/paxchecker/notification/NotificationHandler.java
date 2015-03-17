@@ -16,7 +16,7 @@ import com.github.sunnybat.commoncode.error.*;
  */
 public class NotificationHandler {
 
-  private static final String NOTIFICATIONS_LINK = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
+  private static final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt";
   private static final ArrayList<Notification> notificationList = new ArrayList<>();
   private static String lastNotificationID = "";
 

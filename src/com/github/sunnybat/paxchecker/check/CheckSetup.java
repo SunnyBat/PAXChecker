@@ -1,17 +1,18 @@
 package com.github.sunnybat.paxchecker.check;
 
-import com.github.sunnybat.paxchecker.update.UpdateHandler;
-import com.github.sunnybat.paxchecker.gui.Status;
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import com.github.sunnybat.paxchecker.update.UpdateHandler;
+import com.github.sunnybat.paxchecker.gui.Status;
 import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.Email;
 import com.github.sunnybat.paxchecker.KeyboardHandler;
 import com.github.sunnybat.paxchecker.PAXChecker;
-import java.util.ArrayList;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.gui.Tickets;
 
@@ -42,6 +43,7 @@ public class CheckSetup {
 
   /**
    * Adds a Twitter handle to the list of handles to check.
+   *
    * @param s The handle to check
    */
   public static void addHandle(String s) {

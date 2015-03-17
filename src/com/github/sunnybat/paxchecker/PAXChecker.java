@@ -2,6 +2,7 @@ package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.paxchecker.check.TicketChecker;
 import com.github.sunnybat.paxchecker.check.CheckShowclix;
+import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
@@ -14,6 +15,7 @@ import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.commoncode.encryption.Encryption;
+import com.github.sunnybat.paxchecker.browser.ShowclixReader;
 
 /**
  *
@@ -231,9 +233,11 @@ public final class PAXChecker {
         TicketChecker.addChecker(new CheckPaxsite());
       }
       if (checkShowclix) {
-        CheckShowclix c = new CheckShowclix();
+        CheckShowclix c;
         if (deepCheckShowclix) {
-          c.enableDeepChecking();
+          c = new DeepCheckShowclix();
+        } else {
+          c = new CheckShowclix();
         }
         TicketChecker.addChecker(c);
       }
@@ -266,35 +270,35 @@ public final class PAXChecker {
         PreferenceHandler.savePreferences();
       }
       CheckSetup.startCommandLineWebsiteChecking();
-      return;
-    }
-    if (doUpdate) {
-      start.setStatus("Loading Version Notes...");
-      UpdateHandler.loadVersionNotes();
-      if (UpdateHandler.updateAvailable()) {
-        UpdateHandler.promptUpdate(args);
-      }
-      setup.setPatchNotesText(UpdateHandler.getVersionNotes());
     } else {
-      startBackgroundThread(new Runnable() {
-        @Override
-        public void run() {
-          UpdateHandler.loadVersionNotes();
-          setup.setPatchNotesText(UpdateHandler.getVersionNotes());
+      if (doUpdate) {
+        start.setStatus("Loading Version Notes...");
+        UpdateHandler.loadVersionNotes();
+        if (UpdateHandler.updateAvailable()) {
+          UpdateHandler.promptUpdate(args);
         }
-      }, "Patch Notes");
-    }
-    start.setStatus("Loading Notifications...");
-    NotificationHandler.loadNotifications();
-    start.setStatus("Program loaded!");
-    start.dispose();
-    NotificationHandler.showNewNotifications();
-    if (autoStart) {
+        setup.setPatchNotesText(UpdateHandler.getVersionNotes());
+      } else {
+//        startBackgroundThread(new Runnable() {
+//          @Override
+//          public void run() {
+//            UpdateHandler.loadVersionNotes();
+//            setup.setPatchNotesText(UpdateHandler.getVersionNotes());
+//          }
+//        }, "Patch Notes");
+      }
+      start.setStatus("Loading Notifications...");
+      NotificationHandler.loadNotifications();
+      start.setStatus("Program loaded!");
       start.dispose();
-      CheckSetup.startCheckingWebsites();
-    } else {
-      setup.loadProgramSettings();
-      setup.showWindow();
+      NotificationHandler.showNewNotifications();
+      if (autoStart) {
+        start.dispose();
+        CheckSetup.startCheckingWebsites();
+      } else {
+        setup.loadProgramSettings();
+        setup.showWindow();
+      }
     }
   }
 

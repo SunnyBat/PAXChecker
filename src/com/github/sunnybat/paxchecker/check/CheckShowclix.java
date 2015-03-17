@@ -10,10 +10,9 @@ import com.github.sunnybat.paxchecker.browser.Browser;
  */
 public class CheckShowclix extends Check {
 
-  private int lastShowclixEventID = -1;
-  private int currentShowclixEventID = -1;
-  private boolean deepCheckShowclix;
-  private static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
+  int lastShowclixEventID = -1;
+  int currentShowclixEventID = -1;
+  static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
 
   public CheckShowclix() {
     super();
@@ -56,10 +55,6 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void reset() {
     lastShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo());
-  }
-
-  public synchronized void enableDeepChecking() {
-    deepCheckShowclix = true;
   }
 
   private static String getLink(int showclixID) {

@@ -1,18 +1,23 @@
 package com.github.sunnybat.paxchecker.browser;
 
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import com.github.sunnybat.paxchecker.DataTracker;
+import com.github.sunnybat.paxchecker.PAXChecker;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import com.github.sunnybat.paxchecker.DataTracker;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 
 /**
  *
@@ -28,6 +33,8 @@ public class ShowclixReader {
   private static final String API_EXTENSION_EAST_ID = "17792/";
   private static final String API_EXTENSION_SOUTH_ID = "19042/";
   private static final String API_EXTENSION_AUS_ID = "15374/";
+  private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
+  private static Phaser threadWait = new Phaser();
 
   /**
    * Gets the complete Showclix Event Page link.
@@ -161,8 +168,8 @@ public class ShowclixReader {
         }
       }
       return maxID;
-    } catch (java.net.SocketTimeoutException ste) { // Return maxId for this?
-      System.out.println("Unable to complete information download -- connection timed out");
+    } catch (java.net.SocketTimeoutException ste) {
+      System.out.println("Unable to complete information download -- connection timed out (URL: " + url + ")");
     } catch (IOException | ParseException e) {
       e.printStackTrace();
     }
@@ -224,46 +231,105 @@ public class ShowclixReader {
     }
   }
 
-  // Need to use http://api.showclix.com/Partner/48/sellers?follow[]=events instead.
-  public static List<Integer> getAllRelatedIDs() {
-    List<Integer> myList = new ArrayList<>();
-    int maxPartnerID = 99;
-    for (int i = 0; i <= maxPartnerID; i++) {
+  /**
+   * A currently inefficiently-coded method to check all Partners and Sellers for new PAX events.
+   *
+   * @return A Set of all Showclix IDs to check
+   */
+  public static Set<Integer> getAllRelatedIDs() {
+    threadWait.register();
+    final Set<Integer> myList = new TreeSet<>();
+    int maxPartnerID = 100;
+    for (int i = 1; i <= maxPartnerID; i++) {
+      System.out.println("Checking Partner ID " + i);
       try {
-        HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + i + "/sellers"));
+        final HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + i + "/sellers?follow[]=events"));
+        httpCon.setConnectTimeout(500);
         httpCon.connect();
         if (i == maxPartnerID) {
           if (httpCon.getResponseCode() < 300) { // Is 2XX request (page found, or a variation of it)
             maxPartnerID++;
             System.out.println("Max PartnerID increased by 1!");
-            ErrorDisplay.showErrorWindow("DEBUG: Partner Found", "This is not an error. This is to let you know that a new Partner has been found. "
-                + "You may close this window at any time.", null);
+            if (!PAXChecker.isCommandLine()) {
+              ErrorDisplay.showErrorWindow("DEBUG: Partner Found", "This is not an error. This is to let you know that a new Partner has been found. "
+                  + "You may close this window at any time.", null);
+            } else {
+              System.out.println("DEBUG: Partner Found -- This is not an error. This is to let you know that a new Partner has been found.");
+            }
             i--;
           }
         } else {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-          String jsonText = "";
-          String line;
-          while ((line = reader.readLine()) != null) {
-            DataTracker.addDataUsed(line.length());
-            jsonText += line;
-          }
-          reader.close();
-          JSONParser mP = new JSONParser();
-          JSONObject obj = (JSONObject) mP.parse(jsonText);
-          for (String s : (Iterable<String>) obj.keySet()) {
-            try {
-              int sellerID = Integer.parseInt(s);
-              // TODO: Verify seller info, get event info if found
-            } catch (NumberFormatException nfe) {
-              System.out.println("Error parsing ID number from String: " + s);
+          Runnable r = new Runnable() {
+            @Override
+            public void run() {
+              threadWait.register();
+              try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+                String jsonText = "";
+                String line;
+                while ((line = reader.readLine()) != null) {
+                  DataTracker.addDataUsed(line.length());
+                  jsonText += line;
+                }
+                reader.close();
+                //System.out.println("JSON Text: " + jsonText);
+                JSONParser mP = new JSONParser();
+                //JSONArray array = (JSONArray) mP.parse(jsonText);
+                try {
+                  JSONObject obj = (JSONObject) mP.parse(jsonText);
+                  for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
+                    try {
+                      JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+                      if (obj2.get("organization") == null) {
+                        System.out.println("Null.");
+                      } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
+                        System.out.println("PAX Seller: " + obj2.get("organization"));
+                        JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
+                        System.out.println(events);
+                        for (String s2 : (Iterable<String>) events.keySet()) {
+                          System.out.println("KEY: " + s2);
+                          try {
+                            addToSet(myList, Integer.parseInt(s2));
+                          } catch (NumberFormatException NFE) {
+                            NFE.printStackTrace();
+                          }
+                        }
+                      }
+                    } catch (ClassCastException e) {
+                      e.printStackTrace();
+                    }
+                  }
+                } catch (ClassCastException cce) {
+                  System.out.println("ClassCastException from array: " + ((JSONArray) mP.parse(jsonText)).toJSONString());
+                }
+              } catch (IOException iOException) {
+              } catch (ParseException parseException) {
+              }
+              threadWait.arriveAndDeregister();
             }
-          }
+          };
+          threadPool.submit(r);
         }
-      } catch (IOException | ParseException e) {
-        e.printStackTrace();
+      } catch (IOException e) {
+        System.out.println("Connection timed out.");
       }
     }
+    threadWait.awaitAdvance(1);
+    threadWait.arriveAndDeregister();
     return myList;
+  }
+
+  private static final Object OBJ = new Object();
+
+  /**
+   * Synchronization YAY!
+   *
+   * @param mySet
+   * @param add
+   */
+  private static void addToSet(Set<Integer> mySet, int add) {
+    synchronized (OBJ) {
+      mySet.add(add);
+    }
   }
 }
