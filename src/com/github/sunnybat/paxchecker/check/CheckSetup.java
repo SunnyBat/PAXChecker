@@ -71,6 +71,7 @@ public class CheckSetup {
         status.setupComponents();
         status.showWindow();
         setStatusIcon(getIconName(Browser.getExpo()));
+        TicketChecker.initCheckers();
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
@@ -307,6 +308,7 @@ public class CheckSetup {
       @Override
       public void run() {
         //System.gc();
+        TicketChecker.initCheckers();
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
         do {
           //status.setLastCheckedText("Checking for updates...");

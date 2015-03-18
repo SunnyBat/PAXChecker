@@ -481,7 +481,7 @@ public class Setup extends javax.swing.JFrame {
     });
 
     JCBCheckShowclixDeep.setText("Deep Showclix Checking");
-    JCBCheckShowclixDeep.setToolTipText("<html>\nThis option is a very, very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses exponentially more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage and have a decent ping and connection speed.\n</html>");
+    JCBCheckShowclixDeep.setToolTipText("<html>\nThis option is a very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses much more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage, have decent ping, and have a good connection<br>\nspeed.\n</html>");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -690,7 +690,7 @@ public class Setup extends javax.swing.JFrame {
     jTextArea1.setColumns(20);
     jTextArea1.setLineWrap(true);
     jTextArea1.setRows(5);
-    jTextArea1.setText("Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.\n\nNote that your password is NEVER saved using Preferences.\n\nAnonymous statistics are collected whenever you load Patch Notes (every time the program is first run) or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy");
+    jTextArea1.setText("Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.\n\nNote that your password is NEVER saved using Preferences.\n\nAnonymous statistics are collected whenever you load Patch Notes (every time the program is first run), load notifications, or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy");
     jTextArea1.setWrapStyleWord(true);
     jTextArea1.setCaretPosition(0);
     jScrollPane1.setViewportView(jTextArea1);

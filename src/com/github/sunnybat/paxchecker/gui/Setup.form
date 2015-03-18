@@ -344,7 +344,7 @@
             <Component class="javax.swing.JCheckBox" name="JCBCheckShowclixDeep">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very, very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses exponentially more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage and have a decent ping and connection speed.&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses much more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage, have decent ping, and have a good connection&lt;br&gt;&#xa;speed.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -635,7 +635,7 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences.&#xa;&#xa;Anonymous statistics are collected whenever you load Patch Notes (every time the program is first run) or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy"/>
+                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences.&#xa;&#xa;Anonymous statistics are collected whenever you load Patch Notes (every time the program is first run), load notifications, or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                     <Property name="caretPosition" type="int" value="0"/>
                   </Properties>

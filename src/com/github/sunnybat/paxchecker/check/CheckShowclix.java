@@ -2,6 +2,8 @@ package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.browser.ShowclixReader;
 import com.github.sunnybat.paxchecker.browser.Browser;
+import java.util.Set;
+import java.util.TreeSet;
 // Could replace Browser with a class variable, since all this is using is getExpo(), and then be able to have multiple instances of this running
 
 /**
@@ -10,9 +12,9 @@ import com.github.sunnybat.paxchecker.browser.Browser;
  */
 public class CheckShowclix extends Check {
 
-  int lastShowclixEventID = -1;
-  int currentShowclixEventID = -1;
   static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
+  Set<String> alreadyChecked = new TreeSet<>();
+  String currentLink;
 
   public CheckShowclix() {
     super();
@@ -26,25 +28,28 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    if (currentShowclixEventID > lastShowclixEventID) {
-      return ShowclixReader.isPaxPage(currentShowclixEventID);
-    } else {
-      return false;
-    }
+    return !alreadyChecked.contains(currentLink);
   }
 
   @Override
   public synchronized void updateLink() {
 //    if (!deepCheckShowclix) {
-    currentShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo()); // QUESTION: What if PAX makes a new event with a lower ID on their Seller page than on their Partner page?
-//    } else {
-//
-//    }
+    Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+    for (String i : mySet) {
+      if (!mySet.contains(i)) {
+        System.out.println("Not checked: " + i);
+        if (ShowclixReader.isPaxPage(i)) {
+          System.out.println("Is PAX Page!");
+          currentLink = i;
+          return;
+        }
+      }
+    }
   }
 
   @Override
   public synchronized String getLink() {
-    return getLink(currentShowclixEventID);
+    return currentLink;
   }
 
   @Override
@@ -54,11 +59,11 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized void reset() {
-    lastShowclixEventID = ShowclixReader.getLatestEventID(Browser.getExpo());
-  }
-
-  private static String getLink(int showclixID) {
-    return BASE_SHOWCLIX_LINK + showclixID;
+    Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+    for (String i : mySet) {
+      alreadyChecked.add(i);
+      currentLink = i;
+    }
   }
 
 }

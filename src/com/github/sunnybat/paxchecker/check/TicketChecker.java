@@ -37,8 +37,17 @@ public final class TicketChecker {
    * @param c The Checker to add
    */
   public static void addChecker(Check c) {
-    c.init(status, threadWait); // MOVE LATER
+    //c.init(status, threadWait); // MOVE LATER
     checks.add(c);
+  }
+
+  /**
+   * Initializes the Checkers registered with the program.
+   */
+  public static void initCheckers() {
+    for (Check c : checks) {
+      c.init(status, threadWait);
+    }
   }
 
   /**

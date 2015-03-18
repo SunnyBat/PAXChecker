@@ -16,7 +16,7 @@ import com.github.sunnybat.commoncode.error.*;
  */
 public class NotificationHandler {
 
-  private static final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt";
+  private static final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt?dl=1";
   private static final ArrayList<Notification> notificationList = new ArrayList<>();
   private static String lastNotificationID = "";
 
@@ -149,7 +149,9 @@ public class NotificationHandler {
         cDL.countDown();
       } else {
         NotificationWindow nW = new NotificationWindow(n, cDL);
-        nW.setMoreInfoButtonLink(n.getButtonLink());
+        if (n.getButtonLink() != null) {
+          nW.setMoreInfoButtonLink(n.getButtonLink());
+        }
         if (n.getButtonText() != null) {
           nW.setCloseButtonText(n.getButtonText());
         }

@@ -15,7 +15,6 @@ import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.commoncode.encryption.Encryption;
-import com.github.sunnybat.paxchecker.browser.ShowclixReader;
 
 /**
  *
@@ -23,7 +22,7 @@ import com.github.sunnybat.paxchecker.browser.ShowclixReader;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.1 R2";
+  public static final String VERSION = "2.0.1 R3";
   private static Setup setup;
   private static final Object LOCK = new Object();
   private static boolean commandLine;

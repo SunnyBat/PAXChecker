@@ -29,10 +29,6 @@ public class ShowclixReader {
   private static final String API_EXTENSION_SELLER = "Seller/";
   private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
   private static final String API_EXTENSION_EVENT = "Event/";
-  private static final String API_EXTENSION_PRIME_ID = "16886/"; // Also for PAX Dev
-  private static final String API_EXTENSION_EAST_ID = "17792/";
-  private static final String API_EXTENSION_SOUTH_ID = "19042/";
-  private static final String API_EXTENSION_AUS_ID = "15374/";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
 
@@ -42,192 +38,8 @@ public class ShowclixReader {
    * @param showclixID The Showclix Event ID
    * @return The complete link
    */
-  public static String getLink(int showclixID) {
+  public static String getEventLink(int showclixID) {
     return API_LINK_BASE + API_EXTENSION_EVENT + showclixID;
-  }
-
-  /**
-   * Returns the link to the ShowclixReader API of the given expo. The expo should be the name of the expo (Prime, East) or have PAX in front of it
-   * (PAX Prime, PAX East, etc). Any other name (PAX, PAX Invalid, etc) will return the PAX Prime link.
-   *
-   * @param expo The name of the expo
-   * @return The ShowclixReader API link to Seller Events
-   */
-  public static String getAPISellerEventLink(String expo) {
-    return getAPISellerLink(expo) + "events";
-  }
-
-  /**
-   * Gets the latest ShowclixReader ID for PAX events. Note that this checks PAX Prime, East, South and Aus events. If you want to check a specific
-   * event's ShowclixReader ID, see {@link #getLatestSellerEventID(java.lang.String)}.
-   *
-   * @return The most recent ShowclixReader ID
-   */
-  @Deprecated
-  public static int getLatestEventID() {
-    int maxId;
-    maxId = Math.max(getLatestSellerEventID("Prime"), getLatestSellerEventID("East"));
-    maxId = Math.max(maxId, getLatestSellerEventID("South"));
-    maxId = Math.max(maxId, getLatestSellerEventID("Aus"));
-    maxId = Math.max(maxId, getLatestPartnerEventID(48));
-    maxId = Math.max(maxId, getLatestPartnerEventID(75));
-    return maxId;
-  }
-
-  /**
-   * Gets the latest Event ID for the given expo. Checks both the seller events and partner events.
-   *
-   * @param expo The expo to check
-   * @return The latest Event ID
-   */
-  @Deprecated
-  public static int getLatestEventID(String expo) {
-    return Math.max(getLatestSellerEventID(expo), getLatestPartnerEventID(getSellerID(expo)));
-  }
-
-  /**
-   * Gets the latest Event ID from the Seller events for a given PAX expo.
-   *
-   * @param expo The expo to check
-   * @return The most recent ShowclixReader ID
-   */
-  @Deprecated
-  public static int getLatestSellerEventID(String expo) {
-    try {
-      return getLatestID(new URL(getAPISellerEventLink(expo)));
-    } catch (MalformedURLException ex) {
-      return -1;
-    }
-  }
-
-  /**
-   * Gets the latest Event ID from the given Partner events for a given PAX expo.
-   *
-   * @param partnerID The Seller ID to check
-   * @return The most recent ShowclixReader ID
-   */
-  @Deprecated
-  public static int getLatestPartnerEventID(int partnerID) {
-    try {
-      return getLatestID(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/events"));
-    } catch (MalformedURLException ex) {
-      return -1;
-    }
-  }
-
-  /**
-   * Gets the latest Event ID from the given PAX expo's Seller events.
-   *
-   * @param expo The expo to check
-   * @return The latest Event ID
-   */
-  @Deprecated
-  public static int getLatestPartnerEventID(String expo) {
-    return getLatestPartnerEventID(getSellerID(expo));
-  }
-
-  /**
-   * Gets all Event URLs from the given URL. Note that the page should be JSON-formatted.
-   *
-   * @param sellerID The Seller ID to read
-   * @return The Set of all the Event URLs listed on the given page. This is guaranteed to be non-null.
-   */
-  public static Set<String> getAllSellerEventURLs(int sellerID) {
-    Set<String> retList = new TreeSet<>();
-    try {
-      final HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + "/events"));
-      httpCon.setConnectTimeout(500);
-      try {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-        String jsonText = "";
-        String line;
-        while ((line = reader.readLine()) != null) {
-          DataTracker.addDataUsed(line.length());
-          jsonText += line;
-        }
-        reader.close();
-        //System.out.println("JSON Text: " + jsonText);
-        JSONParser mP = new JSONParser();
-        //JSONArray array = (JSONArray) mP.parse(jsonText);
-        try {
-          JSONObject obj = (JSONObject) mP.parse(jsonText);
-          System.out.println(obj);
-          for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
-            try {
-              JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-              if (obj2.get("listing_url") == null) {
-                System.out.println("Listing URL is null!");
-              } else {
-                System.out.println("URL Found: " + obj2.get("listing_url"));
-                addToSet(retList, (String) obj2.get("listing_url"));
-              }
-            } catch (ClassCastException cce) {
-              System.out.println("CCE: " + s);
-            }
-          }
-        } catch (ClassCastException cce) {
-          cce.printStackTrace();
-          System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
-        }
-      } catch (IOException iOException) {
-      } catch (ParseException parseException) {
-      }
-    } catch (IOException iOException) {
-      System.out.println("ERROR connecting to Seller " + sellerID);
-    }
-    return retList;
-  }
-
-  public static Set<String> getAllPartnerEventURLs(int partnerID) {
-    Set<String> retSet = new TreeSet<>();
-    try {
-      HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers?follow[]=events"));
-      httpCon.setConnectTimeout(500);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-      StringBuilder build = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        DataTracker.addDataUsed(line.length());
-        build.append(line);
-      }
-      reader.close();
-      String jsonText = build.toString();
-      //System.out.println("JSON Text: " + jsonText);
-      JSONParser mP = new JSONParser();
-      //JSONArray array = (JSONArray) mP.parse(jsonText);
-      try {
-        JSONObject obj = (JSONObject) mP.parse(jsonText);
-        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
-          try {
-            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-            if (obj2.get("organization") == null) {
-              System.out.println("Null.");
-            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
-              System.out.println("PAX Seller: " + obj2.get("organization"));
-              JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
-              System.out.println(events);
-              for (String s2 : (Iterable<String>) events.keySet()) {
-                //System.out.println("KEY: " + s2);
-                if ((String) ((JSONObject) events.get(s2)).get("listing_url") != null) {
-                  addToSet(retSet, (String) ((JSONObject) events.get(s2)).get("listing_url")); // SO MANY CLASS CASTS
-                } else {
-                  System.out.println("NULL, resorting to Listing ID");
-                  addToSet(retSet, "http://www.showclix.com/Event/" + s2);
-                }
-              }
-            }
-          } catch (ClassCastException e) {
-            e.printStackTrace();
-          }
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
-      }
-    } catch (IOException iOException) {
-      System.out.println("Error connecting to partner " + partnerID);
-    } catch (ParseException parseException) {
-    }
-    return retSet;
   }
 
   /**
@@ -265,70 +77,211 @@ public class ShowclixReader {
     return false;
   }
 
-  @Deprecated
-  private static int getLatestID(URL url) {
+  public static Set<String> getAllEventURLs(String expo) {
+    Set<String> retSet = ShowclixReader.getAllSellerEventURLs(expo);
+    retSet.addAll(ShowclixReader.getAllPartnerEventURLs(expo));
+    return retSet;
+  }
+
+  public static Set<String> getAllRelevantURLs() {
+    Set<Integer> sellerIDs = getAllRelevantSellerIDs();
+    Set<Integer> partnerIDs = getAllPartners(sellerIDs);
+    final Set<String> retSet = new TreeSet<>();
+    final Phaser threadWait = new Phaser();
+    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
+    for (int partnerID : partnerIDs) {
+      retSet.addAll(getAllPartnerEventURLs(partnerID));
+    }
+    for (int sellerID : sellerIDs) {
+      retSet.addAll(getAllSellerEventURLs(sellerID));
+    }
+    return retSet;
+  }
+
+  private static Set<String> getAllPartnerEventURLs(String expo) {
+    return getAllPartnerEventURLs(getPartnerID(expo));
+  }
+
+  private static Set<String> getAllSellerEventURLs(String expo) {
+    return getAllSellerEventURLs(getSellerID(expo));
+  }
+
+  /**
+   * Gets all Event URLs from the given Seller ID. Note that the page should be JSON-formatted.
+   *
+   * @param sellerID The Seller ID to read
+   * @return The Set of all the Event URLs listed on the given page. This is guaranteed to be non-null.
+   */
+  private static Set<String> getAllSellerEventURLs(int sellerID) {
+    Set<String> retSet = new TreeSet<>();
     try {
-      HttpURLConnection httpCon = Browser.setUpConnection(url);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-      String jsonText = "";
-      String line;
-      while ((line = reader.readLine()) != null) {
-        DataTracker.addDataUsed(line.length());
-        jsonText += line;
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + "/events"));
+      if (jsonText == null) {
+        return retSet;
       }
-      reader.close();
+      //System.out.println("JSON Text: " + jsonText);
       JSONParser mP = new JSONParser();
-      JSONObject obj = (JSONObject) mP.parse(jsonText);
-      int maxID = 0;
-      for (String s : (Iterable<String>) obj.keySet()) {
-        try {
-          maxID = Math.max(maxID, Integer.parseInt((String) s));
-        } catch (NumberFormatException nfe) {
-          System.out.println("Error parsing ID number from String: " + s);
+      //JSONArray array = (JSONArray) mP.parse(jsonText);
+      try {
+        JSONObject obj = (JSONObject) mP.parse(jsonText);
+        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
+          try {
+            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+            if (obj2.get("listing_url") == null) {
+              System.out.println("Listing URL is null!");
+              addToSet(retSet, "http://www.showclix.com/Event/" + s);
+            } else {
+              System.out.println("URL Found: " + obj2.get("listing_url"));
+              addToSet(retSet, (String) obj2.get("listing_url"));
+            }
+          } catch (ClassCastException cce) {
+            System.out.println("CCE: " + s);
+          }
         }
+      } catch (ClassCastException cce) {
+        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
       }
-      return maxID;
-    } catch (java.net.SocketTimeoutException ste) {
-      System.out.println("Unable to complete information download -- connection timed out (URL: " + url + ")");
-    } catch (IOException | ParseException e) {
-      e.printStackTrace();
+    } catch (IOException iOException) {
+      System.out.println("ERROR connecting to Seller " + sellerID);
+    } catch (ParseException parseException) {
     }
-    return -1;
+    return retSet;
   }
 
-  private static String getAPISellerLink(String expo) {
-    String link = API_LINK_BASE + API_EXTENSION_SELLER;
-    if (expo == null) {
-      return link += API_EXTENSION_PRIME_ID;
+  private static Set<String> getAllPartnerEventURLs(int partnerID) {
+    Set<String> retSet = new TreeSet<>();
+    try {
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/events"));
+      if (jsonText == null) {
+        return retSet;
+      }
+      //System.out.println("JSON Text: " + jsonText);
+      JSONParser mP = new JSONParser();
+      //JSONArray array = (JSONArray) mP.parse(jsonText);
+      try {
+        JSONObject obj = (JSONObject) mP.parse(jsonText);
+        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Events
+          try {
+            JSONObject obj2 = ((JSONObject) obj.get(s)); // Get Event JSON
+            if (obj2.get("listing_url") != null) {
+              System.out.println("URL: " + obj2.get("listing_url"));
+              addToSet(retSet, (String) obj2.get("listing_url"));
+            } else {
+              System.out.println("listing_url is null -- using ID " + s);
+            }
+
+//            if (obj2.get("organization") == null) {
+//              System.out.println("Null.");
+//            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
+//              System.out.println("PAX Seller: " + obj2.get("organization"));
+//              JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
+//              for (String s2 : (Iterable<String>) events.keySet()) {
+//                //System.out.println("KEY: " + s2);
+//                if ((String) ((JSONObject) events.get(s2)).get("listing_url") != null) {
+//                  addToSet(retSet, (String) ((JSONObject) events.get(s2)).get("listing_url")); // SO MANY CLASS CASTS
+//                } else {
+//                  System.out.println("NULL, resorting to Listing ID");
+//                  addToSet(retSet, "http://www.showclix.com/Event/" + s2);
+//                }
+//              }
+//            }
+          } catch (ClassCastException e) {
+            e.printStackTrace();
+          }
+        }
+      } catch (ClassCastException cce) {
+        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
+      }
+    } catch (IOException iOException) {
+      System.out.println("Error connecting to partner " + partnerID);
+    } catch (ParseException parseException) {
     }
-    switch (expo.toLowerCase()) {
-      case "prime":
-      case "pax prime":
-      case "dev":
-      case "pax dev":
-        link += API_EXTENSION_PRIME_ID;
-        break;
-      case "east":
-      case "pax east":
-        link += API_EXTENSION_EAST_ID;
-        break;
-      case "south":
-      case "pax south":
-        link += API_EXTENSION_SOUTH_ID;
-        break;
-      case "aus":
-      case "pax aus":
-        link += API_EXTENSION_AUS_ID;
-        break;
-      default:
-        System.out.println("Unknown expo: " + expo);
-        link += API_EXTENSION_PRIME_ID;
-        break;
-    }
-    return link;
+    return retSet;
   }
 
-  private static int getSellerID(String expo) {
+  private static Set<Integer> getAllPartners(Set<Integer> sellerIDs) {
+    final Set<Integer> retSet = new TreeSet<>();
+    for (int i : sellerIDs) {
+      try {
+        String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + i + "/partner"));
+        if (jsonText == null) {
+          return retSet;
+        }
+        JSONParser mP = new JSONParser();
+        JSONObject obj = (JSONObject) mP.parse(jsonText);
+        if (obj.get("partner_id") != null) {
+          try {
+            retSet.add(Integer.parseInt((String) obj.get("partner_id")));
+          } catch (NumberFormatException nfe) {
+            System.out.println("Error parsing number: " + obj.get("partner_id"));
+          }
+        }
+      } catch (MalformedURLException mue) {
+      } catch (ParseException pe) {
+      }
+    }
+    return retSet;
+  }
+
+  private static Set<Integer> getAllRelevantSellerIDs() {
+    final Phaser threadWait = new Phaser();
+    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
+    final Set<Integer> relevantSellerIDs = new TreeSet<>();
+    final Object LOCK = new Object();
+    for (int i = 1; i < 100; i++) {
+      final int pI = i;
+      Runnable r = new Runnable() {
+        @Override
+        public void run() {
+          Set<Integer> mySet = getRelevantSellerIDs(pI);
+          synchronized (LOCK) {
+            relevantSellerIDs.addAll(mySet);
+          }
+          threadWait.arriveAndDeregister();
+        }
+      };
+      threadPool.submit(r);
+    }
+    threadWait.awaitAdvance(threadWait.arriveAndDeregister());
+    return relevantSellerIDs;
+  }
+
+  private static Set<Integer> getRelevantSellerIDs(int partnerID) {
+    Set<Integer> retSet = new TreeSet<>();
+    try {
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers"));
+      if (jsonText == null) {
+        return retSet;
+      }
+      //System.out.println("JSON Text: " + jsonText);
+      JSONParser mP = new JSONParser();
+      //JSONArray array = (JSONArray) mP.parse(jsonText);
+      try {
+        JSONObject obj = (JSONObject) mP.parse(jsonText);
+        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
+          try {
+            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+            if (obj2.get("organization") == null) {
+              System.out.println("Null.");
+            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
+              System.out.println("PAX Seller: " + obj2.get("organization"));
+              retSet.add(Integer.parseInt(s));
+            }
+          } catch (ClassCastException e) {
+            e.printStackTrace();
+          }
+        }
+      } catch (ClassCastException cce) {
+        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
+      }
+    } catch (IOException iOException) {
+      System.out.println("Error connecting to partner " + partnerID);
+    } catch (ParseException parseException) {
+    }
+    return retSet;
+  }
+
+  private static int getPartnerID(String expo) {
     if (expo == null) {
       return 48;
     }
@@ -351,53 +304,56 @@ public class ShowclixReader {
     }
   }
 
-  /**
-   * A currently inefficiently-coded method to check all Partners and Sellers for new PAX events.
-   *
-   * @return A Set of all Showclix IDs to check
-   */
-  public static Set<String> getAllRelatedIDs() {
-    final Phaser threadWait = new Phaser();
-    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
-    final Set<String> myList = new TreeSet<>();
-    for (int partnerID = 1; partnerID <= maxPartnerID; partnerID++) {
-      if (partnerID == maxPartnerID) {
-        try {
-          HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers?follow[]=events"));
-          httpCon.setConnectTimeout(500);
-          httpCon.connect();
-          if (httpCon.getResponseCode() < 300) { // Is 2XX request (page found, or a variation of it)
-            maxPartnerID++;
-            partnerID--;
-            threadWait.register();
-            if (!PAXChecker.isCommandLine()) {
-              ErrorDisplay.showErrorWindow("DEBUG: Partner Found", "This is not an error. This is to let you know that a new Partner has been found. "
-                  + "You may close this window at any time.", null);
-            } else {
-              System.out.println("DEBUG: Partner Found -- This is not an error. This is to let you know that a new Partner has been found.");
-            }
-          }
-        } catch (IOException e) {
-        }
-      } else {
-        final int finalPID = partnerID;
-        Runnable r = new Runnable() {
-          @Override
-          public void run() {
-            System.out.println("Checking Partner ID " + finalPID);
-            myList.addAll(getAllPartnerEventURLs(finalPID));
-            threadWait.arriveAndDeregister();
-          }
-        };
-        threadPool.submit(r);
-      }
+  private static int getSellerID(String expo) {
+    if (expo == null) {
+      return 16886;
     }
-    threadWait.awaitAdvance(threadWait.arriveAndDeregister());
-    System.out.println("LIST!");
-    return myList;
+    switch (expo.toLowerCase()) {
+      case "prime":
+      case "pax prime":
+      case "dev":
+      case "pax dev":
+        return 16886;
+      case "east":
+      case "pax east":
+        return 17792;
+      case "south":
+      case "pax south":
+        return 19042;
+      case "aus":
+      case "pax aus":
+        return 15374;
+      default:
+        System.out.println("Unknown expo: " + expo);
+        return 16886;
+    }
+  }
+
+  private static String parseJSON(URL url) {
+    try {
+      HttpURLConnection httpCon = Browser.setUpConnection(url);
+      httpCon.setConnectTimeout(500);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+      StringBuilder build = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        DataTracker.addDataUsed(line.length());
+        build.append(line);
+      }
+      reader.close();
+      return build.toString();
+    } catch (IOException iOException) {
+      return null;
+    }
   }
 
   private static final Object OBJ = new Object();
+
+  private static void addToSet(Set<Integer> mySet, int add) {
+    synchronized (OBJ) {
+      mySet.add(add);
+    }
+  }
 
   private static void addToSet(Set<String> mySet, String add) {
     synchronized (OBJ) {

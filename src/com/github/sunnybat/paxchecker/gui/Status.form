@@ -113,7 +113,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="JLLastChecked">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Time Until Check:"/>
+        <Property name="text" type="java.lang.String" value="Time Until Check: [Initializing]"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="JLInformation">
@@ -132,7 +132,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="JLDataUsage">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Data Usage:"/>
+        <Property name="text" type="java.lang.String" value="Data Usage: [Initializing]"/>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Note that this does NOT include Twitter&lt;br&gt;&#xa;data usage.&lt;br&gt;&#xa;This is only a rough estimate of data used.&lt;br&gt;&#xa;For more accurate data usage, download&lt;br&gt;&#xa;WireShark (or similar software) and monitor&lt;br&gt;&#xa;usage through that.&#xa;&lt;/html&gt;"/>
       </Properties>
     </Component>

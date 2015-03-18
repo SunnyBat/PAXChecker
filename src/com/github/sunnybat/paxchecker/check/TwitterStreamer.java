@@ -70,6 +70,8 @@ public class TwitterStreamer {
 
     @Override
     public void onStallWarning(StallWarning warning) {
+      Throwable t = new Throwable(warning.getCode() + "\n\n" + warning.getMessage() + "\nn" + warning.getPercentFull());
+      ErrorDisplay.showErrorWindow("Stall Warning", "A stall warning has been thrown by the Twiiter4j library.", t);
     }
 
     @Override
@@ -139,9 +141,27 @@ public class TwitterStreamer {
     @Override
     public void onException(Exception ex) {
       ex.printStackTrace();
-      System.out.println("onException:" + ex.getMessage());
       ErrorDisplay.showErrorWindow("Error with Twitter", "An error has occurred with Twitter checking. If this error occurred right as you started "
           + "the program, it's probably an issue with your Twitter API keys. Otherwise, an internal program error has occurred.", ex);
+    }
+  };
+
+  private static final ConnectionLifeCycleListener cLCListener = new ConnectionLifeCycleListener() {
+    @Override
+    public void onCleanUp() {
+      System.out.println("Twitter Streaming cleanup");
+    }
+
+    @Override
+    public void onConnect() {
+      System.out.println("Connected to Twitter Streaming service.");
+    }
+
+    @Override
+    public void onDisconnect() {
+      System.out.println("Disconnected from Twitter Streaming service");
+      ErrorDisplay.showErrorWindow("WARNING: Disconnected from Twitter Streaming service. Restart the PAXChecker to reconnect. If this persists, let "
+          + "/u/SunnyBat know!");
     }
   };
 
@@ -152,6 +172,7 @@ public class TwitterStreamer {
     System.out.println(Arrays.toString(handles));
     myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
     myStream.addListener(listener);
+    myStream.addConnectionLifeCycleListener(cLCListener);
     myStream.user(handles);
     usersToCheck = handles.clone();
   }

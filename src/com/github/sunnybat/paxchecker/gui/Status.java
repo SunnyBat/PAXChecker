@@ -308,7 +308,7 @@ public class Status extends javax.swing.JFrame {
       }
     });
 
-    JLLastChecked.setText("Time Until Check:");
+    JLLastChecked.setText("Time Until Check: [Initializing]");
 
     JLInformation.setText(" ");
 
@@ -316,7 +316,7 @@ public class Status extends javax.swing.JFrame {
     jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel2.setText("Email -- Phone");
 
-    JLDataUsage.setText("Data Usage:");
+    JLDataUsage.setText("Data Usage: [Initializing]");
     JLDataUsage.setToolTipText("<html>\nNote that this does NOT include Twitter<br>\ndata usage.<br>\nThis is only a rough estimate of data used.<br>\nFor more accurate data usage, download<br>\nWireShark (or similar software) and monitor<br>\nusage through that.\n</html>");
 
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
