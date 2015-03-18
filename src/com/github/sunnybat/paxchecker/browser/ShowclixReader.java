@@ -34,7 +34,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_SOUTH_ID = "19042/";
   private static final String API_EXTENSION_AUS_ID = "15374/";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
-  private static Phaser threadWait = new Phaser();
+  private static int maxPartnerID = 100;
 
   /**
    * Gets the complete Showclix Event Page link.
@@ -63,6 +63,7 @@ public class ShowclixReader {
    *
    * @return The most recent ShowclixReader ID
    */
+  @Deprecated
   public static int getLatestEventID() {
     int maxId;
     maxId = Math.max(getLatestSellerEventID("Prime"), getLatestSellerEventID("East"));
@@ -79,6 +80,7 @@ public class ShowclixReader {
    * @param expo The expo to check
    * @return The latest Event ID
    */
+  @Deprecated
   public static int getLatestEventID(String expo) {
     return Math.max(getLatestSellerEventID(expo), getLatestPartnerEventID(getSellerID(expo)));
   }
@@ -89,6 +91,7 @@ public class ShowclixReader {
    * @param expo The expo to check
    * @return The most recent ShowclixReader ID
    */
+  @Deprecated
   public static int getLatestSellerEventID(String expo) {
     try {
       return getLatestID(new URL(getAPISellerEventLink(expo)));
@@ -103,6 +106,7 @@ public class ShowclixReader {
    * @param partnerID The Seller ID to check
    * @return The most recent ShowclixReader ID
    */
+  @Deprecated
   public static int getLatestPartnerEventID(int partnerID) {
     try {
       return getLatestID(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/events"));
@@ -117,19 +121,134 @@ public class ShowclixReader {
    * @param expo The expo to check
    * @return The latest Event ID
    */
+  @Deprecated
   public static int getLatestPartnerEventID(String expo) {
     return getLatestPartnerEventID(getSellerID(expo));
   }
 
   /**
-   * Checks whether or not the page associated with the given ShowclixID is a PAX ticket page.
+   * Gets all Event URLs from the given URL. Note that the page should be JSON-formatted.
+   *
+   * @param sellerID The Seller ID to read
+   * @return The Set of all the Event URLs listed on the given page. This is guaranteed to be non-null.
+   */
+  public static Set<String> getAllSellerEventURLs(int sellerID) {
+    Set<String> retList = new TreeSet<>();
+    try {
+      final HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + "/events"));
+      httpCon.setConnectTimeout(500);
+      try {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+        String jsonText = "";
+        String line;
+        while ((line = reader.readLine()) != null) {
+          DataTracker.addDataUsed(line.length());
+          jsonText += line;
+        }
+        reader.close();
+        //System.out.println("JSON Text: " + jsonText);
+        JSONParser mP = new JSONParser();
+        //JSONArray array = (JSONArray) mP.parse(jsonText);
+        try {
+          JSONObject obj = (JSONObject) mP.parse(jsonText);
+          System.out.println(obj);
+          for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
+            try {
+              JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+              if (obj2.get("listing_url") == null) {
+                System.out.println("Listing URL is null!");
+              } else {
+                System.out.println("URL Found: " + obj2.get("listing_url"));
+                addToSet(retList, (String) obj2.get("listing_url"));
+              }
+            } catch (ClassCastException cce) {
+              System.out.println("CCE: " + s);
+            }
+          }
+        } catch (ClassCastException cce) {
+          cce.printStackTrace();
+          System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
+        }
+      } catch (IOException iOException) {
+      } catch (ParseException parseException) {
+      }
+    } catch (IOException iOException) {
+      System.out.println("ERROR connecting to Seller " + sellerID);
+    }
+    return retList;
+  }
+
+  public static Set<String> getAllPartnerEventURLs(int partnerID) {
+    Set<String> retSet = new TreeSet<>();
+    try {
+      HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers?follow[]=events"));
+      httpCon.setConnectTimeout(500);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+      StringBuilder build = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        DataTracker.addDataUsed(line.length());
+        build.append(line);
+      }
+      reader.close();
+      String jsonText = build.toString();
+      //System.out.println("JSON Text: " + jsonText);
+      JSONParser mP = new JSONParser();
+      //JSONArray array = (JSONArray) mP.parse(jsonText);
+      try {
+        JSONObject obj = (JSONObject) mP.parse(jsonText);
+        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
+          try {
+            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+            if (obj2.get("organization") == null) {
+              System.out.println("Null.");
+            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
+              System.out.println("PAX Seller: " + obj2.get("organization"));
+              JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
+              System.out.println(events);
+              for (String s2 : (Iterable<String>) events.keySet()) {
+                //System.out.println("KEY: " + s2);
+                if ((String) ((JSONObject) events.get(s2)).get("listing_url") != null) {
+                  addToSet(retSet, (String) ((JSONObject) events.get(s2)).get("listing_url")); // SO MANY CLASS CASTS
+                } else {
+                  System.out.println("NULL, resorting to Listing ID");
+                  addToSet(retSet, "http://www.showclix.com/Event/" + s2);
+                }
+              }
+            }
+          } catch (ClassCastException e) {
+            e.printStackTrace();
+          }
+        }
+      } catch (ClassCastException cce) {
+        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
+      }
+    } catch (IOException iOException) {
+      System.out.println("Error connecting to partner " + partnerID);
+    } catch (ParseException parseException) {
+    }
+    return retSet;
+  }
+
+  /**
+   * Checks whether or not the page associated with the given Showclix EventID is a PAX ticket page.
    *
    * @param showclixID The Showclix ID to check
    * @return True if it is, false if not
    */
   public static boolean isPaxPage(int showclixID) {
+    return isPaxPage("http://www.showclix.com/Event/" + showclixID);
+  }
+
+  /**
+   * Checks whether or not the given URL is a PAX ticket page.
+   *
+   * @param URL The URL to check
+   * @return True if it is, false if not
+   */
+  public static boolean isPaxPage(String URL) {
     try {
-      HttpURLConnection connect = Browser.setUpConnection(new URL("http://www.showclix.com/event/" + showclixID));
+      HttpURLConnection connect = Browser.setUpConnection(new URL(URL));
       BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
       String text = "";
       String line;
@@ -146,6 +265,7 @@ public class ShowclixReader {
     return false;
   }
 
+  @Deprecated
   private static int getLatestID(URL url) {
     try {
       HttpURLConnection httpCon = Browser.setUpConnection(url);
@@ -236,99 +356,54 @@ public class ShowclixReader {
    *
    * @return A Set of all Showclix IDs to check
    */
-  public static Set<Integer> getAllRelatedIDs() {
-    threadWait.register();
-    final Set<Integer> myList = new TreeSet<>();
-    int maxPartnerID = 100;
-    for (int i = 1; i <= maxPartnerID; i++) {
-      System.out.println("Checking Partner ID " + i);
-      try {
-        final HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + i + "/sellers?follow[]=events"));
-        httpCon.setConnectTimeout(500);
-        httpCon.connect();
-        if (i == maxPartnerID) {
+  public static Set<String> getAllRelatedIDs() {
+    final Phaser threadWait = new Phaser();
+    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
+    final Set<String> myList = new TreeSet<>();
+    for (int partnerID = 1; partnerID <= maxPartnerID; partnerID++) {
+      if (partnerID == maxPartnerID) {
+        try {
+          HttpURLConnection httpCon = Browser.setUpConnection(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers?follow[]=events"));
+          httpCon.setConnectTimeout(500);
+          httpCon.connect();
           if (httpCon.getResponseCode() < 300) { // Is 2XX request (page found, or a variation of it)
             maxPartnerID++;
-            System.out.println("Max PartnerID increased by 1!");
+            partnerID--;
+            threadWait.register();
             if (!PAXChecker.isCommandLine()) {
               ErrorDisplay.showErrorWindow("DEBUG: Partner Found", "This is not an error. This is to let you know that a new Partner has been found. "
                   + "You may close this window at any time.", null);
             } else {
               System.out.println("DEBUG: Partner Found -- This is not an error. This is to let you know that a new Partner has been found.");
             }
-            i--;
           }
-        } else {
-          Runnable r = new Runnable() {
-            @Override
-            public void run() {
-              threadWait.register();
-              try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-                String jsonText = "";
-                String line;
-                while ((line = reader.readLine()) != null) {
-                  DataTracker.addDataUsed(line.length());
-                  jsonText += line;
-                }
-                reader.close();
-                //System.out.println("JSON Text: " + jsonText);
-                JSONParser mP = new JSONParser();
-                //JSONArray array = (JSONArray) mP.parse(jsonText);
-                try {
-                  JSONObject obj = (JSONObject) mP.parse(jsonText);
-                  for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
-                    try {
-                      JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-                      if (obj2.get("organization") == null) {
-                        System.out.println("Null.");
-                      } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
-                        System.out.println("PAX Seller: " + obj2.get("organization"));
-                        JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
-                        System.out.println(events);
-                        for (String s2 : (Iterable<String>) events.keySet()) {
-                          System.out.println("KEY: " + s2);
-                          try {
-                            addToSet(myList, Integer.parseInt(s2));
-                          } catch (NumberFormatException NFE) {
-                            NFE.printStackTrace();
-                          }
-                        }
-                      }
-                    } catch (ClassCastException e) {
-                      e.printStackTrace();
-                    }
-                  }
-                } catch (ClassCastException cce) {
-                  System.out.println("ClassCastException from array: " + ((JSONArray) mP.parse(jsonText)).toJSONString());
-                }
-              } catch (IOException iOException) {
-              } catch (ParseException parseException) {
-              }
-              threadWait.arriveAndDeregister();
-            }
-          };
-          threadPool.submit(r);
+        } catch (IOException e) {
         }
-      } catch (IOException e) {
-        System.out.println("Connection timed out.");
+      } else {
+        final int finalPID = partnerID;
+        Runnable r = new Runnable() {
+          @Override
+          public void run() {
+            System.out.println("Checking Partner ID " + finalPID);
+            myList.addAll(getAllPartnerEventURLs(finalPID));
+            threadWait.arriveAndDeregister();
+          }
+        };
+        threadPool.submit(r);
       }
     }
-    threadWait.awaitAdvance(1);
-    threadWait.arriveAndDeregister();
+    threadWait.awaitAdvance(threadWait.arriveAndDeregister());
+    System.out.println("LIST!");
     return myList;
   }
 
   private static final Object OBJ = new Object();
 
-  /**
-   * Synchronization YAY!
-   *
-   * @param mySet
-   * @param add
-   */
-  private static void addToSet(Set<Integer> mySet, int add) {
+  private static void addToSet(Set<String> mySet, String add) {
     synchronized (OBJ) {
+      if (add.endsWith("/")) {
+        add = add.substring(0, add.length() - 1);
+      }
       mySet.add(add);
     }
   }

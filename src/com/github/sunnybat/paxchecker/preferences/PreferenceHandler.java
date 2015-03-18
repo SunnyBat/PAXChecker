@@ -106,6 +106,9 @@ public class PreferenceHandler {
     return p;
   }
 
+  /**
+   * Saves all the preferences for the program. These Preferences should already have been set before calling this.
+   */
   public static synchronized void savePreferences() {
     boolean shouldSave = getBooleanPreference(Preference.TYPES.SAVE_PREFS);
     System.out.println("shouldSave = " + shouldSave);

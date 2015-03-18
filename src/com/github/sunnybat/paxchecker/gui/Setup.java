@@ -54,6 +54,9 @@ public class Setup extends javax.swing.JFrame {
       JCBLoadNotifications.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS));
       JCBCheckUpdates.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES));
       JCBSaveTwitterKeys.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).shouldSave());
+      if (PreferenceHandler.getPreferenceObject(Preference.TYPES.ENABLE_STATISTICS).shouldSave()) {
+        JCBStatistics.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.ENABLE_STATISTICS));
+      }
     } else {
       JCBSavePreferences.setSelected(false);
       JCBSaveCellnum.setEnabled(false);
@@ -68,6 +71,7 @@ public class Setup extends javax.swing.JFrame {
       JCBCheckUpdates.setEnabled(false);
       JCBLoadNotifications.setEnabled(false);
       JCBSaveTwitterKeys.setEnabled(false);
+      JCBStatistics.setEnabled(false);
     }
     JTPExtra.setText(loadHtml("/com/github/sunnybat/paxchecker/gui/Extra.html"));
     JTPExtra.setCaretPosition(0);
@@ -86,7 +90,13 @@ public class Setup extends javax.swing.JFrame {
         }
         if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
           JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
-          JCBDeepShowclixChecking.setEnabled(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
+          if (PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX)) {
+            JCBCheckShowclixDeep.setEnabled(true);
+            JCBCheckShowclixDeep.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.SHOWCLIX_DEEP_CHECK));
+          } else {
+            JCBCheckShowclixDeep.setEnabled(false);
+            JCBCheckShowclixDeep.setSelected(false);
+          }
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
@@ -247,6 +257,8 @@ public class Setup extends javax.swing.JFrame {
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_PAX).setValue(JCBCheckWebsite.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).setShouldSave(JCBSaveCheckShowclix.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).setValue(JCBCheckShowclix.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.SHOWCLIX_DEEP_CHECK).setShouldSave(JCBSaveCheckShowclix.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.SHOWCLIX_DEEP_CHECK).setValue(JCBCheckShowclixDeep.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setShouldSave(JCBCheckTwitter.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setValue(JCBCheckTwitter.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).setShouldSave(JCBSaveEvent.isSelected());
@@ -261,6 +273,8 @@ public class Setup extends javax.swing.JFrame {
     PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_SECRET).setShouldSave(JCBSaveTwitterKeys.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_KEY).setShouldSave(JCBSaveTwitterKeys.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_APP_SECRET).setShouldSave(JCBSaveTwitterKeys.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.ENABLE_STATISTICS).setShouldSave(JCBStatistics.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.ENABLE_STATISTICS).setValue(JCBStatistics.isSelected());
     PreferenceHandler.savePreferences();
   }
 
@@ -335,7 +349,7 @@ public class Setup extends javax.swing.JFrame {
     JBAddPhone = new javax.swing.JButton();
     JCBCheckTwitter = new javax.swing.JCheckBox();
     JLTwitterDisabled = new javax.swing.JLabel();
-    JCBDeepShowclixChecking = new javax.swing.JCheckBox();
+    JCBCheckShowclixDeep = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -362,7 +376,7 @@ public class Setup extends javax.swing.JFrame {
     JCBLoadNotifications = new javax.swing.JCheckBox();
     JCBCheckUpdates = new javax.swing.JCheckBox();
     JCBSaveTwitterKeys = new javax.swing.JCheckBox();
-    jCheckBox1 = new javax.swing.JCheckBox();
+    JCBStatistics = new javax.swing.JCheckBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAX Checker Setup");
@@ -466,8 +480,8 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    JCBDeepShowclixChecking.setText("Deep Showclix Checking");
-    JCBDeepShowclixChecking.setToolTipText("<html>\nThis option is a very, very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses exponentially more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage and have a decent ping and connection speed.\n</html>");
+    JCBCheckShowclixDeep.setText("Deep Showclix Checking");
+    JCBCheckShowclixDeep.setToolTipText("<html>\nThis option is a very, very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses exponentially more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage and have a decent ping and connection speed.\n</html>");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -513,7 +527,7 @@ public class Setup extends javax.swing.JFrame {
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckShowclix)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JCBDeepShowclixChecking)))
+                .addComponent(JCBCheckShowclixDeep)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -546,7 +560,7 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckShowclix)
-          .addComponent(JCBDeepShowclixChecking))
+          .addComponent(JCBCheckShowclixDeep))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
@@ -702,10 +716,10 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveTwitterKeys.setText("Save Twitter Keys");
     JCBSaveTwitterKeys.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
 
-    jCheckBox1.setSelected(true);
-    jCheckBox1.setText("Anonymous Statistics");
-    jCheckBox1.setToolTipText("<html>\nWhen enabled, the program goes through Orangedox<br>\nto collect non-personally identifiable statistics about<br>\nfile downloads, such as the date downloaded and<br>\nthe specific file downloaded.\n</html>");
-    jCheckBox1.setEnabled(false);
+    JCBStatistics.setSelected(true);
+    JCBStatistics.setText("Anonymous Statistics");
+    JCBStatistics.setToolTipText("<html>\nWhen enabled, the program goes through Orangedox<br>\nto collect non-personally identifiable statistics about<br>\nfile downloads, such as the date downloaded and<br>\nthe specific file downloaded.\n</html>");
+    JCBStatistics.setEnabled(false);
 
     javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
     jPanel5.setLayout(jPanel5Layout);
@@ -735,7 +749,7 @@ public class Setup extends javax.swing.JFrame {
               .addComponent(JCBCheckUpdates, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(JCBSaveTwitterKeys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(JCBUseBeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+              .addComponent(JCBStatistics, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
@@ -762,7 +776,7 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBSaveCheckTwitter)
-          .addComponent(jCheckBox1))
+          .addComponent(JCBStatistics))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBSavePlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -797,7 +811,7 @@ public class Setup extends javax.swing.JFrame {
       @Override
       public void run() {
         JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
-        JCBDeepShowclixChecking.setEnabled(JCBCheckShowclix.isSelected());
+        JCBCheckShowclixDeep.setEnabled(JCBCheckShowclix.isSelected());
       }
     });
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
@@ -821,7 +835,7 @@ public class Setup extends javax.swing.JFrame {
     }
     if (JCBCheckShowclix.isSelected()) {
       CheckShowclix c;
-      if (JCBDeepShowclixChecking.isSelected()) {
+      if (JCBCheckShowclixDeep.isSelected()) {
         c = new DeepCheckShowclix();
       } else {
         c = new CheckShowclix();
@@ -861,6 +875,7 @@ public class Setup extends javax.swing.JFrame {
     JCBCheckUpdates.setEnabled(selected);
     JCBLoadNotifications.setEnabled(selected);
     JCBSaveTwitterKeys.setEnabled(selected);
+    JCBStatistics.setEnabled(selected);
   }//GEN-LAST:event_JCBSavePreferencesActionPerformed
 
   private void JBAddPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAddPhoneActionPerformed
@@ -896,10 +911,10 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JButton JBStart;
   private javax.swing.JComboBox JCBCarrier;
   private javax.swing.JCheckBox JCBCheckShowclix;
+  private javax.swing.JCheckBox JCBCheckShowclixDeep;
   private javax.swing.JCheckBox JCBCheckTwitter;
   private javax.swing.JCheckBox JCBCheckUpdates;
   private javax.swing.JCheckBox JCBCheckWebsite;
-  private javax.swing.JCheckBox JCBDeepShowclixChecking;
   private javax.swing.JComboBox JCBExpo;
   private javax.swing.JCheckBox JCBLoadNotifications;
   private javax.swing.JCheckBox JCBPlayAlarm;
@@ -913,6 +928,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSavePreferences;
   private javax.swing.JCheckBox JCBSaveRefreshTime;
   private javax.swing.JCheckBox JCBSaveTwitterKeys;
+  private javax.swing.JCheckBox JCBStatistics;
   private javax.swing.JCheckBox JCBUseBeta;
   private javax.swing.JLabel JLTwitterDisabled;
   private javax.swing.JPasswordField JPFPassword;
@@ -923,7 +939,6 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JTextPane JTPExtra;
   private javax.swing.JTextPane JTPInstructions;
   private javax.swing.JButton jButton3;
-  private javax.swing.JCheckBox jCheckBox1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
