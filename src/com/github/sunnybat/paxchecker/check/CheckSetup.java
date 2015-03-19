@@ -59,7 +59,21 @@ public class CheckSetup {
    * Starts streaming Twitter.
    */
   public static void startTwitterStreaming() {
+    if (status != null) {
+      status.enableTwitter();
+    }
     TwitterReader.runTwitterStream(handleList.toArray(new String[handleList.size()]));
+  }
+
+  /**
+   * Updates the Status GUI to let the user know that the Twitter feed has been disconnected.
+   *
+   * @param connected True if connected, false if not
+   */
+  public static void twitterConnection(boolean connected) {
+    if (status != null) {
+      status.setTwitterStatus(connected);
+    }
   }
 
   /**

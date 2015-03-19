@@ -140,9 +140,8 @@ public class TwitterStreamer {
 
     @Override
     public void onException(Exception ex) {
+      System.out.println("Twitter exception:");
       ex.printStackTrace();
-      ErrorDisplay.showErrorWindow("Error with Twitter", "An error has occurred with Twitter checking. If this error occurred right as you started "
-          + "the program, it's probably an issue with your Twitter API keys. Otherwise, an internal program error has occurred.", ex);
     }
   };
 
@@ -155,6 +154,7 @@ public class TwitterStreamer {
     @Override
     public void onConnect() {
       System.out.println("Connected to Twitter Streaming service.");
+      CheckSetup.twitterConnection(true);
     }
 
     @Override
@@ -162,6 +162,8 @@ public class TwitterStreamer {
       System.out.println("Disconnected from Twitter Streaming service");
       ErrorDisplay.showErrorWindow("WARNING: Disconnected from Twitter Streaming service. Restart the PAXChecker to reconnect. If this persists, let "
           + "/u/SunnyBat know!");
+      CheckSetup.twitterConnection(false);
+      myStream = null;
     }
   };
 
@@ -170,11 +172,15 @@ public class TwitterStreamer {
       return;
     }
     System.out.println(Arrays.toString(handles));
-    myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
-    myStream.addListener(listener);
-    myStream.addConnectionLifeCycleListener(cLCListener);
-    myStream.user(handles);
-    usersToCheck = handles.clone();
+    try {
+      myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
+      myStream.addListener(listener);
+      myStream.addConnectionLifeCycleListener(cLCListener);
+      myStream.user(handles);
+      usersToCheck = handles.clone();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public static boolean isStreamingTwitter() {

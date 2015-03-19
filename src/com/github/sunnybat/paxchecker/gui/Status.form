@@ -31,22 +31,30 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="JLDataUsage" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JLInformation" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JLLastChecked" alignment="0" max="32767" attributes="0"/>
-                      <Component id="JPLinks" alignment="0" min="-2" pref="380" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="JLDataUsage" alignment="0" max="32767" attributes="0"/>
+                              <Component id="JLInformation" alignment="0" max="32767" attributes="0"/>
+                              <Component id="JLLastChecked" alignment="0" max="32767" attributes="0"/>
+                              <Component id="JPLinks" alignment="0" min="-2" pref="380" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="JLTitle" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jButton1" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jButton2" min="-2" pref="185" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="JLTitle" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jButton1" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jButton2" min="-2" pref="185" max="-2" attributes="0"/>
+                      <Component id="JLTwitterStatus" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -59,6 +67,8 @@
               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JPLinks" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+              <Component id="JLTwitterStatus" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="JLLastChecked" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -143,5 +153,10 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
     </Container>
+    <Component class="javax.swing.JLabel" name="JLTwitterStatus">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Connecting to Twitter..."/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>
