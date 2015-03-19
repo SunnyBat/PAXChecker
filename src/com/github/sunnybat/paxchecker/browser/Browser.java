@@ -14,7 +14,7 @@ import com.github.sunnybat.commoncode.error.ErrorDisplay;
 public class Browser {
 
   private static volatile String Expo;
-  private static final String UNSHORTEN_API_LINK = "http://api.longurl.org/v2/expand?url=";
+  private static final String UNSHORTEN_API_LINK = "http://expandurl.appspot.com/expand?url=";
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
@@ -112,10 +112,11 @@ public class Browser {
       String line;
       while (scan.hasNext()) {
         line = scan.nextLine().trim();
-        if (line.contains("<long-url>") && line.contains("]]></l")) {
-          System.out.print("URL Unshortened: ");
-          String found = line.substring(line.indexOf("http"), line.indexOf("]]></l"));
-          System.out.println(found);
+        System.out.println(line);
+        if (line.contains("\"end_url\"")) { // TODO: Parse with JSON later. This is just a hack to get it to work.
+          String found = line.substring(line.indexOf("\"end_url\"") + 12);
+          found = found.substring(0, found.indexOf("\""));
+          System.out.println("URL Unshortened: " + found);
           return found;
         }
       }

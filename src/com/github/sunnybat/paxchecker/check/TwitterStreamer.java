@@ -31,7 +31,7 @@ public class TwitterStreamer {
               String link = Browser.parseLink(tStatus);
               while (link != null) { // Continuously parse through tweet
                 String toOpen = Browser.unshortenURL(link);
-                if (!toOpen.contains("showclix") && !toOpen.contains("t.co")) {
+                if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
                   System.out.println("Link is not Showclix or unshortened -- ignoring.");
                 } else if (!TicketChecker.hasOpenedLink(toOpen)) {
                   CheckSetup.linkFound(toOpen);
@@ -163,7 +163,6 @@ public class TwitterStreamer {
       ErrorDisplay.showErrorWindow("WARNING: Disconnected from Twitter Streaming service. Restart the PAXChecker to reconnect. If this persists, let "
           + "/u/SunnyBat know!");
       CheckSetup.twitterConnection(false);
-      myStream = null;
     }
   };
 

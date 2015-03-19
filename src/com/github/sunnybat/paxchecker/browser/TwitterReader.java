@@ -24,7 +24,7 @@ public class TwitterReader {
   private static String consumerSecret;
   private static String accessToken;
   private static String accessSecret;
-  private static final String[] KEYWORDS = {"passes", "ticket", "sale", "badge", "showclix", "byoc"};
+  private static final String[] KEYWORDS = {"pax", "passes", "ticket", "sale", "badge", "showclix", "byoc"}; // Must be all lowercase
   private long lastIDFound;
   private final String TWITTER_HANDLE;
 
@@ -143,7 +143,7 @@ public class TwitterReader {
    */
   public static boolean hasKeyword(String tweet) {
     for (String keyString : KEYWORDS) {
-      if (tweet.toLowerCase().contains(keyString.toLowerCase())) {
+      if (tweet.toLowerCase().contains(keyString)) {
         return true;
       }
     }
@@ -151,6 +151,11 @@ public class TwitterReader {
     return false;
   }
 
+  /**
+   * Runs a new Twitter stream with the given handles. This should only be run as long as a Twitter stream is not currently running.
+   *
+   * @param handles
+   */
   public static void runTwitterStream(String[] handles) {
     if (!isInitialized()) {
       System.out.println("Unable to start Twitter stream -- Twitter not properly configured!");

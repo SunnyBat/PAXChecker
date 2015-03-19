@@ -1,20 +1,24 @@
 package com.github.sunnybat.paxchecker;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.encryption.Encryption;
+
+import com.github.sunnybat.paxchecker.browser.Browser;
+import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.check.TicketChecker;
 import com.github.sunnybat.paxchecker.check.CheckShowclix;
 import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
-import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
-import com.github.sunnybat.paxchecker.update.UpdateHandler;
 import com.github.sunnybat.paxchecker.gui.Setup;
 import com.github.sunnybat.paxchecker.gui.LoadingWindow;
 import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
-import com.github.sunnybat.commoncode.encryption.Encryption;
+import com.github.sunnybat.paxchecker.update.UpdateHandler;
 
 /**
  *
@@ -22,11 +26,25 @@ import com.github.sunnybat.commoncode.encryption.Encryption;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.1 R3";
+  public static final String VERSION = "2.0.1 R4";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
+  private static final TimerTask updateCheck = new TimerTask() {
+    @Override
+    public void run() {
+      System.out.println("Checking for Updates...");
+      UpdateHandler.loadVersionNotes();
+      if (UpdateHandler.updateAvailable()) {
+        if (isCommandLine()) {
+          UpdateHandler.autoUpdate();
+        }
+      } else {
+        UpdateHandler.promptUpdate(new String[0]); // TODO: Construct args
+      }
+    }
+  };
 
   /**
    * @param args the command line arguments
@@ -249,13 +267,15 @@ public final class PAXChecker {
         if (UpdateHandler.updateAvailable()) {
           UpdateHandler.autoUpdate(args);
         }
+        Timer t = new Timer();
+        t.schedule(updateCheck, 1000 * 60 * 60 * 24, 1000 * 60 * 60 * 24);
       } else {
-        startBackgroundThread(new Runnable() {
-          @Override
-          public void run() {
-            UpdateHandler.loadVersionNotes();
-          }
-        }, "Patch Notes");
+//        startBackgroundThread(new Runnable() {
+//          @Override
+//          public void run() {
+//            UpdateHandler.loadVersionNotes();
+//          }
+//        }, "Patch Notes");
       }
       System.out.println("Loading notifications...");
       NotificationHandler.loadNotifications();
@@ -276,7 +296,10 @@ public final class PAXChecker {
           UpdateHandler.promptUpdate(args);
         }
         setup.setPatchNotesText(UpdateHandler.getVersionNotes());
+        Timer t = new Timer();
+        t.schedule(updateCheck, 1000 * 60 * 60 * 24);
       } else {
+        setup.setPatchNotesText("[Updating Disabled]");
 //        startBackgroundThread(new Runnable() {
 //          @Override
 //          public void run() {

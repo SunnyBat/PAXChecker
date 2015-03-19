@@ -1,12 +1,5 @@
 package com.github.sunnybat.paxchecker.browser;
 
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import com.github.sunnybat.paxchecker.DataTracker;
-import com.github.sunnybat.paxchecker.PAXChecker;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,6 +12,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 
+import com.github.sunnybat.paxchecker.DataTracker;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 /**
  *
  * @author Sunny
@@ -28,19 +27,9 @@ public class ShowclixReader {
   private static final String API_LINK_BASE = "http://api.showclix.com/";
   private static final String API_EXTENSION_SELLER = "Seller/";
   private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
-  private static final String API_EXTENSION_EVENT = "Event/";
+  private static final String API_EXTENSION_VENUE = "Venue/";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
-
-  /**
-   * Gets the complete Showclix Event Page link.
-   *
-   * @param showclixID The Showclix Event ID
-   * @return The complete link
-   */
-  public static String getEventLink(int showclixID) {
-    return API_LINK_BASE + API_EXTENSION_EVENT + showclixID;
-  }
 
   /**
    * Checks whether or not the page associated with the given Showclix EventID is a PAX ticket page.
@@ -78,8 +67,9 @@ public class ShowclixReader {
   }
 
   public static Set<String> getAllEventURLs(String expo) {
-    Set<String> retSet = ShowclixReader.getAllSellerEventURLs(expo);
-    retSet.addAll(ShowclixReader.getAllPartnerEventURLs(expo));
+    Set<String> retSet = getAllSellerEventURLs(expo);
+    retSet.addAll(getAllPartnerEventURLs(expo));
+    retSet.addAll(getAllVenueEventURLs(expo));
     return retSet;
   }
 
@@ -93,6 +83,10 @@ public class ShowclixReader {
     for (int sellerID : sellerIDs) {
       retSet.addAll(getAllSellerEventURLs(sellerID));
     }
+    int[] venues = {13961, 16418, 20012, 15820};
+    for (int venueID : venues) {
+      retSet.addAll(getAllVenueEventURLs(venueID));
+    }
     return retSet;
   }
 
@@ -104,16 +98,17 @@ public class ShowclixReader {
     return getAllSellerEventURLs(getSellerID(expo));
   }
 
+  private static Set<String> getAllVenueEventURLs(String expo) {
+    return getAllVenueEventURLs(getVenueID(expo));
+  }
+
   private static Set<String> getAllEventURLs(JSONObject obj) {
     Set<String> retSet = new TreeSet<>();
     for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
+      retSet.add("http://www.showclix.com/Event/" + s);
       try {
         JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-        if (obj2.get("listing_url") == null) {
-          System.out.println("Listing URL is null!");
-          retSet.add("http://www.showclix.com/Event/" + s);
-        } else {
-          System.out.println("URL Found: " + obj2.get("listing_url"));
+        if (obj2.get("listing_url") != null) {
           retSet.add((String) obj2.get("listing_url"));
         }
       } catch (ClassCastException cce) {
@@ -168,6 +163,28 @@ public class ShowclixReader {
       }
     } catch (IOException iOException) {
       System.out.println("Error connecting to partner " + partnerID);
+    } catch (ParseException parseException) {
+    }
+    return retSet;
+  }
+
+  private static Set<String> getAllVenueEventURLs(int venueID) {
+    Set<String> retSet = new TreeSet<>();
+    try {
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + "/events"));
+      if (jsonText == null) {
+        return retSet;
+      }
+      //System.out.println("JSON Text: " + jsonText);
+      JSONParser mP = new JSONParser();
+      //JSONArray array = (JSONArray) mP.parse(jsonText);
+      try {
+        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
+      } catch (ClassCastException cce) {
+        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
+      }
+    } catch (IOException iOException) {
+      System.out.println("ERROR connecting to Seller " + venueID);
     } catch (ParseException parseException) {
     }
     return retSet;
@@ -300,6 +317,31 @@ public class ShowclixReader {
       default:
         System.out.println("Unknown expo: " + expo);
         return 16886;
+    }
+  }
+
+  private static int getVenueID(String expo) {
+    if (expo == null) {
+      return 13961;
+    }
+    switch (expo.toLowerCase()) {
+      case "prime":
+      case "pax prime":
+      case "dev":
+      case "pax dev":
+        return 13961;
+      case "east":
+      case "pax east":
+        return 16418;
+      case "south":
+      case "pax south":
+        return 20012;
+      case "aus":
+      case "pax aus":
+        return 15820;
+      default:
+        System.out.println("Unknown expo: " + expo);
+        return 13961;
     }
   }
 
