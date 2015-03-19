@@ -27,8 +27,13 @@ public class CheckSetup {
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
   private static final ArrayList<String> handleList = new ArrayList<>();
+  private static boolean startMinimized;
   // GUIs
   private static Status status;
+
+  public static void startMinimized() {
+    startMinimized = true;
+  }
 
   /**
    * Initializes the CheckSetup class and various subclasses.
@@ -69,8 +74,12 @@ public class CheckSetup {
 //          System.out.println("NOTE: Link has changed since last time!");
 //        }
         status.setupComponents();
-        status.showWindow();
         setStatusIcon(getIconName(Browser.getExpo()));
+        if (startMinimized) {
+          status.minimizeWindow();
+        } else {
+          status.showWindow();
+        }
         TicketChecker.initCheckers();
         long startMS;
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running

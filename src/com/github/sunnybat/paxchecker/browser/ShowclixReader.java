@@ -87,8 +87,6 @@ public class ShowclixReader {
     Set<Integer> sellerIDs = getAllRelevantSellerIDs();
     Set<Integer> partnerIDs = getAllPartners(sellerIDs);
     final Set<String> retSet = new TreeSet<>();
-    final Phaser threadWait = new Phaser();
-    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
     for (int partnerID : partnerIDs) {
       retSet.addAll(getAllPartnerEventURLs(partnerID));
     }
@@ -104,6 +102,25 @@ public class ShowclixReader {
 
   private static Set<String> getAllSellerEventURLs(String expo) {
     return getAllSellerEventURLs(getSellerID(expo));
+  }
+
+  private static Set<String> getAllEventURLs(JSONObject obj) {
+    Set<String> retSet = new TreeSet<>();
+    for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
+      try {
+        JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+        if (obj2.get("listing_url") == null) {
+          System.out.println("Listing URL is null!");
+          retSet.add("http://www.showclix.com/Event/" + s);
+        } else {
+          System.out.println("URL Found: " + obj2.get("listing_url"));
+          retSet.add((String) obj2.get("listing_url"));
+        }
+      } catch (ClassCastException cce) {
+        System.out.println("Unable to read event from key " + s + " -- CCE: object is " + obj.get(s).getClass().getSimpleName());
+      }
+    }
+    return retSet;
   }
 
   /**
@@ -123,21 +140,7 @@ public class ShowclixReader {
       JSONParser mP = new JSONParser();
       //JSONArray array = (JSONArray) mP.parse(jsonText);
       try {
-        JSONObject obj = (JSONObject) mP.parse(jsonText);
-        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
-          try {
-            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-            if (obj2.get("listing_url") == null) {
-              System.out.println("Listing URL is null!");
-              addToSet(retSet, "http://www.showclix.com/Event/" + s);
-            } else {
-              System.out.println("URL Found: " + obj2.get("listing_url"));
-              addToSet(retSet, (String) obj2.get("listing_url"));
-            }
-          } catch (ClassCastException cce) {
-            System.out.println("CCE: " + s);
-          }
-        }
+        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
       } catch (ClassCastException cce) {
         System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
       }
@@ -159,36 +162,7 @@ public class ShowclixReader {
       JSONParser mP = new JSONParser();
       //JSONArray array = (JSONArray) mP.parse(jsonText);
       try {
-        JSONObject obj = (JSONObject) mP.parse(jsonText);
-        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Events
-          try {
-            JSONObject obj2 = ((JSONObject) obj.get(s)); // Get Event JSON
-            if (obj2.get("listing_url") != null) {
-              System.out.println("URL: " + obj2.get("listing_url"));
-              addToSet(retSet, (String) obj2.get("listing_url"));
-            } else {
-              System.out.println("listing_url is null -- using ID " + s);
-            }
-
-//            if (obj2.get("organization") == null) {
-//              System.out.println("Null.");
-//            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
-//              System.out.println("PAX Seller: " + obj2.get("organization"));
-//              JSONObject events = (JSONObject) obj2.get("events"); // Will throw CCE if it's no a JSONObject
-//              for (String s2 : (Iterable<String>) events.keySet()) {
-//                //System.out.println("KEY: " + s2);
-//                if ((String) ((JSONObject) events.get(s2)).get("listing_url") != null) {
-//                  addToSet(retSet, (String) ((JSONObject) events.get(s2)).get("listing_url")); // SO MANY CLASS CASTS
-//                } else {
-//                  System.out.println("NULL, resorting to Listing ID");
-//                  addToSet(retSet, "http://www.showclix.com/Event/" + s2);
-//                }
-//              }
-//            }
-          } catch (ClassCastException e) {
-            e.printStackTrace();
-          }
-        }
+        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
       } catch (ClassCastException cce) {
         System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
       }
@@ -228,12 +202,12 @@ public class ShowclixReader {
     threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
     final Set<Integer> relevantSellerIDs = new TreeSet<>();
     final Object LOCK = new Object();
-    for (int i = 1; i < 100; i++) {
-      final int pI = i;
+    for (int pID = 1; pID < 100; pID++) {
+      final int partnerID = pID;
       Runnable r = new Runnable() {
         @Override
         public void run() {
-          Set<Integer> mySet = getRelevantSellerIDs(pI);
+          Set<Integer> mySet = getRelevantSellerIDs(partnerID);
           synchronized (LOCK) {
             relevantSellerIDs.addAll(mySet);
           }
@@ -344,23 +318,6 @@ public class ShowclixReader {
       return build.toString();
     } catch (IOException iOException) {
       return null;
-    }
-  }
-
-  private static final Object OBJ = new Object();
-
-  private static void addToSet(Set<Integer> mySet, int add) {
-    synchronized (OBJ) {
-      mySet.add(add);
-    }
-  }
-
-  private static void addToSet(Set<String> mySet, String add) {
-    synchronized (OBJ) {
-      if (add.endsWith("/")) {
-        add = add.substring(0, add.length() - 1);
-      }
-      mySet.add(add);
     }
   }
 }

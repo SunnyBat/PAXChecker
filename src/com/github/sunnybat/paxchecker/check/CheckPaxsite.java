@@ -24,7 +24,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized void init(com.github.sunnybat.paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    updateLabel(s, "Initializing Paxsite...");
+    updateLabel(s, "Paxsite initialized.");
   }
 
   @Override

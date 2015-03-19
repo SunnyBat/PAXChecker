@@ -37,10 +37,14 @@ public class DeepCheckShowclix extends CheckShowclix {
 
   @Override
   public synchronized void reset() {
-    Set<String> mySet = ShowclixReader.getAllRelevantURLs();
-    for (String url : mySet) {
-      alreadyChecked.add(url); // Ignore pages already in Showclix API when starting up
-      currentLink = url; // Set to last one added
+    if (currentLink == null) {
+      Set<String> mySet = ShowclixReader.getAllRelevantURLs();
+      for (String url : mySet) {
+        alreadyChecked.add(url); // Ignore pages already in Showclix API when starting up
+        currentLink = url; // Set to last one added
+      }
+    } else {
+      alreadyChecked.add(currentLink);
     }
   }
 

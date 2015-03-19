@@ -5,6 +5,7 @@ import com.github.sunnybat.paxchecker.browser.Browser;
 import java.util.Set;
 import java.util.TreeSet;
 // Could replace Browser with a class variable, since all this is using is getExpo(), and then be able to have multiple instances of this running
+// But then if we change the expo later on...
 
 /**
  *
@@ -23,7 +24,7 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void init(com.github.sunnybat.paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    updateLabel(s, "Initializing Showclix...");
+    updateLabel(s, "Showclix initialized.");
   }
 
   @Override
@@ -59,10 +60,14 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized void reset() {
-    Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
-    for (String i : mySet) {
-      alreadyChecked.add(i);
-      currentLink = i;
+    if (currentLink == null) {
+      Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+      for (String i : mySet) {
+        alreadyChecked.add(i);
+        currentLink = i;
+      }
+    } else {
+      alreadyChecked.add(currentLink);
     }
   }
 

@@ -259,7 +259,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Scan Showclix website"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;It is highly recommended that you&lt;br&gt;&#xa;use this option. It scans the Showclix&lt;br&gt;&#xa;website for updates and is generally the&lt;br&gt;&#xa;fastest possible.&lt;br&gt;&#xa;This option uses a very small amount of data.&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;It is highly recommended that you&lt;br&gt;&#xa;use this option. It scans the Showclix&lt;br&gt;&#xa;website for updates and is generally the&lt;br&gt;&#xa;fastest possible.&lt;br&gt;&#xa;This option uses a decent amount of data.&#xa;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckShowclixActionPerformed"/>

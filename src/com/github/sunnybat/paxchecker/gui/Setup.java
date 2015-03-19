@@ -429,7 +429,7 @@ public class Setup extends javax.swing.JFrame {
 
     JCBCheckShowclix.setSelected(true);
     JCBCheckShowclix.setText("Scan Showclix website");
-    JCBCheckShowclix.setToolTipText("<html>\nIt is highly recommended that you<br>\nuse this option. It scans the Showclix<br>\nwebsite for updates and is generally the<br>\nfastest possible.<br>\nThis option uses a very small amount of data.\n</html>");
+    JCBCheckShowclix.setToolTipText("<html>\nIt is highly recommended that you<br>\nuse this option. It scans the Showclix<br>\nwebsite for updates and is generally the<br>\nfastest possible.<br>\nThis option uses a decent amount of data.\n</html>");
     JCBCheckShowclix.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         JCBCheckShowclixActionPerformed(evt);

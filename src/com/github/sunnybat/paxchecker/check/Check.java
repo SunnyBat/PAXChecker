@@ -18,6 +18,7 @@ public abstract class Check implements Runnable {
     if (s != null) {
       linkLabel = s.addLinkJLabel();
     }
+    updateLabel(s, "Initializing...");
     cycBar = cB;
     cycBar.register();
     reset();

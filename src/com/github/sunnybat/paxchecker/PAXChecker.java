@@ -24,7 +24,7 @@ public final class PAXChecker {
 
   public static final String VERSION = "2.0.1 R3";
   private static Setup setup;
-  private static final Object LOCK = new Object();
+  private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
 
@@ -77,7 +77,6 @@ public final class PAXChecker {
     boolean deepCheckShowclix = false;
     boolean autoStart = false;
     boolean savePrefs = false;
-    boolean startMinimized = false;
     String[] twitterTokens = new String[4];
     CheckSetup.addHandle("@Official_PAX");
     if (args.length > 0) {
@@ -162,7 +161,7 @@ public final class PAXChecker {
             autoStart = true;
             break;
           case "-startminimized":
-            startMinimized = true;
+            CheckSetup.startMinimized();
             break;
           case "-cli": // Redundant
             enableCommandLine();
@@ -302,13 +301,13 @@ public final class PAXChecker {
   }
 
   public static void enableCommandLine() {
-    synchronized (LOCK) {
+    synchronized (CLINE_LOCK) {
       commandLine = true;
     }
   }
 
   public static boolean isCommandLine() {
-    synchronized (LOCK) {
+    synchronized (CLINE_LOCK) {
       return commandLine;
     }
   }
