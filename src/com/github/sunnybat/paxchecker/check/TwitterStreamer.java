@@ -14,6 +14,7 @@ public class TwitterStreamer {
 
   private static String[] usersToCheck;
   private static TwitterStream myStream;
+  private static int successiveErrorCount;
   public static final UserStreamListener listener = new UserStreamListener() {
     @Override
     public void onStatus(Status status) { // Feels SO hacked together right now
@@ -22,30 +23,25 @@ public class TwitterStreamer {
         System.out.println("Tweet does not have keywords -- ignoring.");
       } else {
         for (String s : usersToCheck) {
-          if (s.startsWith("@")) {
-            s = s.replaceFirst("@", "");
-          }
-          if (s.toLowerCase().equals(status.getUser().getScreenName().toLowerCase())) {
-            if (status.getText().contains("t.co/")) {
-              String tStatus = status.getText();
-              String link = Browser.parseLink(tStatus);
-              while (link != null) { // Continuously parse through tweet
-                String toOpen = Browser.unshortenURL(link);
-                if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
-                  System.out.println("Link is not Showclix or unshortened -- ignoring.");
-                } else if (!TicketChecker.hasOpenedLink(toOpen)) {
-                  CheckSetup.linkFound(toOpen);
-                  TicketChecker.addLinkFound(toOpen);
-                } else {
-                  System.out.println("Link already found -- ignoring.");
-                }
-                tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
-                link = Browser.parseLink(tStatus); // Get next link, or null if none
+          if (s.equals(status.getUser().getScreenName().toLowerCase()) && status.getText().contains("t.co/")) {
+            String tStatus = status.getText();
+            String link = Browser.parseLink(tStatus);
+            while (link != null) { // Continuously parse through tweet
+              String toOpen = Browser.unshortenURL(link);
+              if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
+                System.out.println("Link is not Showclix or unshortened -- ignoring.");
+              } else if (!TicketChecker.hasOpenedLink(toOpen)) {
+                CheckSetup.linkFound(toOpen);
+                TicketChecker.addLinkFound(toOpen);
+              } else {
+                System.out.println("Link already found -- ignoring.");
               }
-              return;
-            } else {
-              System.out.println("Tweet does not contain link -- ignoring.");
+              tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
+              link = Browser.parseLink(tStatus); // Get next link, or null if none
             }
+            return;
+          } else {
+            System.out.println("Tweet does not contain link -- ignoring.");
           }
         }
         System.out.println("Tweet is not in list of names to check -- ignoring");
@@ -140,8 +136,25 @@ public class TwitterStreamer {
 
     @Override
     public void onException(Exception ex) {
-      System.out.println("Twitter exception:");
       ex.printStackTrace();
+      if (++successiveErrorCount == 1) {
+        if (ex.getMessage().contains("Authentication credentials (https://dev.twitter.com/pages/auth) were missing or incorrect")) {
+          ErrorDisplay.showErrorWindow("WARNING: Unable to authenticate Twitter stream",
+              "\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
+              + "\nThe program will attempt to authenticate two more times.", ex);
+        }
+      } else if (successiveErrorCount == 3) {
+        if (ex.getMessage().contains("Authentication credentials (https://dev.twitter.com/pages/auth) were missing or incorrect")) {
+          ErrorDisplay.showErrorWindow("ERROR: The program was unable to authenticate your Twitter credentials",
+              "\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
+              + "\nThe Twitter feed has been shut down. Please restart the program to enable Twitter checking.", ex);
+        } else {
+          ErrorDisplay.showErrorWindow("ERROR: Disconnected from Twitter Streaming service",
+              "\nRestart the PAXChecker to reconnect. If this persists, let /u/SunnyBat know!"
+              + "\nThe Twitter feed has been shut down. Please restart the program to enable Twitter checking.", ex);
+        }
+        myStream.shutdown();
+      }
     }
   };
 
@@ -149,19 +162,20 @@ public class TwitterStreamer {
     @Override
     public void onCleanUp() {
       System.out.println("Twitter Streaming cleanup");
+      myStream = null; // Make program know that the Twitter stream is dead
+      successiveErrorCount = 0;
     }
 
     @Override
     public void onConnect() {
       System.out.println("Connected to Twitter Streaming service.");
       CheckSetup.twitterConnection(true);
+      successiveErrorCount = 0;
     }
 
     @Override
     public void onDisconnect() {
       System.out.println("Disconnected from Twitter Streaming service");
-      ErrorDisplay.showErrorWindow("WARNING: Disconnected from Twitter Streaming service. Restart the PAXChecker to reconnect. If this persists, let "
-          + "/u/SunnyBat know!");
       CheckSetup.twitterConnection(false);
     }
   };
@@ -177,6 +191,12 @@ public class TwitterStreamer {
       myStream.addConnectionLifeCycleListener(cLCListener);
       myStream.user(handles);
       usersToCheck = handles.clone();
+      for (int i = 0; i < usersToCheck.length; i++) {
+        if (usersToCheck[i].startsWith("@")) {
+          usersToCheck[i] = usersToCheck[i].replaceFirst("@", "");
+        }
+        usersToCheck[i] = usersToCheck[i].toLowerCase();
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }

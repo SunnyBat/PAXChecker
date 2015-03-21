@@ -39,6 +39,9 @@ public class Browser {
    * @see #setExpo(java.lang.String)
    */
   public static String getExpo() {
+    if (Expo == null) {
+      return "PAX Prime";
+    }
     return Expo;
   }
 
@@ -148,6 +151,9 @@ public class Browser {
     }
     if (link.contains(" ")) { // There are words after the link, so remove them
       link = link.substring(0, link.indexOf(" "));
+    }
+    if (link.contains("\"")) {
+      link = link.substring(0, link.indexOf("\""));
     }
     link = link.trim();
 //    if (link.contains("t.co/")) { // Link to unshorten

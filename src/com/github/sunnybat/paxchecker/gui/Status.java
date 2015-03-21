@@ -82,6 +82,10 @@ public class Status extends javax.swing.JFrame {
 
   public void minimizeWindow() {
     if (!SystemTray.isSupported() || myIcon == null) {
+      System.out.println("Unable to minimize window.");
+      if (!isVisible()) {
+        maximizeWindow();
+      }
       return;
     }
     try {
@@ -248,26 +252,28 @@ public class Status extends javax.swing.JFrame {
 
   public void setIcon(final java.awt.Image image) {
     if (image == null) {
+      System.out.println("Image == null");
       return;
     }
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          setIconImage(image);
-          myIcon = new TrayIcon(image, "PAXChecker", myMenu);
-          myIcon.setImageAutoSize(true);
-          myIcon.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-              maximizeWindow();
-            }
-          });
-        } catch (Exception e) {
-          System.out.println("ERROR setting status iconImage!");
+//    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//      @Override
+//      public void run() {
+    try {
+      setIconImage(image);
+      myIcon = new TrayIcon(image, "PAXChecker", myMenu);
+      myIcon.setImageAutoSize(true);
+      myIcon.addActionListener(new java.awt.event.ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+          maximizeWindow();
         }
-      }
-    });
+      });
+      System.out.println("Set status icon: " + (myIcon != null));
+    } catch (Exception e) {
+      System.out.println("ERROR setting status iconImage!");
+    }
+//      }
+//    });
   }
 
   @Override
@@ -298,6 +304,7 @@ public class Status extends javax.swing.JFrame {
     JLDataUsage = new javax.swing.JLabel();
     JPLinks = new javax.swing.JPanel();
     JLTwitterStatus = new javax.swing.JLabel();
+    JLLinksExplanation = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAXChecker");
@@ -349,6 +356,16 @@ public class Status extends javax.swing.JFrame {
 
     JLTwitterStatus.setText("Connecting to Twitter...");
 
+    JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
+    JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
+    JLLinksExplanation.setText("Why are these links pointing to random events???");
+    JLLinksExplanation.setEnabled(false);
+    JLLinksExplanation.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mousePressed(java.awt.event.MouseEvent evt) {
+        JLLinksExplanationMousePressed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -373,7 +390,10 @@ public class Status extends javax.swing.JFrame {
             .addGap(10, 10, 10))
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLTwitterStatus)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(JLLinksExplanation)
+            .addGap(0, 0, Short.MAX_VALUE))))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -386,11 +406,13 @@ public class Status extends javax.swing.JFrame {
         .addComponent(JPLinks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addGap(0, 0, 0)
         .addComponent(JLTwitterStatus)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(0, 0, 0)
+        .addComponent(JLLinksExplanation)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(JLLastChecked)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLDataUsage)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLInformation)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -430,10 +452,16 @@ public class Status extends javax.swing.JFrame {
     minimizeWindow();
   }//GEN-LAST:event_formWindowIconified
 
+  private void JLLinksExplanationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLLinksExplanationMousePressed
+    // TODO add your handling code here:
+
+  }//GEN-LAST:event_JLLinksExplanationMousePressed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JLabel JLDataUsage;
   private javax.swing.JLabel JLInformation;
   private javax.swing.JLabel JLLastChecked;
+  private javax.swing.JLabel JLLinksExplanation;
   private javax.swing.JLabel JLTitle;
   private javax.swing.JLabel JLTwitterStatus;
   private javax.swing.JPanel JPLinks;

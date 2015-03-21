@@ -42,7 +42,7 @@ public class ShowclixReader {
   }
 
   /**
-   * Checks whether or not the given URL is a PAX ticket page.
+   * Checks whether or not the given URL is a PAX ticket page or a queue page.
    *
    * @param URL The URL to check
    * @return True if it is, false if not
@@ -57,13 +57,15 @@ public class ShowclixReader {
         DataTracker.addDataUsed(line.length());
         text += line.toLowerCase();
       }
-      if (text.contains(Browser.getExpo().toLowerCase())) {
-        System.out.println("Expo found on page.");
+      if (text.contains("pax") || text.contains("queue")) {
+        System.out.println("PAX page found!");
         return true; // This blocks the data from the BufferedReader from being fully added to the total data
+      } else {
+        return false;
       }
     } catch (IOException iOException) {
+      return true; // Not sure if it does or not, so open just in case
     }
-    return false;
   }
 
   public static Set<String> getAllEventURLs(String expo) {

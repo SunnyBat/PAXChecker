@@ -119,6 +119,11 @@ public class UpdateHandler {
           allText += line + lineSeparator;
         }
       }
+      if (versionNotes != null && versionNotes.length() == allText.trim().length()) {
+        System.out.println("Patch Notes have not changed.");
+        updateLevel = 0; // Force override updateLevel
+        return;
+      }
       versionNotes = allText.trim();
       if (update != null) {
         update.setYesButtonText(getUpdateLevel());
@@ -179,6 +184,10 @@ public class UpdateHandler {
     args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";
     args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingTwitter() ? "" : "-notwitter";
     args[a++] = Audio.soundEnabled() ? "-alarm" : "";
+//    args[a++] = "-consumerkey";
+//    args[a++] = "-consumersecret";
+//    args[a++] = "-applicationkey";
+//    args[a++] = "-applicationsecret";
     autoUpdate(args);
   }
 

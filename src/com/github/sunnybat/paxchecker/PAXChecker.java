@@ -26,7 +26,7 @@ import com.github.sunnybat.paxchecker.update.UpdateHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.1 R4";
+  public static final String VERSION = "2.0.1 R5";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
@@ -38,7 +38,7 @@ public final class PAXChecker {
       UpdateHandler.loadVersionNotes();
       if (UpdateHandler.updateAvailable()) {
         if (isCommandLine()) {
-          UpdateHandler.autoUpdate();
+          UpdateHandler.autoUpdate(); // TODO: This doesn't enable Twitter, among other things
         }
       } else {
         UpdateHandler.promptUpdate(new String[0]); // TODO: Construct args
