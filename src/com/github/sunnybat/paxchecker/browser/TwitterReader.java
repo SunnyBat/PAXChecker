@@ -24,7 +24,7 @@ public class TwitterReader {
   private static String consumerSecret;
   private static String accessToken;
   private static String accessSecret;
-  private static final String[] KEYWORDS = {"pax", "passes", "ticket", "sale", "badge", "showclix", "byoc"}; // Must be all lowercase
+  private static final String[] KEYWORDS = {"pax", "passes", "ticket", "tix", "sale", "badge", "showclix", "byoc", "hotel"}; // Must be all lowercase
   private long lastIDFound;
   private final String TWITTER_HANDLE;
 

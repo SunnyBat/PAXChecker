@@ -19,6 +19,7 @@ import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.paxchecker.update.UpdateHandler;
+import java.net.MalformedURLException;
 
 /**
  *
@@ -31,7 +32,7 @@ public final class PAXChecker {
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
-  private static final TimerTask updateCheck = new TimerTask() {
+  private static final TimerTask updateCheck = new TimerTask() { // TODO: Move this to after Setup is finished, so you know whether to run or not
     @Override
     public void run() {
       System.out.println("Checking for Updates...");
@@ -51,6 +52,8 @@ public final class PAXChecker {
    */
   public static void main(String[] args) {
     System.out.println("Initializing...");
+    java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
+    // With this, I might not need URL unshorteners... I probably won't. It automatically redirects.
     if (isCLine(args)) {
       enableCommandLine();
     } else {

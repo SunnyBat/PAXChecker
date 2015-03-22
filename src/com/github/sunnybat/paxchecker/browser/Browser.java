@@ -13,7 +13,7 @@ import com.github.sunnybat.commoncode.error.ErrorDisplay;
  */
 public class Browser {
 
-  private static volatile String Expo;
+  private static volatile String expo;
   private static final String UNSHORTEN_API_LINK = "http://expandurl.appspot.com/expand?url=";
 
   /**
@@ -28,7 +28,7 @@ public class Browser {
       if (!e.toLowerCase().startsWith("pax ")) {
         e = "PAX " + e;
       }
-      Expo = e;
+      expo = e;
     }
   }
 
@@ -39,10 +39,10 @@ public class Browser {
    * @see #setExpo(java.lang.String)
    */
   public static String getExpo() {
-    if (Expo == null) {
+    if (expo == null) {
       return "PAX Prime";
     }
-    return Expo;
+    return expo;
   }
 
   /**

@@ -522,6 +522,11 @@
                                   <Component id="JCBSaveTwitterKeys" max="32767" attributes="0"/>
                                   <Component id="JCBUseBeta" alignment="0" max="32767" attributes="0"/>
                                   <Component id="JCBStatistics" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="21" pref="21" max="-2" attributes="0"/>
+                                      <Component id="JCBCheckUpdateDaily" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
@@ -547,20 +552,25 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBSaveCheckPax" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBSaveTwitterKeys" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBCheckUpdateDaily" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBUseBeta" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="JCBSaveTwitterKeys" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBStatistics" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBStatistics" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -672,6 +682,9 @@
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Check for Updates"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckUpdatesActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBSaveTwitterKeys">
               <Properties>
@@ -681,9 +694,13 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBStatistics">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Anonymous Statistics"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;When enabled, the program goes through Orangedox&lt;br&gt;&#xa;to collect non-personally identifiable statistics about&lt;br&gt;&#xa;file downloads, such as the date downloaded and&lt;br&gt;&#xa;the specific file downloaded.&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBCheckUpdateDaily">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Every 24 hours"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>

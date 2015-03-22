@@ -17,6 +17,7 @@ import com.github.sunnybat.commoncode.error.*;
 public class NotificationHandler {
 
   private static final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt?dl=1";
+  private static final String NOTIFICATIONS_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
   private static final ArrayList<Notification> notificationList = new ArrayList<>();
   private static String lastNotificationID = "";
 
@@ -50,7 +51,12 @@ public class NotificationHandler {
     InputStream textInputStream;
     BufferedReader myReader = null;
     try {
-      URL notificationURL = new URL(NOTIFICATIONS_LINK);
+      URL notificationURL;
+      if (PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS)) {
+        notificationURL = new URL(NOTIFICATIONS_LINK_ANONYMOUS);
+      } else {
+        notificationURL = new URL(NOTIFICATIONS_LINK);
+      }
       inputConnection = notificationURL.openConnection();
       textInputStream = inputConnection.getInputStream();
       myReader = new BufferedReader(new InputStreamReader(textInputStream));

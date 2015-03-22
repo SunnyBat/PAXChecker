@@ -25,6 +25,9 @@ public class UpdateHandler {
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
+  private static final String UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
+  private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
+  private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
   private static com.github.sunnybat.paxchecker.update.Update update;
 
   public static void init() {
@@ -295,9 +298,9 @@ public class UpdateHandler {
           System.out.println("Update available, but not opted into BETA versions");
           return false;
         }
-        updateURL = new URL(BETA_UPDATE_LINK);
+        updateURL = new URL(BETA_UPDATE_LINK_ANONYMOUS);
       } else {
-        updateURL = new URL(UPDATE_LINK);
+        updateURL = new URL(UPDATE_LINK_ANONYMOUS);
       }
       URLConnection conn = updateURL.openConnection();
       updateSize = conn.getContentLengthLong();
@@ -322,9 +325,17 @@ public class UpdateHandler {
     try {
       URL updateURL;
       if (getUpdateLevel() == 1) {
-        updateURL = new URL(BETA_UPDATE_LINK);
+        if (PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS)) {
+          updateURL = new URL(BETA_UPDATE_LINK_ANONYMOUS);
+        } else {
+          updateURL = new URL(BETA_UPDATE_LINK);
+        }
       } else {
-        updateURL = new URL(UPDATE_LINK);
+        if (PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS)) {
+          updateURL = new URL(UPDATE_LINK_ANONYMOUS);
+        } else {
+          updateURL = new URL(UPDATE_LINK);
+        }
       }
       URLConnection conn = updateURL.openConnection();
       InputStream inputStream = conn.getInputStream();
