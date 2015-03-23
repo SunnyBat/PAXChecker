@@ -29,12 +29,14 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
+    if (currentLink == null) { // NEVER return true on null. That's how NPEs happen in TicketChecker!
+      return false;
+    }
     return !alreadyChecked.contains(currentLink);
   }
 
   @Override
   public synchronized void updateLink() {
-//    if (!deepCheckShowclix) {
     Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
     for (String i : mySet) {
       if (!mySet.contains(i)) {

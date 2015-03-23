@@ -28,6 +28,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_SELLER = "Seller/";
   private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
   private static final String API_EXTENSION_VENUE = "Venue/";
+  private static final String EVENT_LINK_BASE = "http://www.showclix.com/Event/";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
 
@@ -38,7 +39,7 @@ public class ShowclixReader {
    * @return True if it is, false if not
    */
   public static boolean isPaxPage(int showclixID) {
-    return isPaxPage("http://www.showclix.com/Event/" + showclixID);
+    return isPaxPage(EVENT_LINK_BASE + showclixID);
   }
 
   /**
@@ -77,7 +78,15 @@ public class ShowclixReader {
 
   public static Set<String> getAllRelevantURLs() {
     Set<Integer> sellerIDs = getAllRelevantSellerIDs();
+    sellerIDs.add(getSellerID("Prime"));
+    sellerIDs.add(getSellerID("East"));
+    sellerIDs.add(getSellerID("South"));
+    sellerIDs.add(getSellerID("Aus"));
     Set<Integer> partnerIDs = getAllPartners(sellerIDs);
+    partnerIDs.add(getPartnerID("Prime"));
+    partnerIDs.add(getPartnerID("East"));
+    partnerIDs.add(getPartnerID("South"));
+    partnerIDs.add(getPartnerID("Aus"));
     final Set<String> retSet = new TreeSet<>();
     for (int partnerID : partnerIDs) {
       retSet.addAll(getAllPartnerEventURLs(partnerID));
@@ -107,7 +116,7 @@ public class ShowclixReader {
   private static Set<String> getAllEventURLs(JSONObject obj) {
     Set<String> retSet = new TreeSet<>();
     for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
-      retSet.add("http://www.showclix.com/Event/" + s);
+      retSet.add(EVENT_LINK_BASE + s);
       try {
         JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
         if (obj2.get("listing_url") != null) {
@@ -254,9 +263,10 @@ public class ShowclixReader {
         for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
           try {
             JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-            if (obj2.get("organization") == null) {
+            String seller = (String) obj2.get("organization");
+            if (seller == null) {
               System.out.println("Null.");
-            } else if (((String) obj2.get("organization")).toLowerCase().contains("pax")) {
+            } else if (seller.toLowerCase().contains("pax") || seller.toLowerCase().contains("penny")) {
               System.out.println("PAX Seller: " + obj2.get("organization"));
               retSet.add(Integer.parseInt(s));
             }

@@ -80,7 +80,13 @@ public class Browser {
         ErrorDisplay.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
       }
     } else {
-      ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- desktop is not supported", null);
+      try {
+        if (!browse(url.toURI())) {
+          ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- desktop is not supported", null);
+        }
+      } catch (URISyntaxException use) {
+        ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- URISyntaxException?", use);
+      }
     }
   }
 
@@ -156,13 +162,124 @@ public class Browser {
       link = link.substring(0, link.indexOf("\""));
     }
     link = link.trim();
-//    if (link.contains("t.co/")) { // Link to unshorten
-//      link = Browser.unshortenURL(link);
-//    }
     if (link.endsWith("/")) {
       link = link.substring(0, link.length() - 1);
     }
     System.out.println("Link parsed: " + link);
     return link.trim();
+  }
+
+  // Credit to MightyPork on StackOverflow for the following methods.
+  // http://stackoverflow.com/questions/18004150/desktop-api-is-not-supported-on-the-current-platform/18004334#18004334
+
+  public static boolean browse(URI uri) {
+    return openSystemSpecific(uri.toString());
+  }
+
+  private static boolean openSystemSpecific(String what) {
+    EnumOS os = getOs();
+    if (os.isLinux()) {
+      if (runCommand("kde-open", "%s", what)) {
+        return true;
+      } else if (runCommand("gnome-open", "%s", what)) {
+        return true;
+      }
+      if (runCommand("xdg-open", "%s", what)) {
+        return true;
+      }
+    }
+    if (os.isMac()) {
+      if (runCommand("open", "%s", what)) {
+        return true;
+      }
+    }
+    if (os.isWindows()) {
+      if (runCommand("explorer", "%s", what)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean runCommand(String command, String args, String file) {
+    System.out.println("Trying to exec:\n   cmd = " + command + "\n   args = " + args + "\n   %s = " + file);
+    String[] parts = prepareCommand(command, args, file);
+    try {
+      Process p = Runtime.getRuntime().exec(parts);
+      if (p == null) {
+        return false;
+      }
+      try {
+        int retval = p.exitValue();
+        if (retval == 0) {
+          System.err.println("Process ended immediately.");
+          return false;
+        } else {
+          System.err.println("Process crashed.");
+          return false;
+        }
+      } catch (IllegalThreadStateException itse) {
+        System.err.println("Process is running.");
+        return true;
+      }
+    } catch (IOException e) {
+      logErr("Error running command.", e);
+      return false;
+    }
+  }
+
+  private static String[] prepareCommand(String command, String args, String file) {
+    java.util.List<String> parts = new java.util.ArrayList<>();
+    parts.add(command);
+    if (args != null) {
+      for (String s : args.split(" ")) {
+        s = String.format(s, file); // put in the filename thing
+        parts.add(s.trim());
+      }
+    }
+    return parts.toArray(new String[parts.size()]);
+  }
+
+  private static void logErr(String msg, Throwable t) {
+    System.err.println(msg);
+    t.printStackTrace();
+  }
+
+  private static enum EnumOS {
+
+    linux, macos, solaris, unknown, windows;
+
+    public boolean isLinux() {
+
+      return this == linux || this == solaris;
+    }
+
+    public boolean isMac() {
+
+      return this == macos;
+    }
+
+    public boolean isWindows() {
+      return this == windows;
+    }
+  }
+
+  private static EnumOS getOs() {
+    String s = System.getProperty("os.name").toLowerCase();
+    if (s.contains("win")) {
+      return EnumOS.windows;
+    } else if (s.contains("mac")) {
+      return EnumOS.macos;
+    } else if (s.contains("solaris")) {
+      return EnumOS.solaris;
+    } else if (s.contains("sunos")) {
+      return EnumOS.solaris;
+    } else if (s.contains("linux")) {
+      return EnumOS.linux;
+    } else if (s.contains("unix")) {
+      return EnumOS.linux;
+    } else {
+      return EnumOS.unknown;
+    }
   }
 }
