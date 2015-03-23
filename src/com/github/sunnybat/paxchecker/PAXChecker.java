@@ -19,7 +19,6 @@ import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.paxchecker.update.UpdateHandler;
-import java.net.MalformedURLException;
 
 /**
  *
@@ -27,7 +26,7 @@ import java.net.MalformedURLException;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.1 R5";
+  public static final String VERSION = "2.0.1 R6";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;

@@ -256,7 +256,7 @@ public class Setup extends javax.swing.JFrame {
     PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_UPDATES).setShouldSave(true);
     PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_UPDATES).setValue(JCBCheckUpdates.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.DAILY_UPDATES).setShouldSave(true);
-    PreferenceHandler.getPreferenceObject(Preference.TYPES.DAILY_UPDATES).setValue(JCBCheckUpdateDaily.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.DAILY_UPDATES).setValue(JCBCheckUpdates.isSelected() ? JCBCheckUpdateDaily.isSelected() : false);
     PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).setShouldSave(true);
     PreferenceHandler.getPreferenceObject(Preference.TYPES.LOAD_NOTIFICATIONS).setValue(JCBLoadNotifications.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CELLNUM).setShouldSave(JCBSaveCellnum.isSelected());

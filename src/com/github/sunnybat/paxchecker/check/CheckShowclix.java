@@ -52,6 +52,9 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized String getLink() {
+    if (currentLink == null) {
+      return "[No API Connection]";
+    }
     return currentLink;
   }
 

@@ -31,11 +31,6 @@ public class DeepCheckShowclix extends CheckShowclix {
   }
 
   @Override
-  public synchronized String getLink() {
-    return currentLink;
-  }
-
-  @Override
   public synchronized void reset() {
     if (currentLink == null) {
       Set<String> mySet = ShowclixReader.getAllRelevantURLs();

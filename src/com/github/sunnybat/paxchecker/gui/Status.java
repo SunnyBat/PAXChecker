@@ -359,7 +359,7 @@ public class Status extends javax.swing.JFrame {
     JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
     JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
     JLLinksExplanation.setText("Why are these links pointing to random events???");
-    JLLinksExplanation.setEnabled(false);
+    JLLinksExplanation.setToolTipText("<html>\nThese links are pointing to random events<br>\ndue to changes in the Showclix API. There's<br>\nno need to worry about the Showclix link<br>\nleading to some random Paris event, or the<br>\nPAX Website link leading to X.paxsite.com.\n</html>");
     JLLinksExplanation.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLLinksExplanationMousePressed(evt);
