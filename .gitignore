@@ -8,10 +8,13 @@
 *.war
 *.ear
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# VM Error Logs #
 hs_err_pid*
-/dist/
 
 # Ignore Netbeans-specific classes #
 build/
-nbproject/private/
+dist/
+lib/
+nbproject/
+
+# Ignore library docs and stuff #
