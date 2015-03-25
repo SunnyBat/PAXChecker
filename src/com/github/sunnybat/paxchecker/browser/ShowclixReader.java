@@ -88,6 +88,8 @@ public class ShowclixReader {
     partnerIDs.add(getPartnerID("South"));
     partnerIDs.add(getPartnerID("Aus"));
     final Set<String> retSet = new TreeSet<>();
+    System.out.println("Seller IDs: " + sellerIDs);
+    System.out.println("Partner IDs: " + partnerIDs);
     for (int partnerID : partnerIDs) {
       retSet.addAll(getAllPartnerEventURLs(partnerID));
     }
@@ -265,7 +267,7 @@ public class ShowclixReader {
             JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
             String seller = (String) obj2.get("organization");
             if (seller == null) {
-              System.out.println("Null.");
+              System.out.println("Null (" + s + ")");
             } else if (seller.toLowerCase().contains("pax") || seller.toLowerCase().contains("penny")) {
               System.out.println("PAX Seller: " + obj2.get("organization"));
               retSet.add(Integer.parseInt(s));

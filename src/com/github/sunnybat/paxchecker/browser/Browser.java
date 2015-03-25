@@ -90,7 +90,7 @@ public class Browser {
     }
   }
 
-  public static HttpURLConnection setUpConnection(URL url) {
+  public static HttpURLConnection setUpConnection(URL url) { // NOTE: getURL() method on this will only change to redicted URL once data has been read
     try {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
@@ -171,7 +171,6 @@ public class Browser {
 
   // Credit to MightyPork on StackOverflow for the following methods.
   // http://stackoverflow.com/questions/18004150/desktop-api-is-not-supported-on-the-current-platform/18004334#18004334
-
   public static boolean browse(URI uri) {
     return openSystemSpecific(uri.toString());
   }

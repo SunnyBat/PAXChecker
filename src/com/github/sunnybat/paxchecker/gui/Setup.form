@@ -58,7 +58,7 @@
                           <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel2" max="32767" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" pref="391" max="32767" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -100,6 +100,8 @@
                                       <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JCBCheckShowclixDeep" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -142,6 +144,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JCBCheckShowclixDeep" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -345,6 +348,22 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses much more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage, have decent ping, and have a good connection&lt;br&gt;&#xa;speed.&#xa;&lt;/html&gt;"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckShowclixDeepActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel7">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="2"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="(Deep Disabled???)"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;As of now, Deep Check Showclix uses a LOT of data&lt;br&gt;&#xa; and a LOT of Showclix API requests. With a good&lt;br&gt;&#xa;amount of people starting to use the PAXChecker, the&lt;br&gt;&#xa;Showclix API is repeatedly going offline, which has not&lt;br&gt;&#xa;happened in the past. Until I can optimize the Deep&lt;br&gt;&#xa;Check Showclix option or figure out why this is&lt;br&gt;&#xa;happening, this option will remain disabled.&lt;br&gt;&#xa;&lt;br&gt;&#xa;On the flip side, Deep Check Showclix was parsing&lt;br&gt;&#xa;through the entire API and getting the *exact* same&lt;br&gt;&#xa;pages as the regular Showclix scanning algorithm&lt;br&gt;&#xa;was. So, for now, there&apos;s no difference between Deep&lt;br&gt;&#xa;Check Showclix and regular Showclix checking, sans&lt;br&gt;&#xa;the time and data used.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

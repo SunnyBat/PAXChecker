@@ -26,7 +26,7 @@ import com.github.sunnybat.paxchecker.update.UpdateHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.1 R6";
+  public static final String VERSION = "2.0.2 R1";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;

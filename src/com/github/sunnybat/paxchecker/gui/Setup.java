@@ -2,6 +2,7 @@ package com.github.sunnybat.paxchecker.gui;
 
 import com.github.sunnybat.paxchecker.check.TicketChecker;
 import com.github.sunnybat.paxchecker.check.CheckShowclix;
+import com.github.sunnybat.paxchecker.check.CheckShowclixEventPage;
 import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
 import com.github.sunnybat.paxchecker.Email;
@@ -96,13 +97,14 @@ public class Setup extends javax.swing.JFrame {
         }
         if (PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_SHOWCLIX).isSavedInPreferences()) {
           JCBCheckShowclix.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX));
-          if (PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX)) {
-            JCBCheckShowclixDeep.setEnabled(true);
-            JCBCheckShowclixDeep.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.SHOWCLIX_DEEP_CHECK));
-          } else {
-            JCBCheckShowclixDeep.setEnabled(false);
-            JCBCheckShowclixDeep.setSelected(false);
-          }
+//          if (PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_SHOWCLIX)) {
+//            JCBCheckShowclixDeep.setEnabled(true);
+//            JCBCheckShowclixDeep.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.SHOWCLIX_DEEP_CHECK));
+//            JCBCheckShowclixDeepActionPerformed(null); // Trigger the event to set time to 30-120 if enabled, just hope evt isn't used later ;)
+//          } else {
+//            JCBCheckShowclixDeep.setEnabled(false);
+//            JCBCheckShowclixDeep.setSelected(false);
+//          }
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
@@ -358,6 +360,7 @@ public class Setup extends javax.swing.JFrame {
     JCBCheckTwitter = new javax.swing.JCheckBox();
     JLTwitterDisabled = new javax.swing.JLabel();
     JCBCheckShowclixDeep = new javax.swing.JCheckBox();
+    jLabel7 = new javax.swing.JLabel();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -491,6 +494,17 @@ public class Setup extends javax.swing.JFrame {
 
     JCBCheckShowclixDeep.setText("Deep Showclix Checking");
     JCBCheckShowclixDeep.setToolTipText("<html>\nThis option is a very data-intensive and connection-intensive task.<br>\nIt checks the entire Showclix API for any event relating to PAX. This option<br>\nuses much more data than just the Showclix API option, and also<br>\ntakes exponentially longer. It's only recommended to use this if you don't<br>\ncare about data usage, have decent ping, and have a good connection<br>\nspeed.\n</html>");
+    JCBCheckShowclixDeep.setEnabled(false);
+    JCBCheckShowclixDeep.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JCBCheckShowclixDeepActionPerformed(evt);
+      }
+    });
+
+    jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+    jLabel7.setForeground(new java.awt.Color(255, 0, 0));
+    jLabel7.setText("(Deep Disabled???)");
+    jLabel7.setToolTipText("<html>\nAs of now, Deep Check Showclix uses a LOT of data<br>\n and a LOT of Showclix API requests. With a good<br>\namount of people starting to use the PAXChecker, the<br>\nShowclix API is repeatedly going offline, which has not<br>\nhappened in the past. Until I can optimize the Deep<br>\nCheck Showclix option or figure out why this is<br>\nhappening, this option will remain disabled.<br>\n<br>\nOn the flip side, Deep Check Showclix was parsing<br>\nthrough the entire API and getting the *exact* same<br>\npages as the regular Showclix scanning algorithm<br>\nwas. So, for now, there's no difference between Deep<br>\nCheck Showclix and regular Showclix checking, sans<br>\nthe time and data used.\n</html>");
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -503,7 +517,7 @@ public class Setup extends javax.swing.JFrame {
           .addComponent(JSCheckTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
           .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -536,7 +550,9 @@ public class Setup extends javax.swing.JFrame {
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckShowclix)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JCBCheckShowclixDeep)))
+                .addComponent(JCBCheckShowclixDeep)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -569,7 +585,8 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckShowclix)
-          .addComponent(JCBCheckShowclixDeep))
+          .addComponent(JCBCheckShowclixDeep)
+          .addComponent(jLabel7))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
@@ -830,23 +847,19 @@ public class Setup extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void JCBCheckShowclixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckShowclixActionPerformed
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
-        JCBCheckShowclixDeep.setEnabled(JCBCheckShowclix.isSelected());
-      }
-    });
+    JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
+//    JCBCheckShowclixDeep.setEnabled(JCBCheckShowclix.isSelected());
+//    if (JCBCheckShowclix.isSelected() && JCBCheckShowclixDeep.isSelected()) {
+//      JSCheckTime.setMinimum(60);
+//      JSCheckTime.setMaximum(120);
+//    } else {
+//      JSCheckTime.setMinimum(10);
+//      JSCheckTime.setMaximum(60);
+//    }
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
 
   private void JCBCheckWebsiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckWebsiteActionPerformed
-    // TODO add your handling code here:
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
-      }
-    });
+    JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || (TwitterReader.isInitialized() && JCBCheckTwitter.isSelected()));
   }//GEN-LAST:event_JCBCheckWebsiteActionPerformed
 
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
@@ -858,13 +871,14 @@ public class Setup extends javax.swing.JFrame {
     }
     if (JCBCheckShowclix.isSelected()) {
       CheckShowclix c;
-      if (JCBCheckShowclixDeep.isSelected()) {
-        c = new DeepCheckShowclix();
-      } else {
+//      if (JCBCheckShowclixDeep.isSelected()) {
+//        c = new DeepCheckShowclix();
+//      } else {
         c = new CheckShowclix();
-      }
+//      }
       TicketChecker.addChecker(c);
     }
+    TicketChecker.addChecker(new CheckShowclixEventPage());
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
       CheckSetup.startTwitterStreaming();
     }
@@ -935,6 +949,17 @@ public class Setup extends javax.swing.JFrame {
     //JCBCheckUpdateDaily.setEnabled(JCBCheckUpdates.isSelected());
   }//GEN-LAST:event_JCBCheckUpdatesActionPerformed
 
+  private void JCBCheckShowclixDeepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckShowclixDeepActionPerformed
+    // TODO add your handling code here:
+    if (JCBCheckShowclixDeep.isSelected()) {
+      JSCheckTime.setMinimum(60);
+      JSCheckTime.setMaximum(120);
+    } else {
+      JSCheckTime.setMinimum(10);
+      JSCheckTime.setMaximum(60);
+    }
+  }//GEN-LAST:event_JCBCheckShowclixDeepActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBAddPhone;
   private javax.swing.JButton JBStart;
@@ -975,6 +1000,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
+  private javax.swing.JLabel jLabel7;
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;
