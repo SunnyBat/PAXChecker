@@ -13,10 +13,12 @@ public class CheckShowclixEventPage extends Check {
 
   private static final String EVENT_BASE_URL = "http://www.showclix.com/Event/";
   private List<String> eventCheckList = new ArrayList<>();
-  private String validPage = null;
+  private String validPageID = null;
 
   public CheckShowclixEventPage() {
-    eventCheckList.add("3925916");
+    eventCheckList.add("3925916"); // "Prime 2015"
+    eventCheckList.add("3926134"); // "Prime 2015 BYOC"
+    eventCheckList.add("3926157"); // "Dev 2015"
   }
 
   @Override
@@ -27,7 +29,7 @@ public class CheckShowclixEventPage extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    return validPage != null;
+    return validPageID != null;
   }
 
   @Override
@@ -39,21 +41,19 @@ public class CheckShowclixEventPage extends Check {
           continue;
         }
         conn.getInputStream(); // Will throw IOException if 404 -- simplest way to force it
-        validPage = s;
+        validPageID = s;
         return; // Found valid page, stop checking
-      } catch (IOException ioe) {
-        System.out.println("IOException");
-        ioe.printStackTrace();
+      } catch (IOException ioe) { // getInputStream() threw exception -- 404 or unable to connect
       }
     }
   }
 
   @Override
   public synchronized String getLink() {
-    if (validPage == null) {
-      return "[None]";
+    if (validPageID == null) {
+      return "[None Found]";
     } else {
-      return EVENT_BASE_URL + validPage;
+      return EVENT_BASE_URL + validPageID;
     }
   }
 
@@ -64,9 +64,9 @@ public class CheckShowclixEventPage extends Check {
 
   @Override
   public synchronized void reset() {
-    if (validPage != null) {
-      eventCheckList.remove(validPage);
-      validPage = null;
+    if (validPageID != null) {
+      eventCheckList.remove(validPageID);
+      validPageID = null;
     }
   }
 

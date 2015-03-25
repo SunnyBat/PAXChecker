@@ -358,8 +358,8 @@ public class Status extends javax.swing.JFrame {
 
     JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
     JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
-    JLLinksExplanation.setText("Why are these links pointing to random events???");
-    JLLinksExplanation.setToolTipText("<html>\nThese links are pointing to random events<br>\ndue to changes in the Showclix API. There's<br>\nno need to worry about the Showclix link<br>\nleading to some random Paris event, or the<br>\nPAX Website link leading to X.paxsite.com.\n</html>");
+    JLLinksExplanation.setText("Why are these links pointing to random events??? What's up with [Message]??");
+    JLLinksExplanation.setToolTipText("<html>\nThese links are pointing to random events<br>\ndue to changes in the Showclix API. There's<br>\nno need to worry about the Showclix link<br>\nleading to some random Paris event, or the<br>\nPAX Website link leading to X.paxsite.com.<br>\n<br>\n[No API Connection] means that the program<br>\ncould not establish a connection to the<br>\nShowclix API. While this is bad, unless it<br>\npersists for more than two hours, there's no<br>\nneed to worry about this error too much.<br>\n[None Found] means that no links were<br>\nable to be found. Again, this is normally<br>\na sign that the program is working, and<br>\nit will find the link as soon as it's posted.\n</html>");
     JLLinksExplanation.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLLinksExplanationMousePressed(evt);

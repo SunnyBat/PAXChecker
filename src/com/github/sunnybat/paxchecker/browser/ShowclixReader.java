@@ -29,6 +29,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
   private static final String API_EXTENSION_VENUE = "Venue/";
   private static final String EVENT_LINK_BASE = "http://www.showclix.com/Event/";
+  private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
 
@@ -73,6 +74,7 @@ public class ShowclixReader {
     Set<String> retSet = getAllSellerEventURLs(expo);
     retSet.addAll(getAllPartnerEventURLs(expo));
     retSet.addAll(getAllVenueEventURLs(expo));
+    System.out.println(retSet);
     return retSet;
   }
 
@@ -119,14 +121,14 @@ public class ShowclixReader {
     Set<String> retSet = new TreeSet<>();
     for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
       retSet.add(EVENT_LINK_BASE + s);
-      try {
-        JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-        if (obj2.get("listing_url") != null) {
-          retSet.add((String) obj2.get("listing_url"));
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("Unable to read event from key " + s + " -- CCE: object is " + obj.get(s).getClass().getSimpleName());
-      }
+//      try {
+//        JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
+//        if (obj2.get("listing_url") != null) {
+//          retSet.add((String) obj2.get("listing_url"));
+//        }
+//      } catch (ClassCastException cce) {
+//        System.out.println("Unable to read event from key " + s + " -- CCE: object is " + obj.get(s).getClass().getSimpleName());
+//      }
     }
     return retSet;
   }
@@ -140,7 +142,7 @@ public class ShowclixReader {
   private static Set<String> getAllSellerEventURLs(int sellerID) {
     Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + "/events"));
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
       if (jsonText == null) {
         return retSet;
       }
@@ -148,7 +150,12 @@ public class ShowclixReader {
       JSONParser mP = new JSONParser();
       //JSONArray array = (JSONArray) mP.parse(jsonText);
       try {
-        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
+        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
+        if (obj.containsKey("events")) {
+          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
+        } else {
+          retSet.addAll(getAllEventURLs(obj));
+        }
       } catch (ClassCastException cce) {
         System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
       }
@@ -162,7 +169,7 @@ public class ShowclixReader {
   private static Set<String> getAllPartnerEventURLs(int partnerID) {
     Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/events"));
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
       if (jsonText == null) {
         return retSet;
       }
@@ -170,7 +177,12 @@ public class ShowclixReader {
       JSONParser mP = new JSONParser();
       //JSONArray array = (JSONArray) mP.parse(jsonText);
       try {
-        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
+        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
+        if (obj.containsKey("events")) {
+          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
+        } else {
+          retSet.addAll(getAllEventURLs(obj));
+        }
       } catch (ClassCastException cce) {
         System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
       }
@@ -184,7 +196,7 @@ public class ShowclixReader {
   private static Set<String> getAllVenueEventURLs(int venueID) {
     Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + "/events"));
+      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
       if (jsonText == null) {
         return retSet;
       }
@@ -192,7 +204,12 @@ public class ShowclixReader {
       JSONParser mP = new JSONParser();
       //JSONArray array = (JSONArray) mP.parse(jsonText);
       try {
-        retSet.addAll(getAllEventURLs((JSONObject) mP.parse(jsonText)));
+        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
+        if (obj.containsKey("events")) {
+          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
+        } else {
+          retSet.addAll(getAllEventURLs(obj));
+        }
       } catch (ClassCastException cce) {
         System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
       }

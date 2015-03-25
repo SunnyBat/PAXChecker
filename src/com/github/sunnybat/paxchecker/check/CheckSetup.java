@@ -95,32 +95,32 @@ public class CheckSetup {
           status.showWindow();
         }
         TicketChecker.initCheckers();
-        long startMS;
+        status.setDataUsageText(DataTracker.getDataUsedMB());
         int seconds = getRefreshTime(); // Saves time from accessing volatile variable; can be moved to inside do while if secondsBetweenRefresh can be changed when do while is running
-        if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
-          status.setLastCheckedText("[Only Scanning Twitter]");
-        } else {
-          do {
-            status.setLastCheckedText("Checking for updates...");
-            startMS = System.currentTimeMillis();
-            if (TicketChecker.isUpdated()) {
-              linkFound(TicketChecker.getLinkFound());
-              continue; // Immediately re-check in case other services have found updates
+//        if (!TicketChecker.isCheckingPaxsite() && !TicketChecker.isCheckingShowclix()) {
+//          status.setLastCheckedText("[Only Scanning Twitter]");
+//        } else {
+        do {
+          status.setLastCheckedText("Checking for updates...");
+          long startMS = System.currentTimeMillis();
+          if (TicketChecker.isUpdated()) {
+            linkFound(TicketChecker.getLinkFound());
+            continue; // Immediately re-check in case other services have found updates
+          }
+          status.setDataUsageText(DataTracker.getDataUsedMB());
+          while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
+            if (forceRefresh) {
+              forceRefresh = false;
+              break;
             }
-            status.setDataUsageText(DataTracker.getDataUsedMB());
-            while (System.currentTimeMillis() - startMS < (seconds * 1000)) {
-              if (forceRefresh) {
-                forceRefresh = false;
-                break;
-              }
-              try {
-                Thread.sleep(100);
-              } catch (InterruptedException interruptedException) {
-              }
-              status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException interruptedException) {
             }
-          } while (status.isDisplayable());
-        }
+            status.setLastCheckedText(seconds - (int) ((System.currentTimeMillis() - startMS) / 1000));
+          }
+        } while (status.isDisplayable());
+//        }
       }
     });
   }
@@ -398,6 +398,8 @@ public class CheckSetup {
    * @param seconds The amount of seconds between website updates.
    */
   public static void setRefreshTime(int seconds) {
+    seconds = Math.max(seconds, 10);
+    seconds = Math.min(seconds, 120);
     secondsBetweenRefresh = seconds;
   }
 
