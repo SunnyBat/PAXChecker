@@ -12,10 +12,16 @@ import twitter4j.*;
  */
 public class TwitterStreamer {
 
-  private static String[] usersToCheck;
-  private static TwitterStream myStream;
-  private static int successiveErrorCount;
-  public static final UserStreamListener listener = new UserStreamListener() {
+  public TwitterStreamer(Twitter t) {
+    myTwitter = t;
+  }
+
+  private Twitter myTwitter;
+  private String[] usersToCheck;
+  private TwitterStream myStream;
+  private int successiveErrorCount;
+  private boolean filterKeywords;
+  public final UserStreamListener listener = new UserStreamListener() {
     @Override
     public void onStatus(Status status) { // Feels SO hacked together right now
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
@@ -23,25 +29,42 @@ public class TwitterStreamer {
         System.out.println("Tweet does not have keywords -- ignoring.");
       } else {
         for (String s : usersToCheck) {
-          if (s.equals(status.getUser().getScreenName().toLowerCase()) && status.getText().contains("t.co/")) {
-            String tStatus = status.getText();
-            String link = Browser.parseLink(tStatus);
-            while (link != null) { // Continuously parse through tweet
-              String toOpen = Browser.unshortenURL(link);
-              if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
-                System.out.println("Link is not Showclix or unshortened -- ignoring.");
-              } else if (!TicketChecker.hasOpenedLink(toOpen)) {
-                CheckSetup.linkFound(toOpen);
-                TicketChecker.addLinkFound(toOpen);
-              } else {
-                System.out.println("Link already found -- ignoring.");
+          if (filterKeywords) {
+            if (s.equals(status.getUser().getScreenName().toLowerCase()) && status.getText().contains("t.co/")) {
+              String tStatus = status.getText();
+              String link = Browser.parseLink(tStatus);
+              while (link != null) { // Continuously parse through tweet
+                String toOpen = Browser.unshortenURL(link);
+                if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
+                  System.out.println("Link is not Showclix or unshortened -- ignoring.");
+                } else if (!TicketChecker.hasOpenedLink(toOpen)) {
+                  CheckSetup.linkFound(toOpen);
+                  TicketChecker.addLinkFound(toOpen);
+                } else {
+                  System.out.println("Link already found -- ignoring.");
+                }
+                tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
+                link = Browser.parseLink(tStatus); // Get next link, or null if none
               }
-              tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
-              link = Browser.parseLink(tStatus); // Get next link, or null if none
+              return;
+            } else {
+              System.out.println("Tweet does not contain link -- ignoring.");
             }
-            return;
           } else {
-            System.out.println("Tweet does not contain link -- ignoring.");
+            if (s.equals(status.getUser().getScreenName().toLowerCase())) {
+              String statusText = status.getText().toLowerCase();
+              while (statusText.contains("t.co/")) { // ALL links are shortened
+                String link = Browser.parseLink(statusText);
+                statusText = statusText.substring(statusText.indexOf(link) + link.length()); // Remove link from statusText
+                link = Browser.unshortenURL(link);
+                if (!TicketChecker.hasOpenedLink(link)) {
+                  CheckSetup.linkFound(link);
+                  TicketChecker.addLinkFound(link);
+                } else {
+                  System.out.println("Link already found -- ignoring");
+                }
+              }
+            }
           }
         }
         System.out.println("Tweet is not in list of names to check -- ignoring");
@@ -158,7 +181,7 @@ public class TwitterStreamer {
     }
   };
 
-  private static final ConnectionLifeCycleListener cLCListener = new ConnectionLifeCycleListener() {
+  private final ConnectionLifeCycleListener cLCListener = new ConnectionLifeCycleListener() {
     @Override
     public void onCleanUp() {
       System.out.println("Twitter Streaming cleanup");
@@ -180,30 +203,34 @@ public class TwitterStreamer {
     }
   };
 
-  public static void runTwitterStream(Twitter twitter, String[] handles) {
-    if (isStreamingTwitter()) {
+  public void startStreamingTwitter(String[] handles) {
+    usersToCheck = handles.clone(); // Set users to check
+    for (int i = 0; i < usersToCheck.length; i++) { // Strip @ from Twitter handle
+      if (usersToCheck[i].startsWith("@")) {
+        usersToCheck[i] = usersToCheck[i].replaceFirst("@", "");
+      }
+      usersToCheck[i] = usersToCheck[i].toLowerCase();
+    }
+    if (isStreamingTwitter()) { // If already running, return
       return;
     }
     System.out.println(Arrays.toString(handles));
     try {
-      myStream = new TwitterStreamFactory().getInstance(twitter.getAuthorization());
+      myStream = new TwitterStreamFactory().getInstance(myTwitter.getAuthorization());
       myStream.addListener(listener);
       myStream.addConnectionLifeCycleListener(cLCListener);
       myStream.user(handles);
-      usersToCheck = handles.clone();
-      for (int i = 0; i < usersToCheck.length; i++) {
-        if (usersToCheck[i].startsWith("@")) {
-          usersToCheck[i] = usersToCheck[i].replaceFirst("@", "");
-        }
-        usersToCheck[i] = usersToCheck[i].toLowerCase();
-      }
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public static boolean isStreamingTwitter() {
+  public boolean isStreamingTwitter() {
     return myStream != null;
+  }
+
+  public void enableKeywordFiltering() {
+    filterKeywords = true;
   }
 
 }

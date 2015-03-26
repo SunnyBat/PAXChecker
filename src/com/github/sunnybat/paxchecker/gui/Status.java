@@ -199,6 +199,15 @@ public class Status extends javax.swing.JFrame {
     });
   }
 
+  public void setForceButtonState(final boolean enabled) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        jButton3.setEnabled(enabled);
+      }
+    });
+  }
+
   public void updateJLabel(final javax.swing.JLabel label, final String text) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -410,14 +419,14 @@ public class Status extends javax.swing.JFrame {
         .addComponent(JLLinksExplanation)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(JLLastChecked)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(0, 0, 0)
         .addComponent(JLDataUsage)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLInformation)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jButton2)
-          .addComponent(jButton1))
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jButton1)
+          .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton3)
         .addContainerGap())

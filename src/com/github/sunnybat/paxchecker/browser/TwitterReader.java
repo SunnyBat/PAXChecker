@@ -27,6 +27,7 @@ public class TwitterReader {
   private static final String[] KEYWORDS = {"pax", "passes", "ticket", "tix", "sale", "badge", "showclix", "byoc", "hotel"}; // Must be all lowercase
   private long lastIDFound;
   private final String TWITTER_HANDLE;
+  private static TwitterStreamer myStream;
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
@@ -60,6 +61,7 @@ public class TwitterReader {
     TwitterFactory tf = new TwitterFactory(cb.build());
     twitter = tf.getInstance();
     System.out.println("Twitter initialized!");
+    myStream = new TwitterStreamer(twitter);
   }
 
   public static boolean isInitialized() {
@@ -161,6 +163,27 @@ public class TwitterReader {
       System.out.println("Unable to start Twitter stream -- Twitter not properly configured!");
       return;
     }
-    TwitterStreamer.runTwitterStream(twitter, handles);
+    myStream.startStreamingTwitter(handles);
+  }
+
+  /**
+   * Checks whether or not the program is currently streaming Twitter.
+   *
+   * @return True if it is, false if not
+   */
+  public static boolean isStreamingTwitter() {
+    if (!isInitialized()) {
+      return false;
+    }
+    return myStream.isStreamingTwitter();
+  }
+
+  /**
+   * Enables filtering tweets received by keyword. This cannot be undone.
+   */
+  public static void enableKeywordFiltering() {
+    if (isInitialized()) {
+      myStream.enableKeywordFiltering();
+    }
   }
 }

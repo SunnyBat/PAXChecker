@@ -95,6 +95,8 @@
                                       <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JLTwitterDisabled" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="JCBFilterTwitter" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
@@ -150,6 +152,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JLTwitterDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBFilterTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBPlayAlarm" min="-2" max="-2" attributes="0"/>
@@ -364,6 +367,12 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="(Deep Disabled???)"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;As of now, Deep Check Showclix uses a LOT of data&lt;br&gt;&#xa; and a LOT of Showclix API requests. With a good&lt;br&gt;&#xa;amount of people starting to use the PAXChecker, the&lt;br&gt;&#xa;Showclix API is repeatedly going offline, which has not&lt;br&gt;&#xa;happened in the past. Until I can optimize the Deep&lt;br&gt;&#xa;Check Showclix option or figure out why this is&lt;br&gt;&#xa;happening, this option will remain disabled.&lt;br&gt;&#xa;&lt;br&gt;&#xa;On the flip side, Deep Check Showclix was parsing&lt;br&gt;&#xa;through the entire API and getting the *exact* same&lt;br&gt;&#xa;pages as the regular Showclix scanning algorithm&lt;br&gt;&#xa;was. So, for now, there&apos;s no difference between Deep&lt;br&gt;&#xa;Check Showclix and regular Showclix checking, sans&lt;br&gt;&#xa;the time and data used.&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBFilterTwitter">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Filter by Keywords"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Filters out Tweets that do not contains specific&lt;br&gt;&#xa;keywords. This limits the amount of links opened&lt;br&gt;&#xa;by the PAXChecker, and may in fact prevent the&lt;br&gt;&#xa;PAXChecker from opening the ticket sale page if&lt;br&gt;&#xa;PAX&apos;s Tweet doesn&apos;t contain specific words.&lt;br&gt;&#xa;The use of this is NOT recommended.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -56,6 +57,7 @@ public final class TicketChecker {
    * @return True if an update is found, false if not
    */
   public static boolean isUpdated() {
+    status.setForceButtonState(false);
     for (Check c : checks) {
       threadPool.submit(c);
     }
@@ -81,6 +83,7 @@ public final class TicketChecker {
         System.out.println("Link: " + c.getLink());
       }
     }
+    status.setForceButtonState(true);
     return false;
   }
 
@@ -181,6 +184,6 @@ public final class TicketChecker {
 //      }
 //    }
 //    return false;
-    return TwitterStreamer.isStreamingTwitter();
+    return TwitterReader.isStreamingTwitter();
   }
 }

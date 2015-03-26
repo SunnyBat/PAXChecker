@@ -361,6 +361,7 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled = new javax.swing.JLabel();
     JCBCheckShowclixDeep = new javax.swing.JCheckBox();
     jLabel7 = new javax.swing.JLabel();
+    JCBFilterTwitter = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -506,6 +507,9 @@ public class Setup extends javax.swing.JFrame {
     jLabel7.setText("(Deep Disabled???)");
     jLabel7.setToolTipText("<html>\nAs of now, Deep Check Showclix uses a LOT of data<br>\n and a LOT of Showclix API requests. With a good<br>\namount of people starting to use the PAXChecker, the<br>\nShowclix API is repeatedly going offline, which has not<br>\nhappened in the past. Until I can optimize the Deep<br>\nCheck Showclix option or figure out why this is<br>\nhappening, this option will remain disabled.<br>\n<br>\nOn the flip side, Deep Check Showclix was parsing<br>\nthrough the entire API and getting the *exact* same<br>\npages as the regular Showclix scanning algorithm<br>\nwas. So, for now, there's no difference between Deep<br>\nCheck Showclix and regular Showclix checking, sans<br>\nthe time and data used.\n</html>");
 
+    JCBFilterTwitter.setText("Filter by Keywords");
+    JCBFilterTwitter.setToolTipText("<html>\nFilters out Tweets that do not contains specific<br>\nkeywords. This limits the amount of links opened<br>\nby the PAXChecker, and may in fact prevent the<br>\nPAXChecker from opening the ticket sale page if<br>\nPAX's Tweet doesn't contain specific words.<br>\nThe use of this is NOT recommended.\n</html>");
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -546,7 +550,9 @@ public class Setup extends javax.swing.JFrame {
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckTwitter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JLTwitterDisabled))
+                .addComponent(JLTwitterDisabled)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JCBFilterTwitter))
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckShowclix)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -590,7 +596,8 @@ public class Setup extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
-          .addComponent(JLTwitterDisabled))
+          .addComponent(JLTwitterDisabled)
+          .addComponent(JCBFilterTwitter))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBPlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -874,13 +881,16 @@ public class Setup extends javax.swing.JFrame {
 //      if (JCBCheckShowclixDeep.isSelected()) {
 //        c = new DeepCheckShowclix();
 //      } else {
-        c = new CheckShowclix();
+      c = new CheckShowclix();
 //      }
       TicketChecker.addChecker(c);
     }
     TicketChecker.addChecker(new CheckShowclixEventPage());
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
       CheckSetup.startTwitterStreaming();
+      if (JCBFilterTwitter.isSelected()) {
+        TwitterReader.enableKeywordFiltering();
+      }
     }
     Audio.setPlayAlarm(JCBPlayAlarm.isSelected());
     Email.setUsername(JTFEmail.getText());
@@ -971,6 +981,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBCheckUpdates;
   private javax.swing.JCheckBox JCBCheckWebsite;
   private javax.swing.JComboBox JCBExpo;
+  private javax.swing.JCheckBox JCBFilterTwitter;
   private javax.swing.JCheckBox JCBLoadNotifications;
   private javax.swing.JCheckBox JCBPlayAlarm;
   private javax.swing.JCheckBox JCBSaveCellnum;

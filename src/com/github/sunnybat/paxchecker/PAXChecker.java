@@ -94,7 +94,8 @@ public final class PAXChecker {
     boolean checkPax = true;
     boolean checkShowclix = true;
     boolean checkTwitter = true;
-    boolean deepCheckShowclix = false;
+    boolean filterTwitter = false;
+//    boolean deepCheckShowclix = false;
     boolean autoStart = false;
     boolean savePrefs = false;
     String[] twitterTokens = new String[4];
@@ -155,9 +156,9 @@ public final class PAXChecker {
             System.out.println("Setting check Showclix website to false");
             checkShowclix = false;
             break;
-          case "-deepcheckshowclix":
-            deepCheckShowclix = true;
-            break;
+//          case "-deepcheckshowclix":
+//            deepCheckShowclix = true;
+//            break;
           case "-notwitter":
             if (!checkPax && !checkShowclix) {
               System.out.println("Already not checking PAX website or Showclix -- cannot set check Twitter to false");
@@ -165,6 +166,9 @@ public final class PAXChecker {
             }
             System.out.println("Setting check Twitter to false");
             checkTwitter = false;
+            break;
+          case "-filtertwitter":
+            filterTwitter = true;
             break;
           case "-checktwitter":
             String twitterHandle = args[a + 1];
@@ -183,7 +187,7 @@ public final class PAXChecker {
           case "-startminimized":
             CheckSetup.startMinimized();
             break;
-          case "-cli": // Redundant
+          case "-cli":
             enableCommandLine();
             break;
           case "-property":
@@ -245,6 +249,9 @@ public final class PAXChecker {
         System.out.println("No Twitter keys found!");
       }
     }
+    if (filterTwitter) {
+      TwitterReader.enableKeywordFiltering();
+    }
     System.out.println("Loading patch notes...");
     if (autoStart) {
       if (checkPax) {
@@ -252,11 +259,11 @@ public final class PAXChecker {
       }
       if (checkShowclix) {
         CheckShowclix c;
-        if (deepCheckShowclix) {
-          c = new DeepCheckShowclix();
-        } else {
-          c = new CheckShowclix();
-        }
+//        if (deepCheckShowclix) {
+//          c = new DeepCheckShowclix();
+//        } else {
+        c = new CheckShowclix();
+//        }
         TicketChecker.addChecker(c);
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
