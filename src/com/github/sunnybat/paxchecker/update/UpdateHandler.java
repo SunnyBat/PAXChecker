@@ -79,7 +79,12 @@ public class UpdateHandler {
     InputStream textInputStream;
     BufferedReader myReader = null;
     try {
-      URL patchNotesURL = new URL(PATCH_NOTES_LINK);
+      URL patchNotesURL;
+      if (PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS)) {
+        patchNotesURL = new URL(PATCH_NOTES_LINK_ANONYMOUS);
+      } else {
+        patchNotesURL = new URL(PATCH_NOTES_LINK);
+      }
       inputConnection = patchNotesURL.openConnection();
       textInputStream = inputConnection.getInputStream();
       myReader = new BufferedReader(new InputStreamReader(textInputStream));
@@ -122,7 +127,7 @@ public class UpdateHandler {
           allText += line + lineSeparator;
         }
       }
-      if (versionNotes != null && versionNotes.length() == allText.trim().length()) {
+      if ((versionNotes != null && versionNotes.length() == allText.trim().length()) || allText.length() < 100) {
         System.out.println("Patch Notes have not changed.");
         updateLevel = 0; // Force override updateLevel
         return;

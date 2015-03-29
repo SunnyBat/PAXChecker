@@ -187,6 +187,7 @@ public class TwitterStreamer {
       System.out.println("Twitter Streaming cleanup");
       myStream = null; // Make program know that the Twitter stream is dead
       successiveErrorCount = 0;
+      CheckSetup.twitterStreamKilled();
     }
 
     @Override
@@ -199,7 +200,8 @@ public class TwitterStreamer {
     @Override
     public void onDisconnect() {
       System.out.println("Disconnected from Twitter Streaming service");
-      CheckSetup.twitterConnection(false);
+//      CheckSetup.twitterConnection(false);
+      CheckSetup.twitterConnection(successiveErrorCount * 10); // I don't think *10 is right... Is it 10, 15, 30?
     }
   };
 
@@ -225,8 +227,25 @@ public class TwitterStreamer {
     }
   }
 
+  /**
+   * Checks whether or not the Twitter stream is currently on. This means that it is either connected, attempting to reconnect, or waiting to attempt
+   * to reconnect. If false, startStreamingTwitter() may be called to start it.
+   *
+   * @return True if streaming is on, false if not
+   */
   public boolean isStreamingTwitter() {
     return myStream != null;
+  }
+
+  /**
+   * Checks whether or not the Twitter stream is currently connected. Note that if the stream is disconnected but is still streaming, it will be
+   * automatically attempting to reconnect.
+   *
+   * @return True if it's connected, false if disconnected
+   * @see #isStreamingTwitter()
+   */
+  public boolean isConnected() {
+    return successiveErrorCount == 0 && isStreamingTwitter();
   }
 
   public void enableKeywordFiltering() {

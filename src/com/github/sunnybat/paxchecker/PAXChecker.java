@@ -19,6 +19,7 @@ import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.paxchecker.update.UpdateHandler;
+import java.io.FileNotFoundException;
 
 /**
  *
@@ -26,7 +27,7 @@ import com.github.sunnybat.paxchecker.update.UpdateHandler;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.2 R2";
+  public static final String VERSION = "2.0.2 R3";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
@@ -213,6 +214,18 @@ public final class PAXChecker {
             break;
           case "-applicationsecret":
             twitterTokens[3] = args[a + 1];
+            break;
+          case "-savelog":
+            try {
+              if (args.length > a + 1 && !args[a + 1].startsWith("-")) {
+                System.setOut(new SavePrintStream(System.out, args[a + 1]));
+              } else {
+                System.setOut(new SavePrintStream(System.out));
+              }
+            } catch (FileNotFoundException fnfe) {
+              System.out.println("Unable to set output stream saver -- File does not exist?");
+              fnfe.printStackTrace();
+            }
             break;
           default:
             if (args[a].startsWith("-")) {

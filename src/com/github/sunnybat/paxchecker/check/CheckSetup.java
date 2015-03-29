@@ -66,7 +66,7 @@ public class CheckSetup {
   }
 
   /**
-   * Updates the Status GUI to let the user know that the Twitter feed has been disconnected.
+   * Updates the Status GUI to let the user know that the Twitter feed state has changed.
    *
    * @param connected True if connected, false if not
    */
@@ -74,6 +74,20 @@ public class CheckSetup {
     if (status != null) {
       status.setTwitterStatus(connected);
     }
+  }
+
+  /**
+   * Updates the Status GUI to let the user know that the Twitter feed has been disconnected. Also says how long until the next reconnect
+   * @param reconnectSeconds The amount of seconds left until a reconnect attempt
+   */
+  public static void twitterConnection(int reconnectSeconds) {
+    if (status != null) {
+      status.setTwitterStatus(reconnectSeconds);
+    }
+  }
+  
+  public static void twitterStreamKilled() {
+    status.twitterStreamKilled();
   }
 
   /**

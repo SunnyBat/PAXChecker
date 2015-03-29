@@ -723,7 +723,7 @@
             <Component class="javax.swing.JCheckBox" name="JCBStatistics">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Anonymous Statistics"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;When enabled, the program goes through Orangedox&lt;br&gt;&#xa;to collect non-personally identifiable statistics about&lt;br&gt;&#xa;file downloads, such as the date downloaded and&lt;br&gt;&#xa;the specific file downloaded.&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;When enabled, the program goes through Orangedox&lt;br&gt;&#xa;to collect non-personally identifiable statistics about&lt;br&gt;&#xa;file downloads, such as the date downloaded and&lt;br&gt;&#xa;the specific file downloaded.&lt;br&gt;&#xa;NOTE that &quot;Anonymous Statistics&quot; only means going&lt;br&gt;&#xa;through Dropbox instead of Orangedox. Dropbox&apos;s&lt;br&gt;&#xa;Privacy Policy applies to you, regardless of whether&lt;br&gt;&#xa;or not this option is enabled.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBCheckUpdateDaily">

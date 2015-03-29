@@ -107,8 +107,8 @@ public class Setup extends javax.swing.JFrame {
 //          }
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
-        JCBCheckTwitter.setEnabled(TwitterReader.isInitialized());
-        JLTwitterDisabled.setVisible(!TwitterReader.isInitialized());
+        setTwitterCheckboxEnabled(TwitterReader.isInitialized());
+        JCBFilterTwitter.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.FILTER_TWITTER)); // Will not be shown if Twitter disabled
         JCBPlayAlarm.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.PLAY_ALARM));
         JSCheckTime.setValue(PreferenceHandler.getIntegerPreference(Preference.TYPES.REFRESHTIME));
         if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
@@ -271,6 +271,8 @@ public class Setup extends javax.swing.JFrame {
     PreferenceHandler.getPreferenceObject(Preference.TYPES.SHOWCLIX_DEEP_CHECK).setValue(JCBCheckShowclixDeep.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setShouldSave(JCBSaveCheckTwitter.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.CHECK_TWITTER).setValue(JCBCheckTwitter.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.FILTER_TWITTER).setShouldSave(JCBSaveCheckTwitter.isSelected());
+    PreferenceHandler.getPreferenceObject(Preference.TYPES.FILTER_TWITTER).setValue(JCBFilterTwitter.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).setShouldSave(JCBSaveEvent.isSelected());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.EVENT).setValue(JCBExpo.getSelectedItem().toString());
     PreferenceHandler.getPreferenceObject(Preference.TYPES.PLAY_ALARM).setShouldSave(JCBSavePlayAlarm.isSelected());
@@ -290,8 +292,7 @@ public class Setup extends javax.swing.JFrame {
 
   public void disableTwitter() {
     JCBCheckTwitter.setSelected(false);
-    JCBCheckTwitter.setEnabled(false);
-    JLTwitterDisabled.setVisible(true);
+    setTwitterCheckboxEnabled(false);
   }
 
   private String getCellNumString() {
@@ -326,6 +327,12 @@ public class Setup extends javax.swing.JFrame {
     }
     System.out.println("Final Text: " + text);
     return text;
+  }
+
+  private void setTwitterCheckboxEnabled(boolean enabled) {
+    JCBCheckTwitter.setEnabled(enabled);
+    JLTwitterDisabled.setVisible(!enabled);
+    JCBFilterTwitter.setVisible(enabled);
   }
 
   /**
@@ -755,7 +762,7 @@ public class Setup extends javax.swing.JFrame {
     JCBSaveTwitterKeys.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
 
     JCBStatistics.setText("Anonymous Statistics");
-    JCBStatistics.setToolTipText("<html>\nWhen enabled, the program goes through Orangedox<br>\nto collect non-personally identifiable statistics about<br>\nfile downloads, such as the date downloaded and<br>\nthe specific file downloaded.\n</html>");
+    JCBStatistics.setToolTipText("<html>\nWhen enabled, the program goes through Orangedox<br>\nto collect non-personally identifiable statistics about<br>\nfile downloads, such as the date downloaded and<br>\nthe specific file downloaded.<br>\nNOTE that \"Anonymous Statistics\" only means going<br>\nthrough Dropbox instead of Orangedox. Dropbox's<br>\nPrivacy Policy applies to you, regardless of whether<br>\nor not this option is enabled.\n</html>");
 
     JCBCheckUpdateDaily.setText("Every 24 hours");
     JCBCheckUpdateDaily.setEnabled(false);

@@ -4,6 +4,7 @@ import com.github.sunnybat.paxchecker.Email;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.browser.Browser;
+import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
 import java.awt.*;
 
@@ -38,6 +39,7 @@ public class Status extends javax.swing.JFrame {
     }
     myMenu = new IconMenu();
     JLTwitterStatus.setVisible(false);
+    JBReconnectTwitter.setVisible(false);
   }
 
   public void setupComponents() {
@@ -109,7 +111,7 @@ public class Status extends javax.swing.JFrame {
       @Override
       public void run() {
         JLTwitterStatus.setVisible(true);
-        JLTwitterStatus.setText("Twitter Feed: Connected");
+        JLTwitterStatus.setText("Twitter Feed: Connecting...");
       }
     });
   }
@@ -123,6 +125,24 @@ public class Status extends javax.swing.JFrame {
         } else {
           JLTwitterStatus.setText("Twitter Feed: Disconnected");
         }
+      }
+    });
+  }
+
+  public void setTwitterStatus(final int timeUntilReconnect) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JLTwitterStatus.setText("Twitter Feed: Reconnecting in " + timeUntilReconnect + " seconds");
+      }
+    });
+  }
+
+  public void twitterStreamKilled() {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JBReconnectTwitter.setVisible(true);
       }
     });
   }
@@ -314,6 +334,7 @@ public class Status extends javax.swing.JFrame {
     JPLinks = new javax.swing.JPanel();
     JLTwitterStatus = new javax.swing.JLabel();
     JLLinksExplanation = new javax.swing.JLabel();
+    JBReconnectTwitter = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAXChecker");
@@ -375,6 +396,13 @@ public class Status extends javax.swing.JFrame {
       }
     });
 
+    JBReconnectTwitter.setText("Reconnect Twitter Stream");
+    JBReconnectTwitter.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JBReconnectTwitterActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
@@ -402,7 +430,10 @@ public class Status extends javax.swing.JFrame {
             .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLLinksExplanation)
-            .addGap(0, 0, Short.MAX_VALUE))))
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(JBReconnectTwitter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addContainerGap())))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,6 +460,8 @@ public class Status extends javax.swing.JFrame {
           .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton3)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JBReconnectTwitter)
         .addContainerGap())
     );
 
@@ -466,7 +499,16 @@ public class Status extends javax.swing.JFrame {
 
   }//GEN-LAST:event_JLLinksExplanationMousePressed
 
+  private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
+    // TODO add your handling code here:
+    if (!TwitterReader.isStreamingTwitter()) {
+      CheckSetup.startTwitterStreaming();
+    }
+    JBReconnectTwitter.setVisible(false);
+  }//GEN-LAST:event_JBReconnectTwitterActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton JBReconnectTwitter;
   private javax.swing.JLabel JLDataUsage;
   private javax.swing.JLabel JLInformation;
   private javax.swing.JLabel JLLastChecked;
