@@ -1,25 +1,23 @@
 package com.github.sunnybat.paxchecker;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.commoncode.encryption.Encryption;
-
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
-import com.github.sunnybat.paxchecker.check.TicketChecker;
-import com.github.sunnybat.paxchecker.check.CheckShowclix;
-import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
-import com.github.sunnybat.paxchecker.gui.Setup;
+import com.github.sunnybat.paxchecker.check.CheckShowclix;
+import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
+import com.github.sunnybat.paxchecker.check.TicketChecker;
 import com.github.sunnybat.paxchecker.gui.LoadingWindow;
+import com.github.sunnybat.paxchecker.gui.Setup;
 import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.paxchecker.update.UpdateHandler;
 import java.io.FileNotFoundException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
@@ -100,7 +98,7 @@ public final class PAXChecker {
     boolean autoStart = false;
     boolean savePrefs = false;
     String[] twitterTokens = new String[4];
-    CheckSetup.addHandle("@Official_PAX");
+    TwitterReader.addHandle("@Official_PAX");
     if (args.length > 0) {
       System.out.println("Args!");
       argsCycle:
@@ -173,7 +171,7 @@ public final class PAXChecker {
             break;
           case "-checktwitter":
             String twitterHandle = args[a + 1];
-            CheckSetup.addHandle(twitterHandle);
+            TwitterReader.addHandle(twitterHandle);
           case "-alarm":
             System.out.println("Alarm activated");
             Audio.setPlayAlarm(true);
@@ -280,7 +278,7 @@ public final class PAXChecker {
         TicketChecker.addChecker(c);
       }
       if (checkTwitter && TwitterReader.isInitialized()) {
-        CheckSetup.startTwitterStreaming();
+        TwitterReader.runTwitterStream();
       }
     }
     if (isCommandLine()) {

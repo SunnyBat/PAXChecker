@@ -894,7 +894,7 @@ public class Setup extends javax.swing.JFrame {
     }
     TicketChecker.addChecker(new CheckShowclixEventPage());
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
-      CheckSetup.startTwitterStreaming();
+      TwitterReader.runTwitterStream();
       if (JCBFilterTwitter.isSelected()) {
         TwitterReader.enableKeywordFiltering();
       }

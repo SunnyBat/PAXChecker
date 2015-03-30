@@ -1,16 +1,21 @@
 package com.github.sunnybat.paxchecker.browser;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
-import java.util.List;
+import com.github.sunnybat.commoncode.encryption.Encryption;
+import com.github.sunnybat.commoncode.error.ErrorDisplay;
 import com.github.sunnybat.paxchecker.check.TwitterStreamer;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import twitter4j.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import twitter4j.Paging;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
-import com.github.sunnybat.commoncode.encryption.Encryption;
 
 /**
  * Using the Twitter4J library (3rd party TwitterReader Library for Java).
@@ -28,6 +33,7 @@ public class TwitterReader {
   private long lastIDFound;
   private final String TWITTER_HANDLE;
   private static TwitterStreamer myStream;
+  private static final List<String> handleList = new ArrayList<>();
 
   public TwitterReader(String handle) {
     TWITTER_HANDLE = handle;
@@ -154,20 +160,22 @@ public class TwitterReader {
   }
 
   /**
-   * Runs a new Twitter stream with the given handles. This should only be run as long as a Twitter stream is not currently running.
-   *
-   * @param handles
+   * Runs a new Twitter stream instance. If the Twitter stream is currently running (either connected or attempting to reconnect), this method will do
+   * nothing.
    */
-  public static void runTwitterStream(String[] handles) {
+  public static void runTwitterStream() {
     if (!isInitialized()) {
       System.out.println("Unable to start Twitter stream -- Twitter not properly configured!");
       return;
     }
-    myStream.startStreamingTwitter(handles);
+    String[] list = new String[handleList.size()];
+    handleList.toArray(list);
+    myStream.startStreamingTwitter(list);
   }
 
   /**
-   * Checks whether or not the program is currently streaming Twitter.
+   * Checks whether or not the Twitter stream is currently on. This means that it is either connected, attempting to reconnect, or waiting to attempt
+   * to reconnect. If false, runTwitterStream() may be called to start it.
    *
    * @return True if it is, false if not
    */
@@ -178,6 +186,10 @@ public class TwitterReader {
     return myStream.isStreamingTwitter();
   }
 
+  public static boolean isConnected() {
+    return myStream.isConnected();
+  }
+
   /**
    * Enables filtering tweets received by keyword. This cannot be undone.
    */
@@ -185,5 +197,14 @@ public class TwitterReader {
     if (isInitialized()) {
       myStream.enableKeywordFiltering();
     }
+  }
+
+  /**
+   * Adds a Twitter handle to the list of handles to check.
+   *
+   * @param s The handle to check
+   */
+  public static void addHandle(String s) {
+    handleList.add(s);
   }
 }

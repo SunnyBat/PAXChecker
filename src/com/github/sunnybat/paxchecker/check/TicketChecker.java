@@ -57,7 +57,9 @@ public final class TicketChecker {
    * @return True if an update is found, false if not
    */
   public static boolean isUpdated() {
-    status.setForceButtonState(false);
+    if (status != null) {
+      status.setForceButtonState(false);
+    }
     for (Check c : checks) {
       threadPool.submit(c);
     }
@@ -83,7 +85,9 @@ public final class TicketChecker {
         System.out.println("Link: " + c.getLink());
       }
     }
-    status.setForceButtonState(true);
+    if (status != null) {
+      status.setForceButtonState(true);
+    }
     return false;
   }
 

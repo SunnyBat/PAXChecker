@@ -1,20 +1,19 @@
 package com.github.sunnybat.paxchecker.check;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-
-import com.github.sunnybat.paxchecker.update.UpdateHandler;
-import com.github.sunnybat.paxchecker.gui.Status;
 import com.github.sunnybat.paxchecker.Audio;
-import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.Email;
 import com.github.sunnybat.paxchecker.KeyboardHandler;
 import com.github.sunnybat.paxchecker.PAXChecker;
+import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
+import com.github.sunnybat.paxchecker.gui.Status;
 import com.github.sunnybat.paxchecker.gui.Tickets;
+import com.github.sunnybat.paxchecker.update.UpdateHandler;
+import java.awt.Color;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  *
@@ -26,7 +25,6 @@ public class CheckSetup {
   private static volatile boolean forceRefresh;
   private static volatile java.awt.Image alertIcon;
   private static final Scanner myScanner = new Scanner(System.in);
-  private static final ArrayList<String> handleList = new ArrayList<>();
   private static boolean startMinimized;
   // GUIs
   private static Status status;
@@ -47,25 +45,6 @@ public class CheckSetup {
   }
 
   /**
-   * Adds a Twitter handle to the list of handles to check.
-   *
-   * @param s The handle to check
-   */
-  public static void addHandle(String s) {
-    handleList.add(s);
-  }
-
-  /**
-   * Starts streaming Twitter.
-   */
-  public static void startTwitterStreaming() {
-    if (status != null) {
-      status.enableTwitter();
-    }
-    TwitterReader.runTwitterStream(handleList.toArray(new String[handleList.size()]));
-  }
-
-  /**
    * Updates the Status GUI to let the user know that the Twitter feed state has changed.
    *
    * @param connected True if connected, false if not
@@ -78,6 +57,7 @@ public class CheckSetup {
 
   /**
    * Updates the Status GUI to let the user know that the Twitter feed has been disconnected. Also says how long until the next reconnect
+   *
    * @param reconnectSeconds The amount of seconds left until a reconnect attempt
    */
   public static void twitterConnection(int reconnectSeconds) {
@@ -85,7 +65,7 @@ public class CheckSetup {
       status.setTwitterStatus(reconnectSeconds);
     }
   }
-  
+
   public static void twitterStreamKilled() {
     status.twitterStreamKilled();
   }
@@ -233,7 +213,7 @@ public class CheckSetup {
       System.out.print("Check Twitter (Y/N): ");
       try {
         if (!myScanner.nextLine().toLowerCase().startsWith("n")) {
-          startTwitterStreaming();
+          TwitterReader.runTwitterStream();
         }
       } catch (Exception e) {
       }
@@ -315,6 +295,24 @@ public class CheckSetup {
             case "patch notes":
             case "version notes":
               System.out.println(UpdateHandler.getVersionNotes());
+              break;
+            case "twitterstatus":
+              if (!TwitterReader.isInitialized()) {
+                System.out.println("Twitter is not initialized.");
+              } else if (TwitterReader.isStreamingTwitter()) {
+                System.out.println("Twitter is currently streaming. Status: " + (TwitterReader.isConnected() ? "C" : "Disc") + "onnected");
+              } else {
+                System.out.println("Twitter stream is currently disconnected.");
+              }
+              break;
+            case "reconnecttwitter":
+              if (!TwitterReader.isInitialized()) {
+                System.out.println("Twitter is not initialized -- cannot reconnect.");
+              } else if (TwitterReader.isStreamingTwitter()) {
+                System.out.println("Twitter is currently streaming -- cannot reconnect.");
+              } else {
+                TwitterReader.runTwitterStream();
+              }
               break;
             default:
               if (input.toLowerCase().startsWith("addemail:") || input.toLowerCase().startsWith("add email:")) {

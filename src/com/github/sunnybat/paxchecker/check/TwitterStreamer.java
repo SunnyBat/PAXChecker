@@ -1,9 +1,9 @@
 package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
-import java.util.Arrays;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
+import java.util.Arrays;
 import twitter4j.*;
 
 /**
@@ -170,11 +170,11 @@ public class TwitterStreamer {
         if (ex.getMessage().contains("Authentication credentials (https://dev.twitter.com/pages/auth) were missing or incorrect")) {
           ErrorDisplay.showErrorWindow("ERROR: The program was unable to authenticate your Twitter credentials",
               "\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
-              + "\nThe Twitter feed has been shut down. Please restart the program to enable Twitter checking.", ex);
+              + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.", ex);
         } else {
           ErrorDisplay.showErrorWindow("ERROR: Disconnected from Twitter Streaming service",
               "\nRestart the PAXChecker to reconnect. If this persists, let /u/SunnyBat know!"
-              + "\nThe Twitter feed has been shut down. Please restart the program to enable Twitter checking.", ex);
+              + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.", ex);
         }
         myStream.shutdown();
       }

@@ -502,7 +502,7 @@ public class Status extends javax.swing.JFrame {
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
     // TODO add your handling code here:
     if (!TwitterReader.isStreamingTwitter()) {
-      CheckSetup.startTwitterStreaming();
+      TwitterReader.runTwitterStream();
     }
     JBReconnectTwitter.setVisible(false);
   }//GEN-LAST:event_JBReconnectTwitterActionPerformed
