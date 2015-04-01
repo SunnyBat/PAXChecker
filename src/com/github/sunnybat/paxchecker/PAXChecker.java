@@ -25,7 +25,7 @@ import java.util.TimerTask;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.2 R3";
+  public static final String VERSION = "2.0.2";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;

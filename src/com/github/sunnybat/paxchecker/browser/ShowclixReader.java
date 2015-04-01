@@ -52,7 +52,7 @@ public class ShowclixReader {
   public static boolean isPaxPage(String URL) {
     try {
       HttpURLConnection connect = Browser.setUpConnection(new URL(URL));
-      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream())); // Throws IOException if 404
       String text = "";
       String line;
       while ((line = reader.readLine()) != null) {
@@ -61,7 +61,7 @@ public class ShowclixReader {
       }
       if (text.contains("pax") || text.contains("queue")) {
         System.out.println("PAX page found!");
-        return true; // This blocks the data from the BufferedReader from being fully added to the total data
+        return true;
       } else {
         return false;
       }
@@ -162,6 +162,8 @@ public class ShowclixReader {
     } catch (IOException iOException) {
       System.out.println("ERROR connecting to Seller " + sellerID);
     } catch (ParseException parseException) {
+      System.out.println("ERROR parsing JSON text in Seller events!");
+      parseException.printStackTrace();
     }
     return retSet;
   }
@@ -189,6 +191,8 @@ public class ShowclixReader {
     } catch (IOException iOException) {
       System.out.println("Error connecting to partner " + partnerID);
     } catch (ParseException parseException) {
+      System.out.println("ERROR parsing JSON text in Partner events!");
+      parseException.printStackTrace();
     }
     return retSet;
   }
@@ -216,6 +220,8 @@ public class ShowclixReader {
     } catch (IOException iOException) {
       System.out.println("ERROR connecting to Seller " + venueID);
     } catch (ParseException parseException) {
+      System.out.println("ERROR parsing JSON text in Venue events!");
+      parseException.printStackTrace();
     }
     return retSet;
   }
@@ -376,6 +382,13 @@ public class ShowclixReader {
     }
   }
 
+  /**
+   * Reads the JSON from the given URL. Note that this does NOT check whether or not this page contains valid JSON text. This method will also attempt
+   * to fix any invalid JSON found. This only fixes known JSON parsing errors.
+   *
+   * @param url The URL to parse from
+   * @return The (fixed) text from the page
+   */
   private static String parseJSON(URL url) {
     try {
       HttpURLConnection httpCon = Browser.setUpConnection(url);
@@ -385,6 +398,10 @@ public class ShowclixReader {
       String line;
       while ((line = reader.readLine()) != null) {
         DataTracker.addDataUsed(line.length());
+        // Yea, this is a somewhat hacked-together fix. Oh well, it works!
+        // Perhaps I should try and make this dynamic instead of specific fixes.
+        line = line.replaceAll(":,", ":\"\","); // Showclix, fix your JSON please. It's invalid.
+        line = line.replaceAll(":}", ":\"\"}"); // I'm guessing it's from you guys trying to fix your follows[] code too hastily. Woops.
         build.append(line);
       }
       reader.close();

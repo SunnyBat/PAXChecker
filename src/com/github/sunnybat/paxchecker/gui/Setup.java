@@ -108,7 +108,7 @@ public class Setup extends javax.swing.JFrame {
         }
         JCBCheckTwitter.setSelected(TwitterReader.isInitialized() ? PreferenceHandler.getBooleanPreference(Preference.TYPES.CHECK_TWITTER) : false);
         setTwitterCheckboxEnabled(TwitterReader.isInitialized());
-        JCBFilterTwitter.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.FILTER_TWITTER)); // Will not be shown if Twitter disabled
+        JCBFilterTwitter.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.FILTER_TWITTER) && JCBCheckTwitter.isSelected()); // Will not be shown if Twitter disabled
         JCBPlayAlarm.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.PLAY_ALARM));
         JSCheckTime.setValue(PreferenceHandler.getIntegerPreference(Preference.TYPES.REFRESHTIME));
         if (!JCBCheckWebsite.isSelected() && !JCBCheckShowclix.isSelected() && !JCBCheckTwitter.isSelected()) { // Disable START! button
@@ -952,6 +952,7 @@ public class Setup extends javax.swing.JFrame {
         } else {
           JBStart.setEnabled(true);
         }
+        JCBFilterTwitter.setEnabled(JCBCheckTwitter.isSelected());
       }
     });
   }//GEN-LAST:event_JCBCheckTwitterActionPerformed
