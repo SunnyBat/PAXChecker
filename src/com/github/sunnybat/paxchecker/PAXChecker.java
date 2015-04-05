@@ -25,7 +25,7 @@ import java.util.TimerTask;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.2";
+  public static final String VERSION = "2.0.3 R1";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
@@ -287,8 +287,8 @@ public final class PAXChecker {
         if (UpdateHandler.updateAvailable()) {
           UpdateHandler.autoUpdate(args);
         }
-        Timer t = new Timer();
-        t.schedule(updateCheck, 1000 * 60 * 60 * 24, 1000 * 60 * 60 * 24);
+//        Timer t = new Timer();
+//        t.schedule(updateCheck, 1000 * 60 * 60 * 24, 1000 * 60 * 60 * 24);
       } else {
 //        startBackgroundThread(new Runnable() {
 //          @Override
@@ -316,8 +316,8 @@ public final class PAXChecker {
           UpdateHandler.promptUpdate(args);
         }
         setup.setPatchNotesText(UpdateHandler.getVersionNotes());
-        Timer t = new Timer();
-        t.schedule(updateCheck, 1000 * 60 * 60 * 24);
+//        Timer t = new Timer();
+//        t.schedule(updateCheck, 1000 * 60 * 60 * 24);
       } else {
         setup.setPatchNotesText("[Updating Disabled]");
 //        startBackgroundThread(new Runnable() {

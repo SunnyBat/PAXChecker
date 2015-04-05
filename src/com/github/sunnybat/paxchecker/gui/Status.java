@@ -38,7 +38,6 @@ public class Status extends javax.swing.JFrame {
       System.out.println("ERROR: System tray is not supported!");
     }
     myMenu = new IconMenu();
-    JLTwitterStatus.setVisible(false);
     JBReconnectTwitter.setVisible(false);
   }
 
@@ -77,6 +76,10 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
+        if (!TwitterReader.isStreamingTwitter()) { // This is technically a race condition, but it has a ridiculously large window
+          JLTwitterStatus.setVisible(false);       // to read this before the Twitter stream potentially dies. Ignoring.
+        }
+        pack(); // Is this even doing anything?
         setVisible(true);
       }
     });
@@ -104,16 +107,6 @@ public class Status extends javax.swing.JFrame {
     this.setLocationRelativeTo(null);
     this.toFront();
     tray.remove(myIcon); // Fine if myIcon == null or myIcon isn't in tray
-  }
-
-  public void enableTwitter() {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        JLTwitterStatus.setVisible(true);
-        JLTwitterStatus.setText("Twitter Feed: Connecting...");
-      }
-    });
   }
 
   public void setTwitterStatus(final boolean isEnabled) {
@@ -335,6 +328,7 @@ public class Status extends javax.swing.JFrame {
     JLTwitterStatus = new javax.swing.JLabel();
     JLLinksExplanation = new javax.swing.JLabel();
     JBReconnectTwitter = new javax.swing.JButton();
+    filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAXChecker");
@@ -384,7 +378,7 @@ public class Status extends javax.swing.JFrame {
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
     JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));
 
-    JLTwitterStatus.setText("Connecting to Twitter...");
+    JLTwitterStatus.setText("Twitter Feed: Connecting...");
 
     JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
     JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
@@ -432,7 +426,9 @@ public class Status extends javax.swing.JFrame {
             .addComponent(JLLinksExplanation)
             .addGap(0, 0, Short.MAX_VALUE))
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-            .addComponent(JBReconnectTwitter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(JBReconnectTwitter, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addContainerGap())))
     );
     layout.setVerticalGroup(
@@ -461,6 +457,8 @@ public class Status extends javax.swing.JFrame {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton3)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(0, 0, 0)
         .addComponent(JBReconnectTwitter)
         .addContainerGap())
     );
@@ -516,6 +514,7 @@ public class Status extends javax.swing.JFrame {
   private javax.swing.JLabel JLTitle;
   private javax.swing.JLabel JLTwitterStatus;
   private javax.swing.JPanel JPLinks;
+  private javax.swing.Box.Filler filler1;
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
   private javax.swing.JButton jButton3;

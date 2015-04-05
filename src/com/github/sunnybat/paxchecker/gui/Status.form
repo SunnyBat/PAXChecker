@@ -59,7 +59,10 @@
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="JBReconnectTwitter" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="JBReconnectTwitter" alignment="0" max="32767" attributes="0"/>
+                          <Component id="filler1" max="32767" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -93,6 +96,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jButton3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="filler1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Component id="JBReconnectTwitter" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -167,7 +172,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="JLTwitterStatus">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Connecting to Twitter..."/>
+        <Property name="text" type="java.lang.String" value="Twitter Feed: Connecting..."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="JLLinksExplanation">
@@ -192,6 +197,16 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBReconnectTwitterActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.Box$Filler" name="filler1">
+      <Properties>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[32767, 0]"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.HorizontalGlue"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

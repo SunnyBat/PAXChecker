@@ -61,7 +61,7 @@ public class Setup extends javax.swing.JFrame {
       }
       JCBSaveTwitterKeys.setSelected(PreferenceHandler.getPreferenceObject(Preference.TYPES.TWITTER_CONSUMER_KEY).shouldSave());
       if (PreferenceHandler.getPreferenceObject(Preference.TYPES.ANONYMOUS_STATISTICS).shouldSave()) {
-        //JCBStatistics.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS));
+        JCBStatistics.setSelected(PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS));
       }
     } else {
       JCBSavePreferences.setSelected(false);

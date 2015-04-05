@@ -272,7 +272,7 @@ public class CheckSetup {
               break;
             case "updateprogram":
             case "update program":
-              UpdateHandler.loadVersionNotes();
+              //UpdateHandler.loadVersionNotes();
               UpdateHandler.autoUpdate();
               break;
             case "list":

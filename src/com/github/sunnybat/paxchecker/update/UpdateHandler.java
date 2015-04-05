@@ -28,7 +28,7 @@ public class UpdateHandler {
   private static final String UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar";
   private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar";
   private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt";
-  private static com.github.sunnybat.paxchecker.update.Update update;
+  private static Update update;
 
   public static void init() {
     if (!PAXChecker.isCommandLine()) {
@@ -131,6 +131,9 @@ public class UpdateHandler {
         System.out.println("Patch Notes have not changed.");
         updateLevel = 0; // Force override updateLevel
         return;
+      } else {
+        System.out.println("Patch Notes Old Size: " + (versionNotes != null? versionNotes.length() : -1));
+        System.out.println("Patch Notes New Size: " + allText.trim().length());
       }
       versionNotes = allText.trim();
       if (update != null) {
@@ -173,25 +176,25 @@ public class UpdateHandler {
 
   public static void autoUpdate() {
     loadVersionNotes();
-    String[] args = new String[16];
-    int a = 0;
-    args[a++] = "-cli";
-    args[a++] = "-noupdate";
-    args[a++] = "-username";
-    args[a++] = Email.getUsername();
-    args[a++] = "-password";
-    args[a++] = Email.getPassword();
-    args[a++] = "-cellnum";
-    args[a++] = Email.convertToString(Email.getAddressList());
-    args[a++] = "-expo";
-    args[a++] = Browser.getExpo();
-    args[a++] = "-delay";
-    args[a++] = "" + CheckSetup.getRefreshTime();
-    args[a++] = "-autostart";
-    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingPaxsite() ? "" : "-nopax";
-    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";
-    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingTwitter() ? "" : "-notwitter";
-    args[a++] = Audio.soundEnabled() ? "-alarm" : "";
+    String[] args = new String[0];
+//    int a = 0;
+//    args[a++] = "-cli";
+//    args[a++] = "-noupdate";
+//    args[a++] = "-username";
+//    args[a++] = Email.getUsername();
+//    args[a++] = "-password";
+//    args[a++] = Email.getPassword();
+//    args[a++] = "-cellnum";
+//    args[a++] = Email.convertToString(Email.getAddressList());
+//    args[a++] = "-expo";
+//    args[a++] = Browser.getExpo();
+//    args[a++] = "-delay";
+//    args[a++] = "" + CheckSetup.getRefreshTime();
+//    args[a++] = "-autostart";
+//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingPaxsite() ? "" : "-nopax";
+//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";
+//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingTwitter() ? "" : "-notwitter";
+//    args[a++] = Audio.soundEnabled() ? "-alarm" : "";
 //    args[a++] = "-consumerkey";
 //    args[a++] = "-consumersecret";
 //    args[a++] = "-applicationkey";
@@ -206,7 +209,6 @@ public class UpdateHandler {
    */
   public static void autoUpdate(String[] args) {
     try {
-      System.out.println("Checking for updates...");
       if (updateAvailable()) {
         System.out.println("Update found, downloading update...");
         updateProgram();
@@ -312,7 +314,7 @@ public class UpdateHandler {
       System.out.println("Update size = " + updateSize);
       if (updateSize == -1) {
         ErrorDisplay.showErrorWindow("ERROR checking for updates!", "Update size listed as -1 -- Program most likely unable to connect!", null);
-        return false;
+        //return false;
       }
       return true;
     } catch (Exception e) {
