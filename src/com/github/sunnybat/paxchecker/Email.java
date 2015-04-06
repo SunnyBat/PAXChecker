@@ -424,7 +424,17 @@ public class Email {
       lastEmailSent = System.currentTimeMillis();
     } catch (MessagingException mex) {
       mex.printStackTrace();
-      ErrorDisplay.showErrorWindow("ERROR", "The message was unable to be sent.", mex);
+      if (mex.getMessage().contains("javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:")) {
+        ErrorDisplay.showErrorWindow("SSL Certificate Error", "The PAXChecker was unable to connect to the mail server due to an invalid SSL certificate.", mex);
+      } else if (mex.getMessage().contains("javax.mail.MessagingException: Could not connect to SMTP host:")) {
+        ErrorDisplay.showErrorWindow("Connection Error", "Unable to connect to email server.", mex);
+      } else if (mex.getMessage().contains("javax.mail.AuthenticationFailedException:")) {
+        ErrorDisplay.showErrorWindow("Login Error", "Unable to log in. Double-check your username and password."
+            +"\nIf using Gmail, make sure you allow access to less secure apps: https://www.google.com/settings/security/lesssecureapps"
+            +"\nYou might also try unlocking a captcha: http://www.google.com/accounts/DisplayUnlockCaptcha", mex);
+      } else {
+        ErrorDisplay.showErrorWindow("Email Error", "The message was unable to be sent. Exact reason unknown.", mex);
+      }
       return false;
     } catch (Exception e) {
       e.printStackTrace();

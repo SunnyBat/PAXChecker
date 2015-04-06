@@ -30,7 +30,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" min="-2" max="-2" attributes="0"/>
+          <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -54,9 +54,6 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
-                          <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
                           <Component id="jPanel2" max="32767" attributes="0"/>
                           <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
@@ -80,16 +77,27 @@
                           </Group>
                           <Component id="JPPhonePanel" alignment="0" max="32767" attributes="0"/>
                           <Component id="JBAddPhone" alignment="0" max="32767" attributes="0"/>
+                          <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
+                          <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="JCBCheckShowclixDeep" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="JCBExpo" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="JCBPlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
@@ -98,15 +106,8 @@
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JCBFilterTwitter" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JCBCheckShowclixDeep" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                                  </Group>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -149,6 +150,8 @@
                           <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JLTwitterDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -167,7 +170,7 @@
                       <Component id="JSCheckTime" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JBStart" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -375,6 +378,14 @@
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Filters out Tweets that do not contains specific&lt;br&gt;&#xa;keywords. This limits the amount of links opened&lt;br&gt;&#xa;by the PAXChecker, and may in fact prevent the&lt;br&gt;&#xa;PAXChecker from opening the ticket sale page if&lt;br&gt;&#xa;PAX&apos;s Tweet doesn&apos;t contain specific words.&lt;br&gt;&#xa;The use of this is NOT recommended.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBCheckKnownEvents">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Scan Known Potential Showclix Events"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckKnownEventsActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel6">
@@ -394,7 +405,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane5" alignment="0" pref="387" max="32767" attributes="0"/>
+                  <Component id="jScrollPane5" alignment="0" pref="406" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -439,7 +450,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="387" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="406" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -482,7 +493,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane6" alignment="0" pref="387" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="406" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -523,27 +534,23 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="149" max="-2" attributes="0"/>
-                              <Component id="jButton3" max="32767" attributes="0"/>
-                          </Group>
                           <Component id="jScrollPane1" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBSavePreferences" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveKnownWebsiteChecking" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBLoadNotifications" max="32767" attributes="0"/>
                                   <Component id="JCBCheckUpdates" alignment="0" max="32767" attributes="0"/>
@@ -556,6 +563,11 @@
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="149" max="-2" attributes="0"/>
+                              <Component id="jButton3" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -584,29 +596,31 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="JCBSaveTwitterKeys" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="JCBStatistics" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSaveKnownWebsiteChecking" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBSaveRefreshTime" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="132" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -730,6 +744,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Every 24 hours"/>
                 <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveKnownWebsiteChecking">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Known Website Checking"/>
               </Properties>
             </Component>
           </SubComponents>
