@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.sunnybat.paxchecker.notification;
 
-import java.util.concurrent.CountDownLatch;
 import com.github.sunnybat.paxchecker.browser.Browser;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -14,8 +9,19 @@ import com.github.sunnybat.paxchecker.browser.Browser;
  */
 public class NotificationWindow extends javax.swing.JFrame {
 
-  private final Notification myNote;
-  private final CountDownLatch countDown;
+  private CountDownLatch countDown;
+
+  public NotificationWindow(final String title, final String information) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initComponents();
+        JLTitle.setText(title);
+        JTAInformation.setText(information);
+        customComponents();
+      }
+    });
+  }
 
   /**
    * Creates new form Notification
@@ -23,13 +29,15 @@ public class NotificationWindow extends javax.swing.JFrame {
    * @param n The Notification information object
    * @param cdl The CountDownLatch to count down when window is closed
    */
-  public NotificationWindow(Notification n, CountDownLatch cdl) {
-    myNote = n;
+  public NotificationWindow(final Notification n, CountDownLatch cdl) {
     countDown = cdl;
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         initComponents();
+        JLTitle.setText(n.getTitle());
+        JBClose.setText(n.getButtonText());
+        JTAInformation.setText(n.getInfo());
         customComponents();
         setVisible(true);
       }
@@ -37,9 +45,6 @@ public class NotificationWindow extends javax.swing.JFrame {
   }
 
   private void customComponents() {
-    JLTitle.setText(myNote.getTitle());
-    JBClose.setText(myNote.getButtonText());
-    JTAInformation.setText(myNote.getInfo());
     JTAInformation.setCaretPosition(0);
     JBMoreInfo.setVisible(false);
   }

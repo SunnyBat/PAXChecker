@@ -6,6 +6,7 @@ import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
+import com.github.sunnybat.paxchecker.notification.NotificationWindow;
 import java.awt.*;
 
 /**
@@ -17,6 +18,7 @@ public class Status extends javax.swing.JFrame {
   private SystemTray tray;
   private TrayIcon myIcon;
   private IconMenu myMenu;
+  private final NotificationWindow infoWindow;
 
   /**
    * Creates new form Status
@@ -29,6 +31,17 @@ public class Status extends javax.swing.JFrame {
         customComponents();
       }
     });
+    infoWindow = new NotificationWindow("What's happening???", "If the Showclix scanner is pointing to a seemingly unrelated event, that's expected. "
+        + "This is happening because of changes in the Showclix API, which forced me to scan pages with more than just PAX content. This is just the "
+        + "most recent event created.\n\n"
+        + "There are several reasons why you might be seeing [messages].\n"
+        + "For the PAX Website, you might be seeing [NoFind]. Currently, this is only happening with PAX East. This means that the program was "
+        + "unable to find the button on the PAX registration page.\n"
+        + "For the Showclix Scanner, you might be seeing [No API Connection]. This is a bit more serious -- it means that the PAXChecker was "
+        + "unable to connect to the Showclix API, or was unable to read it correctly. If you're seeing this for more than an hour or so, contact "
+        + "/u/SunnyBat about the issue.\n"
+        + "For the Known Pages option, you'll most likely be seeing [None Found]. This is normal, and it means that no known links have been found. "
+        + "There's no need to worry about this one.");
   }
 
   public void customComponents() {
@@ -383,7 +396,6 @@ public class Status extends javax.swing.JFrame {
     JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
     JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
     JLLinksExplanation.setText("Why are these links pointing to random events??? What's up with [Message]??");
-    JLLinksExplanation.setToolTipText("<html>\nThese links are pointing to random events<br>\ndue to changes in the Showclix API. There's<br>\nno need to worry about the Showclix link<br>\nleading to some random Paris event, or the<br>\nPAX Website link leading to X.paxsite.com.<br>\n<br>\n[No API Connection] means that the program<br>\ncould not establish a connection to the<br>\nShowclix API. While this is bad, unless it<br>\npersists for more than two hours, there's no<br>\nneed to worry about this error too much.<br>\n[None Found] means that no links were<br>\nable to be found. Again, this is normally<br>\na sign that the program is working, and<br>\nit will find the link as soon as it's posted.\n</html>");
     JLLinksExplanation.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLLinksExplanationMousePressed(evt);
@@ -494,7 +506,7 @@ public class Status extends javax.swing.JFrame {
 
   private void JLLinksExplanationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLLinksExplanationMousePressed
     // TODO add your handling code here:
-
+    infoWindow.setVisible(true);
   }//GEN-LAST:event_JLLinksExplanationMousePressed
 
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed

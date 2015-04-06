@@ -11,6 +11,7 @@ import com.github.sunnybat.paxchecker.PAXChecker;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
+import com.github.sunnybat.paxchecker.notification.NotificationWindow;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 
@@ -22,6 +23,8 @@ public class Setup extends javax.swing.JFrame {
 
   public java.util.ArrayList<ExtraPhonePanel> extraPhonePanelList = new java.util.ArrayList<>();
   //private final ErrorWindow twitterDisabledWindow = new ErrorWindow();
+  private final NotificationWindow twitterDisabledWindow;
+  private final NotificationWindow deepDisabledWindow;
 
   /**
    * Creates new form Setup
@@ -30,6 +33,14 @@ public class Setup extends javax.swing.JFrame {
 //    twitterDisabledWindow.setTitleText("Twitter Disabled?");
 //    twitterDisabledWindow.setErrorText("Why is Twitter Disabled?");
 //    twitterDisabledWindow.setInformationText("Twitter is disabled because the Twitter API is not able to be secured in an open-source application.\nIf you want to check Twitter, follow the instructions here: https://redd.it/2nct50");
+    twitterDisabledWindow = new NotificationWindow("Twitter Disabled?", "Twitter is disabled because you did "
+        + "not give the PAXChecker any Twitter API keys to use. For more information, click the More Info button.");
+    twitterDisabledWindow.setMoreInfoButtonLink("http://redd.it/2nct50");
+    deepDisabledWindow = new NotificationWindow("Deep Check Showclix", "Deep Check Showclix is diabled for multiple reasons.\n"
+        + "First off, it was sending a LOT more requests than was necessary to the Showclix API. This was causing instability and, in some cases, "
+        + "blocking users from accessing the API for a while.\n"
+        + "The other reason is that it was not scanning any additional pages. It was sending many, many more requests, only to scan the exact same "
+        + "pages as normal Showclix scanning was. This might change in the future, but for now, it is not benefitting users at all.");
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -376,7 +387,7 @@ public class Setup extends javax.swing.JFrame {
     JCBCheckTwitter = new javax.swing.JCheckBox();
     JLTwitterDisabled = new javax.swing.JLabel();
     JCBCheckShowclixDeep = new javax.swing.JCheckBox();
-    jLabel7 = new javax.swing.JLabel();
+    JLDeepDisabled = new javax.swing.JLabel();
     JCBFilterTwitter = new javax.swing.JCheckBox();
     JCBCheckKnownEvents = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
@@ -504,7 +515,6 @@ public class Setup extends javax.swing.JFrame {
     JLTwitterDisabled.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
     JLTwitterDisabled.setForeground(new java.awt.Color(0, 0, 238));
     JLTwitterDisabled.setText("(Why is this disabled?)");
-    JLTwitterDisabled.setToolTipText("<html>\nTwitter is disabled because the Twitter API<br>\nis not able to be secured in an open-source<br>\napplication. If you want to check Twitter,<br>\nfollow the instructions here:<br>\nhttps://redd.it/2nct50\n</html>");
     JLTwitterDisabled.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mousePressed(java.awt.event.MouseEvent evt) {
         JLTwitterDisabledMousePressed(evt);
@@ -520,10 +530,14 @@ public class Setup extends javax.swing.JFrame {
       }
     });
 
-    jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-    jLabel7.setForeground(new java.awt.Color(255, 0, 0));
-    jLabel7.setText("(Deep Disabled???)");
-    jLabel7.setToolTipText("<html>\nAs of now, Deep Check Showclix uses a LOT of data<br>\n and a LOT of Showclix API requests. With a good<br>\namount of people starting to use the PAXChecker, the<br>\nShowclix API is repeatedly going offline, which has not<br>\nhappened in the past. Until I can optimize the Deep<br>\nCheck Showclix option or figure out why this is<br>\nhappening, this option will remain disabled.<br>\n<br>\nOn the flip side, Deep Check Showclix was parsing<br>\nthrough the entire API and getting the *exact* same<br>\npages as the regular Showclix scanning algorithm<br>\nwas. So, for now, there's no difference between Deep<br>\nCheck Showclix and regular Showclix checking, sans<br>\nthe time and data used.\n</html>");
+    JLDeepDisabled.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+    JLDeepDisabled.setForeground(new java.awt.Color(0, 0, 238));
+    JLDeepDisabled.setText("(Deep Disabled???)");
+    JLDeepDisabled.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mousePressed(java.awt.event.MouseEvent evt) {
+        JLDeepDisabledMousePressed(evt);
+      }
+    });
 
     JCBFilterTwitter.setText("Filter by Keywords");
     JCBFilterTwitter.setToolTipText("<html>\nFilters out Tweets that do not contains specific<br>\nkeywords. This limits the amount of links opened<br>\nby the PAXChecker, and may in fact prevent the<br>\nPAXChecker from opening the ticket sale page if<br>\nPAX's Tweet doesn't contain specific words.<br>\nThe use of this is NOT recommended.\n</html>");
@@ -572,7 +586,7 @@ public class Setup extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(JCBCheckShowclixDeep)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7))
+                .addComponent(JLDeepDisabled))
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                   .addComponent(jLabel5)
@@ -618,7 +632,7 @@ public class Setup extends javax.swing.JFrame {
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckShowclix)
           .addComponent(JCBCheckShowclixDeep)
-          .addComponent(jLabel7))
+          .addComponent(JLDeepDisabled))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBCheckKnownEvents)
         .addGap(0, 0, Short.MAX_VALUE)
@@ -876,7 +890,7 @@ public class Setup extends javax.swing.JFrame {
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+      .addComponent(jTabbedPane1)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -977,7 +991,7 @@ public class Setup extends javax.swing.JFrame {
 
   private void JLTwitterDisabledMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLTwitterDisabledMousePressed
     // TODO add your handling code here:
-    //twitterDisabledWindow.setVisible(true);
+    twitterDisabledWindow.setVisible(true);
   }//GEN-LAST:event_JLTwitterDisabledMousePressed
 
   private void JCBCheckUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckUpdatesActionPerformed
@@ -1000,6 +1014,11 @@ public class Setup extends javax.swing.JFrame {
     // TODO add your handling code here:
     updateElements();
   }//GEN-LAST:event_JCBCheckKnownEventsActionPerformed
+
+  private void JLDeepDisabledMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLDeepDisabledMousePressed
+    // TODO add your handling code here:
+    deepDisabledWindow.setVisible(true);
+  }//GEN-LAST:event_JLDeepDisabledMousePressed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBAddPhone;
@@ -1029,6 +1048,7 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JCheckBox JCBSaveTwitterKeys;
   private javax.swing.JCheckBox JCBStatistics;
   private javax.swing.JCheckBox JCBUseBeta;
+  private javax.swing.JLabel JLDeepDisabled;
   private javax.swing.JLabel JLTwitterDisabled;
   private javax.swing.JPasswordField JPFPassword;
   private javax.swing.JPanel JPPhonePanel;
@@ -1044,7 +1064,6 @@ public class Setup extends javax.swing.JFrame {
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
-  private javax.swing.JLabel jLabel7;
   private javax.swing.JPanel jPanel1;
   private javax.swing.JPanel jPanel2;
   private javax.swing.JPanel jPanel3;

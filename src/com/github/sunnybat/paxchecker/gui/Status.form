@@ -184,7 +184,6 @@
           <Color blue="ee" green="0" red="0" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Why are these links pointing to random events??? What&apos;s up with [Message]??"/>
-        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;These links are pointing to random events&lt;br&gt;&#xa;due to changes in the Showclix API. There&apos;s&lt;br&gt;&#xa;no need to worry about the Showclix link&lt;br&gt;&#xa;leading to some random Paris event, or the&lt;br&gt;&#xa;PAX Website link leading to X.paxsite.com.&lt;br&gt;&#xa;&lt;br&gt;&#xa;[No API Connection] means that the program&lt;br&gt;&#xa;could not establish a connection to the&lt;br&gt;&#xa;Showclix API. While this is bad, unless it&lt;br&gt;&#xa;persists for more than two hours, there&apos;s no&lt;br&gt;&#xa;need to worry about this error too much.&lt;br&gt;&#xa;[None Found] means that no links were&lt;br&gt;&#xa;able to be found. Again, this is normally&lt;br&gt;&#xa;a sign that the program is working, and&lt;br&gt;&#xa;it will find the link as soon as it&apos;s posted.&#xa;&lt;/html&gt;"/>
       </Properties>
       <Events>
         <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLLinksExplanationMousePressed"/>

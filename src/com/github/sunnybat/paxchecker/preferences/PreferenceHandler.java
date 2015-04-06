@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker.preferences;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 

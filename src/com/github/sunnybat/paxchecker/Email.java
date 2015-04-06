@@ -422,24 +422,21 @@ public class Email {
       System.out.println("Message Sent!");
       transport.close();
       lastEmailSent = System.currentTimeMillis();
-    } catch (MessagingException mex) {
-      mex.printStackTrace();
-      if (mex.getMessage().contains("javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:")) {
-        ErrorDisplay.showErrorWindow("SSL Certificate Error", "The PAXChecker was unable to connect to the mail server due to an invalid SSL certificate.", mex);
-      } else if (mex.getMessage().contains("javax.mail.MessagingException: Could not connect to SMTP host:")) {
-        ErrorDisplay.showErrorWindow("Connection Error", "Unable to connect to email server.", mex);
-      } else if (mex.getMessage().contains("javax.mail.AuthenticationFailedException:")) {
-        ErrorDisplay.showErrorWindow("Login Error", "Unable to log in. Double-check your username and password."
-            +"\nIf using Gmail, make sure you allow access to less secure apps: https://www.google.com/settings/security/lesssecureapps"
-            +"\nYou might also try unlocking a captcha: http://www.google.com/accounts/DisplayUnlockCaptcha", mex);
-      } else {
-        ErrorDisplay.showErrorWindow("Email Error", "The message was unable to be sent. Exact reason unknown.", mex);
-      }
-      return false;
     } catch (Exception e) {
       e.printStackTrace();
-      ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
-      return false;
+      if (e instanceof AuthenticationFailedException) { // Subclass of MessagingException, so it should go before it
+        ErrorDisplay.showErrorWindow("Login Error", "Unable to log in. Double-check your username and password."
+            + "\nIf using Gmail, make sure you allow access to less secure apps:\nhttps://www.google.com/settings/security/lesssecureapps"
+            + "\nYou might also try unlocking a captcha:\nhttp://www.google.com/accounts/DisplayUnlockCaptcha", e);
+      } else if (e instanceof MessagingException) {
+        ErrorDisplay.showErrorWindow("Connection Error", "Unable to connect to email server.", e);
+        //} else if (mex.getLocalizedMessage().contains("javax.mail.AuthenticationFailedException:")) {
+      } else if (e instanceof javax.net.ssl.SSLHandshakeException) {
+        ErrorDisplay.showErrorWindow("SSL Certificate Error", "The PAXChecker was unable to connect to the mail server due to an invalid SSL certificate.", e);
+      } else {
+        ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
+        return false;
+      }
     }//end catch block
     System.out.println("Finished sending message.");
     return true;
