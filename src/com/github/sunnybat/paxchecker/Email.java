@@ -201,11 +201,11 @@ public class Email {
       return new String[]{null, null};
     }
     if (emailToSplit.contains("@")) {
-      String temp1 = emailToSplit.substring(0, emailToSplit.indexOf("@"));
-      String temp2 = emailToSplit.substring(emailToSplit.indexOf("@"));
+      String temp1 = emailToSplit.substring(0, emailToSplit.indexOf("@")).trim();
+      String temp2 = emailToSplit.substring(emailToSplit.indexOf("@")).trim();
       return new String[]{temp1, temp2};
     } else {
-      return new String[]{emailToSplit, null};
+      return new String[]{emailToSplit.trim(), null};
     }
   }
 

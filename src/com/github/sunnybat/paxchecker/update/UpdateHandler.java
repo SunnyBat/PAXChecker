@@ -2,11 +2,7 @@ package com.github.sunnybat.paxchecker.update;
 
 import java.io.*;
 import java.net.*;
-import com.github.sunnybat.paxchecker.Audio;
-import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.check.CheckSetup;
 import com.github.sunnybat.paxchecker.DataTracker;
-import com.github.sunnybat.paxchecker.Email;
 import com.github.sunnybat.paxchecker.PAXChecker;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
@@ -132,7 +128,7 @@ public class UpdateHandler {
         updateLevel = 0; // Force override updateLevel
         return;
       } else {
-        System.out.println("Patch Notes Old Size: " + (versionNotes != null? versionNotes.length() : -1));
+        System.out.println("Patch Notes Old Size: " + (versionNotes != null ? versionNotes.length() : -1));
         System.out.println("Patch Notes New Size: " + allText.trim().length());
       }
       versionNotes = allText.trim();
@@ -174,46 +170,27 @@ public class UpdateHandler {
     return useBetaVersion;
   }
 
-  public static void autoUpdate() {
-    loadVersionNotes();
-    String[] args = new String[0];
-//    int a = 0;
-//    args[a++] = "-cli";
-//    args[a++] = "-noupdate";
-//    args[a++] = "-username";
-//    args[a++] = Email.getUsername();
-//    args[a++] = "-password";
-//    args[a++] = Email.getPassword();
-//    args[a++] = "-cellnum";
-//    args[a++] = Email.convertToString(Email.getAddressList());
-//    args[a++] = "-expo";
-//    args[a++] = Browser.getExpo();
-//    args[a++] = "-delay";
-//    args[a++] = "" + CheckSetup.getRefreshTime();
-//    args[a++] = "-autostart";
-//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingPaxsite() ? "" : "-nopax";
-//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingShowclix() ? "" : "-noshowclix";
-//    args[a++] = com.github.sunnybat.paxchecker.check.TicketChecker.isCheckingTwitter() ? "" : "-notwitter";
-//    args[a++] = Audio.soundEnabled() ? "-alarm" : "";
-//    args[a++] = "-consumerkey";
-//    args[a++] = "-consumersecret";
-//    args[a++] = "-applicationkey";
-//    args[a++] = "-applicationsecret";
-    autoUpdate(args);
-  }
-
   /**
    * Checks for program updates and automatically updates if found.
    *
    * @param args The command-line arguments to use when starting a new program instance
    */
-  public static void autoUpdate(String[] args) {
+  public static void CLIUpdate(String[] args) {
+    java.util.Scanner in = new java.util.Scanner(System.in);
     try {
       if (updateAvailable()) {
-        System.out.println("Update found, downloading update...");
-        updateProgram();
-        System.out.println("Update finished. Please manually restart the PAXChecker.");
-        System.exit(0);
+        System.out.println("Update found! Update to newest version (Y/N)? ");
+        if (in.nextLine().toLowerCase().startsWith("y")) {
+          System.out.println("Downloading update...");
+          updateProgram();
+          System.out.println("Update finished. Restart the PAXChecker in a new program instance (Y/N)? ");
+          if (in.nextLine().toLowerCase().startsWith("y")) {
+            startNewProgramInstance(args);
+          }
+          System.exit(0);
+        } else {
+          System.out.println("Update cancelled.");
+        }
       }
     } catch (Exception e) {
       ErrorDisplay.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);

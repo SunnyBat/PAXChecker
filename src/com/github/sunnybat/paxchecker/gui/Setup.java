@@ -141,7 +141,8 @@ public class Setup extends javax.swing.JFrame {
           JTFCellNum.setCaretPosition(0);
           for (int a = 1; a < specificNumbers.length; a++) {
             System.out.println("specificNumbers[" + a + "] = " + specificNumbers[a]);
-            addPhonePanel(new ExtraPhonePanel(Setup.this, Email.splitEmail(specificNumbers[a])[0].trim(), Email.splitEmail(specificNumbers[a])[1].trim()));
+            String[] nums = Email.splitEmail(specificNumbers[a]); // Values already trimmed
+            addPhonePanel(new ExtraPhonePanel(Setup.this, nums[0], nums[1])); // Null values are OK
           }
         } else {
           System.out.println("Normal address");

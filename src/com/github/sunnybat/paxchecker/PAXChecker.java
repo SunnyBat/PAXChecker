@@ -16,8 +16,6 @@ import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
 import com.github.sunnybat.paxchecker.update.UpdateHandler;
 import java.io.FileNotFoundException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -25,25 +23,11 @@ import java.util.TimerTask;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.3 R2";
+  public static final String VERSION = "2.0.3 R3";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
   private static LoadingWindow start;
-  private static final TimerTask updateCheck = new TimerTask() { // TODO: Move this to after Setup is finished, so you know whether to run or not
-    @Override
-    public void run() {
-      System.out.println("Checking for Updates...");
-      UpdateHandler.loadVersionNotes();
-      if (UpdateHandler.updateAvailable()) {
-        if (isCommandLine()) {
-          UpdateHandler.autoUpdate(); // TODO: This doesn't enable Twitter, among other things
-        }
-      } else {
-        UpdateHandler.promptUpdate(new String[0]); // TODO: Construct args
-      }
-    }
-  };
 
   /**
    * @param args the command line arguments
@@ -285,17 +269,8 @@ public final class PAXChecker {
       if (doUpdate) {
         UpdateHandler.loadVersionNotes();
         if (UpdateHandler.updateAvailable()) {
-          UpdateHandler.autoUpdate(args);
+          UpdateHandler.CLIUpdate(args);
         }
-//        Timer t = new Timer();
-//        t.schedule(updateCheck, 1000 * 60 * 60 * 24, 1000 * 60 * 60 * 24);
-      } else {
-//        startBackgroundThread(new Runnable() {
-//          @Override
-//          public void run() {
-//            UpdateHandler.loadVersionNotes();
-//          }
-//        }, "Patch Notes");
       }
       System.out.println("Loading notifications...");
       NotificationHandler.loadNotifications();

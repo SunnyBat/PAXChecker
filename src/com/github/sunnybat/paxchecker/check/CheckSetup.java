@@ -273,7 +273,8 @@ public class CheckSetup {
             case "updateprogram":
             case "update program":
               //UpdateHandler.loadVersionNotes();
-              UpdateHandler.autoUpdate();
+              //UpdateHandler.CLIUpdate();
+              System.out.println("Sorry, this has been temporarily disabled. Please restart manually.");
               break;
             case "list":
             case "listall":
