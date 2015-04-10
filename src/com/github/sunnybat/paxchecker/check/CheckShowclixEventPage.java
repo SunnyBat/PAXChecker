@@ -11,14 +11,14 @@ import java.util.*;
  */
 public class CheckShowclixEventPage extends Check {
 
-  private static final String EVENT_BASE_URL = "http://www.showclix.com/Event/";
+  private static final String EVENT_BASE_URL = "http://www.showclix.com/event/";
   private List<String> eventCheckList = new ArrayList<>();
   private String validPageID = null;
 
   public CheckShowclixEventPage() {
     eventCheckList.add("3925916"); // "Prime 2015"
     eventCheckList.add("3926134"); // "Prime 2015 BYOC"
-    eventCheckList.add("3926157"); // "Dev 2015"
+    //eventCheckList.add("3926157"); // "Dev 2015"
   }
 
   @Override
@@ -35,15 +35,22 @@ public class CheckShowclixEventPage extends Check {
   @Override
   public synchronized final void updateLink() {
     for (String s : eventCheckList) {
+      HttpURLConnection conn = null;
       try {
-        HttpURLConnection conn = Browser.setUpConnection(new URL(EVENT_BASE_URL + s));
+        conn = Browser.setUpConnection(new URL(EVENT_BASE_URL + s));
         if (conn == null) { // In case it fails to set up correctly
           continue;
         }
         conn.getInputStream(); // Will throw IOException if 404 -- simplest way to force it
+        System.out.println(conn.getURL());
         validPageID = s;
         return; // Found valid page, stop checking
       } catch (IOException ioe) { // getInputStream() threw exception -- 404 or unable to connect
+        if (conn != null) {
+          System.out.println("Link redirected to: " + conn.getURL());
+        } else {
+          System.out.println("Unable to find link from " + s);
+        }
       }
     }
   }

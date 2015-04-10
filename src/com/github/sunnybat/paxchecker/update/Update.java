@@ -32,7 +32,7 @@ public class Update extends javax.swing.JFrame {
     JPBProgressBar.setVisible(false);
     pack();
     setLocationRelativeTo(null);
-    setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() / 1024 / 1024 * 100)) / 100) + "MB");
+    setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() * 100 / 1024 / 1024)) / 100) + "MB");
     setYesButtonText(UpdateHandler.getUpdateLevel());
   }
 
@@ -41,6 +41,7 @@ public class Update extends javax.swing.JFrame {
       @Override
       public void run() {
         setVisible(true);
+        setStatusLabelText("Update Size: " + ((double) ((int) ((double) UpdateHandler.getUpdateSize() * 100 / 1024 / 1024)) / 100) + "MB");
       }
     });
   }

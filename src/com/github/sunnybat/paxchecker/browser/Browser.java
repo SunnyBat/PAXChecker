@@ -14,7 +14,6 @@ import com.github.sunnybat.commoncode.error.ErrorDisplay;
 public class Browser {
 
   private static volatile String expo;
-  private static final String UNSHORTEN_API_LINK = "http://expandurl.appspot.com/expand?url=";
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
@@ -110,30 +109,18 @@ public class Browser {
    * @return The actual URL that will be served
    */
   public static String unshortenURL(String toShorten) {
-    URL fullURL;
-    URLConnection myConn;
+    URLConnection myConn = null;
     try {
-      fullURL = new URL(UNSHORTEN_API_LINK + toShorten);
-      myConn = fullURL.openConnection();
-      myConn.setConnectTimeout(3000);
-      myConn.connect();
-      Scanner scan = new Scanner(myConn.getInputStream());
-      String line;
-      while (scan.hasNext()) {
-        line = scan.nextLine().trim();
-        System.out.println(line);
-        if (line.contains("\"end_url\"")) { // TODO: Parse with JSON later. This is just a hack to get it to work.
-          String found = line.substring(line.indexOf("\"end_url\"") + 12);
-          found = found.substring(0, found.indexOf("\""));
-          System.out.println("URL Unshortened: " + found);
-          return found;
-        }
-      }
+      URL myURL = new URL(toShorten);
+      myConn = myURL.openConnection(); // As long as Java follows redirects (called from PAXChecker.main()) we're good!
+      myConn.getInputStream();
     } catch (Exception e) {
-      System.out.println("ERROR: Unable to shorten link: " + toShorten);
-      e.printStackTrace();
     }
-    return toShorten;
+    if (myConn != null) {
+      return myConn.getURL().toString();
+    } else {
+      return toShorten;
+    }
   }
 
   /**

@@ -25,53 +25,34 @@ public class TwitterStreamer {
     @Override
     public void onStatus(Status status) { // Feels SO hacked together right now
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
-      if (!TwitterReader.hasKeyword(status.getText())) { // TODO: Check if screenName is in the list of users to check for
-        System.out.println("Tweet does not have keywords -- ignoring.");
-      } else {
-        for (String s : usersToCheck) {
-          if (filterKeywords) {
-            if (s.equals(status.getUser().getScreenName().toLowerCase()) && status.getText().contains("t.co/")) {
-              String tStatus = status.getText();
-              String link = Browser.parseLink(tStatus);
-              while (link != null) { // Continuously parse through tweet
-                String toOpen = Browser.unshortenURL(link);
-                if (!toOpen.contains("showclix") && !toOpen.contains("t.co") && !toOpen.contains("onpeak")) {
-                  System.out.println("Link is not Showclix or unshortened -- ignoring.");
-                } else if (!TicketChecker.hasOpenedLink(toOpen)) {
-                  CheckSetup.linkFound(toOpen);
-                  TicketChecker.addLinkFound(toOpen);
-                } else {
-                  System.out.println("Link already found -- ignoring.");
-                }
-                tStatus = tStatus.substring(tStatus.indexOf(link) + link.length(), tStatus.length()); // Trim status Tweet to link
-                link = Browser.parseLink(tStatus); // Get next link, or null if none
-              }
-              return;
+      if (filterKeywords) {
+        if (!TwitterReader.hasKeyword(status.getText())) {
+          System.out.println("Tweet does not have keywords -- ignoring.");
+          return;
+        }
+      }
+      for (String s : usersToCheck) {
+        if (s.equals(status.getUser().getScreenName().toLowerCase())) {
+          String statusText = status.getText().toLowerCase();
+          while (statusText.contains("t.co/")) { // ALL links are shortened
+            String link = Browser.parseLink(statusText);
+            statusText = statusText.substring(statusText.indexOf(link) + link.length()); // Remove link from statusText
+            link = Browser.unshortenURL(link);
+            if (!TicketChecker.hasOpenedLink(link)) {
+              CheckSetup.linkFound(link);
+              TicketChecker.addLinkFound(link);
             } else {
-              System.out.println("Tweet does not contain link -- ignoring.");
-            }
-          } else {
-            if (s.equals(status.getUser().getScreenName().toLowerCase())) {
-              String statusText = status.getText().toLowerCase();
-              while (statusText.contains("t.co/")) { // ALL links are shortened
-                String link = Browser.parseLink(statusText);
-                statusText = statusText.substring(statusText.indexOf(link) + link.length()); // Remove link from statusText
-                link = Browser.unshortenURL(link);
-                if (!TicketChecker.hasOpenedLink(link)) {
-                  CheckSetup.linkFound(link);
-                  TicketChecker.addLinkFound(link);
-                } else {
-                  System.out.println("Link already found -- ignoring");
-                }
-              }
+              System.out.println("Link already found -- ignoring");
             }
           }
+          return;
         }
-        System.out.println("Tweet is not in list of names to check -- ignoring");
       }
+      System.out.println("Tweet is not in list of names to check -- ignoring");
     }
 
     @Override
+
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
     }
 

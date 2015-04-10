@@ -28,7 +28,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_SELLER = "Seller/";
   private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
   private static final String API_EXTENSION_VENUE = "Venue/";
-  private static final String EVENT_LINK_BASE = "http://www.showclix.com/Event/";
+  private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
