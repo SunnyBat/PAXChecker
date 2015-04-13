@@ -2,8 +2,10 @@ package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.browser.Browser;
 import java.io.IOException;
-import java.net.*;
-import java.util.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

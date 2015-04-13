@@ -1,11 +1,14 @@
 package com.github.sunnybat.paxchecker.browser;
 
-import com.github.sunnybat.paxchecker.check.CheckSetup;
-import java.awt.Desktop;
-import java.io.*;
-import java.net.*;
-import java.util.Scanner;
 import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  *
@@ -93,7 +96,7 @@ public class Browser {
     try {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
-      httpCon.setConnectTimeout(Math.min(CheckSetup.getRefreshTime() * 1000, 15000));
+      httpCon.setConnectTimeout(5000);
       httpCon.setReadTimeout(2000);
       return httpCon;
     } catch (Exception e) {

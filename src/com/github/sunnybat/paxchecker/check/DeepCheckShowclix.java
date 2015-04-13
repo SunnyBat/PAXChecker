@@ -17,17 +17,7 @@ public class DeepCheckShowclix extends CheckShowclix {
   @Override
   public synchronized void updateLink() {
     Set<String> mySet = ShowclixReader.getAllRelevantURLs();
-    for (String url : mySet) {
-      if (!mySet.contains(url)) {
-        System.out.println("Not checked: " + url);
-        alreadyChecked.add(url);
-        if (ShowclixReader.isPaxPage(url)) {
-          System.out.println("Is PAX Page!");
-          currentLink = url;
-          return;
-        }
-      }
-    }
+    updateLinkFromSet(mySet);
   }
 
   @Override

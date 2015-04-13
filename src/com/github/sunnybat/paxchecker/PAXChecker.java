@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.3 R4";
+  public static final String VERSION = "2.0.3 R5";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;

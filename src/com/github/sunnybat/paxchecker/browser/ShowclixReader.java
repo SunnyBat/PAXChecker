@@ -120,15 +120,11 @@ public class ShowclixReader {
   private static Set<String> getAllEventURLs(JSONObject obj) {
     Set<String> retSet = new TreeSet<>();
     for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
-      retSet.add(EVENT_LINK_BASE + s);
-//      try {
-//        JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-//        if (obj2.get("listing_url") != null) {
-//          retSet.add((String) obj2.get("listing_url"));
-//        }
-//      } catch (ClassCastException cce) {
-//        System.out.println("Unable to read event from key " + s + " -- CCE: object is " + obj.get(s).getClass().getSimpleName());
-//      }
+      if (obj.get(s) instanceof JSONObject || !((String) obj.get(s)).equals("HIDDEN")) {
+        retSet.add(EVENT_LINK_BASE + s);
+      } else {
+        System.out.println("Event " + s + " is currently hidden");
+      }
     }
     return retSet;
   }
@@ -400,8 +396,8 @@ public class ShowclixReader {
         DataTracker.addDataUsed(line.length());
         // Yea, this is a somewhat hacked-together fix. Oh well, it works!
         // Perhaps I should try and make this dynamic instead of specific fixes.
-        line = line.replaceAll(":,", ":\"\","); // Showclix, fix your JSON please. It's invalid.
-        line = line.replaceAll(":}", ":\"\"}"); // I'm guessing it's from you guys trying to fix your follows[] code too hastily. Woops.
+        line = line.replaceAll(":,", ":\"HIDDEN\","); // Showclix, fix your JSON please. It's invalid.
+        line = line.replaceAll(":}", ":\"HIDDEN\"}"); // I'm guessing it's from you guys trying to fix your follows[] code too hastily. Woops.
         build.append(line);
       }
       reader.close();

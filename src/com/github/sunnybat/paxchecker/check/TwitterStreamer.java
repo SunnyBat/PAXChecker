@@ -33,7 +33,7 @@ public class TwitterStreamer {
       }
       for (String s : usersToCheck) {
         if (s.equals(status.getUser().getScreenName().toLowerCase())) {
-          String statusText = status.getText().toLowerCase();
+          String statusText = status.getText();
           while (statusText.contains("t.co/")) { // ALL links are shortened
             String link = Browser.parseLink(statusText);
             statusText = statusText.substring(statusText.indexOf(link) + link.length()); // Remove link from statusText

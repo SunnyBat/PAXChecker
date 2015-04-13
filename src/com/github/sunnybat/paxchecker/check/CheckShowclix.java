@@ -15,7 +15,8 @@ public class CheckShowclix extends Check {
 
   static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
   Set<String> alreadyChecked = new TreeSet<>();
-  String currentLink;
+  String currentLink; // When new link found, this will not be null. This will be the final link to check, AKA the final redirect link
+  String originalLink; // The original link found to add to alreadyChecked when finished
 
   public CheckShowclix() {
     super();
@@ -38,12 +39,17 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void updateLink() {
     Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+    updateLinkFromSet(mySet);
+  }
+
+  final void updateLinkFromSet(Set<String> mySet) {
     for (String i : mySet) {
       if (!mySet.contains(i)) {
         System.out.println("Not checked: " + i);
         if (ShowclixReader.isPaxPage(i)) {
-          System.out.println("Is PAX Page!");
-          currentLink = i;
+          originalLink = i;
+          currentLink = Browser.unshortenURL(i);
+          System.out.println("PAX page found! OL = " + originalLink + " :: CL = " + currentLink);
           return;
         }
       }
@@ -72,7 +78,7 @@ public class CheckShowclix extends Check {
         currentLink = i;
       }
     } else {
-      alreadyChecked.add(currentLink);
+      alreadyChecked.add(originalLink);
     }
   }
 
