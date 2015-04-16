@@ -38,19 +38,27 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized void updateLink() {
-    Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+    updateLink("[Checking]");
+    Set<String> mySet = getLinks();
     updateLinkFromSet(mySet);
+    updateLink(getLink());
+  }
+
+  Set<String> getLinks() {
+    return ShowclixReader.getAllEventURLs(Browser.getExpo());
   }
 
   final void updateLinkFromSet(Set<String> mySet) {
     for (String i : mySet) {
-      if (!mySet.contains(i)) {
+      if (!alreadyChecked.contains(i)) { // LOL used to check mySet instead of alreadyChecked... Never again.
         System.out.println("Not checked: " + i);
         if (ShowclixReader.isPaxPage(i)) {
           originalLink = i;
           currentLink = Browser.unshortenURL(i);
           System.out.println("PAX page found! OL = " + originalLink + " :: CL = " + currentLink);
-          return;
+          break;
+        } else {
+          System.out.println("Link is not pax page. Ignoring.");
         }
       }
     }
@@ -65,14 +73,9 @@ public class CheckShowclix extends Check {
   }
 
   @Override
-  public synchronized void updateGUI(com.github.sunnybat.paxchecker.gui.Status s) {
-    updateLabel(s, "Current Showclix Link: " + getLink());
-  }
-
-  @Override
   public synchronized void reset() {
     if (currentLink == null) {
-      Set<String> mySet = ShowclixReader.getAllEventURLs(Browser.getExpo());
+      Set<String> mySet = getLinks();
       for (String i : mySet) {
         alreadyChecked.add(i);
         currentLink = i;

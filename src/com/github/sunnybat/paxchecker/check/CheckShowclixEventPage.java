@@ -36,17 +36,19 @@ public class CheckShowclixEventPage extends Check {
 
   @Override
   public synchronized final void updateLink() {
+    updateLink("[Checking]");
     for (String s : eventCheckList) {
       HttpURLConnection conn = null;
       try {
         conn = Browser.setUpConnection(new URL(EVENT_BASE_URL + s));
         if (conn == null) { // In case it fails to set up correctly
+          System.out.println("URLConnection failed to set up for " + EVENT_BASE_URL + s);
           continue;
         }
         conn.getInputStream(); // Will throw IOException if 404 -- simplest way to force it
         System.out.println(conn.getURL());
         validPageID = s;
-        return; // Found valid page, stop checking
+        break; // Found valid page, stop checking
       } catch (IOException ioe) { // getInputStream() threw exception -- 404 or unable to connect
         if (conn != null) {
           System.out.println("Link redirected to: " + conn.getURL());
@@ -55,6 +57,7 @@ public class CheckShowclixEventPage extends Check {
         }
       }
     }
+    updateLink(getLink());
   }
 
   @Override
@@ -64,11 +67,6 @@ public class CheckShowclixEventPage extends Check {
     } else {
       return EVENT_BASE_URL + validPageID;
     }
-  }
-
-  @Override
-  public synchronized void updateGUI(com.github.sunnybat.paxchecker.gui.Status s) {
-    updateLabel(s, "Known Pages Found: " + getLink());
   }
 
   @Override

@@ -45,6 +45,10 @@ public abstract class Check implements Runnable {
 
   public abstract void reset();
 
-  public abstract void updateGUI(com.github.sunnybat.paxchecker.gui.Status s);
+  final void updateLink(String link) {
+    if (linkLabel != null) {
+      linkLabel.setText("Current Website Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+    }
+  }
 
 }

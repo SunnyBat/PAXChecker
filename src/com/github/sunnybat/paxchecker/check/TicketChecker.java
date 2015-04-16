@@ -68,9 +68,6 @@ public final class TicketChecker {
     System.out.println("Finished waiting");
     for (Check c : checks) {
       //c.updateLink();
-      if (status != null) {
-        c.updateGUI(status);
-      }
       if (c.ticketsFound()) {
         if (!hasOpenedLink(c.getLink())) {
           System.out.println("FOUND LINK: " + c.getLink());

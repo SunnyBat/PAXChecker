@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.3 R5";
+  public static final String VERSION = "2.0.3";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
@@ -153,6 +153,7 @@ public final class PAXChecker {
           case "-filtertwitter":
             filterTwitter = true;
             break;
+          case "-follow":
           case "-checktwitter":
             String twitterHandle = args[a + 1];
             TwitterReader.addHandle(twitterHandle);

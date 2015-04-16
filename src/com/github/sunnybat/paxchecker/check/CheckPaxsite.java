@@ -46,17 +46,14 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized final void updateLink() {
+    updateLink("[Checking]");
     currentLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
+    updateLink(getLink());
   }
 
   @Override
   public synchronized String getLink() {
     return currentLinkFound;
-  }
-
-  @Override
-  public synchronized void updateGUI(com.github.sunnybat.paxchecker.gui.Status s) {
-    updateLabel(s, "Current Website Link: " + getLink());
   }
 
   @Override

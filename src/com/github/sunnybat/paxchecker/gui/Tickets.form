@@ -62,7 +62,7 @@
             </Property>
             <Property name="lineWrap" type="boolean" value="true"/>
             <Property name="rows" type="int" value="5"/>
-            <Property name="text" type="java.lang.String" value="An update has been found!&#xa;&#xa;An attempt to open the link found in your default browser has been made. If it did not open, you will have to do so manually.&#xa;&#xa;Good luck buying tickets!&#xa;- /u/SunnyBat (Sunnybat@yahoo.com)"/>
+            <Property name="text" type="java.lang.String" value="An update has been found!&#xa;&#xa;An attempt to open the link found in your default browser has been made. If it did not open, you will have to do so manually.&#xa;&#xa;Good luck buying tickets!&#xa;- /u/SunnyBat (Sunnybat@yahoo.com)&#xa;&#xa;If this was a false positive, feel free to post on /r/PAXChecker or PM /u/SunnyBat individually."/>
             <Property name="wrapStyleWord" type="boolean" value="true"/>
           </Properties>
         </Component>
