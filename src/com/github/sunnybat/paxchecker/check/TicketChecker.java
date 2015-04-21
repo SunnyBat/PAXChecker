@@ -71,7 +71,7 @@ public final class TicketChecker {
       if (c.ticketsFound()) {
         if (!hasOpenedLink(c.getLink())) {
           System.out.println("FOUND LINK: " + c.getLink());
-          setLinkFound(c.getLink());
+          linkFound(c.getLink());
           c.reset();
           return true;
         } else {
@@ -93,8 +93,9 @@ public final class TicketChecker {
    *
    * @param link The link to set
    */
-  private static synchronized void setLinkFound(String link) {
+  private static synchronized void linkFound(String link) {
     linkFound = link;
+    addLinkFound(link);
   }
 
   /**
@@ -104,14 +105,6 @@ public final class TicketChecker {
    */
   public static synchronized String getLinkFound() {
     return linkFound;
-  }
-
-  /**
-   * Resets the last link found. This automatically adds the last link found to the list.
-   */
-  public static synchronized void resetLinkFound() {
-    addLinkFound(linkFound);
-    linkFound = "";
   }
 
   /**

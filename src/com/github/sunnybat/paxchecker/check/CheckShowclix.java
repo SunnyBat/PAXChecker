@@ -59,6 +59,7 @@ public class CheckShowclix extends Check {
           break;
         } else {
           System.out.println("Link is not pax page. Ignoring.");
+          alreadyChecked.add(i);
         }
       }
     }
@@ -81,6 +82,7 @@ public class CheckShowclix extends Check {
         currentLink = i;
       }
     } else {
+      System.out.println("Adding " + originalLink + " to alreadyChecked");
       alreadyChecked.add(originalLink);
     }
   }
