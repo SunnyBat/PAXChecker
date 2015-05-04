@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.browser;
 
+import com.github.sunnybat.paxchecker.DataTracker;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,9 +12,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
-
-import com.github.sunnybat.paxchecker.DataTracker;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -66,6 +64,7 @@ public class ShowclixReader {
         return false;
       }
     } catch (IOException iOException) {
+      System.out.println("IOException in ShowclixReader.isPaxPage() -- returning true");
       return true; // Not sure if it does or not, so open just in case
     }
   }

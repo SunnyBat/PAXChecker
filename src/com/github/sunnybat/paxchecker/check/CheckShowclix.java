@@ -44,7 +44,7 @@ public class CheckShowclix extends Check {
     updateLink(getLink());
   }
 
-  Set<String> getLinks() {
+  protected Set<String> getLinks() {
     return ShowclixReader.getAllEventURLs(Browser.getExpo());
   }
 

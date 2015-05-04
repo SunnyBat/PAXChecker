@@ -10,7 +10,7 @@ import com.github.sunnybat.paxchecker.browser.ShowclixReader;
 public class DeepCheckShowclix extends CheckShowclix { // Such a complex class. =/
 
   @Override
-  Set<String> getLinks() {
+  protected Set<String> getLinks() {
     return ShowclixReader.getAllRelevantURLs();
   }
 
