@@ -64,7 +64,15 @@
             <StringItem index="3" value="Sprint"/>
             <StringItem index="4" value="T-Mobile"/>
             <StringItem index="5" value="U.S. Cellular"/>
-            <StringItem index="6" value="[Other]"/>
+            <StringItem index="6" value="Bell"/>
+            <StringItem index="7" value="Rogers"/>
+            <StringItem index="8" value="Fido"/>
+            <StringItem index="9" value="Koodo"/>
+            <StringItem index="10" value="Telus"/>
+            <StringItem index="11" value="Virgin"/>
+            <StringItem index="12" value="Wind"/>
+            <StringItem index="13" value="SaskTel"/>
+            <StringItem index="14" value="[Other]"/>
           </StringArray>
         </Property>
       </Properties>

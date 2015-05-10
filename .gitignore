@@ -18,3 +18,4 @@ lib/
 nbproject/
 
 # Ignore library docs and stuff #
+.DS_Store

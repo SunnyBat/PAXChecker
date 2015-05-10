@@ -233,6 +233,22 @@ public class Email {
           return "T-Mobile";
         case "email.uscc.net":
           return "U.S. Cellular";
+        case "txt.bell.ca":
+          return "Bell";
+        case "pcs.rogers.com":
+          return "Rogers";
+        case "fido.ca":
+          return "Fido";
+        case "txt.koodomobile.com":
+          return "Koodo";
+        case "msg.telus.com":
+          return "Telus";
+        case "vmobile.ca":
+          return "Virgin";
+        case "txt.windmobile.ca":
+          return "Wind";
+        case "pcs.saktelmobility.com":
+          return "SaskTel";
         default:
           return "[Other]";
       }
@@ -261,6 +277,22 @@ public class Email {
         return "@tmomail.net";
       case "u.s. cellular":
         return "@email.uscc.net";
+      case "bell":
+        return "@txt.bell.ca";
+      case "rogers":
+        return "@pcs.rogers.com";
+      case "fido":
+        return "@fido.ca";
+      case "koodo":
+        return "@txt.koodomobile.com";
+      case "telus":
+        return "@msg.telus.com";
+      case "virgin":
+        return "@vmobile.ca";
+      case "wind":
+        return "@txt.windmobile.ca";
+      case "sasktel":
+        return "@pcs.saktelmobility.com";
       default:
         System.out.println("ERROR: Unable to identify carrier. Using default AT&T.");
         return getCarrierExtension("AT&T (MMS)");

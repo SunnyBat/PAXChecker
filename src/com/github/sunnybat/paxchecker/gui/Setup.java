@@ -248,8 +248,24 @@ public class Setup extends javax.swing.JFrame {
         return 4;
       case "u.s. cellular":
         return 5;
-      case "[other]":
+      case "bell":
         return 6;
+      case "rogers":
+        return 7;
+      case "fido":
+        return 8;
+      case "koodo":
+        return 9;
+      case "telus":
+        return 10;
+      case "virgin":
+        return 11;
+      case "wind":
+        return 12;
+      case "sasktel":
+        return 13;
+      case "[other]":
+        return 14;
     }
   }
 
@@ -439,7 +455,7 @@ public class Setup extends javax.swing.JFrame {
 
     JTFCellNum.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
-    JCBCarrier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "[Other]" }));
+    JCBCarrier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin", "Wind", "SaskTel", "[Other]" }));
 
     jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel6.setText("Seconds Between Website Checks");
