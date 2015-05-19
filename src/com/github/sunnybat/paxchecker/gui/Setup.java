@@ -949,7 +949,9 @@ public class Setup extends javax.swing.JFrame {
 //      }
       TicketChecker.addChecker(c);
     }
-    TicketChecker.addChecker(new CheckShowclixEventPage());
+    if (JCBCheckKnownEvents.isSelected()) {
+      TicketChecker.addChecker(new CheckShowclixEventPage());
+    }
     if (JCBCheckTwitter.isSelected() && TwitterReader.isInitialized()) {
       TwitterReader.runTwitterStream();
       if (JCBFilterTwitter.isSelected()) {

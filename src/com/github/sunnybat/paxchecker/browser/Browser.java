@@ -172,8 +172,7 @@ public class Browser {
         return true;
       } else if (runCommand("gnome-open", "%s", what)) {
         return true;
-      }
-      if (runCommand("xdg-open", "%s", what)) {
+      } else if (runCommand("xdg-open", "%s", what)) {
         return true;
       }
     }

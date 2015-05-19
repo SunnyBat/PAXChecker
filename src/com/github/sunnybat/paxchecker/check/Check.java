@@ -47,7 +47,11 @@ public abstract class Check implements Runnable {
 
   final void updateLink(String link) {
     if (linkLabel != null) {
-      linkLabel.setText("Current Website Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+      if (this.getClass().getSimpleName().length() <= 5) {
+        linkLabel.setText("Current (???) Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+      } else {
+        linkLabel.setText("Current " + this.getClass().getSimpleName().substring(5) + " Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+      }
     }
   }
 
