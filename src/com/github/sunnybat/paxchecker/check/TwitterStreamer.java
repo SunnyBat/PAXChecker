@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import java.util.Arrays;
@@ -71,7 +71,11 @@ public class TwitterStreamer {
     @Override
     public void onStallWarning(StallWarning warning) {
       Throwable t = new Throwable(warning.getCode() + "\n\n" + warning.getMessage() + "\nn" + warning.getPercentFull());
-      ErrorDisplay.showErrorWindow("Stall Warning", "A stall warning has been thrown by the Twiiter4j library.", t);
+      new ErrorBuilder()
+          .setError(t)
+          .setErrorTitle("Stall Warning")
+          .setErrorMessage("A stall warning has been thrown by the Twiiter4j library.")
+          .buildWindow();
     }
 
     @Override
@@ -143,19 +147,28 @@ public class TwitterStreamer {
       ex.printStackTrace();
       if (++successiveErrorCount == 1) {
         if (ex.getMessage().contains("Authentication credentials (https://dev.twitter.com/pages/auth) were missing or incorrect")) {
-          ErrorDisplay.showErrorWindow("WARNING: Unable to authenticate Twitter stream",
-              "\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
-              + "\nThe program will attempt to authenticate two more times.", ex);
+          new ErrorBuilder()
+              .setError(ex)
+              .setErrorTitle("WARNING: Unable to authenticate Twitter stream")
+              .setErrorMessage("\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
+                  + "\nThe program will attempt to authenticate two more times.")
+              .buildWindow();
         }
       } else if (successiveErrorCount == 3) {
         if (ex.getMessage().contains("Authentication credentials (https://dev.twitter.com/pages/auth) were missing or incorrect")) {
-          ErrorDisplay.showErrorWindow("ERROR: The program was unable to authenticate your Twitter credentials",
-              "\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
-              + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.", ex);
+          new ErrorBuilder()
+              .setError(ex)
+              .setErrorTitle("ERROR: The program was unable to authenticate your Twitter credentials")
+              .setErrorMessage("\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
+                  + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.")
+              .buildWindow();
         } else {
-          ErrorDisplay.showErrorWindow("ERROR: Disconnected from Twitter Streaming service",
-              "\nRestart the PAXChecker to reconnect. If this persists, let /u/SunnyBat know!"
-              + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.", ex);
+          new ErrorBuilder()
+              .setError(ex)
+              .setErrorTitle("ERROR: Disconnected from Twitter Streaming service")
+              .setErrorMessage("\nClick the Reconnect button or restart the PAXChecker to reconnect. If this persists, let /u/SunnyBat know!"
+                  + "\n\nThe Twitter feed has been shut down. To reconnect, you must do so manually.")
+              .buildWindow();
         }
         myStream.shutdown();
       }

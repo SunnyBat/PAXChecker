@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.encryption.Encryption;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.TwitterReader;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.5 R1";
+  public static final String VERSION = "2.0.5 R2";
   private static Setup setup;
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
@@ -42,7 +42,7 @@ public final class PAXChecker {
       try {
         start = new LoadingWindow();
         start.showWindow(); // Will throw HeadlessException if in headless environment
-        Thread.setDefaultUncaughtExceptionHandler(new com.github.sunnybat.commoncode.error.ExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new com.github.sunnybat.commoncode.error.GUIExceptionHandler());
         javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
         setup = new Setup();
       } catch (java.awt.HeadlessException e) {
@@ -180,7 +180,11 @@ public final class PAXChecker {
               String value = args[a + 2];
               Email.setProperty(key, value);
             } catch (Exception e) {
-              ErrorDisplay.showErrorWindow("ERROR setting custom property!", "Unable to set custom properties. See error details for more information.", e);
+              new ErrorBuilder()
+                  .setError(e)
+                  .setErrorTitle("ERROR setting custom property!")
+                  .setErrorMessage("Unable to set custom properties. See error details for more information.")
+                  .buildWindow();
             }
             break;
           case "-savesettings":
@@ -209,6 +213,9 @@ public final class PAXChecker {
               System.out.println("Unable to set output stream saver -- File does not exist?");
               fnfe.printStackTrace();
             }
+            break;
+          case "-alarmfile":
+            Audio.setAlarmFile(args[a + 1]);
             break;
           default:
             if (args[a].startsWith("-")) {

@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker.browser;
 
 import com.github.sunnybat.commoncode.encryption.Encryption;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.check.TwitterStreamer;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
@@ -60,8 +60,12 @@ public class TwitterReader {
           .setOAuthConsumerSecret(Encryption.decrypt(consumerSecret))
           .setOAuthAccessToken(Encryption.decrypt(accessToken))
           .setOAuthAccessTokenSecret(Encryption.decrypt(accessSecret));
-    } catch (GeneralSecurityException | IOException generalSecurityException) {
-      ErrorDisplay.showErrorWindow("ERROR setting Twitter API keys -- API not initialized.");
+    } catch (GeneralSecurityException | IOException gse) {
+      new ErrorBuilder()
+          .setError(gse)
+          .setErrorTitle("Twitter Error")
+          .setErrorMessage("ERROR setting Twitter API keys -- API not initialized.")
+          .buildWindow();
       return;
     }
     TwitterFactory tf = new TwitterFactory(cb.build());

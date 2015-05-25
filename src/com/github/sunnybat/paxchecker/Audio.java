@@ -1,9 +1,16 @@
 package com.github.sunnybat.paxchecker;
 
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 
 /**
  *
@@ -14,6 +21,7 @@ public class Audio {
   private static boolean playSound;
   private static Clip clip;
   private static final LListener listener = new LListener();
+  private static File alarmFile;
 
   /**
    * Checks whether or not sound is currently enabled. This is set using {@link #setPlayAlarm(boolean)}.
@@ -33,6 +41,27 @@ public class Audio {
     playSound = play;
   }
 
+  public static void setAlarmFile(String file) {
+    System.out.println("Alarmfile");
+    setAlarmFile(new File(file));
+  }
+
+  public static void setAlarmFile(File alarmFile) {
+    if (!alarmFile.exists()) {
+      System.out.println("Alarm file does not exist.");
+    } else if (!alarmFile.getName().toLowerCase().endsWith(".wav")) {
+      System.out.println("File is not a WAV file.");
+      new ErrorBuilder()
+          .setErrorTitle("Cannot use audio file")
+          .setErrorMessage("Currently, the only supported alarm audio format is .WAV files. If you would like"
+              + " to see support for other audio formats, let me know!")
+          .buildWindow();
+    } else {
+      Audio.alarmFile = alarmFile;
+      System.out.println("Set alarm file to " + alarmFile.getName());
+    }
+  }
+
   /**
    * Plays the alarm. Note that this checks {@link #soundEnabled()} to make sure it's supposed to play. This method only allows one sound to play at a
    * time, and resets the sound currently playing to the beginning.
@@ -50,7 +79,12 @@ public class Audio {
       }
       clip = AudioSystem.getClip();
       clip.addLineListener(listener);
-      InputStream audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
+      InputStream audioSrc;
+      if (alarmFile != null) {
+        audioSrc = new FileInputStream(alarmFile);
+      } else {
+        audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
+      }
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
       clip.open(inputStream);

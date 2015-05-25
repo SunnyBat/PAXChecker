@@ -6,7 +6,7 @@ import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.PAXChecker;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 
 /**
  *
@@ -137,7 +137,11 @@ public class UpdateHandler {
       }
       System.out.println("Finished loading version notes.");
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("Error Loading Version Notes", "Unable to load version notes -- an unknown error has occurred.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("Error Loading Version Notes")
+          .setErrorMessage("Unable to load version notes -- an unknown error has occurred.")
+          .buildWindow();
       e.printStackTrace();
     } finally {
       try {
@@ -193,8 +197,11 @@ public class UpdateHandler {
         }
       }
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("ERROR", "An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.", e);
-      ErrorDisplay.fatalError();
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorMessage("An error has occurred while attempting to update the program. If the problem persists, please manually download the latest version.")
+          .fatalError()
+          .buildWindow();
     }
   }
 
@@ -267,13 +274,19 @@ public class UpdateHandler {
   public static boolean updateAvailable() {
     try {
       if (getUpdateLevel() == -1) {
-        ErrorDisplay.showErrorWindow("ERROR checking for updates!", "Unable to load version notes -- Unable to check for updates!", null);
+        new ErrorBuilder()
+            .setErrorTitle("ERROR checking for updates!")
+            .setErrorMessage("Unable to load version notes -- Unable to check for updates!")
+            .buildWindow();
         return false;
       } else if (getUpdateLevel() == 0) {
         System.out.println("Using most recent version.");
         return false;
       } else if (getUpdateLevel() == 4) {
-        ErrorDisplay.showErrorWindow("Error Updating", "Unable to determine update availability -- Version not found in version notes", null);
+        new ErrorBuilder()
+            .setErrorTitle("Error Updating")
+            .setErrorMessage("Unable to determine update availability -- Version not found in version notes")
+            .buildWindow();
         return false;
       }
       URL updateURL;
@@ -290,13 +303,20 @@ public class UpdateHandler {
       updateSize = conn.getContentLengthLong();
       System.out.println("Update size = " + updateSize);
       if (updateSize == -1) {
-        ErrorDisplay.showErrorWindow("ERROR checking for updates!", "Update size listed as -1 -- Program most likely unable to connect!", null);
+        new ErrorBuilder()
+            .setErrorTitle("ERROR checking for updates!")
+            .setErrorMessage("Update size listed as -1 -- Program most likely unable to connect!")
+            .buildWindow();
         //return false;
       }
       return true;
     } catch (Exception e) {
       System.out.println("ERROR updating program!");
-      ErrorDisplay.showErrorWindow("ERROR updating program!", "The program was unable to check for new updates.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("ERROR updating program")
+          .setErrorMessage("The program was unable to check for new updates.")
+          .buildWindow();
     }
     return false;
   }
@@ -364,15 +384,23 @@ public class UpdateHandler {
         fIn.close();
         inputFile.delete();
       } catch (Exception e) {
-        ErrorDisplay.showErrorWindow("ERROR updating", "Unable to complete update -- unable to copy temp JAR file to current JAR file.", e);
-        ErrorDisplay.fatalError();
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("ERROR updating")
+            .setErrorMessage("Unable to complete update -- unable to copy temp JAR file to current JAR file.")
+            .fatalError()
+            .buildWindow();
       }
       System.out.println("Download Complete!");
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("ERROR updating program!");
-      ErrorDisplay.showErrorWindow("ERROR updating the program", "The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + UPDATE_LINK, e);
-      ErrorDisplay.fatalError();
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("ERROR updating the program")
+          .setErrorMessage("The program was unable to successfully download the update. If the problem continues, please manually download the latest version at " + UPDATE_LINK)
+          .fatalError()
+          .buildWindow();
     }
   }
 
@@ -406,7 +434,10 @@ public class UpdateHandler {
       ProcessBuilder pb = new ProcessBuilder(nArgs);
       pb.start();
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("Small Error", "Unable to automatically run update.", e);
+      new ErrorBuilder()
+          .setErrorTitle("Small Error")
+          .setErrorMessage("Unable to automatically run update.")
+          .buildWindow();
     }
   }
 }

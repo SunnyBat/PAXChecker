@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker;
 
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.commoncode.encryption.Encryption;
 import com.github.sunnybat.paxchecker.check.CheckSetup;
 import java.util.*;
@@ -60,7 +60,10 @@ public class Email {
     } else {
       if (!username.contains("::")) {
         System.out.println("ERROR parsing host -- no semicolon found!");
-        ErrorDisplay.showErrorWindow("ERROR Using Custom Host", "Unable to parse the SMTP server from the given address (" + username + ")! Please make sure this was input correctly!", null);
+        new ErrorBuilder()
+            .setErrorTitle("ERROR Using Custom Host")
+            .setErrorMessage("Unable to parse the SMTP server from the given address (" + username + ")! Please make sure this was input correctly!")
+            .buildWindow();
         props.put("mail.smtp.user", "@yahoo.com");
         return;
       }
@@ -72,7 +75,10 @@ public class Email {
         System.out.println("Error parsing extra info in email.");
       }
       if (extraInfo == null) {
-        ErrorDisplay.showErrorWindow("Not Enough Information", "The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.", null);
+        new ErrorBuilder()
+            .setErrorTitle("Not Enough Information")
+            .setErrorMessage("The SMTP server is required for non-Yahoo or non-GMail addresses. Please put ::SMTP.ser.ver:PORT after the email specified.")
+            .buildWindow();
         props.put("mail.smtp.user", "@yahoo.com");
         return;
       }
@@ -88,7 +94,11 @@ public class Email {
         setHost(tempHost);
       } catch (Exception e) {
         System.out.println("ERROR parsing host -- no semicolon found!");
-        ErrorDisplay.showErrorWindow("ERROR Using Custom Host", "Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!", e);
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("ERROR Using Custom Host")
+            .setErrorMessage("Unable to parse the smtp server from the given address (" + extraInfo + ")! Please make sure this was input correctly!")
+            .buildWindow();
         props.put("mail.smtp.user", "@yahoo.com");
         return;
       }
@@ -169,7 +179,11 @@ public class Email {
       props.put("mail.smtp.password", password);
     } catch (Exception e) {
       System.out.println("ERROR encrypting password!");
-      ErrorDisplay.showErrorWindow("ERROR encrypting password", "An error has occurred while attempting to encrypt your password.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("ERROR encrypting password")
+          .setErrorMessage("An error has occurred while attempting to encrypt your password.")
+          .buildWindow();
     }
   }
 
@@ -184,7 +198,11 @@ public class Email {
       return Encryption.decrypt(password);
     } catch (Exception e) {
       System.out.println("ERROR decrypting password!");
-      ErrorDisplay.showErrorWindow("ERROR decrypting password", "And error has occurred while attempting to decrypt your password.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("ERROR decrypting password")
+          .setErrorMessage("An error has occurred while attempting to decrypt your password.")
+          .buildWindow();
     }
     return null;
   }
@@ -457,16 +475,32 @@ public class Email {
     } catch (Exception e) {
       e.printStackTrace();
       if (e instanceof AuthenticationFailedException) { // Subclass of MessagingException, so it should go before it
-        ErrorDisplay.showErrorWindow("Login Error", "Unable to log in. Double-check your username and password."
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("Login Error")
+            .setErrorMessage("Unable to log in. Double-check your username and password."
             + "\nIf using Gmail, make sure you allow access to less secure apps:\nhttps://www.google.com/settings/security/lesssecureapps"
-            + "\nYou might also try unlocking a captcha:\nhttp://www.google.com/accounts/DisplayUnlockCaptcha", e);
+            + "\nYou might also try unlocking a captcha:\nhttp://www.google.com/accounts/DisplayUnlockCaptcha")
+            .buildWindow();
       } else if (e instanceof MessagingException) {
-        ErrorDisplay.showErrorWindow("Connection Error", "Unable to connect to email server.", e);
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("Connection Error")
+            .setErrorMessage("Unable to connect to email server.")
+            .buildWindow();
         //} else if (mex.getLocalizedMessage().contains("javax.mail.AuthenticationFailedException:")) {
       } else if (e instanceof javax.net.ssl.SSLHandshakeException) {
-        ErrorDisplay.showErrorWindow("SSL Certificate Error", "The PAXChecker was unable to connect to the mail server due to an invalid SSL certificate.", e);
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("SSL Certificate Error")
+            .setErrorMessage("The PAXChecker was unable to connect to the mail server due to an invalid SSL certificate.")
+            .buildWindow();
       } else {
-        ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to send the message.", e);
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("Mail Error")
+            .setErrorMessage("An unknown error has occurred while attempting to send the message.")
+            .buildWindow();
         return false;
       }
     }//end catch block

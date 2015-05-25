@@ -8,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.preferences.Preference;
 import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import com.github.sunnybat.commoncode.error.*;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 
 /**
  *
@@ -94,7 +94,11 @@ public class NotificationHandler {
       }
       System.out.println("Finished loading notifications.");
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("Error Loading Notifications", "Unable to load notifications -- an unknown error has occurred.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorTitle("Error Loading Notifications")
+          .setErrorMessage("Unable to load notifications -- an unknown error has occurred.")
+          .buildWindow();
     } finally {
       try {
         if (myReader != null) {

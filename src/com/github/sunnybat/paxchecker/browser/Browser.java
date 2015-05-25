@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker.browser;
 
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -71,7 +71,9 @@ public class Browser {
    */
   public static void openLinkInBrowser(URL url) {
     if (url == null) {
-      ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- link is null!", null);
+      new ErrorBuilder()
+          .setErrorMessage("Unable to open link in default browser -- link is null!")
+          .buildWindow();
       return;
     }
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
@@ -79,15 +81,24 @@ public class Browser {
       try {
         desktop.browse(url.toURI());
       } catch (URISyntaxException | IOException e) {
-        ErrorDisplay.showErrorWindow("ERROR opening browser window", "Unable to open link in browser window!", e);
+        new ErrorBuilder()
+            .setError(e)
+            .setErrorTitle("ERROR opening browser window")
+            .setErrorMessage("Unable to open link in browser window!")
+            .buildWindow();
       }
     } else {
       try {
         if (!browse(url.toURI())) {
-          ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- desktop is not supported", null);
+          new ErrorBuilder()
+              .setErrorMessage("Unable to open link in default browser -- desktop is not supported")
+              .buildWindow();
         }
       } catch (URISyntaxException use) {
-        ErrorDisplay.showErrorWindow("ERROR", "Unable to open link in default browser -- URISyntaxException?", use);
+        new ErrorBuilder()
+            .setError(use)
+            .setErrorMessage("Unable to open link in default browser -- URISyntaxException?")
+            .buildWindow();
       }
     }
   }

@@ -3,7 +3,7 @@ package com.github.sunnybat.paxchecker.browser;
 import java.io.*;
 import java.net.*;
 import com.github.sunnybat.paxchecker.DataTracker;
-import com.github.sunnybat.commoncode.error.ErrorDisplay;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
 
 /**
  *
@@ -47,7 +47,10 @@ public class PaxsiteReader {
     } catch (IOException ioe) {
       return "[IOException]";
     } catch (Exception e) {
-      ErrorDisplay.showErrorWindow("ERROR", "An unknown error has occurred while attempting to read the PAX website.", e);
+      new ErrorBuilder()
+          .setError(e)
+          .setErrorMessage("An unknown error has occurred while attempting to read the PAX website.")
+          .buildWindow();
       System.out.println("ERROR");
       return null;
     } finally {
