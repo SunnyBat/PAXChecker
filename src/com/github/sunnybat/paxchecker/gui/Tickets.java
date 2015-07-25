@@ -1,5 +1,7 @@
 package com.github.sunnybat.paxchecker.gui;
 
+import java.awt.Image;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,11 +11,23 @@ import java.util.Date;
  */
 public class Tickets extends javax.swing.JFrame {
 
+  static {
+    try {
+      myIcon = javax.imageio.ImageIO.read(Tickets.class.getResourceAsStream("/resources/alert.png"));
+    } catch (IOException iOE) {
+      iOE.printStackTrace();
+      System.out.println("Failed to load ImageIcon for Tickets window -- program will still function normally.");
+    }
+  }
+
+  private static Image myIcon;
+
   public Tickets(final String link) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         initComponents();
+        setIconImage(myIcon);
         String newline = System.getProperty("line.separator");
         jTextArea1.append(newline + newline + "Tickets found at " + currentTime() + newline + "NOTE: The hours in this time may be off... The minutes and seconds are correct!");
         jTextArea1.append(newline + newline + "URL found: " + link);
@@ -25,7 +39,7 @@ public class Tickets extends javax.swing.JFrame {
     });
   }
 
-  public static String currentTime() {
+  private static String currentTime() {
     Calendar myCal = Calendar.getInstance();
     long ctm = myCal.getTimeInMillis();
     if (myCal.getTimeZone().getRawOffset() != -28800000) {

@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Phaser;
 
 /**
  *

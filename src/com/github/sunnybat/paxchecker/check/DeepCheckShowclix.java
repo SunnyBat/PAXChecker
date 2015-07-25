@@ -1,11 +1,12 @@
 package com.github.sunnybat.paxchecker.check;
 
-import java.util.Set;
 import com.github.sunnybat.paxchecker.browser.ShowclixReader;
+import java.util.Set;
 
 /**
  *
  * @author SunnyBat
+ * @deprecated Inefficient check method
  */
 public class DeepCheckShowclix extends CheckShowclix { // Such a complex class. =/
 

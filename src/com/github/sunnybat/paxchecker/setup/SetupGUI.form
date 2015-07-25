@@ -51,7 +51,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel2" max="32767" attributes="0"/>
@@ -71,7 +71,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JTFCellNum" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="JCBCarrier" min="-2" pref="82" max="-2" attributes="0"/>
+                                      <Component id="JCBCarrier" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -84,13 +84,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JCBCheckShowclixDeep" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="JLDeepDisabled" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="JCBCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -109,6 +103,7 @@
                               </Group>
                               <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                           </Group>
+                          <Component id="JPTwitterKeys" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -144,20 +139,18 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckWebsite" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBCheckShowclixDeep" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JLDeepDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JLTwitterDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JCBFilterTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <Component id="JPTwitterKeys" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="JCBPlayAlarm" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -215,7 +208,7 @@
             <Component class="javax.swing.JComboBox" name="JCBCarrier">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="7">
+                  <StringArray count="14">
                     <StringItem index="0" value="AT&amp;T (MMS)"/>
                     <StringItem index="1" value="AT&amp;T (SMS)"/>
                     <StringItem index="2" value="Verizon"/>
@@ -223,6 +216,13 @@
                     <StringItem index="4" value="T-Mobile"/>
                     <StringItem index="5" value="U.S. Cellular"/>
                     <StringItem index="6" value="Bell"/>
+                    <StringItem index="7" value="Rogers"/>
+                    <StringItem index="8" value="Fido"/>
+                    <StringItem index="9" value="Koodo"/>
+                    <StringItem index="10" value="Telus"/>
+                    <StringItem index="11" value="Virgin (CAN)"/>
+                    <StringItem index="12" value="Wind"/>
+                    <StringItem index="13" value="Sasktel"/>
                   </StringArray>
                 </Property>
               </Properties>
@@ -349,30 +349,6 @@
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLTwitterDisabledMousePressed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBCheckShowclixDeep">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Deep Showclix Checking"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;This option is a very data-intensive and connection-intensive task.&lt;br&gt;&#xa;It checks the entire Showclix API for any event relating to PAX. This option&lt;br&gt;&#xa;uses much more data than just the Showclix API option, and also&lt;br&gt;&#xa;takes exponentially longer. It&apos;s only recommended to use this if you don&apos;t&lt;br&gt;&#xa;care about data usage, have decent ping, and have a good connection&lt;br&gt;&#xa;speed.&#xa;&lt;/html&gt;"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckShowclixDeepActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="JLDeepDisabled">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="11" style="2"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ee" green="0" red="0" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="(Deep Disabled???)"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLDeepDisabledMousePressed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JCheckBox" name="JCBFilterTwitter">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Filter by Keywords"/>
@@ -387,6 +363,97 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckKnownEventsActionPerformed"/>
               </Events>
             </Component>
+            <Container class="javax.swing.JPanel" name="JPTwitterKeys">
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="JTFApplicationSecret" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="JTFConsumerKey" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                                  <Component id="JTFConsumerSecret" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                                  <Component id="JTFApplicationKey" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="JTFConsumerKey" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="JTFConsumerSecret" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="JTFApplicationKey" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="JTFApplicationSecret" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="jLabel7">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Consumer Key"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel8">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Consumer Secret"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel9">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Application Key"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel10">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Application Secret"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="JTFApplicationSecret">
+                </Component>
+                <Component class="javax.swing.JTextField" name="JTFApplicationKey">
+                </Component>
+                <Component class="javax.swing.JTextField" name="JTFConsumerSecret">
+                </Component>
+                <Component class="javax.swing.JTextField" name="JTFConsumerKey">
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel6">
@@ -406,7 +473,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane5" alignment="0" pref="406" max="32767" attributes="0"/>
+                  <Component id="jScrollPane5" alignment="0" pref="504" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -451,7 +518,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="406" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="504" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -494,7 +561,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane6" alignment="0" pref="406" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="504" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -538,38 +605,24 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jScrollPane1" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Component id="jScrollPane1" pref="391" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="JCBSavePreferences" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveCellnum" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveCheckPax" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveEmail" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveKnownWebsiteChecking" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveEvent" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="JCBLoadNotifications" max="32767" attributes="0"/>
-                                  <Component id="JCBCheckUpdates" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="JCBSaveTwitterKeys" max="32767" attributes="0"/>
-                                  <Component id="JCBUseBeta" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="JCBStatistics" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="JCBSaveCheckSettings" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBSaveEmailSettings" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="21" pref="21" max="-2" attributes="0"/>
                                       <Component id="JCBCheckUpdateDaily" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
+                                  <Component id="JCBSaveTwitterKeys" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBUseBeta" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBStatistics" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBLoadNotifications" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JCBCheckUpdates" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="JCBSaveRefreshTime" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="149" max="-2" attributes="0"/>
-                              <Component id="jButton3" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="JBSaveSettings" alignment="0" pref="391" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -579,101 +632,43 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSavePreferences" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveEmail" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBLoadNotifications" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="JCBSaveEmailSettings" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveCellnum" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBCheckUpdates" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="JCBSaveCheckSettings" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveCheckPax" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBCheckUpdateDaily" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="JCBLoadNotifications" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="JCBSaveTwitterKeys" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBStatistics" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="JCBSaveCheckShowclix" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSaveKnownWebsiteChecking" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSaveCheckTwitter" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSavePlayAlarm" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="JCBSaveEvent" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                      <Component id="JCBCheckUpdates" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBSaveRefreshTime" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="JCBCheckUpdateDaily" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="132" max="32767" attributes="0"/>
+                      <Component id="JCBSaveTwitterKeys" min="-2" pref="23" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="JCBStatistics" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="JBSaveSettings" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane1" pref="230" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JCheckBox" name="JCBSavePreferences">
+            <Component class="javax.swing.JCheckBox" name="JCBSaveEmailSettings">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save Preferences"/>
+                <Property name="text" type="java.lang.String" value="Save Email Settings"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckSettings">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save Check Settings"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSavePreferencesActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSaveCheckSettingsActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveEmail">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Username"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveCellnum">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Cell Number"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBSaveCellnumActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveRefreshTime">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Refresh Time"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckPax">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save PAX Checking"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckShowclix">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Showclix Checking"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSavePlayAlarm">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Play Alarm"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveEvent">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Event"/>
-              </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
               <AuxValues>
@@ -701,18 +696,13 @@
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;BETA versions will most likely&lt;br&gt;&#xa;include features that could, at any&lt;br&gt;&#xa;point in time, break the program&lt;br&gt;&#xa;or parts of it. These versions will&lt;br&gt;&#xa;contain ideas that still need to be&lt;br&gt;&#xa;debugged, so any help in finding&lt;br&gt;&#xa;these is greatly appreciated.&lt;br&gt;&#xa;Change information can be found&lt;br&gt;&#xa;in the Patch Notes, and more&lt;br&gt;&#xa;detailed changes can be found in&lt;br&gt;&#xa;the GitHub commits.&lt;br&gt;&#xa;&lt;br&gt;&#xa;Use at your own risk.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="JBSaveSettings">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save Settings"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBSaveSettingsActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveCheckTwitter">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Twitter Checking"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBLoadNotifications">
               <Properties>
@@ -731,7 +721,7 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBSaveTwitterKeys">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save Twitter Keys"/>
+                <Property name="text" type="java.lang.String" value="Save Encrypted Twitter Keys"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;NOTE: This saves your Twitter API&lt;br&gt;&#xa;keys in an encrypted format. Your&lt;br&gt;&#xa;keys will still be obtainable if you or&lt;br&gt;&#xa;someone else has access to this&lt;br&gt;&#xa;program&apos;s source code (which is&lt;br&gt;&#xa;publicly available). Save at your&lt;br&gt;&#xa;own risk!&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
@@ -745,11 +735,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Every 24 hours"/>
                 <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveKnownWebsiteChecking">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Known Website Checking"/>
               </Properties>
             </Component>
           </SubComponents>

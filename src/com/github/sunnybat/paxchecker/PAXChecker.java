@@ -1,21 +1,16 @@
 package com.github.sunnybat.paxchecker;
 
-import com.github.sunnybat.commoncode.encryption.Encryption;
-import com.github.sunnybat.commoncode.error.ErrorBuilder;
+import com.github.sunnybat.commoncode.email.EmailAccount;
+import com.github.sunnybat.commoncode.update.*;
 import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.browser.TwitterReader;
-import com.github.sunnybat.paxchecker.check.CheckPaxsite;
-import com.github.sunnybat.paxchecker.check.CheckSetup;
-import com.github.sunnybat.paxchecker.check.CheckShowclix;
-import com.github.sunnybat.paxchecker.check.DeepCheckShowclix;
-import com.github.sunnybat.paxchecker.check.TicketChecker;
+import com.github.sunnybat.paxchecker.check.*;
 import com.github.sunnybat.paxchecker.gui.LoadingWindow;
-import com.github.sunnybat.paxchecker.gui.Setup;
-import com.github.sunnybat.paxchecker.notification.NotificationHandler;
-import com.github.sunnybat.paxchecker.preferences.Preference;
-import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import com.github.sunnybat.paxchecker.update.UpdateHandler;
-import java.io.FileNotFoundException;
+import com.github.sunnybat.paxchecker.gui.Status;
+import com.github.sunnybat.paxchecker.setup.*;
+import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  *
@@ -23,307 +18,204 @@ import java.io.FileNotFoundException;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "2.0.5 R2";
-  private static Setup setup;
+  public static final String VERSION = "3.0.0 R1";
   private static final Object CLINE_LOCK = new Object();
   private static boolean commandLine;
-  private static LoadingWindow start;
+  private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
+  private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
+  private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) {
+//    new com.github.sunnybat.paxchecker.setup.SetupCLI().promptForSettings();
+//    com.github.sunnybat.paxchecker.setup.SetupGUI myGUITwo = new com.github.sunnybat.paxchecker.setup.SetupGUI();
+//    myGUITwo.showWindow();
+    removeOldPreferences();
     System.out.println("Initializing...");
     java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
-    // With this, I might not need URL unshorteners... I probably won't. It automatically redirects.
-    if (isCLine(args)) {
-      enableCommandLine();
-    } else {
-      try {
-        start = new LoadingWindow();
-        start.showWindow(); // Will throw HeadlessException if in headless environment
-        Thread.setDefaultUncaughtExceptionHandler(new com.github.sunnybat.commoncode.error.GUIExceptionHandler());
-        javax.swing.ToolTipManager.sharedInstance().setDismissDelay(600000); // Make Tooltips stay forever
-        setup = new Setup();
-      } catch (java.awt.HeadlessException e) {
-        System.out.println("Headless environment detected: Switching to CLI mode.");
-        enableCommandLine();
-      }
-    }
-    initClasses();
-    setupProgram(args);
-  }
 
-  private static boolean isCLine(String[] args) {
-    for (String s : args) {
-      if (s.equals("-cli")) {
-        return true;
-      }
-    }
-    return false;
-  }
+    LoadingWindow window = new LoadingWindow();
+    window.showWindow();
 
-  private static void initClasses() {
-    PreferenceHandler.init();
-    CheckSetup.init();
-    Email.init();
-    UpdateHandler.init();
-    KeyboardHandler.init();
-    NotificationHandler.init();
-  }
-
-  public static void setupProgram(String[] args) {
-    boolean doUpdate = PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_UPDATES);
-    boolean checkPax = true;
-    boolean checkShowclix = true;
-    boolean checkTwitter = true;
-    boolean filterTwitter = false;
-//    boolean deepCheckShowclix = false;
-    boolean autoStart = false;
-    boolean savePrefs = false;
-    String[] twitterTokens = new String[4];
-    TwitterReader.addHandle("@Official_PAX");
-    if (args.length > 0) {
-      System.out.println("Args!");
-      argsCycle:
-      for (int a = 0; a < args.length; a++) {
-        System.out.println("args[" + a + "] = " + args[a]);
-        switch (args[a].toLowerCase()) {
-          case "-noupdate":
-            doUpdate = false;
-            break;
-          case "-notificationid":
-            NotificationHandler.setLastNotificationID(args[a + 1]);
-            break;
-          case "-nonotifications":
-            NotificationHandler.setLastNotificationID("DISABLE");
-            break;
-          case "-typelink":
-            KeyboardHandler.setTypeLink(true);
-            break;
-          case "-email":
-            Email.setUsername(args[a + 1]);
-            System.out.println("Username set to " + Email.getUsername());
-            break;
-          case "-password":
-            Email.setPassword(args[a + 1]);
-            System.out.println("Password set");
-            break;
-          case "-cellnum":
-            for (int b = a + 1; b < args.length; b++) {
-              if (args[b].startsWith("-")) {
-                a = b - 1;
-                continue argsCycle;
-              }
-              System.out.println("Adding email address " + args[b]);
-              Email.addEmailAddress(args[b]);
-            }
-            break;
-          case "-expo":
-            Browser.setExpo(args[a + 1]);
-            System.out.println("Expo set to " + Browser.getExpo());
-            break;
-          case "-nopax":
-            if (!checkShowclix && !checkTwitter) {
-              System.out.println("Already not checking Showclix or Twitter -- cannot set check PAX website to false");
-              break;
-            }
-            System.out.println("Setting check PAX website to false");
-            checkPax = false;
-            break;
-          case "-noshowclix":
-            if (!checkPax && !checkTwitter) {
-              System.out.println("Already not checking PAX website or Twitter -- cannot set check Showclix website to false");
-              break;
-            }
-            System.out.println("Setting check Showclix website to false");
-            checkShowclix = false;
-            break;
-//          case "-deepcheckshowclix":
-//            deepCheckShowclix = true;
-//            break;
-          case "-notwitter":
-            if (!checkPax && !checkShowclix) {
-              System.out.println("Already not checking PAX website or Showclix -- cannot set check Twitter to false");
-              break;
-            }
-            System.out.println("Setting check Twitter to false");
-            checkTwitter = false;
-            break;
-          case "-filtertwitter":
-            filterTwitter = true;
-            break;
-          case "-follow":
-          case "-checktwitter":
-            String twitterHandle = args[a + 1];
-            TwitterReader.addHandle(twitterHandle);
-          case "-alarm":
-            System.out.println("Alarm activated");
-            Audio.setPlayAlarm(true);
-            break;
-          case "-delay":
-            CheckSetup.setRefreshTime(Integer.getInteger(args[a + 1], 15));
-            System.out.println("Set refresh time to " + CheckSetup.getRefreshTime());
-            break;
-          case "-autostart":
-            autoStart = true;
-            break;
-          case "-startminimized":
-            CheckSetup.startMinimized();
-            break;
-          case "-cli":
-            enableCommandLine();
-            break;
-          case "-property":
-            try {
-              String key = args[a + 1];
-              String value = args[a + 2];
-              Email.setProperty(key, value);
-            } catch (Exception e) {
-              new ErrorBuilder()
-                  .setError(e)
-                  .setErrorTitle("ERROR setting custom property!")
-                  .setErrorMessage("Unable to set custom properties. See error details for more information.")
-                  .buildWindow();
-            }
-            break;
-          case "-savesettings":
-            savePrefs = true;
-            break;
-          case "-consumerkey":
-            twitterTokens[0] = args[a + 1];
-            break;
-          case "-consumersecret":
-            twitterTokens[1] = args[a + 1];
-            break;
-          case "-applicationkey":
-            twitterTokens[2] = args[a + 1];
-            break;
-          case "-applicationsecret":
-            twitterTokens[3] = args[a + 1];
-            break;
-          case "-savelog":
-            try {
-              if (args.length > a + 1 && !args[a + 1].startsWith("-")) {
-                System.setOut(new SavePrintStream(System.out, args[a + 1]));
-              } else {
-                System.setOut(new SavePrintStream(System.out));
-              }
-            } catch (FileNotFoundException fnfe) {
-              System.out.println("Unable to set output stream saver -- File does not exist?");
-              fnfe.printStackTrace();
-            }
-            break;
-          case "-alarmfile":
-            Audio.setAlarmFile(args[a + 1]);
-            break;
-          default:
-            if (args[a].startsWith("-")) {
-              System.out.println("Unknown argument: " + args[a]);
-            }
-            break;
-        }
-      }
-      if (autoStart && !checkPax && !checkShowclix && !checkTwitter) {
-        System.out.println("ERROR: Program is not checking PAX website, Showclix website, or Twitter. Program will now exit.");
-        System.exit(0);
-      }
-    }
-    if (!PreferenceHandler.getBooleanPreference(Preference.TYPES.LOAD_NOTIFICATIONS)) {
-      NotificationHandler.setLastNotificationID("DISABLE");
-    }
-    if (twitterTokens[0] != null) {
-      TwitterReader.setKeys(twitterTokens[0], twitterTokens[1], twitterTokens[2], twitterTokens[3]);
-      TwitterReader.init();
-    }
-    if (!TwitterReader.isInitialized()) {
-      if (PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_KEY) != null) {
-        System.out.println("Loading Twitter keys from Prefrences");
+    // CHECK UPDATES, NOTIFICATIONS
+    try {
+      window.setStatus("Checking for updates...");
+      PatchNotesDownloader notesDownloader = new PatchNotesDownloader(PATCH_NOTES_LINK);
+      notesDownloader.downloadVersionNotes(VERSION);
+      if (notesDownloader.updateAvailable()) {
+        // TODO: Add support for anonymous downloads
+        UpdateDownloader myDownloader = new UpdateDownloader(UPDATE_LINK, BETA_UPDATE_LINK);
+        UpdatePrompt myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
+            "VERSION", notesDownloader.getVersionNotes(VERSION));
+        window.setVisible(false); // TODO: Make better method
+        myPrompt.showWindow();
         try {
-          TwitterReader.setKeys(Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_KEY)),
-              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_CONSUMER_SECRET)),
-              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_APP_KEY)),
-              Encryption.decrypt(PreferenceHandler.getStringPreference(Preference.TYPES.TWITTER_APP_SECRET)));
-        } catch (Exception exception) {
-          System.out.println("ERROR: Unable to load Twitter keys from Preferences!");
+          myPrompt.waitForClose();
+        } catch (InterruptedException e) {
         }
-        TwitterReader.init();
-      } else {
-        System.out.println("No Twitter keys found!");
-      }
-    }
-    if (filterTwitter) {
-      TwitterReader.enableKeywordFiltering();
-    }
-    System.out.println("Loading patch notes...");
-    if (autoStart) {
-      if (checkPax) {
-        TicketChecker.addChecker(new CheckPaxsite());
-      }
-      if (checkShowclix) {
-        CheckShowclix c;
-//        if (deepCheckShowclix) {
-//          c = new DeepCheckShowclix();
-//        } else {
-        c = new CheckShowclix();
-//        }
-        TicketChecker.addChecker(c);
-      }
-      if (checkTwitter && TwitterReader.isInitialized()) {
-        TwitterReader.runTwitterStream();
-      }
-    }
-    if (isCommandLine()) {
-      if (doUpdate) {
-        UpdateHandler.loadVersionNotes();
-        if (UpdateHandler.updateAvailable()) {
-          UpdateHandler.CLIUpdate(args);
+        if (myPrompt.shouldUpdateProgram()) {
+          myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
+          return;
+        } else {
+          window.showWindow();
         }
       }
-      System.out.println("Loading notifications...");
-      NotificationHandler.loadNotifications();
-      System.out.println("Finished loading notifications.");
-      NotificationHandler.showNewNotifications();
-      if (!autoStart) {
-        CheckSetup.commandLineSettingsInput();
+    } catch (IOException iOException) {
+    } catch (URISyntaxException uRISyntaxException) {
+    }
+    window.dispose();
+
+    // SETUP
+    boolean isHeadless = GraphicsEnvironment.isHeadless();
+    boolean isAutostart = false;
+    for (String s : args) {
+      switch (s.toLowerCase()) {
+        case "-cli":
+          isHeadless = true;
+          break;
+        case "-autostart":
+          isAutostart = true;
+          break;
+//          case "-noupdate":
+//            doUpdate = false;
+//            break;
+//          case "-notificationid":
+//            NotificationHandler.setLastNotificationID(args[a + 1]);
+//            break;
+//          case "-nonotifications":
+//            NotificationHandler.setLastNotificationID("DISABLE");
+//            break;
+//          case "-follow":
+//          case "-checktwitter":
+//            String twitterHandle = args[a + 1];
+//            TwitterReader.addHandle(twitterHandle);
+//          case "-autostart":
+//            autoStart = true;
+//            break;
+//          case "-startminimized":
+//            CheckSetup.startMinimized();
+//            break;
+//          case "-property":
+//            try {
+//              String key = args[a + 1];
+//              String value = args[a + 2];
+//              Email.setProperty(key, value);
+//            } catch (Exception e) {
+//              new ErrorBuilder()
+//                  .setError(e)
+//                  .setErrorTitle("ERROR setting custom property!")
+//                  .setErrorMessage("Unable to set custom properties. See error details for more information.")
+//                  .buildWindow();
+//            }
+//            break;
+//          case "-savesettings":
+//            savePrefs = true;
+//            break;
+//          case "-consumerkey":
+//            twitterTokens[0] = args[a + 1];
+//            break;
+//          case "-consumersecret":
+//            twitterTokens[1] = args[a + 1];
+//            break;
+//          case "-applicationkey":
+//            twitterTokens[2] = args[a + 1];
+//            break;
+//          case "-applicationsecret":
+//            twitterTokens[3] = args[a + 1];
+//            break;
+//          case "-savelog":
+//            try {
+//              if (args.length > a + 1 && !args[a + 1].startsWith("-")) {
+//                System.setOut(new SavePrintStream(System.out, args[a + 1]));
+//              } else {
+//                System.setOut(new SavePrintStream(System.out));
+//              }
+//            } catch (FileNotFoundException fnfe) {
+//              System.out.println("Unable to set output stream saver -- File does not exist?");
+//              fnfe.printStackTrace();
+//            }
+//            break;
+//          case "-alarmfile":
+//            Audio.setAlarmFile(args[a + 1]);
+//            break;
+//          default:
+//            if (args[a].startsWith("-")) {
+//              System.out.println("Unknown argument: " + args[a]);
+//            }
+//            break;
       }
-      if (savePrefs) {
-        PreferenceHandler.savePreferences();
-      }
-      CheckSetup.startCommandLineWebsiteChecking();
+    }
+    Setup mySetup;
+    if (isAutostart) {
+      mySetup = new SetupAuto(args);
+    } else if (isHeadless) {
+      mySetup = new SetupCLI();
     } else {
-      if (doUpdate) {
-        start.setStatus("Loading Version Notes...");
-        UpdateHandler.loadVersionNotes();
-        if (UpdateHandler.updateAvailable()) {
-          UpdateHandler.promptUpdate(args);
-        }
-        setup.setPatchNotesText(UpdateHandler.getVersionNotes());
-//        Timer t = new Timer();
-//        t.schedule(updateCheck, 1000 * 60 * 60 * 24);
-      } else {
-        setup.setPatchNotesText("[Updating Disabled]");
-//        startBackgroundThread(new Runnable() {
-//          @Override
-//          public void run() {
-//            UpdateHandler.loadVersionNotes();
-//            setup.setPatchNotesText(UpdateHandler.getVersionNotes());
-//          }
-//        }, "Patch Notes");
+      mySetup = new SetupGUI();
+    }
+    mySetup.promptForSettings();
+
+    Status myStatus = new Status();
+
+    EmailAccount emailAccount = null;
+    try {
+      emailAccount = new EmailAccount(mySetup.getEmailUsername(), mySetup.getEmailPassword());
+      for (String s : mySetup.getEmailAddresses()) {
+        emailAccount.addEmailAddress(s);
       }
-      start.setStatus("Loading Notifications...");
-      NotificationHandler.loadNotifications();
-      start.setStatus("Program loaded!");
-      start.dispose();
-      NotificationHandler.showNewNotifications();
-      if (autoStart) {
-        start.dispose();
-        CheckSetup.startCheckingWebsites();
-      } else {
-        setup.loadProgramSettings();
-        setup.showWindow();
+    } catch (IllegalArgumentException e) {
+    }
+    TicketChecker myChecker = initChecker(mySetup, myStatus);
+
+    myStatus.showWindow();
+
+    while (true) {
+      long startTime = System.currentTimeMillis();
+      if (myChecker.isUpdated()) {
+        Browser.openLinkInBrowser(myChecker.getLinkFound());
+        if (emailAccount != null) {
+          emailAccount.sendMessage("PAXChecker", "A new link has been found: " + myChecker.getLinkFound());
+        }
+      }
+      while (System.currentTimeMillis() - startTime < mySetup.timeBetweenChecks() * 1000) {
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException iE) {
+        }
       }
     }
+  }
+
+  private static void removeOldPreferences() {
+    try {
+      System.out.println("Checking for old preferences root...");
+      java.util.prefs.Preferences p = java.util.prefs.Preferences.userRoot().node("paxchecker");
+      p.removeNode();
+      p.flush();
+      System.out.println("Removed node.");
+    } catch (Exception e) {
+      System.out.println("Unable to remove old preferences node -- already removed?");
+    }
+  }
+
+  private static TicketChecker initChecker(Setup mySetup, Status myStatus) {
+    TicketChecker myChecker = new TicketChecker(myStatus);
+    if (mySetup.shouldCheckPAXWebsite()) {
+      myChecker.addChecker(new CheckPaxsite());
+    }
+    if (mySetup.shouldCheckShowclix()) {
+      myChecker.addChecker(new CheckShowclix());
+    }
+    if (mySetup.shouldCheckKnownEvents()) {
+      myChecker.addChecker(new CheckShowclixEventPage());
+    }
+    if (mySetup.shouldCheckTwitter()) {
+      // TODO: Add Twitter checker
+    }
+    myChecker.initCheckers();
+    return myChecker;
   }
 
   public static void enableCommandLine() {

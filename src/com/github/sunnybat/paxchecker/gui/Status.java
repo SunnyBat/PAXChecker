@@ -1,13 +1,15 @@
 package com.github.sunnybat.paxchecker.gui;
 
-import com.github.sunnybat.paxchecker.Email;
-import com.github.sunnybat.paxchecker.DataTracker;
+import com.github.sunnybat.commoncode.email.EmailAccount;
+import com.github.sunnybat.commoncode.email.EmailAddress;
 import com.github.sunnybat.paxchecker.Audio;
+import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.browser.TwitterReader;
-import com.github.sunnybat.paxchecker.check.CheckSetup;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
-import java.awt.*;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  *
@@ -50,24 +52,49 @@ public class Status extends javax.swing.JFrame {
     } catch (Exception e) {
       System.out.println("ERROR: System tray is not supported!");
     }
-    myMenu = new IconMenu();
+    myMenu = new IconMenu() {
+      @Override
+      public void showWindowPressed() {
+        showWindow();
+      }
+
+      @Override
+      public void forceCheckPressed() {
+        // TODO: Add force check code
+      }
+
+      @Override
+      public void sendTestEmailPressed() {
+
+      }
+    };
     JBReconnectTwitter.setVisible(false);
   }
 
-  public void setupComponents() {
+  public void enableEmail() {
+    if (myMenu != null) {
+      myMenu.enableEmail();
+    }
+  }
+
+  public void enableTwitter() {
+    // TODO: Enable Twitter
+  }
+
+  public void setupComponents(final List<EmailAddress> addresses) {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         JLTitle.setText(Browser.getExpo() + " Website Status");
-        if (!Email.shouldSendEmail()) {
+        if (addresses == null) {
           setInfoText("[TEXTING DISABLED]");
           setTextButtonState(false);
-        } else if (Email.getAddressList().size() == 1) {
-          setInfoText(Email.getUsername() + " -- " + Email.getAddressList().get(0).getCompleteAddress());
+        } else if (addresses.size() == 1) {
+          setInfoText(addresses.get(0).getCompleteAddress()); // TODO: Add in sending email address
         } else {
-          setInfoText(Email.getUsername() + " -- Multiple Numbers (Mouse Here to View)");
+          setInfoText("Multiple Numbers (Mouse Here to View)"); // TODO: Add in sending email address
           String list = "<html>";
-          String[] allAddresses = Email.convertToString(Email.getAddressList()).split(";");
+          String[] allAddresses = EmailAccount.convertToString(addresses).split(";");
           for (int a = 0; a < allAddresses.length; a++) {
             list += allAddresses[a].trim();
             if (a + 1 != allAddresses.length) {
@@ -89,9 +116,9 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if (!TwitterReader.isStreamingTwitter()) { // This is technically a race condition, but it has a ridiculously large window
-          JLTwitterStatus.setVisible(false);       // to read this before the Twitter stream potentially dies. Ignoring.
-        }
+//        if (!TwitterReader.isStreamingTwitter()) { // This is technically a race condition, but it has a ridiculously large window
+//          JLTwitterStatus.setVisible(false);       // to read this before the Twitter stream potentially dies. Ignoring.
+//        }
         pack(); // Is this even doing anything?
         setVisible(true);
       }
@@ -188,7 +215,7 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        jButton1.setEnabled(enabled);
+        JBTestText.setEnabled(enabled);
         if (enabled) {
           myMenu.addTextButton();
         } else {
@@ -202,7 +229,7 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        jButton2.setEnabled(enabled);
+        JBTestAlarm.setEnabled(enabled);
       }
     });
   }
@@ -220,7 +247,7 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        jButton1.setText(s);
+        JBTestText.setText(s);
       }
     });
   }
@@ -229,7 +256,7 @@ public class Status extends javax.swing.JFrame {
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        jButton3.setEnabled(enabled);
+        JBForceCheck.setEnabled(enabled);
       }
     });
   }
@@ -290,25 +317,29 @@ public class Status extends javax.swing.JFrame {
       System.out.println("Image == null");
       return;
     }
-//    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-//      @Override
-//      public void run() {
     try {
-      setIconImage(image);
-      myIcon = new TrayIcon(image, "PAXChecker", myMenu);
-      myIcon.setImageAutoSize(true);
-      myIcon.addActionListener(new java.awt.event.ActionListener() {
+      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
         @Override
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-          maximizeWindow();
+        public void run() {
+          try {
+            setIconImage(image);
+            myIcon = new TrayIcon(image, "PAXChecker", myMenu);
+            myIcon.setImageAutoSize(true);
+            myIcon.addActionListener(new java.awt.event.ActionListener() {
+              @Override
+              public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maximizeWindow();
+              }
+            });
+            System.out.println("Set status icon: " + (myIcon != null));
+          } catch (Exception e) {
+            System.out.println("ERROR setting status iconImage!");
+          }
         }
       });
-      System.out.println("Set status icon: " + (myIcon != null));
-    } catch (Exception e) {
-      System.out.println("ERROR setting status iconImage!");
+    } catch (InterruptedException | InvocationTargetException e) {
+      e.printStackTrace();
     }
-//      }
-//    });
   }
 
   @Override
@@ -330,9 +361,9 @@ public class Status extends javax.swing.JFrame {
   private void initComponents() {
 
     JLTitle = new javax.swing.JLabel();
-    jButton1 = new javax.swing.JButton();
-    jButton2 = new javax.swing.JButton();
-    jButton3 = new javax.swing.JButton();
+    JBTestText = new javax.swing.JButton();
+    JBTestAlarm = new javax.swing.JButton();
+    JBForceCheck = new javax.swing.JButton();
     JLLastChecked = new javax.swing.JLabel();
     JLInformation = new javax.swing.JLabel();
     jLabel2 = new javax.swing.JLabel();
@@ -356,24 +387,24 @@ public class Status extends javax.swing.JFrame {
     JLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     JLTitle.setText("PAX Website Status");
 
-    jButton1.setText("Test Text");
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
+    JBTestText.setText("Test Text");
+    JBTestText.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
+        JBTestTextActionPerformed(evt);
       }
     });
 
-    jButton2.setText("Test Alarm Sound");
-    jButton2.addActionListener(new java.awt.event.ActionListener() {
+    JBTestAlarm.setText("Test Alarm Sound");
+    JBTestAlarm.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton2ActionPerformed(evt);
+        JBTestAlarmActionPerformed(evt);
       }
     });
 
-    jButton3.setText("Force Check");
-    jButton3.addActionListener(new java.awt.event.ActionListener() {
+    JBForceCheck.setText("Force Check");
+    JBForceCheck.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton3ActionPerformed(evt);
+        JBForceCheckActionPerformed(evt);
       }
     });
 
@@ -425,10 +456,10 @@ public class Status extends javax.swing.JFrame {
                 .addComponent(JPLinks, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addComponent(JLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JBTestText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JBTestAlarm, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
+              .addComponent(JBForceCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGap(10, 10, 10))
           .addGroup(layout.createSequentialGroup()
@@ -464,10 +495,10 @@ public class Status extends javax.swing.JFrame {
         .addComponent(JLInformation)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jButton1)
-          .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(JBTestText)
+          .addComponent(JBTestAlarm, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jButton3)
+        .addComponent(JBForceCheck)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0)
@@ -478,47 +509,39 @@ public class Status extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    // TODO add your handling code here:
-    CheckSetup.forceRefresh();
-  }//GEN-LAST:event_jButton3ActionPerformed
+  private void JBForceCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBForceCheckActionPerformed
+    // TODO: Force Check Pressed
+  }//GEN-LAST:event_JBForceCheckActionPerformed
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    // TODO add your handling code here:
-    Email.sendBackgroundTestEmail();
-  }//GEN-LAST:event_jButton1ActionPerformed
+  private void JBTestTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestTextActionPerformed
+    // TODO: Test Text Pressed
+  }//GEN-LAST:event_JBTestTextActionPerformed
 
-  private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    // TODO add your handling code here:
-//    Browser.openLinkInBrowser("http://prime.paxsite.com");
-//    setInformationText("PAX Prime site opened.");
+  private void JBTestAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestAlarmActionPerformed
     if (Audio.playAlarm()) {
       setInformationText("Alarm started.");
     } else {
       setInformationText("Unable to play alarm.");
     }
-  }//GEN-LAST:event_jButton2ActionPerformed
+  }//GEN-LAST:event_JBTestAlarmActionPerformed
 
   private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
-    // TODO add your handling code here:
     minimizeWindow();
   }//GEN-LAST:event_formWindowIconified
 
   private void JLLinksExplanationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLLinksExplanationMousePressed
-    // TODO add your handling code here:
     infoWindow.setVisible(true);
   }//GEN-LAST:event_JLLinksExplanationMousePressed
 
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
-    // TODO add your handling code here:
-    if (!TwitterReader.isStreamingTwitter()) {
-      TwitterReader.runTwitterStream();
-    }
-    JBReconnectTwitter.setVisible(false);
+    // TODO: Reconnect to Twitter Pressed
   }//GEN-LAST:event_JBReconnectTwitterActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton JBForceCheck;
   private javax.swing.JButton JBReconnectTwitter;
+  private javax.swing.JButton JBTestAlarm;
+  private javax.swing.JButton JBTestText;
   private javax.swing.JLabel JLDataUsage;
   private javax.swing.JLabel JLInformation;
   private javax.swing.JLabel JLLastChecked;
@@ -527,9 +550,6 @@ public class Status extends javax.swing.JFrame {
   private javax.swing.JLabel JLTwitterStatus;
   private javax.swing.JPanel JPLinks;
   private javax.swing.Box.Filler filler1;
-  private javax.swing.JButton jButton1;
-  private javax.swing.JButton jButton2;
-  private javax.swing.JButton jButton3;
   private javax.swing.JLabel jLabel2;
   // End of variables declaration//GEN-END:variables
 }

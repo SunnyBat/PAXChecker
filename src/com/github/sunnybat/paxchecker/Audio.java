@@ -1,16 +1,18 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
-import com.github.sunnybat.paxchecker.check.CheckSetup;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -41,11 +43,21 @@ public class Audio {
     playSound = play;
   }
 
+  /**
+   * Sets the file to play when the alarm is triggered. Note that this currently only works with .WAV files.
+   *
+   * @param file The path (relative or absolute) to the File to play
+   */
   public static void setAlarmFile(String file) {
     System.out.println("Alarmfile");
     setAlarmFile(new File(file));
   }
 
+  /**
+   * Sets the file to play when the alarm is triggered. Note that this currently only works with .WAV files.
+   *
+   * @param alarmFile The File to play
+   */
   public static void setAlarmFile(File alarmFile) {
     if (!alarmFile.exists()) {
       System.out.println("Alarm file does not exist.");
@@ -83,25 +95,27 @@ public class Audio {
       if (alarmFile != null) {
         audioSrc = new FileInputStream(alarmFile);
       } else {
-        audioSrc = PAXChecker.class.getResourceAsStream("/resources/Alarm.wav");
+        audioSrc = Audio.class.getResourceAsStream("/resources/Alarm.wav");
       }
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
       clip.open(inputStream);
       clip.start();
       return true;
-    } catch (Exception e) {
+    } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
       e.printStackTrace();
     }
     return false;
   }
 
+  /**
+   * A custom LineListener implementation used for stopping the default clip when it's told to stop
+   */
   private static class LListener implements LineListener {
 
     @Override
     public void update(LineEvent le) {
       if (le.getType() == LineEvent.Type.STOP) {
-        CheckSetup.setStatusInformationText("Finished playing alarm.");
         clip.removeLineListener(listener);
         clip.close();
       }

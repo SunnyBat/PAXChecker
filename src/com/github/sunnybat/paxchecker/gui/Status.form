@@ -41,11 +41,11 @@
                           </Group>
                           <Component id="JLTitle" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jButton1" max="32767" attributes="0"/>
+                              <Component id="JBTestText" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jButton2" min="-2" pref="185" max="-2" attributes="0"/>
+                              <Component id="JBTestAlarm" min="-2" pref="185" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jButton3" alignment="0" max="32767" attributes="0"/>
+                          <Component id="JBForceCheck" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
@@ -90,11 +90,11 @@
               <Component id="JLInformation" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton2" min="-2" pref="23" max="-2" attributes="0"/>
+                  <Component id="JBTestText" min="-2" max="-2" attributes="0"/>
+                  <Component id="JBTestAlarm" min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+              <Component id="JBForceCheck" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="filler1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -114,28 +114,28 @@
         <Property name="text" type="java.lang.String" value="PAX Website Status"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="JBTestText">
       <Properties>
         <Property name="text" type="java.lang.String" value="Test Text"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBTestTextActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton2">
+    <Component class="javax.swing.JButton" name="JBTestAlarm">
       <Properties>
         <Property name="text" type="java.lang.String" value="Test Alarm Sound"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBTestAlarmActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton3">
+    <Component class="javax.swing.JButton" name="JBForceCheck">
       <Properties>
         <Property name="text" type="java.lang.String" value="Force Check"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBForceCheckActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="JLLastChecked">

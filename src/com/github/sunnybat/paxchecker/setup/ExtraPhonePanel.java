@@ -1,6 +1,6 @@
-package com.github.sunnybat.paxchecker.gui;
+package com.github.sunnybat.paxchecker.setup;
 
-import com.github.sunnybat.paxchecker.Email;
+import com.github.sunnybat.commoncode.email.EmailAddress;
 
 /**
  *
@@ -8,19 +8,19 @@ import com.github.sunnybat.paxchecker.Email;
  */
 public class ExtraPhonePanel extends javax.swing.JPanel {
 
-  private final Setup mainSetupPanel;
+  private final SetupGUI mainSetupPanel;
 
   /**
    * Creates new form ExtraPhonePanel
    *
    * @param mSP
    */
-  public ExtraPhonePanel(Setup mSP) {
+  public ExtraPhonePanel(SetupGUI mSP) {
     initComponents();
     mainSetupPanel = mSP;
   }
 
-  public ExtraPhonePanel(Setup mSP, String numberCarrier) {
+  public ExtraPhonePanel(SetupGUI mSP, String numberCarrier) {
     initComponents();
     mainSetupPanel = mSP;
   }
@@ -31,12 +31,12 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
    * @param number The cell number to be texted
    * @param carrier The carrier to be texted, or null for AT&T
    */
-  public ExtraPhonePanel(Setup mSP, String number, String carrier) {
+  public ExtraPhonePanel(SetupGUI mSP, String number, String carrier) {
     initComponents();
     mainSetupPanel = mSP;
     if (carrier != null) {
-      jComboBox1.setSelectedIndex(Setup.getIndexOfProvider(Email.getProvider(carrier)));
-      if (Email.getProvider(carrier).equals("[Other]")) {
+      jComboBox1.setSelectedIndex(SetupGUI.getIndexOfProvider(EmailAddress.getProvider(carrier)));
+      if (EmailAddress.getProvider(carrier).equals("[Other]")) {
         jTextField2.setText(number + carrier);
       } else {
         jTextField2.setText(number);
@@ -72,7 +72,7 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
 
     jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
-    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin", "Wind", "SaskTel", "[Other]" }));
+    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin (CAN)", "Wind", "Sasktel" }));
 
     jButton1.setText("X");
     jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -88,9 +88,9 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
       .addGroup(layout.createSequentialGroup()
         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+        .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jButton1))
     );

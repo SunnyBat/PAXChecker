@@ -1,0 +1,129 @@
+package com.github.sunnybat.paxchecker.setup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author SunnyBat
+ */
+public class SetupAuto implements Setup {
+
+  private String[] args;
+
+  public SetupAuto(String[] args) {
+    this.args = new String[args.length];
+    System.arraycopy(args, 0, this.args, 0, args.length);
+  }
+
+  @Override
+  public void promptForSettings() {
+    // Do not need to do anything
+  }
+
+  private boolean hasArg(String arg) {
+    for (String s : args) {
+      if (s.equals(arg)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private String getArg(String arg) {
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equals(arg) && i < args.length - 1) {
+        return args[i+1];
+      }
+    }
+    return ""; // Probably shouldn't return null?
+  }
+
+  @Override
+  public String getEmailUsername() {
+    return getArg("-email");
+  }
+
+  @Override
+  public String getEmailPassword() {
+    return getArg("-password");
+  }
+
+  @Override
+  public List<String> getEmailAddresses() {
+    List<String> emails = new ArrayList<>();
+    String arg = getArg("-cellnum");
+    if (arg != null) {
+      String[] split = arg.split(";");
+      for (String s : split) {
+        emails.add(s.trim());
+      }
+    }
+    return emails;
+  }
+
+  @Override
+  public boolean shouldCheckPAXWebsite() {
+    return !hasArg("-nopax");
+  }
+
+  @Override
+  public boolean shouldCheckShowclix() {
+    return !hasArg("-noshowclix");
+  }
+
+  @Override
+  public boolean shouldCheckKnownEvents() {
+    return !hasArg("-noknownevents");
+  }
+
+  @Override
+  public boolean shouldCheckTwitter() {
+    return !hasArg("-notwitter");
+  }
+
+  @Override
+  public boolean shouldFilterTwitter() {
+    return hasArg("-filtertwitter");
+  }
+
+  @Override
+  public boolean shouldPlayAlarm() {
+    return hasArg("-alarm");
+  }
+
+  @Override
+  public int timeBetweenChecks() {
+    try {
+      return Integer.parseInt(getArg("-delay"));
+    } catch (NumberFormatException nfe) {
+      return 10;
+    }
+  }
+
+  @Override
+  public String getExpoToCheck() {
+    return getArg("-expo");
+  }
+
+  @Override
+  public String getTwitterConsumerKey() {
+    return getArg("-consumerkey");
+  }
+
+  @Override
+  public String getTwitterConsumerSecret() {
+    return getArg("-consumersecret");
+  }
+
+  @Override
+  public String getTwitterApplicationKey() {
+    return getArg("-applicationkey");
+  }
+
+  @Override
+  public String getTwitterApplicationSecret() {
+    return getArg("-applicationsecret");
+  }
+
+}

@@ -1,14 +1,15 @@
 package com.github.sunnybat.paxchecker.notification;
 
-import java.io.*;
+import com.github.sunnybat.commoncode.error.ErrorBuilder;
+import com.github.sunnybat.paxchecker.DataTracker;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-import com.github.sunnybat.paxchecker.DataTracker;
-import com.github.sunnybat.paxchecker.preferences.Preference;
-import com.github.sunnybat.paxchecker.preferences.PreferenceHandler;
-import com.github.sunnybat.commoncode.error.ErrorBuilder;
 
 /**
  *
@@ -16,16 +17,19 @@ import com.github.sunnybat.commoncode.error.ErrorBuilder;
  */
 public class NotificationHandler {
 
-  private static final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt?dl=1";
-  private static final String NOTIFICATIONS_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
-  private static final ArrayList<Notification> notificationList = new ArrayList<>();
-  private static String lastNotificationID = "";
+  private final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt?dl=1";
+  private final String NOTIFICATIONS_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
+  private final ArrayList<Notification> notificationList = new ArrayList<>();
+  private String lastNotificationID = "";
+  private final boolean anonymousStatistics;
 
-  /**
-   * Init.
-   */
-  public static void init() {
-    setLastNotificationID(PreferenceHandler.getStringPreference(Preference.TYPES.LAST_NOTIFICATION_ID));
+  public NotificationHandler(boolean anonymousStatistics, String lastNotificationID) {
+    if (lastNotificationID == null) {
+      this.lastNotificationID = "DISABLE";
+    } else {
+      this.lastNotificationID = lastNotificationID;
+    }
+    this.anonymousStatistics = anonymousStatistics;
   }
 
   /**
@@ -33,7 +37,7 @@ public class NotificationHandler {
    *
    * @param lNID The last Notification ID loaded
    */
-  public static void setLastNotificationID(String lNID) {
+  public void setLastNotificationID(String lNID) {
     if (lNID == null) {
       return;
     }
@@ -43,8 +47,8 @@ public class NotificationHandler {
   /**
    * This loads all new notifications. This method will block until complete.
    */
-  public static void loadNotifications() {
-    if (lastNotificationID != null && lastNotificationID.equals("DISABLE")) {
+  public void loadNotifications() {
+    if (lastNotificationID.equals("DISABLE")) {
       return;
     }
     URLConnection inputConnection;
@@ -52,7 +56,7 @@ public class NotificationHandler {
     BufferedReader myReader = null;
     try {
       URL notificationURL;
-      if (PreferenceHandler.getBooleanPreference(Preference.TYPES.ANONYMOUS_STATISTICS)) {
+      if (anonymousStatistics) {
         notificationURL = new URL(NOTIFICATIONS_LINK_ANONYMOUS);
       } else {
         notificationURL = new URL(NOTIFICATIONS_LINK);
@@ -115,7 +119,7 @@ public class NotificationHandler {
    *
    * @return An ArrayList with all new notifications
    */
-  private static ArrayList<Notification> newNotifications() {
+  private ArrayList<Notification> newNotifications() {
     ArrayList<Notification> list = new ArrayList<>();
     for (Notification n : notificationList) {
       if (n.getID().equals(lastNotificationID)) {
@@ -131,7 +135,7 @@ public class NotificationHandler {
    *
    * @return True for new notifications, false if none
    */
-  public static boolean isNewNotification() {
+  public boolean isNewNotification() {
     if (lastNotificationID.equals("DISABLE")) {
       return false;
     }
@@ -140,17 +144,19 @@ public class NotificationHandler {
 
   /**
    * Shows all new notifications. This blocks the current Thread until all notifications have been closed.
+   *
+   * @return The ID of the latest notification shown, or null if there are no new notifications
    */
-  public static void showNewNotifications() {
+  public String showNewNotifications() {
     if (!isNewNotification()) {
-      return;
+      return null;
     }
     boolean first = false;
     ArrayList<Notification> newNotifications = newNotifications();
     CountDownLatch cDL = new CountDownLatch(newNotifications.size());
     for (Notification n : newNotifications) {
       if (!first) {
-        PreferenceHandler.getPreferenceObject(Preference.TYPES.LAST_NOTIFICATION_ID).setValue(n.getID());
+        lastNotificationID = n.getID();
         first = true;
       }
       if (com.github.sunnybat.paxchecker.PAXChecker.isCommandLine()) {
@@ -172,6 +178,7 @@ public class NotificationHandler {
       cDL.await();
     } catch (InterruptedException interruptedException) {
     }
+    return lastNotificationID;
   }
 
 }

@@ -1,21 +1,21 @@
 package com.github.sunnybat.paxchecker.gui;
 
-import com.github.sunnybat.paxchecker.Email;
 import com.github.sunnybat.paxchecker.Audio;
-import com.github.sunnybat.paxchecker.check.CheckSetup;
-import java.awt.*;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
 
 /**
  *
  * @author Sunnybat
  */
-public class IconMenu extends PopupMenu {
+public abstract class IconMenu extends PopupMenu {
 
   private final MenuItem maximizeButton;
   private final MenuItem closeButton;
   private final MenuItem testTextButton;
   private final MenuItem testAlarmButton;
   private final MenuItem forceCheckButton;
+  private boolean sendEmail;
 
   public IconMenu() {
     maximizeButton = new MenuItem("Restore Window");
@@ -26,7 +26,7 @@ public class IconMenu extends PopupMenu {
     maximizeButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        CheckSetup.maximizeStatusWindow();
+        showWindowPressed();
       }
     });
     closeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -38,7 +38,7 @@ public class IconMenu extends PopupMenu {
     testTextButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        Email.sendBackgroundTestEmail();
+        sendTestEmailPressed();
       }
     });
     testAlarmButton.addActionListener(new java.awt.event.ActionListener() {
@@ -50,10 +50,14 @@ public class IconMenu extends PopupMenu {
     forceCheckButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        CheckSetup.forceRefresh();
+        forceCheckPressed();
       }
     });
     addAllComponents();
+  }
+
+  public void enableEmail() {
+    sendEmail = true;
   }
 
   public void removeTextButton() {
@@ -66,10 +70,10 @@ public class IconMenu extends PopupMenu {
   }
 
   private void addAllComponents() {
-    if (Email.shouldSendEmail()) {
+    if (sendEmail) {
       add(testTextButton);
     }
-    if (Audio.soundEnabled()) {
+    if (Audio.playAlarm()) {
       add(testAlarmButton);
     }
     add(forceCheckButton);
@@ -77,4 +81,10 @@ public class IconMenu extends PopupMenu {
     add(maximizeButton);
     add(closeButton);
   }
+
+  public abstract void showWindowPressed();
+
+  public abstract void forceCheckPressed();
+
+  public abstract void sendTestEmailPressed();
 }

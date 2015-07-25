@@ -1,8 +1,9 @@
 package com.github.sunnybat.paxchecker.check;
 
-import com.github.sunnybat.paxchecker.browser.TwitterReader;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
 
 /**
  *
@@ -10,22 +11,19 @@ import java.util.concurrent.*;
  */
 public final class TicketChecker {
 
-  private static final ArrayList<Check> checks = new ArrayList<>();
-  private static final ArrayList<String> openedLinks = new ArrayList<>();
-  private static com.github.sunnybat.paxchecker.gui.Status status;
-  private static String linkFound = "";
-  private static ExecutorService threadPool;
-  private static Phaser threadWait;
+  private final ArrayList<Check> checks = new ArrayList<>();
+  private final ArrayList<String> openedLinks = new ArrayList<>();
+  private com.github.sunnybat.paxchecker.gui.Status status;
+  private String linkFound = "";
+  private ExecutorService threadPool;
+  private Phaser threadWait;
 
   /**
    * Initializes the TicketChecker class.
    *
    * @param s The Status to update, or null if none
    */
-  public static void init(com.github.sunnybat.paxchecker.gui.Status s) {
-    if (threadPool != null) {
-      throw new IllegalStateException("Program has already been initialized.");
-    }
+  public TicketChecker(com.github.sunnybat.paxchecker.gui.Status s) {
     status = s;
     threadPool = Executors.newCachedThreadPool();
     threadWait = new Phaser();
@@ -37,7 +35,7 @@ public final class TicketChecker {
    *
    * @param c The Checker to add
    */
-  public static void addChecker(Check c) {
+  public void addChecker(Check c) {
     //c.init(status, threadWait); // MOVE LATER
     checks.add(c);
   }
@@ -45,7 +43,7 @@ public final class TicketChecker {
   /**
    * Initializes the Checkers registered with the program.
    */
-  public static void initCheckers() {
+  public void initCheckers() {
     for (Check c : checks) {
       c.init(status, threadWait);
     }
@@ -56,7 +54,7 @@ public final class TicketChecker {
    *
    * @return True if an update is found, false if not
    */
-  public static boolean isUpdated() {
+  public boolean isUpdated() {
     if (status != null) {
       status.setForceButtonState(false);
     }
@@ -93,7 +91,7 @@ public final class TicketChecker {
    *
    * @param link The link to set
    */
-  private static synchronized void linkFound(String link) {
+  private synchronized void linkFound(String link) {
     linkFound = link;
     addLinkFound(link);
   }
@@ -103,7 +101,7 @@ public final class TicketChecker {
    *
    * @return The last link found
    */
-  public static synchronized String getLinkFound() {
+  public synchronized String getLinkFound() {
     return linkFound;
   }
 
@@ -112,7 +110,7 @@ public final class TicketChecker {
    *
    * @param link The link to add to the list
    */
-  public static synchronized void addLinkFound(String link) {
+  public synchronized void addLinkFound(String link) {
     if (link.endsWith("/") || link.endsWith("\\")) {
       link = link.substring(0, link.length() - 1);
     }
@@ -125,7 +123,7 @@ public final class TicketChecker {
    * @param s The link to check
    * @return True if the link has already been opened, false if not
    */
-  public static synchronized boolean hasOpenedLink(String s) {
+  public synchronized boolean hasOpenedLink(String s) {
     for (String link : openedLinks) {
       if (link.endsWith("/") || link.endsWith("\\")) {
         link = link.substring(0, link.length() - 1);
@@ -143,7 +141,7 @@ public final class TicketChecker {
    *
    * @return True if checking the PAX website, false if not
    */
-  public static boolean isCheckingPaxsite() {
+  public boolean isCheckingPaxsite() {
     for (Check c : checks) {
       if (CheckPaxsite.class.isInstance(c)) {
         return true;
@@ -157,27 +155,12 @@ public final class TicketChecker {
    *
    * @return True if checking the Showclix website, false if not
    */
-  public static boolean isCheckingShowclix() {
+  public boolean isCheckingShowclix() {
     for (Check c : checks) {
       if (CheckShowclix.class.isInstance(c)) {
         return true;
       }
     }
     return false;
-  }
-
-  /**
-   * Checks whether or not the program is currently checking the Twitter website for updates.
-   *
-   * @return True if checking Twitter, false if not
-   */
-  public static boolean isCheckingTwitter() {
-//    for (Check c : checks) {
-//      if (CheckTwitter.class.isInstance(c)) {
-//        return true;
-//      }
-//    }
-//    return false;
-    return TwitterReader.isStreamingTwitter();
   }
 }
