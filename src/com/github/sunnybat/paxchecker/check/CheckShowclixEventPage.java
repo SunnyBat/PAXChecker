@@ -18,8 +18,8 @@ public class CheckShowclixEventPage extends Check {
   private String validPageID = null;
 
   public CheckShowclixEventPage() {
-    eventCheckList.add("3925916"); // "Prime 2015"
-    eventCheckList.add("3926134"); // "Prime 2015 BYOC"
+    //eventCheckList.add("3925916"); // "Prime 2015"
+    //eventCheckList.add("3926134"); // "Prime 2015 BYOC"
     //eventCheckList.add("3926157"); // "Dev 2015"
   }
 

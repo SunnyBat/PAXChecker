@@ -23,6 +23,12 @@ public class NotificationHandler {
   private String lastNotificationID = "";
   private final boolean anonymousStatistics;
 
+  /**
+   * Creates a new NotificationHandler.
+   *
+   * @param anonymousStatistics True for anonymous statistics, false for usage tracking
+   * @param lastNotificationID The ID of the last notification loaded, or null or "DISABLE" to disable notifications
+   */
   public NotificationHandler(boolean anonymousStatistics, String lastNotificationID) {
     if (lastNotificationID == null) {
       this.lastNotificationID = "DISABLE";
@@ -30,18 +36,6 @@ public class NotificationHandler {
       this.lastNotificationID = lastNotificationID;
     }
     this.anonymousStatistics = anonymousStatistics;
-  }
-
-  /**
-   * Sets the last Notification ID loaded. Set to DISABLE to disable notifications.
-   *
-   * @param lNID The last Notification ID loaded
-   */
-  public void setLastNotificationID(String lNID) {
-    if (lNID == null) {
-      return;
-    }
-    lastNotificationID = lNID;
   }
 
   /**

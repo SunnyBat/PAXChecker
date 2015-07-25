@@ -6,6 +6,7 @@ import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.check.*;
 import com.github.sunnybat.paxchecker.gui.LoadingWindow;
 import com.github.sunnybat.paxchecker.gui.Status;
+import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.setup.*;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
@@ -39,7 +40,7 @@ public final class PAXChecker {
     LoadingWindow window = new LoadingWindow();
     window.showWindow();
 
-    // CHECK UPDATES, NOTIFICATIONS
+    // CHECK UPDATES
     try {
       window.setStatus("Checking for updates...");
       PatchNotesDownloader notesDownloader = new PatchNotesDownloader(PATCH_NOTES_LINK);
@@ -62,9 +63,15 @@ public final class PAXChecker {
           window.showWindow();
         }
       }
-    } catch (IOException iOException) {
-    } catch (URISyntaxException uRISyntaxException) {
+    } catch (IOException | URISyntaxException e) {
+      e.printStackTrace();
     }
+
+    // CHECK NOTIFICATIONS
+    window.setStatus("Checking for notifications...");
+    NotificationHandler notifications = new NotificationHandler(false, "-1"); // TODO: Load notifications from Preferences
+    notifications.loadNotifications();
+    notifications.showNewNotifications();
     window.dispose();
 
     // SETUP
@@ -157,7 +164,8 @@ public final class PAXChecker {
     }
     mySetup.promptForSettings();
 
-    Status myStatus = new Status();
+    // SET UP STATUS WINDOW AND CHECKERS
+    final Status myStatus = new Status();
 
     EmailAccount emailAccount = null;
     try {
@@ -167,10 +175,36 @@ public final class PAXChecker {
       }
     } catch (IllegalArgumentException e) {
     }
-    TicketChecker myChecker = initChecker(mySetup, myStatus);
+    final TicketChecker myChecker = initChecker(mySetup, myStatus);
+    if (mySetup.shouldCheckTwitter()) {
+      // TODO: Add Twitter checker
+      TwitterStreamer tcheck = new TwitterStreamer(null) {
+        @Override
+        public void twitterConnected() {
+          myStatus.setTwitterStatus(true);
+        }
+
+        @Override
+        public void twitterDisconnected() {
+          myStatus.setTwitterStatus(false);
+        }
+
+        @Override
+        public void twitterKilled() {
+          myStatus.twitterStreamKilled();
+        }
+
+        @Override
+        public void linkFound(String link) {
+          Browser.openLinkInBrowser(myChecker.getLinkFound());
+        }
+      };
+      tcheck.startStreamingTwitter();
+    }
 
     myStatus.showWindow();
 
+    // START CHECKING
     while (true) {
       long startTime = System.currentTimeMillis();
       if (myChecker.isUpdated()) {
@@ -210,9 +244,6 @@ public final class PAXChecker {
     }
     if (mySetup.shouldCheckKnownEvents()) {
       myChecker.addChecker(new CheckShowclixEventPage());
-    }
-    if (mySetup.shouldCheckTwitter()) {
-      // TODO: Add Twitter checker
     }
     myChecker.initCheckers();
     return myChecker;

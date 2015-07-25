@@ -11,11 +11,16 @@
 # VM Error Logs #
 hs_err_pid*
 
-# Ignore Netbeans-specific classes #
+# Ignore Netbeans-specific stuff #
 build/
 dist/
 lib/
 nbproject/
+build.xml
+manifest.mf
+
+# Ignore project-specific stuff #
+*.txt
 
 # Ignore library docs and stuff #
 .DS_Store

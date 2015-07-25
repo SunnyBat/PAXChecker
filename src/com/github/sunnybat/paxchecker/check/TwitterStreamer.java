@@ -52,11 +52,6 @@ public abstract class TwitterStreamer {
     System.out.println("Twitter initialized!");
   }
 
-  public TwitterStreamer(Twitter t) {
-    myTwitter = t;
-    usersToCheck.add("Official_PAX");
-  }
-
   private final UserStreamListener listener = new UserStreamListener() {
     @Override
     public void onStatus(Status status) { // Only called when a user the program is watching tweets
@@ -99,7 +94,7 @@ public abstract class TwitterStreamer {
           .setErrorMessage("A stall warning has been thrown by the Twiiter4j library. This may have killed the Twitter stream, regardless of whether"
               + " or not the Status Window says it's connected. It's recommended that you restart the PAXChecker.")
           .buildWindow();
-      twitterStatus("Twitter stalled");
+      System.out.println("Stall warning?");
     }
 
     @Override
@@ -205,13 +200,12 @@ public abstract class TwitterStreamer {
       System.out.println("Twitter Streaming cleanup");
       myStream = null; // Make program know that the Twitter stream is dead
       successiveErrorCount = 0;
-      twitterDisconnected();
+      twitterKilled();
     }
 
     @Override
     public void onConnect() {
       System.out.println("Connected to Twitter Streaming service.");
-      // TODO: Notifiy user of successful connection
       twitterConnected();
       successiveErrorCount = 0;
     }
@@ -219,14 +213,12 @@ public abstract class TwitterStreamer {
     @Override
     public void onDisconnect() {
       System.out.println("Disconnected from Twitter Streaming service");
-      //CheckSetup.twitterConnection(successiveErrorCount * 10); // I don't think *10 is right... Is it 10, 15, 30?
-      // TODO: Notify user of retry
+      twitterDisconnected();
     }
   };
 
-  //public abstract void linkFound(String link);
   /**
-   * Adds a new keyword to filter for.
+   * Adds a new keyword to filter for. If the Twitter stream is running, this has no effect until restarted.
    *
    * @param keyword The keyword to add to the filter
    */
@@ -238,7 +230,7 @@ public abstract class TwitterStreamer {
   }
 
   /**
-   * Adds a new user to watch.
+   * Adds a new user to watch. If the Twitter stream is running, this has no effect until restarted.
    *
    * @param user The user to watch
    */
@@ -265,6 +257,9 @@ public abstract class TwitterStreamer {
     return false;
   }
 
+  /**
+   * Starts looking for Twitter updates. If the stream is already started -- connected or disconnected -- this method does nothing.
+   */
   public void startStreamingTwitter() {
     if (isStreamingTwitter()) { // If already running, return
       System.out.println("Twitter stream is already running!");
@@ -315,12 +310,26 @@ public abstract class TwitterStreamer {
     filterKeywords = true;
   }
 
+  /**
+   * Called when a new link has been found
+   *
+   * @param link The link found
+   */
   public abstract void linkFound(String link);
 
+  /**
+   * Called when a connection to the Twitter API has been made, including reconnects
+   */
   public abstract void twitterConnected();
 
+  /**
+   * Called when disconnected from the Twitter API and will automatically retry
+   */
   public abstract void twitterDisconnected();
 
-  public abstract void twitterStatus(String status);
+  /**
+   * Called when disconnected from the Twitter API and will not retry automatically
+   */
+  public abstract void twitterKilled();
 
 }

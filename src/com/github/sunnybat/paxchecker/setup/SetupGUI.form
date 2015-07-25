@@ -3,7 +3,7 @@
 <Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="PAX Checker Setup"/>
+    <Property name="title" type="java.lang.String" value="PAXChecker Setup"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
@@ -55,7 +55,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel2" max="32767" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" pref="391" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -79,7 +79,8 @@
                           <Component id="JBAddPhone" alignment="0" max="32767" attributes="0"/>
                           <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
                           <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
-                          <Component id="jLabel6" alignment="0" max="32767" attributes="0"/>
+                          <Component id="JLSecondsBetweenChecks" alignment="0" max="32767" attributes="0"/>
+                          <Component id="JPTwitterKeys" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
@@ -96,14 +97,11 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JLTwitterDisabled" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JCBFilterTwitter" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="JPTwitterKeys" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -145,7 +143,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JLTwitterDisabled" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JCBFilterTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -158,12 +155,12 @@
                           <Component id="JCBExpo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <Component id="JLSecondsBetweenChecks" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="JSCheckTime" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JBStart" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -227,7 +224,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel6">
+            <Component class="javax.swing.JLabel" name="JLSecondsBetweenChecks">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Seconds Between Website Checks"/>
@@ -335,20 +332,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckTwitterActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="JLTwitterDisabled">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="11" style="2"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ee" green="0" red="0" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="(Why is this disabled?)"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="JLTwitterDisabledMousePressed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JCheckBox" name="JCBFilterTwitter">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Filter by Keywords"/>
@@ -358,6 +341,7 @@
             <Component class="javax.swing.JCheckBox" name="JCBCheckKnownEvents">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Scan Known Potential Showclix Events"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckKnownEventsActionPerformed"/>
@@ -371,26 +355,19 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="JTFApplicationSecret" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                  <Component id="JTFConsumerKey" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                                  <Component id="JTFConsumerSecret" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
-                                  <Component id="JTFApplicationKey" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="filler1" min="-2" pref="6" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="JTFConsumerKey" alignment="1" max="32767" attributes="0"/>
+                              <Component id="JTFConsumerSecret" alignment="1" max="32767" attributes="0"/>
+                              <Component id="JTFApplicationKey" max="32767" attributes="0"/>
+                              <Component id="JTFApplicationSecret" alignment="1" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -398,7 +375,6 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="JTFConsumerKey" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -418,6 +394,11 @@
                               <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="JTFApplicationSecret" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="filler1" min="-2" pref="87" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -451,6 +432,16 @@
                 <Component class="javax.swing.JTextField" name="JTFConsumerSecret">
                 </Component>
                 <Component class="javax.swing.JTextField" name="JTFConsumerKey">
+                </Component>
+                <Component class="javax.swing.Box$Filler" name="filler1">
+                  <Properties>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[0, 32767]"/>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.VerticalGlue"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -683,9 +674,8 @@
                     <Property name="columns" type="int" value="20"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="5"/>
-                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences.&#xa;&#xa;Anonymous statistics are collected whenever you load Patch Notes (every time the program is first run), load notifications, or download new versions. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy"/>
+                    <Property name="text" type="java.lang.String" value="Preferences are automatically saved after you start the program. You may choose which preferences you want saved. If you do not save a preference, it loads in its default state.&#xa;&#xa;Note that your password is NEVER saved using Preferences.&#xa;&#xa;Anonymous statistics are collected whenever you load Patch Notes (every time the program is first run), load notifications, or download new versions. This is purely for me to see how many people are using the program. You may opt out of this by selecting the &quot;Anonymous Statistics&quot; checkbox, at which point all downloads will be directly between you and Dropbox. For information on this, please see the Orangedox Privacy Policy: https://dropbox.orangedox.com/terms/#privacy"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
-                    <Property name="caretPosition" type="int" value="0"/>
                   </Properties>
                 </Component>
               </SubComponents>
