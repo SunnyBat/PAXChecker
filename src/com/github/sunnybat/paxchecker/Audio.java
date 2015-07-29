@@ -26,7 +26,7 @@ public class Audio {
   private static File alarmFile;
 
   /**
-   * Checks whether or not sound is currently enabled. This is set using {@link #setPlayAlarm(boolean)}.
+   * Checks whether or not sound is currently enabled. This is set using {@link #enableAlarm(boolean)}.
    *
    * @return True to play sound, false to not
    */
@@ -39,8 +39,8 @@ public class Audio {
    *
    * @param play True to play sound, false to not
    */
-  public static void setPlayAlarm(boolean play) {
-    playSound = play;
+  public static void enableAlarm() {
+    playSound = true;
   }
 
   /**
@@ -49,7 +49,6 @@ public class Audio {
    * @param file The path (relative or absolute) to the File to play
    */
   public static void setAlarmFile(String file) {
-    System.out.println("Alarmfile");
     setAlarmFile(new File(file));
   }
 
@@ -60,6 +59,11 @@ public class Audio {
    */
   public static void setAlarmFile(File alarmFile) {
     if (!alarmFile.exists()) {
+      new ErrorBuilder()
+          .setErrorTitle("File Not Found")
+          .setErrorMessage("The alarm file was unable to be found. Please ensure that a file exists at the following location:\n"
+              + alarmFile.getAbsolutePath())
+          .buildWindow();
       System.out.println("Alarm file does not exist.");
     } else if (!alarmFile.getName().toLowerCase().endsWith(".wav")) {
       System.out.println("File is not a WAV file.");
@@ -81,7 +85,7 @@ public class Audio {
    * @return True if the alarm was successfully started, false if not
    */
   public static boolean playAlarm() {
-    if (!soundEnabled()) {
+    if (!playSound) {
       return false;
     }
     try {

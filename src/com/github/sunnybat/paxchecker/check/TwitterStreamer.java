@@ -3,6 +3,7 @@ package com.github.sunnybat.paxchecker.check;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import twitter4j.ConnectionLifeCycleListener;
 import twitter4j.DirectMessage;
@@ -26,8 +27,8 @@ import twitter4j.conf.ConfigurationBuilder;
 public abstract class TwitterStreamer {
 
   private Twitter myTwitter;
-  private List<String> usersToCheck = new ArrayList<>();
-  private List<String> keywords = new ArrayList<>();
+  private List<String> usersToCheck = new ArrayList<>(Arrays.asList("Official_PAX")); // No @ in the raw list!
+  private List<String> keywords = new ArrayList<>(Arrays.asList("pax", "passes", "ticket", "tix", "sale", "badge", "showclix", "byoc", "hotel")); // All lowercase
   private TwitterStream myStream;
   private int successiveErrorCount;
   private boolean filterKeywords;
@@ -38,7 +39,7 @@ public abstract class TwitterStreamer {
    * @param keys
    */
   public TwitterStreamer(String[] keys) {
-    if (keys.length != 4) {
+    if (keys == null || keys.length != 4) {
       throw new IllegalArgumentException("keys must contain exactly four valid Twitter API keys");
     }
     ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -162,6 +163,26 @@ public abstract class TwitterStreamer {
     }
 
     @Override
+    public void onQuotedTweet(User source, User quoter, Status stat) {
+    }
+
+    @Override
+    public void onFavoritedRetweet(User source, User favoriter, Status stat) {
+    }
+
+    @Override
+    public void onRetweetedRetweet(User source, User retweeter, Status stat) {
+    }
+
+    @Override
+    public void onUserDeletion(long id) {
+    }
+
+    @Override
+    public void onUserSuspension(long id) {
+    }
+
+    @Override
     public void onException(Exception ex) {
       ex.printStackTrace();
       if (++successiveErrorCount == 1) {
@@ -250,7 +271,7 @@ public abstract class TwitterStreamer {
       return true;
     }
     for (String keyword : keywords) {
-      if (text.contains(keyword)) {
+      if (text.toLowerCase().contains(keyword)) {
         return true;
       }
     }

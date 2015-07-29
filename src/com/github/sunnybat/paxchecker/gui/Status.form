@@ -117,6 +117,7 @@
     <Component class="javax.swing.JButton" name="JBTestText">
       <Properties>
         <Property name="text" type="java.lang.String" value="Test Text"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBTestTextActionPerformed"/>
@@ -125,6 +126,7 @@
     <Component class="javax.swing.JButton" name="JBTestAlarm">
       <Properties>
         <Property name="text" type="java.lang.String" value="Test Alarm Sound"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBTestAlarmActionPerformed"/>

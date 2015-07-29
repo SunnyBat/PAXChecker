@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author SunnyBat
  */
-public class SetupGUI extends javax.swing.JFrame implements Setup {
+public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements Setup {
 
   private java.util.ArrayList<ExtraPhonePanel> extraPhonePanelList;
   private NotificationWindow twitterDisabledWindow;
@@ -28,17 +28,18 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
    */
   public SetupGUI() {
     extraPhonePanelList = new java.util.ArrayList<>();
-    twitterDisabledWindow = new NotificationWindow("Twitter Disabled?", "Twitter is disabled because you did "
-        + "not give the PAXChecker any Twitter API keys to use. For more information, click the More Info button.");
+    twitterDisabledWindow = new NotificationWindow("API Keys", "The Twitter API requires API keys to access it. Unfortunately, putting API keys in "
+        + "an open-source project runs the risk of having the keys disabled due to malicious people. As such, you must use your own Twitter API "
+        + "keys. For more information, press the More Info button.\n\nIt's recommended to check the \"Save Encrypted Twitter Keys\" checkbox in the "
+        + "Preferences tab if you do not want to enter them into the program every time.\nNOTE: You should only save your Twitter keys on a private "
+        + "and trusted computer!");
     twitterDisabledWindow.setMoreInfoButtonLink("http://redd.it/2nct50");
     prefs = new PreferenceHandler("paxchecker");
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         initComponents();
         customComponents();
-        loadProgramSettings();
-        setTwitterKeysVisible(false);
       }
     });
   }
@@ -48,52 +49,57 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
    *
    * @param twitterKeys
    */
-  public SetupGUI(String[] twitterKeys) {
+  public SetupGUI(final String[] twitterKeys) {
     this();
-    if (twitterKeys != null && twitterKeys.length == 4) {
-      JTFConsumerKey.setText(twitterKeys[0]);
-      JTFConsumerSecret.setText(twitterKeys[1]);
-      JTFApplicationKey.setText(twitterKeys[2]);
-      JTFApplicationSecret.setText(twitterKeys[3]);
-      if (JCBCheckTwitter.isSelected()) { // This is loaded after Preferences, so we're good
-        setTwitterKeysVisible(true);
+    invokeAndWaitOnEDT(new Runnable() {
+      @Override
+      public void run() {
+        if (twitterKeys != null && twitterKeys.length == 4) {
+          if (twitterKeys[0] != null) { // In case these are loaded from Preferences, we don't want to overwrite them
+            JTFConsumerKey.setText(twitterKeys[0]);
+          }
+          if (twitterKeys[1] != null) {
+            JTFConsumerSecret.setText(twitterKeys[1]);
+          }
+          if (twitterKeys[2] != null) {
+            JTFApplicationKey.setText(twitterKeys[2]);
+          }
+          if (twitterKeys[3] != null) {
+            JTFApplicationSecret.setText(twitterKeys[3]);
+          }
+        }
       }
-    }
+    });
   }
 
   private void customComponents() {
     setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-    JTPExtra.setText(loadHtml("/com/github/sunnybat/paxchecker/gui/Extra.html"));
+    JTPExtra.setText(loadHtml("/com/github/sunnybat/paxchecker/setup/Extra.html"));
     JTPExtra.setCaretPosition(0);
-    JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/gui/Instructions.html"));
+    JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/setup/Instructions.html"));
     JTPInstructions.setCaretPosition(0);
-  }
-
-  public void loadProgramSettings() {
-    // TODO: Change to better method of getting each Preference than raw String
-
-    // Preferences
+    // Preferences Tab
     JCBSaveEmailSettings.setSelected(prefs.getBooleanPreference("SAVE_EMAIL_SETTINGS"));
-    JCBSaveCheckSettings.setSelected(prefs.getBooleanPreference("SAVE_CHECK_SETTINGS"));
+    JCBSaveCheckSettings.setSelected(prefs.getBooleanPreference("SAVE_CHECK_SETTINGS", true));
     JCBUseBeta.setSelected(prefs.getBooleanPreference("USE_BETA"));
-    JCBLoadNotifications.setSelected(prefs.getBooleanPreference("LOAD_NOTIFICATIONS"));
-    JCBCheckUpdates.setSelected(prefs.getBooleanPreference("LOAD_UPDATES"));
-    if (JCBCheckUpdates.isSelected()) {
-      JCBCheckUpdateDaily.setSelected(prefs.getBooleanPreference("DAILY_UPDATES"));
-    } else {
-      JCBCheckUpdateDaily.setEnabled(false);
-    }
+    JCBLoadNotifications.setSelected(prefs.getBooleanPreference("LOAD_NOTIFICATIONS", true));
+    JCBCheckUpdates.setSelected(prefs.getBooleanPreference("LOAD_UPDATES", true));
+//    if (JCBCheckUpdates.isSelected()) {
+//      JCBCheckUpdateDaily.setSelected(prefs.getBooleanPreference("DAILY_UPDATES"));
+//    } else {
+//      JCBCheckUpdateDaily.setEnabled(false);
+//    }
     JCBSaveTwitterKeys.setSelected(prefs.getBooleanPreference("SAVE_TWITTER_KEYS"));
     JCBStatistics.setSelected(prefs.getBooleanPreference("ANONYMOUS_STATISTICS"));
 
-    // Main Settings
+    // Main Settings Window
     String cellNum = prefs.getStringPreference("CELLNUM");
     if (cellNum != null) {
       if (cellNum.contains(";")) {
         // TODO: Add EPPs to the GUI with all emails
         String[] split = cellNum.split(";");
         for (String s : split) {
-          s = s.trim(); // Not sure if this will actually work
+          s = s.trim();
           ExtraPhonePanel p = new ExtraPhonePanel(this, s.substring(0, s.indexOf("@")), EmailAddress.getProvider(s.substring(s.indexOf("@") + 1)));
         }
       } else {
@@ -101,9 +107,10 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
       }
     }
     JTFEmail.setText(prefs.getStringPreference("EMAIL"));
-    JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX"));
-    JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX"));
+    JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX", true));
+    JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
     JCBCheckTwitter.setSelected(prefs.getBooleanPreference("CHECK_TWITTER"));
+    setTwitterKeysVisible(JCBCheckTwitter.isSelected());
     //JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS")); // TODO: Enable this when new known events are found
     JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER"));
     JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
@@ -117,49 +124,31 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     } catch (NullPointerException e) {
       System.out.println("Unable to load Twitter keys from Preferences! Program will still function normally.");
     }
+    updateStart();
   }
 
-  public void showWindow() {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+  public void addPhonePanel(final ExtraPhonePanel panel) {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
-        setVisible(true);
+        extraPhonePanelList.add(panel);
+        JPPhonePanel.add(panel);
+        JPPhonePanel.revalidate();
+        pack();
       }
     });
   }
 
-  private static String loadHtml(String localPath) {
-    try {
-      java.io.InputStream in = Setup.class.getResourceAsStream(localPath);
-      java.util.Scanner scan = new java.util.Scanner(in);
-      String text = "";
-      while (scan.hasNext()) {
-        text += scan.nextLine();
+  public void removePhonePanel(final ExtraPhonePanel panel) {
+    invokeAndWaitOnEDT(new Runnable() {
+      @Override
+      public void run() {
+        extraPhonePanelList.remove(panel);
+        JPPhonePanel.remove(panel);
+        JPPhonePanel.revalidate();
+        pack();
       }
-      return text;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return "[ERROR LOADING " + localPath + "]";
-    }
-  }
-
-  public void addPhonePanel(ExtraPhonePanel panel) {
-    extraPhonePanelList.add(panel);
-    JPPhonePanel.add(panel);
-    JPPhonePanel.revalidate();
-    pack();
-  }
-
-  public void removePhonePanel(ExtraPhonePanel panel) {
-    extraPhonePanelList.remove(panel);
-    JPPhonePanel.remove(panel);
-    JPPhonePanel.revalidate();
-    pack();
-  }
-
-  private void setTwitterKeysVisible(boolean visible) {
-    JPTwitterKeys.setVisible(visible);
-    setSize(getWidth(), getHeight() + ((10 + JPTwitterKeys.getPreferredSize().height) * (visible ? 1 : -1)));
+    });
   }
 
   /**
@@ -241,12 +230,38 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     });
   }
 
+  private static String loadHtml(String localPath) {
+    try {
+      java.io.InputStream in = Setup.class.getResourceAsStream(localPath);
+      java.util.Scanner scan = new java.util.Scanner(in);
+      String text = "";
+      while (scan.hasNext()) {
+        text += scan.nextLine();
+      }
+      return text;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "[ERROR LOADING " + localPath + "]";
+    }
+  }
+
+  private void setTwitterKeysVisible(boolean visible) {
+    if (JPTwitterKeys.isVisible() != visible) { // Prevent duplicate calls improperly resizing GUI
+      JPTwitterKeys.setVisible(visible);
+      setSize(getWidth(), getHeight() + JPTwitterKeys.getPreferredSize().height * (visible ? 1 : -1));
+    }
+  }
+
   private void savePreferences() {
-    prefs.getPreferenceObject("USE_BETA").setValue(JCBUseBeta.isSelected());
-    prefs.getPreferenceObject("LOAD_UPDATES").setValue(JCBCheckUpdates.isSelected());
-    prefs.getPreferenceObject("DAILY_UPDATES").setValue(JCBCheckUpdateDaily.isSelected());
-    prefs.getPreferenceObject("DAILY_UPDATES").setShouldSave(JCBCheckUpdates.isSelected()); // If update checking is disabled, don't check every 24 hours
+    prefs.getPreferenceObject("SAVE_EMAIL_SETTINGS").setValue(JCBSaveEmailSettings.isSelected());
+    prefs.getPreferenceObject("SAVE_CHECK_SETTINGS").setValue(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("LOAD_NOTIFICATIONS").setValue(JCBLoadNotifications.isSelected());
+    prefs.getPreferenceObject("LOAD_UPDATES").setValue(JCBCheckUpdates.isSelected());
+    prefs.getPreferenceObject("DAILY_UPDATES").setShouldSave(JCBCheckUpdates.isSelected()); // If update checking is disabled, don't check every 24 hours
+    prefs.getPreferenceObject("DAILY_UPDATES").setValue(JCBCheckUpdateDaily.isSelected());
+    prefs.getPreferenceObject("SAVE_TWITTER_KEYS").setValue(JCBSaveTwitterKeys.isSelected());
+    prefs.getPreferenceObject("USE_BETA").setValue(JCBUseBeta.isSelected());
+    prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
     prefs.getPreferenceObject("CELLNUM").setShouldSave(JCBSaveEmailSettings.isSelected());
     prefs.getPreferenceObject("CELLNUM").setValue(getCellNumString());
     prefs.getPreferenceObject("EMAIL").setShouldSave(JCBSaveEmailSettings.isSelected());
@@ -260,7 +275,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setShouldSave(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setValue(JCBCheckKnownEvents.isSelected());
     prefs.getPreferenceObject("FILTER_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
-    prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected());
+    prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected() && JCBCheckTwitter.isSelected());
     prefs.getPreferenceObject("EVENT").setShouldSave(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("EVENT").setValue(JCBExpo.getSelectedItem().toString());
     prefs.getPreferenceObject("PLAY_ALARM").setShouldSave(JCBSaveCheckSettings.isSelected());
@@ -371,7 +386,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
 
   @Override
   public boolean shouldCheckTwitter() {
-    return JCBCheckTwitter.isSelected();
+    return JCBCheckTwitter.isSelected() && twitterSetUpCorrectly();
   }
 
   @Override
@@ -456,6 +471,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     JTFConsumerSecret = new javax.swing.JTextField();
     JTFConsumerKey = new javax.swing.JTextField();
     filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+    jLabel6 = new javax.swing.JLabel();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -589,6 +605,15 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
 
     jLabel10.setText("Application Secret");
 
+    jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+    jLabel6.setForeground(new java.awt.Color(0, 0, 238));
+    jLabel6.setText("(How do I Get These?)");
+    jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jLabel6MouseClicked(evt);
+      }
+    });
+
     javax.swing.GroupLayout JPTwitterKeysLayout = new javax.swing.GroupLayout(JPTwitterKeys);
     JPTwitterKeys.setLayout(JPTwitterKeysLayout);
     JPTwitterKeysLayout.setHorizontalGroup(
@@ -596,42 +621,49 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
       .addGroup(JPTwitterKeysLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jLabel10)
-          .addComponent(jLabel7)
-          .addComponent(jLabel8)
-          .addComponent(jLabel9))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(JTFConsumerKey, javax.swing.GroupLayout.Alignment.TRAILING)
-          .addComponent(JTFConsumerSecret, javax.swing.GroupLayout.Alignment.TRAILING)
-          .addComponent(JTFApplicationKey)
-          .addComponent(JTFApplicationSecret, javax.swing.GroupLayout.Alignment.TRAILING)))
+          .addGroup(JPTwitterKeysLayout.createSequentialGroup()
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(jLabel10)
+              .addComponent(jLabel7)
+              .addComponent(jLabel8)
+              .addComponent(jLabel9))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(JTFConsumerKey, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+              .addComponent(JTFConsumerSecret, javax.swing.GroupLayout.Alignment.TRAILING)
+              .addComponent(JTFApplicationKey)
+              .addComponent(JTFApplicationSecret, javax.swing.GroupLayout.Alignment.TRAILING)))
+          .addGroup(JPTwitterKeysLayout.createSequentialGroup()
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(jLabel6))))
     );
     JPTwitterKeysLayout.setVerticalGroup(
       JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(JPTwitterKeysLayout.createSequentialGroup()
-        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel7)
-          .addComponent(JTFConsumerKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel8)
-          .addComponent(JTFConsumerSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel9)
-          .addComponent(JTFApplicationKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel10)
-          .addComponent(JTFApplicationSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addGap(0, 0, 0))
-      .addGroup(JPTwitterKeysLayout.createSequentialGroup()
-        .addContainerGap()
-        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(0, 0, Short.MAX_VALUE))
+        .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addGroup(JPTwitterKeysLayout.createSequentialGroup()
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel7)
+              .addComponent(JTFConsumerKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel8)
+              .addComponent(JTFConsumerSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel9)
+              .addComponent(JTFApplicationKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(jLabel10)
+              .addComponent(JTFApplicationSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addGroup(JPTwitterKeysLayout.createSequentialGroup()
+            .addGap(0, 0, 0)
+            .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        .addGap(0, 0, Short.MAX_VALUE)
+        .addComponent(jLabel6))
     );
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -642,7 +674,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
         .addContainerGap()
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+          .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
           .addGroup(jPanel1Layout.createSequentialGroup()
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -715,9 +747,9 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
           .addComponent(JCBFilterTwitter))
-        .addGap(0, 0, 0)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JPTwitterKeys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(0, 0, 0)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBPlayAlarm)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -754,11 +786,11 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     jPanel6.setLayout(jPanel6Layout);
     jPanel6Layout.setHorizontalGroup(
       jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
     );
     jPanel6Layout.setVerticalGroup(
       jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+      .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Instructions", jPanel6);
@@ -775,11 +807,11 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     jPanel4.setLayout(jPanel4Layout);
     jPanel4Layout.setHorizontalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
     );
     jPanel4Layout.setVerticalGroup(
       jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+      .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Patch Notes", jPanel4);
@@ -803,23 +835,19 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
     jPanel3.setLayout(jPanel3Layout);
     jPanel3Layout.setHorizontalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
     );
     jPanel3Layout.setVerticalGroup(
       jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+      .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
     );
 
     jTabbedPane1.addTab("Extra", jPanel3);
 
     JCBSaveEmailSettings.setText("Save Email Settings");
 
+    JCBSaveCheckSettings.setSelected(true);
     JCBSaveCheckSettings.setText("Save Check Settings");
-    JCBSaveCheckSettings.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        JCBSaveCheckSettingsActionPerformed(evt);
-      }
-    });
 
     jTextArea1.setEditable(false);
     jTextArea1.setColumns(20);
@@ -866,7 +894,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
       .addGroup(jPanel5Layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+          .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
           .addGroup(jPanel5Layout.createSequentialGroup()
             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(JCBSaveCheckSettings)
@@ -880,7 +908,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
               .addComponent(JCBLoadNotifications)
               .addComponent(JCBCheckUpdates))
             .addGap(0, 0, Short.MAX_VALUE))
-          .addComponent(JBSaveSettings, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+          .addComponent(JBSaveSettings, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
         .addContainerGap())
     );
     jPanel5Layout.setVerticalGroup(
@@ -905,7 +933,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
         .addGap(43, 43, 43)
         .addComponent(JBSaveSettings)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
         .addContainerGap())
     );
 
@@ -934,17 +962,12 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
   }//GEN-LAST:event_JCBCheckWebsiteActionPerformed
 
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
-    // TODO add your handling code here
     dispose();
+    savePreferences();
     isOpen = false;
   }//GEN-LAST:event_JBStartActionPerformed
 
-  private void JCBSaveCheckSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBSaveCheckSettingsActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_JCBSaveCheckSettingsActionPerformed
-
   private void JBAddPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAddPhoneActionPerformed
-    // TODO add your handling code here:
     addPhonePanel(new ExtraPhonePanel(this));
   }//GEN-LAST:event_JBAddPhoneActionPerformed
 
@@ -960,14 +983,16 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
   }//GEN-LAST:event_JCBCheckTwitterActionPerformed
 
   private void JCBCheckUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckUpdatesActionPerformed
-    // TODO add your handling code here:
     //JCBCheckUpdateDaily.setEnabled(JCBCheckUpdates.isSelected());
   }//GEN-LAST:event_JCBCheckUpdatesActionPerformed
 
   private void JCBCheckKnownEventsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckKnownEventsActionPerformed
-    // TODO add your handling code here:
     updateStart();
   }//GEN-LAST:event_JCBCheckKnownEventsActionPerformed
+
+  private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
+    twitterDisabledWindow.setVisible(true);
+  }//GEN-LAST:event_jLabel6MouseClicked
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton JBAddPhone;
@@ -1009,6 +1034,7 @@ public class SetupGUI extends javax.swing.JFrame implements Setup {
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
+  private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
   private javax.swing.JLabel jLabel9;

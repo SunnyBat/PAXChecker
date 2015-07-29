@@ -125,10 +125,6 @@ public class SetupCLI implements Setup {
     System.out.print("Check Twitter (Y/N): ");
     checkTwitter = isResponseYes(myScanner);
     if (checkTwitter) { // Checking Twitter
-      System.out.print("Filter Twitter (Y/N): ");
-      filterTwitter = isResponseYes(myScanner);
-      System.out.println("The next four prompts are for Twitter authentication. If you do not input valid keys for all of them,"
-          + "Twitter scanning will not work. For more information, see http://redd.it/2nct50");
       boolean inputKeys = true;
       if (consumerKey != null) { // Keys have been specified
         System.out.print("Twitter keys have already been specified. Would you like to specify new ones (Y/N)? ");
@@ -144,6 +140,10 @@ public class SetupCLI implements Setup {
         System.out.print("Twitter Application Secret: ");
         applicationSecret = myScanner.nextLine();
       }
+      System.out.print("Filter Twitter (Y/N): ");
+      filterTwitter = isResponseYes(myScanner);
+      System.out.println("The next four prompts are for Twitter authentication. If you do not input valid keys for all of them,"
+          + "Twitter scanning will not work. For more information, see http://redd.it/2nct50");
     }
     System.out.print("Refresh Time (seconds, 10-120, numbers only): ");
     try {

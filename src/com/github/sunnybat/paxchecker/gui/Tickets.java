@@ -9,7 +9,7 @@ import java.util.Date;
  *
  * @author SunnyBat
  */
-public class Tickets extends javax.swing.JFrame {
+public class Tickets extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
   static {
     try {

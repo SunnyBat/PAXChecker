@@ -73,7 +73,7 @@ public abstract class IconMenu extends PopupMenu {
     if (sendEmail) {
       add(testTextButton);
     }
-    if (Audio.playAlarm()) {
+    if (Audio.soundEnabled()) {
       add(testAlarmButton);
     }
     add(forceCheckButton);

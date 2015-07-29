@@ -8,14 +8,13 @@ import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
  *
  * @author SunnyBat
  */
-public class Status extends javax.swing.JFrame {
+public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
   private SystemTray tray;
   private TrayIcon myIcon;
@@ -23,10 +22,11 @@ public class Status extends javax.swing.JFrame {
   private final NotificationWindow infoWindow;
 
   /**
-   * Creates new form Status
+   * Creates a new Status window. Note that this does not display when created. Also note that this will block until all the components have been
+   * created (generally does not take long).
    */
   public Status() {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         initComponents();
@@ -49,25 +49,27 @@ public class Status extends javax.swing.JFrame {
   public void customComponents() {
     try {
       tray = SystemTray.getSystemTray();
+      myMenu = new IconMenu() {
+        @Override
+        public void showWindowPressed() {
+          showWindow();
+          tray.remove(myIcon);
+        }
+
+        @Override
+        public void forceCheckPressed() {
+          // TODO: Add force check code
+        }
+
+        @Override
+        public void sendTestEmailPressed() {
+          // TODO: Add test email code
+        }
+      };
     } catch (Exception e) {
       System.out.println("ERROR: System tray is not supported!");
     }
-    myMenu = new IconMenu() {
-      @Override
-      public void showWindowPressed() {
-        showWindow();
-      }
-
-      @Override
-      public void forceCheckPressed() {
-        // TODO: Add force check code
-      }
-
-      @Override
-      public void sendTestEmailPressed() {
-
-      }
-    };
+    JLTwitterStatus.setVisible(false); // Enable when Twitter enabled
     JBReconnectTwitter.setVisible(false);
   }
 
@@ -75,24 +77,35 @@ public class Status extends javax.swing.JFrame {
     if (myMenu != null) {
       myMenu.enableEmail();
     }
+    JBTestText.setEnabled(true);
+  }
+
+  public void enableAlarm() {
+    JBTestAlarm.setEnabled(true);
   }
 
   public void enableTwitter() {
-    // TODO: Enable Twitter
+    JLTwitterStatus.setVisible(true);
   }
 
-  public void setupComponents(final List<EmailAddress> addresses) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+  /**
+   * Sets up the Status GUI.
+   *
+   * @param emailAddress
+   * @param addresses
+   */
+  public void setupComponents(final String emailAddress, final List<EmailAddress> addresses) {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLTitle.setText(Browser.getExpo() + " Website Status");
-        if (addresses == null) {
+        if (addresses == null || emailAddress == null) {
           setInfoText("[TEXTING DISABLED]");
           setTextButtonState(false);
         } else if (addresses.size() == 1) {
-          setInfoText(addresses.get(0).getCompleteAddress()); // TODO: Add in sending email address
+          setInfoText(emailAddress + " -- " + addresses.get(0).getCompleteAddress());
         } else {
-          setInfoText("Multiple Numbers (Mouse Here to View)"); // TODO: Add in sending email address
+          setInfoText(emailAddress + " -- Multiple Numbers (Mouse Here to View)");
           String list = "<html>";
           String[] allAddresses = EmailAccount.convertToString(addresses).split(";");
           for (int a = 0; a < allAddresses.length; a++) {
@@ -104,23 +117,7 @@ public class Status extends javax.swing.JFrame {
           list += "</html>";
           setLabelTooltipText(list);
         }
-        if (!Audio.soundEnabled()) {
-          setSoundButtonState(false);
-        }
         setDataUsageText(DataTracker.getDataUsedMB());
-      }
-    });
-  }
-
-  public void showWindow() {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-//        if (!TwitterReader.isStreamingTwitter()) { // This is technically a race condition, but it has a ridiculously large window
-//          JLTwitterStatus.setVisible(false);       // to read this before the Twitter stream potentially dies. Ignoring.
-//        }
-        pack(); // Is this even doing anything?
-        setVisible(true);
       }
     });
   }
@@ -131,22 +128,32 @@ public class Status extends javax.swing.JFrame {
       if (!isVisible()) {
         maximizeWindow();
       }
-      return;
+    } else {
+      try {
+        tray.add(myIcon);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      invokeAndWaitOnEDT(new Runnable() {
+        @Override
+        public void run() {
+          setVisible(false);
+        }
+      });
     }
-    try {
-      tray.add(myIcon);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    setVisible(false);
   }
 
   public void maximizeWindow() {
-    setExtendedState(javax.swing.JFrame.NORMAL);
-    setVisible(true);
-    this.setLocationRelativeTo(null);
-    this.toFront();
     tray.remove(myIcon); // Fine if myIcon == null or myIcon isn't in tray
+    invokeAndWaitOnEDT(new Runnable() {
+      @Override
+      public void run() {
+        setExtendedState(javax.swing.JFrame.NORMAL);
+        setVisible(true);
+        setLocationRelativeTo(null);
+        toFront();
+      }
+    });
   }
 
   public void setTwitterStatus(final boolean isEnabled) {
@@ -317,29 +324,25 @@ public class Status extends javax.swing.JFrame {
       System.out.println("Image == null");
       return;
     }
-    try {
-      javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            setIconImage(image);
-            myIcon = new TrayIcon(image, "PAXChecker", myMenu);
-            myIcon.setImageAutoSize(true);
-            myIcon.addActionListener(new java.awt.event.ActionListener() {
-              @Override
-              public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maximizeWindow();
-              }
-            });
-            System.out.println("Set status icon: " + (myIcon != null));
-          } catch (Exception e) {
-            System.out.println("ERROR setting status iconImage!");
-          }
+    invokeAndWaitOnEDT(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          setIconImage(image);
+          myIcon = new TrayIcon(image, "PAXChecker", myMenu);
+          myIcon.setImageAutoSize(true);
+          myIcon.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+              maximizeWindow();
+            }
+          });
+          System.out.println("Set status icon: " + (myIcon != null));
+        } catch (Exception e) {
+          System.out.println("ERROR setting status iconImage!");
         }
-      });
-    } catch (InterruptedException | InvocationTargetException e) {
-      e.printStackTrace();
-    }
+      }
+    });
   }
 
   @Override
@@ -388,6 +391,7 @@ public class Status extends javax.swing.JFrame {
     JLTitle.setText("PAX Website Status");
 
     JBTestText.setText("Test Text");
+    JBTestText.setEnabled(false);
     JBTestText.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         JBTestTextActionPerformed(evt);
@@ -395,6 +399,7 @@ public class Status extends javax.swing.JFrame {
     });
 
     JBTestAlarm.setText("Test Alarm Sound");
+    JBTestAlarm.setEnabled(false);
     JBTestAlarm.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         JBTestAlarmActionPerformed(evt);
