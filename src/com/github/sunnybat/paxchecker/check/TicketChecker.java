@@ -137,6 +137,15 @@ public final class TicketChecker {
   }
 
   /**
+   * Checks whether or not the program is currently checking anything.
+   *
+   * @return True if checking anything, false if not
+   */
+  public boolean isCheckingAnything() {
+    return !checks.isEmpty();
+  }
+
+  /**
    * Checks whether or not the program is currently checking the PAX website for updates.
    *
    * @return True if checking the PAX website, false if not
@@ -158,6 +167,20 @@ public final class TicketChecker {
   public boolean isCheckingShowclix() {
     for (Check c : checks) {
       if (CheckShowclix.class.isInstance(c)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks whether or not the program is currently checking known Showclix pages for updates.
+   *
+   * @return True if checking known Showclix pages, false if not
+   */
+  public boolean isCheckingKnownPages() {
+    for (Check c : checks) {
+      if (CheckShowclixEventPage.class.isInstance(c)) {
         return true;
       }
     }

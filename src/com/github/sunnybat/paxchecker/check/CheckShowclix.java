@@ -17,9 +17,16 @@ public class CheckShowclix extends Check {
   Set<String> alreadyChecked = new TreeSet<>();
   String currentLink; // When new link found, this will not be null. This will be the final link to check, AKA the final redirect link
   String originalLink; // The original link found to add to alreadyChecked when finished
+  final String expoToCheck;
 
-  public CheckShowclix() {
+  /**
+   * Creates a new CheckShowclix.
+   *
+   * @param expo The expo to check
+   */
+  public CheckShowclix(String expo) {
     super();
+    expoToCheck = expo;
   }
 
   @Override
@@ -45,7 +52,7 @@ public class CheckShowclix extends Check {
   }
 
   protected Set<String> getLinks() {
-    return ShowclixReader.getAllEventURLs(Browser.getExpo());
+    return ShowclixReader.getAllEventURLs(expoToCheck);
   }
 
   final void updateLinkFromSet(Set<String> mySet) {

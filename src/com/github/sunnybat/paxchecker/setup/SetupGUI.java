@@ -976,7 +976,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   }//GEN-LAST:event_JBSaveSettingsActionPerformed
 
   private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed
-    // TODO add your handling code here:
     JCBFilterTwitter.setEnabled(JCBCheckTwitter.isSelected());
     setTwitterKeysVisible(JCBCheckTwitter.isSelected());
     updateStart();

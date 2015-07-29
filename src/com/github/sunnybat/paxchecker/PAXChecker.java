@@ -38,6 +38,8 @@ public final class PAXChecker {
     System.out.println("Initializing...");
     java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
 
+//    ResourceDownloader download = new ResourceDownloader();
+//    download.downloadResources();
     // SETUP
     boolean isHeadless = GraphicsEnvironment.isHeadless();
     boolean isAutostart = false;
@@ -84,17 +86,11 @@ public final class PAXChecker {
             System.out.println("Not enough arguments specified for -property!");
           }
           break;
-        case "-consumerkey":
+        case "-twitterkeys":
           twitterTokens[0] = args[i + 1];
-          break;
-        case "-consumersecret":
-          twitterTokens[1] = args[i + 1];
-          break;
-        case "-applicationkey":
-          twitterTokens[2] = args[i + 1];
-          break;
-        case "-applicationsecret":
-          twitterTokens[3] = args[i + 1];
+          twitterTokens[1] = args[i + 2];
+          twitterTokens[2] = args[i + 3];
+          twitterTokens[3] = args[i + 4];
           break;
         case "-savelog":
           try {
@@ -124,7 +120,7 @@ public final class PAXChecker {
     if (isHeadless) {
       ErrorBuilder.forceCommandLine();
     }
-    String patchNotes = doLoading(checkUpdates, checkNotifications); // Load updates, notifications
+    String patchNotes = doLoading(checkUpdates, checkNotifications);
     Setup mySetup;
     if (isAutostart) {
       mySetup = new SetupAuto(args);
@@ -146,9 +142,10 @@ public final class PAXChecker {
     twitterTokens[3] = mySetup.getTwitterApplicationSecret();
 
     // SET UP STATUS WINDOW AND CHECKERS
-    final Status myStatus = new Status();
-
-    EmailAccount emailAccount = null;
+    Browser myBrowser = new Browser();
+    myBrowser.setExpo(mySetup.getExpoToCheck());
+    Status myStatus;
+    EmailAccount emailAccount;
     try {
       emailAccount = new EmailAccount(mySetup.getEmailUsername(), mySetup.getEmailPassword());
       for (String s : mySetup.getEmailAddresses()) {
@@ -157,42 +154,23 @@ public final class PAXChecker {
       for (String key : properties.keySet()) {
         emailAccount.setProperty(key, properties.get(key));
       }
-      myStatus.setupComponents(emailAccount.getUsername(), emailAccount.getAddressList());
-      myStatus.enableEmail();
+      myStatus = new Status(myBrowser.getExpo(), emailAccount.getUsername(), emailAccount.getAddressList());
     } catch (IllegalArgumentException e) {
-      myStatus.setupComponents(null, null);
+      emailAccount = null;
+      myStatus = new Status(myBrowser.getExpo());
     }
+    myStatus.enableEmail();
     if (mySetup.shouldPlayAlarm()) {
       Audio.enableAlarm();
       myStatus.enableAlarm();
     }
-    final TicketChecker myChecker = initChecker(mySetup, myStatus);
+    final TicketChecker myChecker = initChecker(mySetup, myStatus, myBrowser.getExpo());
     if (mySetup.shouldCheckTwitter()) {
-      TwitterStreamer tcheck = new TwitterStreamer(twitterTokens) {
-        @Override
-        public void twitterConnected() {
-          myStatus.setTwitterStatus(true);
-        }
-
-        @Override
-        public void twitterDisconnected() {
-          myStatus.setTwitterStatus(false);
-        }
-
-        @Override
-        public void twitterKilled() {
-          myStatus.twitterStreamKilled();
-        }
-
-        @Override
-        public void linkFound(String link) {
-          Browser.openLinkInBrowser(link);
-        }
-      };
+      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens);
       for (String s : followList) {
         tcheck.addUser(s);
       }
-      tcheck.startStreamingTwitter();
+      tcheck.startStreamingTwitter(); // CHECK: Move this down?
       myStatus.enableTwitter();
     }
     if (startMinimized) {
@@ -202,28 +180,21 @@ public final class PAXChecker {
     }
 
     // START CHECKING
-    while (true) {
-      myStatus.setLastCheckedText("Checking for Updates");
-      long startTime = System.currentTimeMillis();
-      if (myChecker.isUpdated()) {
-        Browser.openLinkInBrowser(myChecker.getLinkFound());
-        if (emailAccount != null) {
-          emailAccount.sendMessage("PAXChecker", "A new link has been found: " + myChecker.getLinkFound());
-        }
-        Tickets ticketWindow = new Tickets(myChecker.getLinkFound());
-        ticketWindow.showWindow();
-      }
-      myStatus.setDataUsageText(DataTracker.getDataUsedMB());
-      while (System.currentTimeMillis() - startTime < mySetup.timeBetweenChecks() * 1000) {
-        myStatus.setLastCheckedText(mySetup.timeBetweenChecks() - (int) ((System.currentTimeMillis() - startTime) / 1000));
-        try {
-          Thread.sleep(250);
-        } catch (InterruptedException iE) {
-        }
-      }
-    }
+    checkForTickets(myStatus, myChecker, emailAccount, mySetup.timeBetweenChecks());
   }
 
+  private static boolean hasArgument(String[] args, String argument) {
+    for (String s : args) {
+      if (s.toLowerCase().equals(argument.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the old Preferences root to prevent registry cluttering.
+   */
   private static void removeOldPreferences() {
     try {
       System.out.println("Checking for old preferences root...");
@@ -286,19 +257,80 @@ public final class PAXChecker {
     return notes;
   }
 
-  private static TicketChecker initChecker(Setup mySetup, Status myStatus) {
+  private static TicketChecker initChecker(Setup mySetup, Status myStatus, String expo) {
     TicketChecker myChecker = new TicketChecker(myStatus);
     if (mySetup.shouldCheckPAXWebsite()) {
-      myChecker.addChecker(new CheckPaxsite());
+      myChecker.addChecker(new CheckPaxsite(expo));
     }
     if (mySetup.shouldCheckShowclix()) {
-      myChecker.addChecker(new CheckShowclix());
+      myChecker.addChecker(new CheckShowclix(expo));
     }
     if (mySetup.shouldCheckKnownEvents()) {
       myChecker.addChecker(new CheckShowclixEventPage());
     }
     myChecker.initCheckers();
     return myChecker;
+  }
+
+  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys) {
+    return new TwitterStreamer(keys) {
+      @Override
+      public void twitterConnected() {
+        myStatus.setTwitterStatus(true);
+      }
+
+      @Override
+      public void twitterDisconnected() {
+        myStatus.setTwitterStatus(false);
+      }
+
+      @Override
+      public void twitterKilled() {
+        myStatus.twitterStreamKilled();
+      }
+
+      @Override
+      public void linkFound(String link) {
+        Browser.openLinkInBrowser(link);
+      }
+    };
+  }
+
+  /**
+   * Checks for tickets. Blocks indefinitely. Note that if checker is not checking anything, this method does not block and only modifies the Status
+   * GUI status text.
+   *
+   * @param status The Status window to update
+   * @param checker The TicketChecker to use
+   * @param email The EmailAccount to use, or null for none
+   * @param checkTime The time between checks
+   * @throws NullPointerException if any arguments besides email are null
+   */
+  private static void checkForTickets(Status status, TicketChecker checker, EmailAccount email, int checkTime) {
+    if (checker.isCheckingAnything()) {
+      while (true) {
+        status.setLastCheckedText("Checking for Updates");
+        long startTime = System.currentTimeMillis();
+        if (checker.isUpdated()) {
+          Browser.openLinkInBrowser(checker.getLinkFound());
+          if (email != null) {
+            email.sendMessage("PAXChecker", "A new link has been found: " + checker.getLinkFound());
+          }
+          Tickets ticketWindow = new Tickets(checker.getLinkFound()); // CHECK: Should I only allow one Tickets at a time?
+          ticketWindow.showWindow();
+        }
+        status.setDataUsageText(DataTracker.getDataUsedMB());
+        while (System.currentTimeMillis() - startTime < checkTime * 1000) {
+          status.setLastCheckedText(checkTime - (int) ((System.currentTimeMillis() - startTime) / 1000));
+          try {
+            Thread.sleep(250);
+          } catch (InterruptedException iE) {
+          }
+        }
+      }
+    } else {
+      status.setLastCheckedText("[Only Checking Twitter]");
+    }
   }
 
   public static void enableCommandLine() { // TODO: Remove this
@@ -318,7 +350,7 @@ public final class PAXChecker {
    *
    * @param run The Runnable object to use
    */
-  public static void continueProgram(Runnable run) {
+  public static void continueProgram(Runnable run) { // CHECK: Remove?
     Thread newThread = new Thread(run);
     newThread.setName("Program Loop");
     newThread.setDaemon(false); // Prevent the JVM from stopping due to zero non-daemon threads running

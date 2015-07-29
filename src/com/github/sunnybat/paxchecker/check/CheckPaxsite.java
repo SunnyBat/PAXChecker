@@ -6,7 +6,6 @@
 package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.browser.PaxsiteReader;
-import com.github.sunnybat.paxchecker.browser.Browser;
 
 /**
  *
@@ -16,9 +15,16 @@ public class CheckPaxsite extends Check {
 
   private String lastLinkFound;
   private String currentLinkFound;
+  private final String expoToCheck;
 
-  public CheckPaxsite() {
+  /**
+   * Creates a new PaxsiteChecker.
+   *
+   * @param expo The expo to check
+   */
+  public CheckPaxsite(String expo) {
     super();
+    expoToCheck = expo;
   }
 
   @Override
@@ -37,7 +43,7 @@ public class CheckPaxsite extends Check {
       return false;
     } else if (currentLinkFound.equals("[NoFind]") || currentLinkFound.equals("[Button Parsing Error]")) {
       return false;
-    } else if (!currentLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(Browser.getExpo()) + "\"")) {
+    } else if (!currentLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(expoToCheck) + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
       return true;
     }
@@ -47,7 +53,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized final void updateLink() {
     updateLink("[Checking]");
-    currentLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
+    currentLinkFound = PaxsiteReader.getCurrentButtonLink(expoToCheck);
     updateLink(getLink());
   }
 
@@ -58,7 +64,7 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized void reset() {
-    lastLinkFound = PaxsiteReader.getCurrentButtonLink(Browser.getExpo());
+    lastLinkFound = PaxsiteReader.getCurrentButtonLink(expoToCheck);
   }
 
 }

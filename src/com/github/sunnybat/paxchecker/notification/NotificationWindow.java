@@ -153,7 +153,6 @@ public class NotificationWindow extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void JBCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBCloseActionPerformed
-    // TODO add your handling code here:
     dispose();
   }//GEN-LAST:event_JBCloseActionPerformed
 

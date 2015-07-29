@@ -16,7 +16,7 @@ import java.net.URLConnection;
  */
 public class Browser {
 
-  private static volatile String expo;
+  private String expo; // CHECK: Should I just remove this entirely...?
 
   /**
    * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
@@ -25,7 +25,7 @@ public class Browser {
    *
    * @param e The String to set as the expo
    */
-  public static void setExpo(String e) {
+  public void setExpo(String e) {
     if (e != null) {
       if (!e.toLowerCase().startsWith("pax ")) {
         e = "PAX " + e;
@@ -40,7 +40,7 @@ public class Browser {
    * @return The expo currently set
    * @see #setExpo(java.lang.String)
    */
-  public static String getExpo() {
+  public String getExpo() {
     if (expo == null) {
       return "PAX Prime";
     }
