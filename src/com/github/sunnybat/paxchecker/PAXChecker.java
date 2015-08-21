@@ -24,8 +24,6 @@ import java.util.*;
 public final class PAXChecker {
 
   public static final String VERSION = "3.0.0 R2";
-  private static final Object CLINE_LOCK = new Object();
-  private static boolean commandLine;
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
@@ -141,10 +139,11 @@ public final class PAXChecker {
     twitterTokens[2] = mySetup.getTwitterApplicationKey();
     twitterTokens[3] = mySetup.getTwitterApplicationSecret();
 
-    // SET UP STATUS WINDOW AND CHECKERS
+    // SETUP
     Browser myBrowser = new Browser();
     myBrowser.setExpo(mySetup.getExpoToCheck());
     Status myStatus;
+    // SET UP EMAIL ACCOUNT
     EmailAccount emailAccount;
     try {
       emailAccount = new EmailAccount(mySetup.getEmailUsername(), mySetup.getEmailPassword());
@@ -155,15 +154,16 @@ public final class PAXChecker {
         emailAccount.setProperty(key, properties.get(key));
       }
       myStatus = new Status(myBrowser.getExpo(), emailAccount.getUsername(), emailAccount.getAddressList());
+      myStatus.enableEmail();
     } catch (IllegalArgumentException e) {
       emailAccount = null;
       myStatus = new Status(myBrowser.getExpo());
     }
-    myStatus.enableEmail();
     if (mySetup.shouldPlayAlarm()) {
       Audio.enableAlarm();
       myStatus.enableAlarm();
     }
+    // SET UP CHECKERS
     final TicketChecker myChecker = initChecker(mySetup, myStatus, myBrowser.getExpo());
     if (mySetup.shouldCheckTwitter()) {
       TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens);
@@ -217,6 +217,7 @@ public final class PAXChecker {
     loadingWindow.showWindow();
     String notes = null;
 
+    // TODO: Command-line updates and notifications
     // CHECK UPDATES
     if (checkUpdates) {
       try {
@@ -321,54 +322,31 @@ public final class PAXChecker {
         }
         status.setDataUsageText(DataTracker.getDataUsedMB());
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
+          synchronized (status) {
+            int button = status.getButtonPressed();
+            if (button > 0) {
+              status.resetButtonPressed();
+              if (button == 1) {
+                break;
+              } else if (button == 2) {
+                if (email != null) {
+                  email.sendMessage("PAXChecker", "This is a test text.");
+                }
+              } else if (button == 4) {
+                // TODO: Reconnect to Twitter
+              }
+            }
+          }
           status.setLastCheckedText(checkTime - (int) ((System.currentTimeMillis() - startTime) / 1000));
           try {
-            Thread.sleep(250);
+            Thread.sleep(200);
           } catch (InterruptedException iE) {
+            iE.printStackTrace();
           }
         }
       }
     } else {
       status.setLastCheckedText("[Only Checking Twitter]");
     }
-  }
-
-  public static void enableCommandLine() { // TODO: Remove this
-    synchronized (CLINE_LOCK) {
-      commandLine = true;
-    }
-  }
-
-  public static boolean isCommandLine() {
-    synchronized (CLINE_LOCK) {
-      return commandLine;
-    }
-  }
-
-  /**
-   * Creates a new non-daemon Thread with the given Runnable object.
-   *
-   * @param run The Runnable object to use
-   */
-  public static void continueProgram(Runnable run) { // CHECK: Remove?
-    Thread newThread = new Thread(run);
-    newThread.setName("Program Loop");
-    newThread.setDaemon(false); // Prevent the JVM from stopping due to zero non-daemon threads running
-    newThread.setPriority(Thread.NORM_PRIORITY);
-    newThread.start(); // Start the Thread
-  }
-
-  /**
-   * Starts a new daemon Thread.
-   *
-   * @param run The Runnable object to use
-   * @param name The name to give the Thread
-   */
-  public static void startBackgroundThread(Runnable run, String name) {
-    Thread newThread = new Thread(run);
-    newThread.setName(name);
-    newThread.setDaemon(true); // Kill the JVM if only daemon threads are running
-    newThread.setPriority(Thread.MIN_PRIORITY); // Let other Threads take priority, as this will probably not run for long
-    newThread.start(); // Start the Thread
   }
 }

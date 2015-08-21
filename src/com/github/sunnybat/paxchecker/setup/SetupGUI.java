@@ -1,8 +1,8 @@
 package com.github.sunnybat.paxchecker.setup;
 
 import com.github.sunnybat.commoncode.email.EmailAddress;
-import com.github.sunnybat.commoncode.encryption.Encryption;
 import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
+import com.github.sunnybat.commoncode.utilities.Encryption;
 import com.github.sunnybat.paxchecker.PAXChecker;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
@@ -94,13 +94,29 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
     // Main Settings Window
     String cellNum = prefs.getStringPreference("CELLNUM");
+    System.out.println("Total: " + cellNum);
     if (cellNum != null) {
       if (cellNum.contains(";")) {
-        // TODO: Add EPPs to the GUI with all emails
         String[] split = cellNum.split(";");
+        boolean first = false;
         for (String s : split) {
+          if (!s.contains("@") || s.endsWith("@")) {
+            System.out.println("Invalid email: " + s);
+            continue;
+          }
           s = s.trim();
-          ExtraPhonePanel p = new ExtraPhonePanel(this, s.substring(0, s.indexOf("@")), EmailAddress.getProvider(s.substring(s.indexOf("@") + 1)));
+          if (!first) {
+            JCBCarrier.setSelectedIndex(getIndexOfProvider(EmailAddress.getProvider(s.substring(s.indexOf("@") + 1))));
+            if (JCBCarrier.getSelectedItem().equals("[Other]")) {
+              JTFCellNum.setText(s);
+            } else {
+              JTFCellNum.setText(s.substring(0, s.indexOf("@")));
+            }
+            first = true;
+          } else {
+            ExtraPhonePanel p = new ExtraPhonePanel(this, s.substring(0, s.indexOf("@")), s.substring(s.indexOf("@") + 1));
+            addPhonePanel(p);
+          }
         }
       } else {
         JTFCellNum.setText(cellNum);
@@ -296,36 +312,41 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
   private String getCellNumString() {
     String text = JTFCellNum.getText();
-    if (text == null || text.length() < 5) {
-      text = "";
-    } else if (!text.contains("@")) {
-      text += EmailAddress.getCarrierExtension(JCBCarrier.getSelectedItem().toString());
+    text = formatEmails(text, EmailAddress.getCarrierExtension(JCBCarrier.getSelectedItem().toString()));
+    for (ExtraPhonePanel panel : extraPhonePanelList) {
+      text += ";" + formatEmails(panel.getNumber(), EmailAddress.getCarrierExtension(panel.getProvider()));
     }
-    String tempText;
-    java.util.Iterator<ExtraPhonePanel> myIt = extraPhonePanelList.iterator();
-    while (myIt.hasNext()) {
-      ExtraPhonePanel panel = myIt.next();
-      tempText = panel.getNumber();
-      if (tempText.length() < 4) {
-        System.out.println("NOTE: Number is too short! Cannot use!");
-        continue;
-      }
-      String[] split = tempText.split(";");
-      tempText = "";
-      for (String split1 : split) {
-        split1 = split1.trim();
-        tempText += split1;
-        if (!split1.contains("@")) {
-          tempText += EmailAddress.getCarrierExtension(panel.getProvider());
-        }
-        tempText += ";";
-      }
-      //Validate tempText address?
-      text += ";" + tempText;
-      System.out.println("Debug: " + tempText);
-    }
-    System.out.println("Final Text: " + text);
+    System.out.println("Old = " + text);
+    text = text.replaceAll("(;)\\1+", ";"); // Replace multiple ;'s in a row with just one ;
+    text = text.replaceAll("^;|$;", ""); // Remove ; at beginning or end
+    System.out.println("New = " + text);
     return text;
+  }
+
+  /**
+   * Formats the given email into a String to save to the Preferences. Can handle multiple emails separated with ';'. If toParse or ending are null or
+   * an empty String, this method returns an empty String.
+   *
+   * @param toParse Email to parse
+   * @param ending Email ending, with or without @
+   * @return The formatted email to save to Preferences, potentially with ; clumped together or at the beginning or end (but not necessarily)
+   */
+  private String formatEmails(String toParse, String ending) {
+    if (toParse == null || toParse.length() == 0 || ending == null || ending.length() == 0) {
+      return "";
+    }
+    String toReturn = "";
+    String[] splitEmails = toParse.split(";");
+    for (String email : splitEmails) {
+      email = email.trim();
+      if (email.length() > 0) {
+        if (!email.contains("@")) {
+          email += ending;
+        }
+        toReturn += email + ";";
+      }
+    }
+    return toReturn;
   }
 
   private void updateStart() {
@@ -512,7 +533,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
     JTFCellNum.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
-    JCBCarrier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin (CAN)", "Wind", "Sasktel" }));
+    JCBCarrier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin (CAN)", "Wind", "Sasktel", "[Other]" }));
 
     JLSecondsBetweenChecks.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     JLSecondsBetweenChecks.setText("Seconds Between Website Checks");
@@ -659,9 +680,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
             .addGroup(JPTwitterKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
               .addComponent(jLabel10)
               .addComponent(JTFApplicationSecret, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-          .addGroup(JPTwitterKeysLayout.createSequentialGroup()
-            .addGap(0, 0, 0)
-            .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
+          .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addGap(0, 0, Short.MAX_VALUE)
         .addComponent(jLabel6))
     );

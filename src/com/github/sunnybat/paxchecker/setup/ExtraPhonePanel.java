@@ -37,7 +37,7 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
     if (carrier != null) {
       jComboBox1.setSelectedIndex(SetupGUI.getIndexOfProvider(EmailAddress.getProvider(carrier)));
       if (EmailAddress.getProvider(carrier).equals("[Other]")) {
-        jTextField2.setText(number + carrier);
+        jTextField2.setText(number + "@" + carrier);
       } else {
         jTextField2.setText(number);
       }
@@ -72,7 +72,7 @@ public class ExtraPhonePanel extends javax.swing.JPanel {
 
     jTextField2.setToolTipText("<html>\nSpecify the number you want to receive texts at.<br>\nOnly put your number - no spaces, no leading 1.<br>\nYou may use dashes -- or perentheses ().<br>\nIf you use a different carrier, you may find their<br>\ntexting email address extension at<br>\nwww.emailtextmessages.com and put it onto the<br>\nend of your number.<br>\nExamples:<br>\n(123)-456-7890 [Verizon selected in dropdown box]<br>\n1234567890@car.rier.net<br>\n123-4567890@car.rier.net<br>\n</html>");
 
-    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin (CAN)", "Wind", "Sasktel" }));
+    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AT&T (MMS)", "AT&T (SMS)", "Verizon", "Sprint", "T-Mobile", "U.S. Cellular", "Bell", "Rogers", "Fido", "Koodo", "Telus", "Virgin (CAN)", "Wind", "Sasktel", "[Other]" }));
 
     jButton1.setText("X");
     jButton1.addActionListener(new java.awt.event.ActionListener() {

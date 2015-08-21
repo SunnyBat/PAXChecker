@@ -205,7 +205,7 @@
             <Component class="javax.swing.JComboBox" name="JCBCarrier">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="14">
+                  <StringArray count="15">
                     <StringItem index="0" value="AT&amp;T (MMS)"/>
                     <StringItem index="1" value="AT&amp;T (SMS)"/>
                     <StringItem index="2" value="Verizon"/>
@@ -220,6 +220,7 @@
                     <StringItem index="11" value="Virgin (CAN)"/>
                     <StringItem index="12" value="Wind"/>
                     <StringItem index="13" value="Sasktel"/>
+                    <StringItem index="14" value="[Other]"/>
                   </StringArray>
                 </Property>
               </Properties>

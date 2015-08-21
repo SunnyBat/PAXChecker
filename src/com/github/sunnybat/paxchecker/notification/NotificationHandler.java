@@ -22,6 +22,7 @@ public class NotificationHandler {
   private final ArrayList<Notification> notificationList = new ArrayList<>();
   private String lastNotificationID = "";
   private final boolean anonymousStatistics;
+  private boolean isHeadless;
 
   /**
    * Creates a new NotificationHandler.
@@ -36,6 +37,10 @@ public class NotificationHandler {
       this.lastNotificationID = lastNotificationID;
     }
     this.anonymousStatistics = anonymousStatistics;
+  }
+
+  public void setHeadless() {
+    isHeadless = true;
   }
 
   /**
@@ -153,7 +158,7 @@ public class NotificationHandler {
         lastNotificationID = n.getID();
         first = true;
       }
-      if (com.github.sunnybat.paxchecker.PAXChecker.isCommandLine()) {
+      if (isHeadless) {
         System.out.println("NOTIFICATION " + n.getID());
         System.out.println(n.getInfo());
         cDL.countDown();
