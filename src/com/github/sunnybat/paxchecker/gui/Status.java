@@ -6,23 +6,43 @@ import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 
 /**
  *
  * @author SunnyBat
  */
-public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
+public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame implements com.github.sunnybat.paxchecker.status.Status {
 
-  private SystemTray tray;
-  private TrayIcon myIcon;
-  private IconMenu myMenu;
   private final NotificationWindow infoWindow;
   private int button;
   private SwingWorker infoReset = new InformationResetter();
+  private MenuItem maximizeButton = new MenuItem("Restore Window");
+  private MenuItem closeButton = new MenuItem("Close Program");
+  private MenuItem forceCheckButton = new MenuItem("Force Check");
+  private MenuItem testTextButton = new MenuItem("Test Text");
+  private MenuItem testAlarmButton = new MenuItem("Test Alarm");
+  private MenuItem reconnectTwitterButton = new MenuItem("Reconnect to Twitter");
   private final int TEXT_DELAY_TIME = 300; // Seconds
   private final int INFORMATION_CLEAR_DELAY_TIME = 15; // Seconds
 
@@ -60,39 +80,61 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void customComponents(final String expo, final String emailAddress, final List<EmailAddress> addresses) {
+    maximizeButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        restoreFromTray();
+      }
+    });
+    closeButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        System.exit(0);
+      }
+    });
+    forceCheckButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonPressed(1);
+      }
+    });
+    testTextButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonPressed(2); // CHECK: Number?
+      }
+    });
+    testAlarmButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonPressed(3);
+      }
+    });
+    reconnectTwitterButton.addActionListener(new java.awt.event.ActionListener() {
+      @Override
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonPressed(4);
+      }
+    });
+    getPopupMenu().add(maximizeButton);
+    getPopupMenu().add(closeButton);
+    getPopupMenu().addSeparator();
+    getPopupMenu().add(forceCheckButton);
     try {
-      tray = SystemTray.getSystemTray();
-      myMenu = new IconMenu() {
-        @Override
-        public void showWindowPressed() {
-          showWindow();
-          tray.remove(myIcon);
-        }
-
-        @Override
-        public void forceCheckPressed() {
-          buttonPressed(1);
-        }
-
-        @Override
-        public void sendTestEmailPressed() {
-          buttonPressed(2);
-        }
-      };
       setIcon(javax.imageio.ImageIO.read(Status.class.getResourceAsStream("/resources/" + expo.replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
     } catch (Exception e) {
-      System.out.println("ERROR: System tray is not supported!");
+      e.printStackTrace();
     }
     JLTwitterStatus.setVisible(false); // Enable when Twitter enabled
     JBReconnectTwitter.setVisible(false);
     JLTitle.setText(expo + " Website Status");
     if (addresses == null || emailAddress == null) {
-      setInfoText("[TEXTING DISABLED]");
-      setTextButtonState(false);
+      JLEmailPhone.setText("[TEXTING DISABLED]");
+      JBTestText.setEnabled(false);
     } else if (addresses.size() == 1) {
-      setInfoText(emailAddress + " -- " + addresses.get(0).getCompleteAddress());
+      JLEmailPhone.setText(emailAddress + " -- " + addresses.get(0).getCompleteAddress());
     } else {
-      setInfoText(emailAddress + " -- Multiple Numbers (Mouse Here to View)");
+      JLEmailPhone.setText(emailAddress + " -- Multiple Numbers (Mouse Here to View)");
       String list = "<html>";
       String[] allAddresses = EmailAccount.convertToString(addresses).split(";");
       for (int a = 0; a < allAddresses.length; a++) {
@@ -102,91 +144,59 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
         }
       }
       list += "</html>";
-      setLabelTooltipText(list);
+      JLEmailPhone.setToolTipText(list);
     }
     setDataUsageText(DataTracker.getDataUsedMB());
   }
 
+  @Override
   public void enableEmail() {
-    if (myMenu != null) {
-      myMenu.enableEmail();
-    }
+    getPopupMenu().add(testTextButton);
     JBTestText.setEnabled(true);
   }
 
+  @Override
   public void enableAlarm() {
+    getPopupMenu().add(testAlarmButton);
     JBTestAlarm.setEnabled(true);
   }
 
+  @Override
   public void enableTwitter() {
     JLTwitterStatus.setVisible(true);
   }
 
-  public void minimizeWindow() {
-    if (!SystemTray.isSupported() || myIcon == null) {
-      System.out.println("Unable to minimize window.");
-      if (!isVisible()) {
-        maximizeWindow();
-      }
+  @Override
+  public void setTwitterStatus(final boolean isEnabled) {
+    if (isEnabled) {
+      setTwitterStatus("Twitter Feed: Connected");
     } else {
-      try {
-        tray.add(myIcon);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      invokeAndWaitOnEDT(new Runnable() {
-        @Override
-        public void run() {
-          setVisible(false);
-        }
-      });
+      setTwitterStatus("Twitter Feed: Disconnected");
     }
   }
 
-  public void maximizeWindow() {
-    tray.remove(myIcon); // Fine if myIcon == null or myIcon isn't in tray
+  @Override
+  public void setTwitterStatus(final String text) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
-        setExtendedState(javax.swing.JFrame.NORMAL);
-        setVisible(true);
-        setLocationRelativeTo(null);
-        toFront();
+        JLTwitterStatus.setText(text);
       }
     });
   }
 
-  public void setTwitterStatus(final boolean isEnabled) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        if (isEnabled) {
-          JLTwitterStatus.setText("Twitter Feed: Connected");
-        } else {
-          JLTwitterStatus.setText("Twitter Feed: Disconnected");
-        }
-      }
-    });
-  }
-
-  public void setTwitterStatus(final int timeUntilReconnect) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JLTwitterStatus.setText("Twitter Feed: Reconnecting in " + timeUntilReconnect + " seconds");
-      }
-    });
-  }
-
+  @Override
   public void twitterStreamKilled() {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
+        getPopupMenu().add(reconnectTwitterButton);
         JBReconnectTwitter.setVisible(true);
       }
     });
   }
 
+  @Override
   public void setInformationText(final String text) {
     if (infoReset != null) { // CHECK: Synchronization?
       infoReset.cancel(true);
@@ -201,6 +211,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
     infoReset.execute();
   }
 
+  @Override
   public void setLastCheckedText(final String text) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
@@ -210,69 +221,47 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
     });
   }
 
+  @Override
   public void setLastCheckedText(final int seconds) {
     setLastCheckedText("Time until next check: " + seconds + " seconds");
   }
 
-  public void setInfoText(final String text) {
+  @Override
+  public void setForceCheckEnabled(final boolean enabled) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
-        JLEmailPhone.setText(text);
-      }
-    });
-  }
-
-  public void setTextButtonState(final boolean enabled) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JBTestText.setEnabled(enabled);
+        JBForceCheck.setEnabled(enabled);
         if (enabled) {
-          myMenu.addTextButton();
+          getPopupMenu().add(forceCheckButton);
         } else {
-          myMenu.removeTextButton();
+          getPopupMenu().remove(forceCheckButton);
         }
       }
     });
   }
 
-  public void setSoundButtonState(final boolean enabled) {
+  @Override
+  public void setDataUsageText(final String text) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
-        JBTestAlarm.setEnabled(enabled);
+        JLDataUsage.setText(text);
       }
     });
   }
 
-  public void setLabelTooltipText(final String s) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JLEmailPhone.setToolTipText(s);
-      }
-    });
+  @Override
+  public void setDataUsageText(double mb) {
+    setDataUsageText("Data Used: " + mb + "MB");
   }
 
-  public void setTextButtonText(final String s) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JBTestText.setText(s);
-      }
-    });
-  }
-
-  public void setForceButtonState(final boolean enabled) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JBForceCheck.setEnabled(enabled);
-      }
-    });
-  }
-
+  /**
+   * Updates the given JLabel on the EDT.
+   *
+   * @param label
+   * @param text
+   */
   public void updateJLabel(final javax.swing.JLabel label, final String text) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
@@ -289,8 +278,8 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
     }
   }
 
-  public javax.swing.JLabel addLinkJLabel() {
-    final javax.swing.JLabel jL = new javax.swing.JLabel();
+  public JLabel addLinkJLabel() {
+    final JLabel jL = new javax.swing.JLabel();
     jL.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         openLabelLink(jL.getText());
@@ -307,57 +296,8 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
     return jL;
   }
 
-  public void setDataUsageText(final String text) {
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        JLDataUsage.setText(text);
-      }
-    });
-  }
-
-  public void setDataUsageText(long amount) {
-    setDataUsageText("Data Used: " + amount + "MB");
-  }
-
-  public void setDataUsageText(double mb) {
-    setDataUsageText("Data Used: " + mb + "MB");
-  }
-
   public void setIcon(final java.awt.Image image) {
-    if (image == null) {
-      System.out.println("Image == null");
-      return;
-    }
-    invokeAndWaitOnEDT(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          setIconImage(image);
-          myIcon = new TrayIcon(image, "PAXChecker", myMenu);
-          myIcon.setImageAutoSize(true);
-          myIcon.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-              maximizeWindow();
-            }
-          });
-          System.out.println("Set status icon: " + (myIcon != null));
-        } catch (Exception e) {
-          System.out.println("ERROR setting status iconImage!");
-        }
-      }
-    });
-  }
-
-  @Override
-  public void dispose() {
-    if (tray != null) {
-      if (myIcon != null) {
-        tray.remove(myIcon);
-      }
-    }
-    super.dispose();
+    super.setTrayIcon("PAXChecker", image);
   }
 
   public int getButtonPressed() {
@@ -416,7 +356,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
       do {
         int secondsLeft = (int) ((delayTime - (System.nanoTime() - startTime)) / 1000000000L);
         setProgress((INFORMATION_CLEAR_DELAY_TIME - secondsLeft) / INFORMATION_CLEAR_DELAY_TIME * 100);
-      } while (System.nanoTime() - startTime < delayTime);
+      } while (System.nanoTime() - startTime < delayTime && !super.isCancelled());
       // Complete
       setProgress(100);
       return null;
@@ -424,7 +364,9 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
     @Override
     protected void done() {
-      setInformationText(" ");
+      if (!super.isCancelled()) {
+        setInformationText(" ");
+      }
     }
   }
 
@@ -436,52 +378,53 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    JLTitle = new javax.swing.JLabel();
-    JBTestText = new javax.swing.JButton();
-    JBTestAlarm = new javax.swing.JButton();
-    JBForceCheck = new javax.swing.JButton();
-    JLLastChecked = new javax.swing.JLabel();
-    JLInformation = new javax.swing.JLabel();
-    JLEmailPhone = new javax.swing.JLabel();
-    JLDataUsage = new javax.swing.JLabel();
-    JPLinks = new javax.swing.JPanel();
-    JLTwitterStatus = new javax.swing.JLabel();
-    JLLinksExplanation = new javax.swing.JLabel();
-    JBReconnectTwitter = new javax.swing.JButton();
-    filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+    JLTitle = new JLabel();
+    JBTestText = new JButton();
+    JBTestAlarm = new JButton();
+    JBForceCheck = new JButton();
+    JLLastChecked = new JLabel();
+    JLInformation = new JLabel();
+    JLEmailPhone = new JLabel();
+    JLDataUsage = new JLabel();
+    JPLinks = new JPanel();
+    JLTwitterStatus = new JLabel();
+    JLLinksExplanation = new JLabel();
+    JBReconnectTwitter = new JButton();
+    filler1 = new Box.Filler(new Dimension(0, 0), new Dimension(0, 0), new Dimension(32767, 0));
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     setTitle("PAXChecker");
     setResizable(false);
-    addWindowListener(new java.awt.event.WindowAdapter() {
-      public void windowIconified(java.awt.event.WindowEvent evt) {
+    addWindowListener(new WindowAdapter() {
+      public void windowIconified(WindowEvent evt) {
         formWindowIconified(evt);
       }
     });
 
-    JLTitle.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-    JLTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    JLTitle.setFont(new Font("Tahoma", 0, 24)); // NOI18N
+    JLTitle.setHorizontalAlignment(SwingConstants.CENTER);
     JLTitle.setText("PAX Website Status");
+    JLTitle.setToolTipText("");
 
     JBTestText.setText("Test Text");
     JBTestText.setEnabled(false);
-    JBTestText.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    JBTestText.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         JBTestTextActionPerformed(evt);
       }
     });
 
     JBTestAlarm.setText("Test Alarm Sound");
     JBTestAlarm.setEnabled(false);
-    JBTestAlarm.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    JBTestAlarm.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         JBTestAlarmActionPerformed(evt);
       }
     });
 
     JBForceCheck.setText("Force Check");
-    JBForceCheck.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    JBForceCheck.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         JBForceCheckActionPerformed(evt);
       }
     });
@@ -490,95 +433,93 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
     JLInformation.setText(" ");
 
-    JLEmailPhone.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-    JLEmailPhone.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    JLEmailPhone.setFont(new Font("Tahoma", 2, 11)); // NOI18N
+    JLEmailPhone.setHorizontalAlignment(SwingConstants.CENTER);
     JLEmailPhone.setText("Email -- Phone");
 
     JLDataUsage.setText("Data Usage: [Initializing]");
     JLDataUsage.setToolTipText("<html>\nNote that this does NOT include Twitter<br>\ndata usage.<br>\nThis is only a rough estimate of data used.<br>\nFor more accurate data usage, download<br>\nWireShark (or similar software) and monitor<br>\nusage through that.\n</html>");
 
-    JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.LINE_AXIS));
-    JPLinks.setLayout(new javax.swing.BoxLayout(JPLinks, javax.swing.BoxLayout.Y_AXIS));
+    JPLinks.setLayout(new BoxLayout(JPLinks, BoxLayout.LINE_AXIS));
+    JPLinks.setLayout(new BoxLayout(JPLinks, BoxLayout.Y_AXIS));
 
     JLTwitterStatus.setText("Twitter Feed: Connecting...");
 
-    JLLinksExplanation.setFont(new java.awt.Font("Tahoma", 2, 10)); // NOI18N
-    JLLinksExplanation.setForeground(new java.awt.Color(0, 0, 238));
+    JLLinksExplanation.setFont(new Font("Tahoma", 2, 10)); // NOI18N
+    JLLinksExplanation.setForeground(new Color(0, 0, 238));
     JLLinksExplanation.setText("Why are these links pointing to random events??? What's up with [Message]??");
-    JLLinksExplanation.addMouseListener(new java.awt.event.MouseAdapter() {
-      public void mousePressed(java.awt.event.MouseEvent evt) {
+    JLLinksExplanation.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent evt) {
         JLLinksExplanationMousePressed(evt);
       }
     });
 
     JBReconnectTwitter.setText("Reconnect Twitter Stream");
-    JBReconnectTwitter.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
+    JBReconnectTwitter.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
         JBReconnectTwitterActionPerformed(evt);
       }
     });
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    GroupLayout layout = new GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                .addComponent(JLDataUsage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(JLInformation, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(JLLastChecked, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(JPLinks, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addComponent(JLTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
+                .addComponent(JLDataUsage, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JLInformation, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JLLastChecked, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JPLinks, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 380, GroupLayout.PREFERRED_SIZE))
+              .addComponent(JLTitle, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(JBTestText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JBTestAlarm, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-              .addComponent(JBForceCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(JLEmailPhone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(JBTestText, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JBTestAlarm, GroupLayout.PREFERRED_SIZE, 185, GroupLayout.PREFERRED_SIZE))
+              .addComponent(JBForceCheck, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(JLEmailPhone, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGap(10, 10, 10))
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLTwitterStatus)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(layout.createSequentialGroup()
             .addComponent(JLLinksExplanation)
             .addGap(0, 0, Short.MAX_VALUE))
-          .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(JBReconnectTwitter, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+              .addComponent(JBReconnectTwitter, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(filler1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addContainerGap())))
     );
-    layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addComponent(JLTitle)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLEmailPhone)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JPLinks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(JPLinks, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addGap(0, 0, 0)
         .addComponent(JLTwitterStatus)
         .addGap(0, 0, 0)
         .addComponent(JLLinksExplanation)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(JLLastChecked)
         .addGap(0, 0, 0)
         .addComponent(JLDataUsage)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JLInformation)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
           .addComponent(JBTestText)
-          .addComponent(JBTestAlarm, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+          .addComponent(JBTestAlarm))
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JBForceCheck)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(filler1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0)
         .addComponent(JBReconnectTwitter)
         .addContainerGap())
@@ -608,7 +549,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }//GEN-LAST:event_JBTestAlarmActionPerformed
 
   private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
-    minimizeWindow();
+    minimizeToTray();
   }//GEN-LAST:event_formWindowIconified
 
   private void JLLinksExplanationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JLLinksExplanationMousePressed
@@ -617,21 +558,23 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
     buttonPressed(4);
+    JBReconnectTwitter.setVisible(false);
+    getPopupMenu().remove(reconnectTwitterButton);
   }//GEN-LAST:event_JBReconnectTwitterActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton JBForceCheck;
-  private javax.swing.JButton JBReconnectTwitter;
-  private javax.swing.JButton JBTestAlarm;
-  private javax.swing.JButton JBTestText;
-  private javax.swing.JLabel JLDataUsage;
-  private javax.swing.JLabel JLEmailPhone;
-  private javax.swing.JLabel JLInformation;
-  private javax.swing.JLabel JLLastChecked;
-  private javax.swing.JLabel JLLinksExplanation;
-  private javax.swing.JLabel JLTitle;
-  private javax.swing.JLabel JLTwitterStatus;
-  private javax.swing.JPanel JPLinks;
-  private javax.swing.Box.Filler filler1;
+  private JButton JBForceCheck;
+  private JButton JBReconnectTwitter;
+  private JButton JBTestAlarm;
+  private JButton JBTestText;
+  private JLabel JLDataUsage;
+  private JLabel JLEmailPhone;
+  private JLabel JLInformation;
+  private JLabel JLLastChecked;
+  private JLabel JLLinksExplanation;
+  private JLabel JLTitle;
+  private JLabel JLTwitterStatus;
+  private JPanel JPLinks;
+  private Box.Filler filler1;
   // End of variables declaration//GEN-END:variables
 }

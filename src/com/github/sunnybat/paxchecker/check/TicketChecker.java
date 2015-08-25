@@ -56,7 +56,7 @@ public final class TicketChecker {
    */
   public boolean isUpdated() {
     if (status != null) {
-      status.setForceButtonState(false);
+      status.setForceCheckEnabled(false);
     }
     for (Check c : checks) {
       threadPool.submit(c);
@@ -81,7 +81,7 @@ public final class TicketChecker {
       }
     }
     if (status != null) {
-      status.setForceButtonState(true);
+      status.setForceCheckEnabled(true);
     }
     return false;
   }

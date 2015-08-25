@@ -27,6 +27,7 @@ public final class PAXChecker {
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
+  private static TwitterStreamer myStreamer;
 
   /**
    * @param args the command line arguments
@@ -171,10 +172,11 @@ public final class PAXChecker {
         tcheck.addUser(s);
       }
       tcheck.startStreamingTwitter(); // CHECK: Move this down?
+      myStreamer = tcheck;
       myStatus.enableTwitter();
     }
     if (startMinimized) {
-      myStatus.minimizeWindow();
+      myStatus.minimizeToTray();
     } else {
       myStatus.showWindow();
     }
@@ -346,7 +348,9 @@ public final class PAXChecker {
                   }
                 }
               } else if (button == 4) {
-                // TODO: Reconnect to Twitter
+                if (myStreamer != null) {
+                  myStreamer.startStreamingTwitter();
+                }
               }
             }
           }
