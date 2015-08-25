@@ -315,7 +315,11 @@ public final class PAXChecker {
         if (checker.isUpdated()) {
           Browser.openLinkInBrowser(checker.getLinkFound());
           if (email != null) {
-            email.sendMessage("PAXChecker", "A new link has been found: " + checker.getLinkFound());
+            try {
+              email.sendMessage("PAXChecker", "A new link has been found: " + checker.getLinkFound());
+            } catch (IllegalStateException e) { // In case we send too fast
+              System.out.println("Unable to send email (" + e.getMessage() + ")");
+            }
           }
           Tickets ticketWindow = new Tickets(checker.getLinkFound()); // CHECK: Should I only allow one Tickets at a time?
           ticketWindow.showWindow();
@@ -330,7 +334,16 @@ public final class PAXChecker {
                 break;
               } else if (button == 2) {
                 if (email != null) {
-                  email.sendMessage("PAXChecker", "This is a test text.");
+                  status.setInformationText("Sending test text...");
+                  try {
+                    if (email.sendMessage("PAXChecker", "This is a test text.")) {
+                      status.setInformationText("Test text sent successfully!");
+                    } else {
+                      status.setInformationText("Unable to send test text");
+                    }
+                  } catch (IllegalStateException e) { // In case we send too fast
+                    status.setInformationText("Unable to send test text (sent too fast?)");
+                  }
                 }
               } else if (button == 4) {
                 // TODO: Reconnect to Twitter

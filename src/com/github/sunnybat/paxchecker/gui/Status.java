@@ -9,6 +9,7 @@ import com.github.sunnybat.paxchecker.notification.NotificationWindow;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.util.List;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -21,6 +22,9 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   private IconMenu myMenu;
   private final NotificationWindow infoWindow;
   private int button;
+  private SwingWorker infoReset = new InformationResetter();
+  private final int TEXT_DELAY_TIME = 300; // Seconds
+  private final int INFORMATION_CLEAR_DELAY_TIME = 15; // Seconds
 
   public Status(String expo) {
     this(expo, null, null);
@@ -75,6 +79,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
           buttonPressed(2);
         }
       };
+      setIcon(javax.imageio.ImageIO.read(Status.class.getResourceAsStream("/resources/" + expo.replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
     } catch (Exception e) {
       System.out.println("ERROR: System tray is not supported!");
     }
@@ -152,7 +157,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setTwitterStatus(final boolean isEnabled) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         if (isEnabled) {
@@ -165,7 +170,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setTwitterStatus(final int timeUntilReconnect) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLTwitterStatus.setText("Twitter Feed: Reconnecting in " + timeUntilReconnect + " seconds");
@@ -174,7 +179,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void twitterStreamKilled() {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JBReconnectTwitter.setVisible(true);
@@ -183,16 +188,21 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setInformationText(final String text) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    if (infoReset != null) { // CHECK: Synchronization?
+      infoReset.cancel(true);
+    }
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLInformation.setText(text);
       }
     });
+    infoReset = new InformationResetter();
+    infoReset.execute();
   }
 
   public void setLastCheckedText(final String text) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLLastChecked.setText(text);
@@ -205,7 +215,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setInfoText(final String text) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLEmailPhone.setText(text);
@@ -214,7 +224,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setTextButtonState(final boolean enabled) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JBTestText.setEnabled(enabled);
@@ -228,7 +238,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setSoundButtonState(final boolean enabled) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JBTestAlarm.setEnabled(enabled);
@@ -237,7 +247,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setLabelTooltipText(final String s) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLEmailPhone.setToolTipText(s);
@@ -246,7 +256,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setTextButtonText(final String s) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JBTestText.setText(s);
@@ -255,7 +265,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setForceButtonState(final boolean enabled) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JBForceCheck.setEnabled(enabled);
@@ -264,7 +274,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void updateJLabel(final javax.swing.JLabel label, final String text) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         label.setText(text);
@@ -286,7 +296,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
         openLabelLink(jL.getText());
       }
     });
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         jL.setText(" ");
@@ -298,7 +308,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   public void setDataUsageText(final String text) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+    invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
         JLDataUsage.setText(text);
@@ -362,6 +372,59 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
     synchronized (this) {
       this.button = button;
       this.notify();
+    }
+  }
+
+  private class TextCountdown extends SwingWorker<Object, String> {
+
+    @Override
+    protected Object doInBackground() throws Exception { // TODO: Thread safety?
+      // Start
+      long startTime = System.nanoTime();
+      long delayTime = TEXT_DELAY_TIME * 1000000000L;
+      do {
+        int secondsLeft = (int) ((delayTime - (System.nanoTime() - startTime)) / 1000000000L);
+        publish("(" + secondsLeft + ")");
+        setProgress((TEXT_DELAY_TIME - secondsLeft) / TEXT_DELAY_TIME * 100);
+      } while (System.nanoTime() - startTime < delayTime);
+      // Complete
+      publish("Test Text");
+      setProgress(100);
+      return null;
+    }
+
+    @Override
+    protected void process(java.util.List<String> chunks) {
+      if (!chunks.isEmpty()) {
+        JBTestText.setText(chunks.get(chunks.size() - 1));
+      }
+    }
+
+    @Override
+    protected void done() {
+      JBTestText.setEnabled(true);
+    }
+  }
+
+  private class InformationResetter extends SwingWorker<Object, String> {
+
+    @Override
+    protected Object doInBackground() throws Exception { // TODO: Thread safety?
+      // Start
+      long startTime = System.nanoTime();
+      long delayTime = INFORMATION_CLEAR_DELAY_TIME * 1000000000L;
+      do {
+        int secondsLeft = (int) ((delayTime - (System.nanoTime() - startTime)) / 1000000000L);
+        setProgress((INFORMATION_CLEAR_DELAY_TIME - secondsLeft) / INFORMATION_CLEAR_DELAY_TIME * 100);
+      } while (System.nanoTime() - startTime < delayTime);
+      // Complete
+      setProgress(100);
+      return null;
+    }
+
+    @Override
+    protected void done() {
+      setInformationText(" ");
     }
   }
 
@@ -529,6 +592,9 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }//GEN-LAST:event_JBForceCheckActionPerformed
 
   private void JBTestTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestTextActionPerformed
+    JBTestText.setEnabled(false); // TODO: Move this to TextCountdown so it doesn't have to be called here
+    SwingWorker worker = new TextCountdown();
+    worker.execute();
     buttonPressed(2);
   }//GEN-LAST:event_JBTestTextActionPerformed
 
