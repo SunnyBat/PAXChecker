@@ -6,9 +6,11 @@ import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
+import com.github.sunnybat.paxchecker.resources.ResourceLoader;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -121,7 +123,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
     getPopupMenu().addSeparator();
     getPopupMenu().add(forceCheckButton);
     try {
-      setIcon(javax.imageio.ImageIO.read(Status.class.getResourceAsStream("/resources/" + expo.replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
+      setIcon(javax.imageio.ImageIO.read(ResourceLoader.loadResource(expo.replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -296,8 +298,14 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
     return jL;
   }
 
-  public void setIcon(final java.awt.Image image) {
-    super.setTrayIcon("PAXChecker", image);
+  public void setIcon(final Image image) {
+    invokeAndWaitOnEDT(new Runnable() {
+      @Override
+      public void run() {
+        setIconImage(image);
+        setTrayIcon("PAXChecker", image);
+      }
+    });
   }
 
   public int getButtonPressed() {
@@ -541,11 +549,6 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
 
   private void JBTestAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestAlarmActionPerformed
     buttonPressed(3);
-    if (Audio.playAlarm()) {
-      setInformationText("Alarm started.");
-    } else {
-      setInformationText("Unable to play alarm.");
-    }
   }//GEN-LAST:event_JBTestAlarmActionPerformed
 
   private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified

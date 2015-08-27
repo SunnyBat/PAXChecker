@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.gui;
 
+import com.github.sunnybat.paxchecker.resources.ResourceLoader;
 import java.awt.Image;
 import java.io.IOException;
 import java.util.Calendar;
@@ -13,7 +14,7 @@ public class Tickets extends com.github.sunnybat.commoncode.javax.swing.JFrame {
 
   static {
     try {
-      myIcon = javax.imageio.ImageIO.read(Tickets.class.getResourceAsStream("/resources/alert.png"));
+      myIcon = javax.imageio.ImageIO.read(ResourceLoader.loadResource("Alert.png"));
     } catch (IOException iOE) {
       iOE.printStackTrace();
       System.out.println("Failed to load ImageIcon for Tickets window -- program will still function normally.");

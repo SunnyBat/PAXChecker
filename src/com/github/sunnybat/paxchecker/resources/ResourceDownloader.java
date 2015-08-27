@@ -1,6 +1,5 @@
-package com.github.sunnybat.paxchecker;
+package com.github.sunnybat.paxchecker.resources;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,21 +14,14 @@ import java.net.URLConnection;
  */
 public class ResourceDownloader {
 
-  private final String RESOURCE_LOCATION;
   private final String BASE_URL = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerResources/";
-  private final String ALARM_FILE_NAME = "Alarm.wav";
-  private File alarmFile;
   private boolean redownload;
 
   public ResourceDownloader() {
-    RESOURCE_LOCATION = getResourceLocation();
-    File resourceFolder = new File(RESOURCE_LOCATION);
+    File resourceFolder = new File(ResourceConstants.RESOURCE_LOCATION);
     if (!resourceFolder.exists() && resourceFolder.getParentFile().exists()) {
       resourceFolder.mkdirs();
-    } else {
-      System.out.println("Error creating directory!");
     }
-    alarmFile = new File(RESOURCE_LOCATION + ALARM_FILE_NAME);
   }
 
   public void forceRedownload() {
@@ -37,13 +29,20 @@ public class ResourceDownloader {
   }
 
   public void downloadResources() {
-    if (!alarmFile.exists() || redownload) {
+    for (String fileName : ResourceConstants.DEFAULT_FILE_NAMES) {
+      downloadIfNecessary(fileName, new File(ResourceConstants.RESOURCE_LOCATION + fileName));
+    }
+  }
+
+  private void downloadIfNecessary(String fileName, File downloadTo) {
+    if (!downloadTo.exists() || redownload) {
+      startingFile(fileName);
       try {
-        System.out.println("Downloading Alarm file.");
-        downloadResource(BASE_URL + ALARM_FILE_NAME, alarmFile);
+        downloadResource(BASE_URL + fileName, downloadTo);
       } catch (IOException ioe) {
         ioe.printStackTrace();
       }
+      finishedFile(fileName);
     }
   }
 
@@ -63,26 +62,19 @@ public class ResourceDownloader {
     while ((bytesRead = inputStream.read(buffer)) != -1) {
       buffOutputStream.write(buffer, 0, bytesRead);
       total += bytesRead;
-      int percent = (int) (total * 100 / remoteFileSize);
-      filePercentage(percent);
+      filePercentage((int) (total * 100 / remoteFileSize));
     }
     buffOutputStream.flush();
     buffOutputStream.close();
     inputStream.close();
   }
 
-  private String getResourceLocation() { // TODO: Paths for different OS, which will use different file separators
-    String os = System.getProperty("os.name").toLowerCase();
-    if (os.contains("windows")) {
-      String userName = System.getProperty("user.name");
-      return "C:/Users/" + userName + "/AppData/Roaming/PAXChecker/";
-    } else if (os.contains("mac")) {
-      return null; // TODO: Mac location
-    } else if (os.contains("linux")) {
-      return "~/.config/PAXChecker/";
-    } else {
-      return "./PAXChecker/";
-    }
+  /**
+   * Override this to get the name of the file that is currently being downloaded.
+   *
+   * @param fileName The filename
+   */
+  public void startingFile(String fileName) {
   }
 
   /**
@@ -91,6 +83,14 @@ public class ResourceDownloader {
    * @param percent The percent downloaded
    */
   public void filePercentage(int percent) {
+  }
+
+  /**
+   * Override this to get the name of the file that has been fully downloaded.
+   *
+   * @param fileName The filename
+   */
+  public void finishedFile(String fileName) {
   }
 
 }

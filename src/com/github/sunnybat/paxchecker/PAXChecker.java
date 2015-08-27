@@ -3,19 +3,32 @@ package com.github.sunnybat.paxchecker;
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.commoncode.startup.LoadingWindow;
-import com.github.sunnybat.commoncode.update.*;
+import com.github.sunnybat.commoncode.update.PatchNotesDownloader;
+import com.github.sunnybat.commoncode.update.UpdateDownloader;
+import com.github.sunnybat.commoncode.update.UpdatePrompt;
 import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.check.*;
+import com.github.sunnybat.paxchecker.check.CheckPaxsite;
+import com.github.sunnybat.paxchecker.check.CheckShowclix;
+import com.github.sunnybat.paxchecker.check.CheckShowclixEventPage;
+import com.github.sunnybat.paxchecker.check.TicketChecker;
+import com.github.sunnybat.paxchecker.check.TwitterStreamer;
 import com.github.sunnybat.paxchecker.gui.Status;
 import com.github.sunnybat.paxchecker.gui.Tickets;
 import com.github.sunnybat.paxchecker.notification.NotificationHandler;
-import com.github.sunnybat.paxchecker.setup.*;
+import com.github.sunnybat.paxchecker.resources.ResourceDownloader;
+import com.github.sunnybat.paxchecker.setup.Setup;
+import com.github.sunnybat.paxchecker.setup.SetupAuto;
+import com.github.sunnybat.paxchecker.setup.SetupCLI;
+import com.github.sunnybat.paxchecker.setup.SetupGUI;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -23,7 +36,7 @@ import java.util.*;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R2";
+  public static final String VERSION = "3.0.0 R3";
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
@@ -37,8 +50,6 @@ public final class PAXChecker {
     System.out.println("Initializing...");
     java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
 
-//    ResourceDownloader download = new ResourceDownloader();
-//    download.downloadResources();
     // SETUP
     boolean isHeadless = GraphicsEnvironment.isHeadless();
     boolean isAutostart = false;
@@ -119,7 +130,17 @@ public final class PAXChecker {
     if (isHeadless) {
       ErrorBuilder.forceCommandLine();
     }
-    String patchNotes = doLoading(checkUpdates, checkNotifications);
+    String patchNotes = null;
+    final LoadingWindow loadingWindow = new LoadingWindow();
+    loadingWindow.showWindow();
+    loadResources(loadingWindow, hasArgument(args, "-redownloadresources"));
+    if (checkUpdates) {
+      patchNotes = loadUpdates(loadingWindow);
+    }
+    if (checkNotifications) {
+      loadNotifications(loadingWindow);
+    }
+    loadingWindow.dispose();
     Setup mySetup;
     if (isAutostart) {
       mySetup = new SetupAuto(args);
@@ -209,55 +230,69 @@ public final class PAXChecker {
     }
   }
 
-  /**
-   * Loads Updates and Notifications.
-   *
-   * @return All the Version Notes, or null if not loaded
-   */
-  private static String doLoading(boolean checkUpdates, boolean checkNotifications) {
-    LoadingWindow loadingWindow = new LoadingWindow();
-    loadingWindow.showWindow();
+  private static String loadUpdates(LoadingWindow window) {
     String notes = null;
-
-    // TODO: Command-line updates and notifications
-    // CHECK UPDATES
-    if (checkUpdates) {
-      try {
-        loadingWindow.setStatus("Checking for updates...");
-        PatchNotesDownloader notesDownloader = new PatchNotesDownloader(PATCH_NOTES_LINK);
-        notesDownloader.downloadVersionNotes(VERSION);
-        notes = notesDownloader.getVersionNotes();
-        if (notesDownloader.updateAvailable()) {
-          // TODO: Add support for anonymous downloads
-          UpdateDownloader myDownloader = new UpdateDownloader(UPDATE_LINK, BETA_UPDATE_LINK);
-          UpdatePrompt myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
-              "VERSION", notesDownloader.getVersionNotes(VERSION));
-          loadingWindow.setVisible(false); // TODO: Make better method
-          myPrompt.showWindow();
-          try {
-            myPrompt.waitForClose();
-          } catch (InterruptedException e) {
-          }
-          if (myPrompt.shouldUpdateProgram()) {
-            myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-            System.exit(0); // TODO: Is this actually the right way to kill the program?
-          } else {
-            loadingWindow.showWindow();
-          }
+    try {
+      window.setStatus("Checking for updates...");
+      PatchNotesDownloader notesDownloader = new PatchNotesDownloader(PATCH_NOTES_LINK);
+      notesDownloader.downloadVersionNotes(VERSION);
+      notes = notesDownloader.getVersionNotes();
+      if (notesDownloader.updateAvailable()) {
+        // TODO: Add support for anonymous downloads
+        UpdateDownloader myDownloader = new UpdateDownloader(UPDATE_LINK, BETA_UPDATE_LINK);
+        UpdatePrompt myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
+            "VERSION", notesDownloader.getVersionNotes(VERSION));
+        window.setVisible(false); // TODO: Make better method
+        myPrompt.showWindow();
+        try {
+          myPrompt.waitForClose();
+        } catch (InterruptedException e) {
         }
-      } catch (IOException | URISyntaxException e) {
-        e.printStackTrace();
+        if (myPrompt.shouldUpdateProgram()) {
+          myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
+          System.exit(0); // TODO: Is this actually the right way to kill the program?
+        } else {
+          window.showWindow();
+        }
       }
+    } catch (IOException | URISyntaxException e) {
+      e.printStackTrace();
     }
-
-    if (checkNotifications) {
-      loadingWindow.setStatus("Checking for notifications...");
-      NotificationHandler notifications = new NotificationHandler(false, "-1"); // TODO: Load notifications from Preferences
-      notifications.loadNotifications();
-      notifications.showNewNotifications();
-    }
-    loadingWindow.dispose();
     return notes;
+  }
+
+  private static void loadNotifications(LoadingWindow window) {
+    window.setStatus("Checking for notifications...");
+    NotificationHandler notifications = new NotificationHandler(false, "-1"); // TODO: Load notifications from Preferences
+    notifications.loadNotifications();
+    notifications.showNewNotifications();
+  }
+
+  private static void loadResources(final LoadingWindow window, boolean redownload) {
+    ResourceDownloader download = new ResourceDownloader() {
+      private String currentFile;
+
+      @Override
+      public void startingFile(String fileName) {
+        currentFile = fileName;
+        window.setStatus("Starting " + currentFile);
+      }
+
+      @Override
+      public void filePercentage(int percent) {
+        super.filePercentage(percent);
+        window.setStatus("Downloading " + currentFile + " (" + percent + "%)");
+      }
+
+      @Override
+      public void finishedFile(String fileName) {
+        window.setStatus("Finished downloading " + fileName);
+      }
+    };
+    if (redownload) {
+      download.forceRedownload();
+    }
+    download.downloadResources();
   }
 
   private static TicketChecker initChecker(Setup mySetup, Status myStatus, String expo) {
@@ -346,6 +381,12 @@ public final class PAXChecker {
                   } catch (IllegalStateException e) { // In case we send too fast
                     status.setInformationText("Unable to send test text (sent too fast?)");
                   }
+                }
+              } else if (button == 3) {
+                if (Audio.playAlarm()) {
+                  status.setInformationText("Alarm started.");
+                } else {
+                  status.setInformationText("Unable to play alarm.");
                 }
               } else if (button == 4) {
                 if (myStreamer != null) {

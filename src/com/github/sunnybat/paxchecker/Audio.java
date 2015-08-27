@@ -1,6 +1,7 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
+import com.github.sunnybat.paxchecker.resources.ResourceLoader;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,7 +100,7 @@ public class Audio {
       if (alarmFile != null) {
         audioSrc = new FileInputStream(alarmFile);
       } else {
-        audioSrc = Audio.class.getResourceAsStream("/resources/Alarm.wav");
+        audioSrc = ResourceLoader.loadResource("Alarm.wav");
       }
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
