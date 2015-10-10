@@ -33,7 +33,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         + "keys. For more information, press the More Info button.\n\nIt's recommended to check the \"Save Encrypted Twitter Keys\" checkbox in the "
         + "Preferences tab if you do not want to enter them into the program every time.\nNOTE: You should only save your Twitter keys on a private "
         + "and trusted computer!");
-    twitterDisabledWindow.setMoreInfoButtonLink("http://redd.it/2nct50");
+    twitterDisabledWindow.setMoreInfoButtonLink("https://redd.it/2nct50");
     prefs = new PreferenceHandler("paxchecker");
     invokeAndWaitOnEDT(new Runnable() {
       @Override

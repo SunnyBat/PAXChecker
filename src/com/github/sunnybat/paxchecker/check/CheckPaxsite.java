@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.browser.PaxsiteReader;
@@ -28,7 +23,7 @@ public class CheckPaxsite extends Check {
   }
 
   @Override
-  public synchronized void init(com.github.sunnybat.paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+  public synchronized void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
     updateLabel(s, "Paxsite initialized.");
   }

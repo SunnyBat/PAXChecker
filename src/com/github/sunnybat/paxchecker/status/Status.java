@@ -18,5 +18,7 @@ public interface Status {
   public void setForceCheckEnabled(boolean enabled);
   public void setDataUsageText(double dataUsed);
   public void setDataUsageText(String dataUsed);
+  public int getButtonPressed();
+  public void resetButtonPressed();
 
 }

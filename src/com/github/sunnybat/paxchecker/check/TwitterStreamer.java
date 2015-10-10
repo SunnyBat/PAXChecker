@@ -12,6 +12,7 @@ import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -202,6 +203,13 @@ public abstract class TwitterStreamer {
               .setErrorMessage("\nMake sure that you have specified the correct credentials and that your computer's system time is correct!"
                   + "\nThe Twitter feed has been shut down. To reconnect, you must do so manually.")
               .buildWindow();
+        } else if (ex.getMessage().contains("420:Returned by the Search and Trends API when you are being rate limited")) {
+          new ErrorBuilder()
+              .setError(ex)
+              .setErrorTitle("ERROR: Too Many Logins")
+              .setErrorMessage("You currently have too many Twitter streams open at once. Either create multiple Twitter accounts or wait"
+                  + " a few minutes (to let any previously open streams close by themselves) and try again. ")
+              .buildWindow();
         } else {
           new ErrorBuilder()
               .setError(ex)
@@ -292,8 +300,12 @@ public abstract class TwitterStreamer {
       myStream.addConnectionLifeCycleListener(cLCListener);
       long[] ids = new long[usersToCheck.size()];
       for (int i = 0; i < usersToCheck.size(); i++) {
-        User toAdd = myTwitter.showUser(usersToCheck.get(i));
-        ids[i] = toAdd.getId();
+        try {
+          User toAdd = myTwitter.showUser(usersToCheck.get(i));
+          ids[i] = toAdd.getId();
+        } catch (TwitterException tE) {
+          System.out.println("TwitterException: Unable to add user " + usersToCheck.get(i) + " to list!");
+        }
       }
       FilterQuery filter = new FilterQuery(0, ids);
       //myStream.user();

@@ -13,7 +13,7 @@ public final class TicketChecker {
 
   private final ArrayList<Check> checks = new ArrayList<>();
   private final ArrayList<String> openedLinks = new ArrayList<>();
-  private com.github.sunnybat.paxchecker.gui.Status status;
+  private com.github.sunnybat.paxchecker.status.StatusGUI status;
   private String linkFound = "";
   private ExecutorService threadPool;
   private Phaser threadWait;
@@ -21,9 +21,9 @@ public final class TicketChecker {
   /**
    * Initializes the TicketChecker class.
    *
-   * @param s The Status to update, or null if none
+   * @param s The StatusGUI to update, or null if none
    */
-  public TicketChecker(com.github.sunnybat.paxchecker.gui.Status s) {
+  public TicketChecker(com.github.sunnybat.paxchecker.status.StatusGUI s) {
     status = s;
     threadPool = Executors.newCachedThreadPool();
     threadWait = new Phaser();

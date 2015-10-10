@@ -30,7 +30,7 @@ public class CheckShowclix extends Check {
   }
 
   @Override
-  public synchronized void init(com.github.sunnybat.paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+  public synchronized void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
     updateLabel(s, "Showclix initialized.");
   }

@@ -14,7 +14,7 @@ public abstract class Check implements Runnable {
   public Check() {
   }
 
-  public void init(com.github.sunnybat.paxchecker.gui.Status s, java.util.concurrent.Phaser cB) {
+  public void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
     if (s != null) {
       linkLabel = s.addLinkJLabel();
     }
@@ -24,7 +24,7 @@ public abstract class Check implements Runnable {
     reset();
   }
 
-  public final void updateLabel(com.github.sunnybat.paxchecker.gui.Status s, String text) {
+  public final void updateLabel(com.github.sunnybat.paxchecker.status.StatusGUI s, String text) {
     if (s != null) {
       s.updateJLabel(linkLabel, text);
     }

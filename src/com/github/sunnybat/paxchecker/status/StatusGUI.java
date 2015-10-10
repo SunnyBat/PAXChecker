@@ -1,8 +1,7 @@
-package com.github.sunnybat.paxchecker.gui;
+package com.github.sunnybat.paxchecker.status;
 
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.commoncode.email.EmailAddress;
-import com.github.sunnybat.paxchecker.Audio;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
@@ -34,7 +33,7 @@ import javax.swing.WindowConstants;
  *
  * @author SunnyBat
  */
-public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame implements com.github.sunnybat.paxchecker.status.Status {
+public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements com.github.sunnybat.paxchecker.status.Status {
 
   private final NotificationWindow infoWindow;
   private int button;
@@ -48,7 +47,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
   private final int TEXT_DELAY_TIME = 300; // Seconds
   private final int INFORMATION_CLEAR_DELAY_TIME = 15; // Seconds
 
-  public Status(String expo) {
+  public StatusGUI(String expo) {
     this(expo, null, null);
   }
 
@@ -60,7 +59,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
    * @param emailAddress The email address used to send emails
    * @param addresses The List of addresses to send emails to
    */
-  public Status(final String expo, final String emailAddress, final List<EmailAddress> addresses) {
+  public StatusGUI(final String expo, final String emailAddress, final List<EmailAddress> addresses) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
@@ -103,7 +102,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
     testTextButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        buttonPressed(2); // CHECK: Number?
+        buttonPressed(2);
       }
     });
     testAlarmButton.addActionListener(new java.awt.event.ActionListener() {
@@ -166,6 +165,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
   @Override
   public void enableTwitter() {
     JLTwitterStatus.setVisible(true);
+    pack();
   }
 
   @Override
@@ -194,6 +194,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
       public void run() {
         getPopupMenu().add(reconnectTwitterButton);
         JBReconnectTwitter.setVisible(true);
+        pack();
       }
     });
   }
@@ -308,10 +309,12 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
     });
   }
 
+  @Override
   public int getButtonPressed() {
     return button;
   }
 
+  @Override
   public void resetButtonPressed() {
     button = 0;
   }
@@ -319,7 +322,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
   private void buttonPressed(int button) {
     synchronized (this) {
       this.button = button;
-      this.notify();
+      //this.notify();
     }
   }
 
@@ -561,6 +564,7 @@ public class Status extends com.github.sunnybat.commoncode.javax.swing.JFrame im
 
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
     buttonPressed(4);
+    setTwitterStatus("Twitter Feed: Reconnecting...");
     JBReconnectTwitter.setVisible(false);
     getPopupMenu().remove(reconnectTwitterButton);
   }//GEN-LAST:event_JBReconnectTwitterActionPerformed
