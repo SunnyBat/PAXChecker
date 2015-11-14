@@ -18,7 +18,7 @@ class ResourceConstants {
       System.out.println("RD PATH: " + System.getProperty("user.home") + "/Library/Application Support/PAXChecker/");
       return System.getProperty("user.home") + "/Library/Application Support/PAXChecker/"; // TODO: Mac location
     } else if (os.contains("linux") || os.contains("ubuntu")) {
-      return System.getProperty("user.home") + "/.config/PAXChecker/";
+      return System.getProperty("user.home") + "/.PAXChecker/";
     } else { // Store in current folder, we have no clue what OS this is
       return "PAXChecker/";
     }

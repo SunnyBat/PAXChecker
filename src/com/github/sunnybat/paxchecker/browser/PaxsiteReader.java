@@ -19,19 +19,11 @@ import java.net.UnknownHostException;
 public class PaxsiteReader {
 
   public static String getCurrentButtonLink(String expo) {
-    return parseHRef(getCurrentButtonLinkLine(expo));
-    //return Browser.parseLink(getCurrentButtonLinkLine(expo)); // Adds " to end of link
+    return findShowclixLink(expo);
+    //return parseHRef(getCurrentButtonLinkLine(expo));
   }
 
-  /**
-   * Finds the link of the Register Now button on the PAX website. This scans EVENT.paxsite.com/registration for the Register Now button link, and
-   * returns the ENTIRE line, HTML and all.
-   *
-   * @param expo The expo to check
-   * @return The line (HTML included) that the Register Now button link is on
-   * @see #parseHRef(java.lang.String)
-   */
-  private static String getCurrentButtonLinkLine(String expo) {
+  private static String findShowclixLink(String expo) {
     URL url;
     InputStream is = null;
     BufferedReader br;
@@ -45,8 +37,19 @@ public class PaxsiteReader {
       while ((line = br.readLine()) != null) {
         DataTracker.addDataUsed(line.length());
         line = line.trim();
-        if (line.contains("class=\"btn red\"") && line.contains("title=\"Register Online\"")) {
-          return line;
+        if (line.contains("www.showclix.com")) {
+          String parseRef = line.toLowerCase();
+          String ret;
+          if (parseRef.contains("http://")) {
+            ret = line.substring(parseRef.indexOf("www.showclix.com") - 7);
+          } else if (parseRef.contains("https://")) {
+            ret = line.substring(parseRef.indexOf("www.showclix.com") - 8);
+          } else {
+            ret = line.substring(parseRef.indexOf("www.showclix.com"));
+          }
+          parseRef = ret.toLowerCase();
+          ret = ret.substring(0, parseRef.indexOf("\""));
+          return ret;
         }
       }
     } catch (UnknownHostException | MalformedURLException | SocketTimeoutException e) {
@@ -72,40 +75,6 @@ public class PaxsiteReader {
       }
     }
     return "[NoFind]";
-  }
-
-  /**
-   * Parses the link out of the given line of HTML. Note that this requires an href with the link surrounded by quotation marks for this to work.
-   * Furthermore, the link can't have any quotation marks in it (though if it does, you have bigger problems).
-   *
-   * @param parse The HTML to parse
-   * @return The link from the HTML, or the address to the current expo site
-   * @see #getExpo()
-   * @see #getWebsiteLink(java.lang.String)
-   * @see #getCurrentButtonLinkLine()
-   */
-  private static String parseHRef(String parse) {
-    if (parse == null) {
-      System.out.println("ERROR: parseHRef arg parse is null!");
-      return "[null?]";
-    }
-    try {
-      parse = parse.trim(); // Remove white space
-      parse = parse.substring(parse.indexOf("href=") + 6); // Get index of link
-      parse = parse.substring(0, parse.indexOf("\"")); // Remove everything after the link
-      if (parse.startsWith("\"") && parse.endsWith("\"")) {
-        parse = parse.substring(1, parse.length() - 1);
-      } else if (parse.length() < 10) {
-        System.out.println("Unable to correctly parse link from button HTML.");
-        return null;
-      }
-      //System.out.println("Link parsed from Register Online button: " + parse);
-      return parse.trim(); // PAX Aus currently has a space at the end of the registration button link... It doesn't sit well with Browser.java
-    } catch (Exception e) {
-      System.out.println("ERROR: Unable to parse link from button");
-      e.printStackTrace();
-      return "[Button Parsing Error]";
-    }
   }
 
   /**

@@ -431,6 +431,11 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   }
 
   @Override
+  public boolean shouldFilterShowclix() {
+    return JCBFilterShowclix.isSelected();
+  }
+
+  @Override
   public String getTwitterConsumerKey() {
     return JTFConsumerKey.getText();
   }
@@ -493,6 +498,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     JTFConsumerKey = new javax.swing.JTextField();
     filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
     jLabel6 = new javax.swing.JLabel();
+    JCBFilterShowclix = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -685,6 +691,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         .addComponent(jLabel6))
     );
 
+    JCBFilterShowclix.setText("Strict Filtering");
+    JCBFilterShowclix.setToolTipText("<html>\nEnabling this will hopefully reduce the<br>\namount of false positives, however<br>\nmight also cause the PAXChecker to<br>\nmiss the queue. Use at your own risk.\n</html>");
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -718,7 +727,10 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(JCBCheckKnownEvents)
               .addComponent(JCBCheckWebsite)
-              .addComponent(JCBCheckShowclix)
+              .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(JCBCheckShowclix)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JCBFilterShowclix))
               .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                   .addComponent(jLabel5)
@@ -759,7 +771,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBCheckWebsite)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(JCBCheckShowclix)
+        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(JCBCheckShowclix)
+          .addComponent(JCBFilterShowclix))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JCBCheckKnownEvents)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1024,6 +1038,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   private javax.swing.JCheckBox JCBCheckUpdates;
   private javax.swing.JCheckBox JCBCheckWebsite;
   private javax.swing.JComboBox JCBExpo;
+  private javax.swing.JCheckBox JCBFilterShowclix;
   private javax.swing.JCheckBox JCBFilterTwitter;
   private javax.swing.JCheckBox JCBLoadNotifications;
   private javax.swing.JCheckBox JCBPlayAlarm;
