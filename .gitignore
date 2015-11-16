@@ -12,6 +12,7 @@
 hs_err_pid*
 
 # Ignore Netbeans-specific stuff #
+.idea/
 build/
 dist/
 lib/
