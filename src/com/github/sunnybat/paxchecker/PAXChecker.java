@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R4";
+  public static final String VERSION = "3.0.0 R5";
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
@@ -137,6 +137,9 @@ public final class PAXChecker {
         case "-alarmfile":
           Audio.setAlarmFile(args[i + 1]);
           break;
+        case "-redownloadresources":
+          // Used elsewhere
+          break;
         default:
           if (args[i].startsWith("-")) {
             System.out.println("Unknown argument: " + args[i]);
@@ -154,11 +157,15 @@ public final class PAXChecker {
     String patchNotes = null;
     loadingOutput.start();
     loadResources(loadingOutput, hasArgument(args, "-redownloadresources"));
-    if (checkUpdates) {
-      patchNotes = loadUpdates(loadingOutput);
-    }
-    if (checkNotifications) {
-      loadNotifications(loadingOutput);
+    if (!isHeadless) {
+      if (checkUpdates) {
+        patchNotes = loadUpdates(loadingOutput);
+      }
+      if (checkNotifications) {
+        loadNotifications(loadingOutput);
+      }
+    } else {
+      System.out.println("Updating and notifications are currently disabled in CLI mode and will be enabled in a future update.");
     }
     loadingOutput.stop();
     Setup mySetup;
@@ -184,6 +191,9 @@ public final class PAXChecker {
     // SETUP
     Browser myBrowser = new Browser();
     myBrowser.setExpo(mySetup.getExpoToCheck());
+    if (mySetup.shouldFilterShowclix()) {
+      com.github.sunnybat.paxchecker.browser.ShowclixReader.strictFilter(); // Laziness will be the reason I keep refactoring everything...
+    }
     Status myStatus;
     // SET UP EMAIL ACCOUNT
     EmailAccount emailAccount;

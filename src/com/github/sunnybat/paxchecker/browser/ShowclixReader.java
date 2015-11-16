@@ -30,6 +30,16 @@ public class ShowclixReader {
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
   private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
   private static int maxPartnerID = 100;
+  private static boolean strictFiltering; // TODO: This is state and should be moved to non-static somehow
+
+  /**
+   * Sets the isPaxPage() checks to strictly filter for PAX pages.
+   *
+   * @deprecated Needs refactoring
+   */
+  public static void strictFilter() { // TODO: Refactor so this is non-static elsewhere
+    strictFiltering = true;
+  }
 
   /**
    * Checks whether or not the page associated with the given Showclix EventID is a PAX ticket page.
@@ -57,8 +67,11 @@ public class ShowclixReader {
         DataTracker.addDataUsed(line.length());
         text += line.toLowerCase();
       }
-      if (text.contains("pax") || text.contains("queue")) {
-        System.out.println("PAX page found!");
+      if (text.contains("pax")) {
+        System.out.println("Found PAX in page -- is PAX page.");
+        return true;
+      } else if (!strictFiltering && text.contains("queue")) {
+        System.out.println("Found queue in page -- is PAX page.");
         return true;
       } else {
         return false;

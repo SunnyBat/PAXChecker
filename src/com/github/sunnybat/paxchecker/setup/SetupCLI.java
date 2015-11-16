@@ -13,6 +13,7 @@ public class SetupCLI implements Setup {
 
   private boolean checkPaxWebsite;
   private boolean checkShowclixWebsite;
+  private boolean filterShowclix;
   private boolean checkKnownEvents;
   private boolean checkTwitter;
   private boolean filterTwitter;
@@ -120,6 +121,8 @@ public class SetupCLI implements Setup {
     checkPaxWebsite = isResponseYes(myScanner);
     System.out.print("Check Showclix Website (Y/N): ");
     checkShowclixWebsite = isResponseYes(myScanner);
+    System.out.print("Filter Showclix Website (Y/N): ");
+    filterShowclix = isResponseYes(myScanner);
     System.out.print("Check Known Events (Y/N): ");
     checkKnownEvents = isResponseYes(myScanner);
     System.out.print("Check Twitter (Y/N): ");
@@ -200,6 +203,11 @@ public class SetupCLI implements Setup {
   @Override
   public boolean shouldCheckTwitter() {
     return checkTwitter;
+  }
+
+  @Override
+  public boolean shouldFilterShowclix() {
+    return filterShowclix;
   }
 
   @Override

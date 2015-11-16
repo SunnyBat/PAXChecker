@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.paxchecker.status.StatusGUI;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,7 +14,7 @@ public final class TicketChecker {
 
   private final ArrayList<Check> checks = new ArrayList<>();
   private final ArrayList<String> openedLinks = new ArrayList<>();
-  private com.github.sunnybat.paxchecker.status.StatusGUI status;
+  private StatusGUI status;
   private String linkFound = "";
   private ExecutorService threadPool;
   private Phaser threadWait;
@@ -23,7 +24,7 @@ public final class TicketChecker {
    *
    * @param s The StatusGUI to update, or null if none
    */
-  public TicketChecker(com.github.sunnybat.paxchecker.status.StatusGUI s) {
+  public TicketChecker(StatusGUI s) {
     status = s;
     threadPool = Executors.newCachedThreadPool();
     threadWait = new Phaser();

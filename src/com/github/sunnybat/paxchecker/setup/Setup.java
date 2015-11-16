@@ -65,6 +65,13 @@ public interface Setup {
   public boolean shouldCheckTwitter();
 
   /**
+   * Gets whether or not to filter Showclix results.
+   *
+   * @return True to filter, false to not
+   */
+  public boolean shouldFilterShowclix();
+
+  /**
    * Gets whether or not to filter Twitter results.
    *
    * @return True to filter, false to not

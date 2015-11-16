@@ -85,7 +85,11 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBCheckShowclix" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="JCBFilterShowclix" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -137,7 +141,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckWebsite" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="JCBCheckShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBFilterShowclix" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -469,6 +476,12 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JCheckBox" name="JCBFilterShowclix">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Strict Filtering"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Enabling this will hopefully reduce the&lt;br&gt;&#xa;amount of false positives, however&lt;br&gt;&#xa;might also cause the PAXChecker to&lt;br&gt;&#xa;miss the queue. Use at your own risk.&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel6">

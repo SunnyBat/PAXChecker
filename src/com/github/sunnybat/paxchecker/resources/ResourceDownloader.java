@@ -51,8 +51,14 @@ public class ResourceDownloader {
     InputStream inputStream = conn.getInputStream();
     long remoteFileSize = conn.getContentLength();
     System.out.println(downloadTo.getAbsolutePath());
-    if (downloadTo.exists()) { // CHECK: Do I need to do this?
+    if (downloadTo.exists()) {
       downloadTo.delete();
+    } else {
+      File folder = downloadTo.getParentFile();
+      if (!folder.exists()) {
+        System.out.println("Folder does not exist, making folder.");
+        folder.mkdirs();
+      }
     }
     downloadTo.createNewFile();
     BufferedOutputStream buffOutputStream = new BufferedOutputStream(new FileOutputStream(downloadTo));

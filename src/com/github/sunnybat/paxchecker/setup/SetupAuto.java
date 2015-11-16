@@ -83,6 +83,11 @@ public class SetupAuto implements Setup {
   }
 
   @Override
+  public boolean shouldFilterShowclix() {
+    return hasArg("-filtershowclix");
+  }
+
+  @Override
   public boolean shouldFilterTwitter() {
     return hasArg("-filtertwitter");
   }
