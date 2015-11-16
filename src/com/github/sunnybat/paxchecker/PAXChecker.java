@@ -361,7 +361,7 @@ public final class PAXChecker {
       @Override
       public void linkFound(String link, String statusText) {
         Browser.openLinkInBrowser(link);
-        email.sendMessage("PAXChecker","Link found on Twitter! Message: '" + statusText + "' LINK: " + link);
+        email.sendMessage("PAXChecker","Link found on Twitter! Tweet Text: '" + statusText + "' Expanded Link: " + link);
       }
     };
   }
