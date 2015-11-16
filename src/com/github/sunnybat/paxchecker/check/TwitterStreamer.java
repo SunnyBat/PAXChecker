@@ -28,7 +28,7 @@ import twitter4j.conf.ConfigurationBuilder;
 public abstract class TwitterStreamer {
 
   private Twitter myTwitter;
-  private List<String> usersToCheck = new ArrayList<>(Arrays.asList("Official_PAX")); // No @ in the raw list!
+  private List<String> usersToCheck = new ArrayList<>(Arrays.asList("althor880")); // No @ in the raw list!
   private List<String> keywords = new ArrayList<>(Arrays.asList("pax", "passes", "ticket", "tix", "sale", "badge", "showclix", "byoc", "hotel")); // All lowercase
   private TwitterStream myStream;
   private int successiveErrorCount;
@@ -59,15 +59,17 @@ public abstract class TwitterStreamer {
     public void onStatus(Status status) { // Only called when a user the program is watching tweets
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
       String statusText = status.getText();
+      String statusTextForNotification = statusText;
       if (filterKeywords && !hasKeyword(statusText)) {
         System.out.println("Does not contain keyword -- ignoring");
         return;
       }
       while (statusText.contains("t.co/")) { // ALL links are shortened
         String link = Browser.parseLink(statusText);
+
         statusText = statusText.substring(statusText.indexOf(link) + link.length()); // Remove link from statusText
         link = Browser.unshortenURL(link);
-        linkFound(link);
+        linkFound(link, statusTextForNotification);
       }
     }
 
@@ -348,7 +350,7 @@ public abstract class TwitterStreamer {
    *
    * @param link The link found
    */
-  public abstract void linkFound(String link);
+  public abstract void linkFound(String link, String statusText);
 
   /**
    * Called when a connection to the Twitter API has been made, including reconnects
