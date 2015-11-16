@@ -27,3 +27,4 @@ manifest.mf
 .DS_Store
 /.idea
 /out
+/.idea/libraries
