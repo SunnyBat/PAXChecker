@@ -22,6 +22,7 @@ manifest.mf
 # Ignore project-specific stuff #
 *.txt
 
+/PAXChecker.iml
 # Ignore library docs and stuff #
 .DS_Store
 /.idea
