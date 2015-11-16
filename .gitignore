@@ -25,6 +25,10 @@ manifest.mf
 /.idea
 *.txt
 
+/PAXChecker.iml
 # Ignore library docs and stuff #
 /.idea/libraries/*
 .DS_Store
+/.idea
+/out
+/.idea/libraries
