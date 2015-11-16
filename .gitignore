@@ -20,6 +20,9 @@ build.xml
 manifest.mf
 
 # Ignore project-specific stuff #
+/PAXChecker.iml
+/out
+/.idea
 *.txt
 
 # Ignore library docs and stuff #
