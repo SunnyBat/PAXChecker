@@ -26,4 +26,5 @@ manifest.mf
 *.txt
 
 # Ignore library docs and stuff #
+/.idea/libraries
 .DS_Store
