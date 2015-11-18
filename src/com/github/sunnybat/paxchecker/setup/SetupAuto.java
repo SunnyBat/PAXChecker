@@ -93,6 +93,11 @@ public class SetupAuto implements Setup {
   }
 
   @Override
+  public boolean shouldTextTweets() {
+    return hasArg("-texttweets");
+  }
+
+  @Override
   public boolean shouldPlayAlarm() {
     return hasArg("-alarm");
   }

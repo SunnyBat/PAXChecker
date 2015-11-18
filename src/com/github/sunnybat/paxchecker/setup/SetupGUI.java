@@ -126,9 +126,10 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX", true));
     JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
     JCBCheckTwitter.setSelected(prefs.getBooleanPreference("CHECK_TWITTER"));
-    setTwitterKeysVisible(JCBCheckTwitter.isSelected());
+    checkTwitterAction(JCBCheckTwitter.isSelected());
     //JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS")); // TODO: Enable this when new known events are found
-    JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER"));
+    JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER") && JCBCheckTwitter.isSelected());
+    JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS") && JCBCheckTwitter.isSelected());
     JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
     JCBPlayAlarm.setSelected(prefs.getBooleanPreference("PLAY_ALARM"));
     JSCheckTime.setValue(prefs.getIntegerPreference("REFRESHTIME"));
@@ -261,10 +262,12 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     }
   }
 
-  private void setTwitterKeysVisible(boolean visible) {
-    if (JPTwitterKeys.isVisible() != visible) { // Prevent duplicate calls improperly resizing GUI
-      JPTwitterKeys.setVisible(visible);
-      setSize(getWidth(), getHeight() + JPTwitterKeys.getPreferredSize().height * (visible ? 1 : -1));
+  private void checkTwitterAction(boolean checking) {
+    if (JPTwitterKeys.isVisible() != checking) { // Prevent duplicate calls improperly resizing GUI
+      JCBFilterTwitter.setEnabled(JCBCheckTwitter.isSelected());
+      JCBTextTweets.setEnabled(JCBCheckTwitter.isSelected());
+      JPTwitterKeys.setVisible(checking);
+      setSize(getWidth(), getHeight() + JPTwitterKeys.getPreferredSize().height * (checking ? 1 : -1));
     }
   }
 
@@ -292,6 +295,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setValue(JCBCheckKnownEvents.isSelected());
     prefs.getPreferenceObject("FILTER_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected() && JCBCheckTwitter.isSelected());
+    prefs.getPreferenceObject("TEXT_TWEETS").setShouldSave(JCBSaveCheckSettings.isSelected());
+    prefs.getPreferenceObject("TEXT_TWEETS").setValue(JCBTextTweets.isSelected() && JCBCheckTwitter.isSelected());
     prefs.getPreferenceObject("EVENT").setShouldSave(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("EVENT").setValue(JCBExpo.getSelectedItem().toString());
     prefs.getPreferenceObject("PLAY_ALARM").setShouldSave(JCBSaveCheckSettings.isSelected());
@@ -416,6 +421,11 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   }
 
   @Override
+  public boolean shouldTextTweets() {
+    return JCBTextTweets.isSelected();
+  }
+
+  @Override
   public boolean shouldPlayAlarm() {
     return JCBPlayAlarm.isSelected();
   }
@@ -499,6 +509,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
     jLabel6 = new javax.swing.JLabel();
     JCBFilterShowclix = new javax.swing.JCheckBox();
+    JCBTextTweets = new javax.swing.JCheckBox();
     jPanel6 = new javax.swing.JPanel();
     jScrollPane5 = new javax.swing.JScrollPane();
     JTPInstructions = new javax.swing.JTextPane();
@@ -694,6 +705,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     JCBFilterShowclix.setText("Strict Filtering");
     JCBFilterShowclix.setToolTipText("<html>\nEnabling this will hopefully reduce the<br>\namount of false positives, however<br>\nmight also cause the PAXChecker to<br>\nmiss the queue. Use at your own risk.\n</html>");
 
+    JCBTextTweets.setText("Text Tweets");
+    JCBTextTweets.setToolTipText("<html>\nSend a text to the given email address<br>\nif a link is found in a Tweet.If you receive<br>\nTweets directly from Twitter, this option<br>\nwill likely be redundant (and therefore not<br>\nrecommended).\n</html>");
+
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
     jPanel1Layout.setHorizontalGroup(
@@ -740,7 +754,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(JCBCheckTwitter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JCBFilterTwitter)))
+                .addComponent(JCBFilterTwitter)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(JCBTextTweets)))
             .addGap(0, 0, Short.MAX_VALUE)))
         .addContainerGap())
     );
@@ -779,7 +795,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
           .addComponent(JCBCheckTwitter)
-          .addComponent(JCBFilterTwitter))
+          .addComponent(JCBFilterTwitter)
+          .addComponent(JCBTextTweets))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(JPTwitterKeys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1009,8 +1026,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   }//GEN-LAST:event_JBSaveSettingsActionPerformed
 
   private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed
-    JCBFilterTwitter.setEnabled(JCBCheckTwitter.isSelected());
-    setTwitterKeysVisible(JCBCheckTwitter.isSelected());
+    checkTwitterAction(JCBCheckTwitter.isSelected());
     updateStart();
   }//GEN-LAST:event_JCBCheckTwitterActionPerformed
 
@@ -1046,6 +1062,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   private javax.swing.JCheckBox JCBSaveEmailSettings;
   private javax.swing.JCheckBox JCBSaveTwitterKeys;
   private javax.swing.JCheckBox JCBStatistics;
+  private javax.swing.JCheckBox JCBTextTweets;
   private javax.swing.JCheckBox JCBUseBeta;
   private javax.swing.JLabel JLSecondsBetweenChecks;
   private javax.swing.JPasswordField JPFPassword;

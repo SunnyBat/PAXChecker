@@ -102,6 +102,8 @@
                                       <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JCBFilterTwitter" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="JCBTextTweets" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -151,6 +153,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JCBFilterTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JCBTextTweets" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JPTwitterKeys" min="-2" max="-2" attributes="0"/>
@@ -480,6 +483,12 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Strict Filtering"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Enabling this will hopefully reduce the&lt;br&gt;&#xa;amount of false positives, however&lt;br&gt;&#xa;might also cause the PAXChecker to&lt;br&gt;&#xa;miss the queue. Use at your own risk.&#xa;&lt;/html&gt;"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="JCBTextTweets">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Text Tweets"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Send a text to the given email address&lt;br&gt;&#xa;if a link is found in a Tweet.If you receive&lt;br&gt;&#xa;Tweets directly from Twitter, this option&lt;br&gt;&#xa;will likely be redundant (and therefore not&lt;br&gt;&#xa;recommended).&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

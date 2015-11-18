@@ -189,8 +189,7 @@ public final class PAXChecker {
     twitterTokens[3] = mySetup.getTwitterApplicationSecret();
 
     // SETUP
-    Browser myBrowser = new Browser();
-    myBrowser.setExpo(mySetup.getExpoToCheck());
+    Expo myExpo = Expo.parseExpo(mySetup.getExpoToCheck());
     if (mySetup.shouldFilterShowclix()) {
       com.github.sunnybat.paxchecker.browser.ShowclixReader.strictFilter(); // Laziness will be the reason I keep refactoring everything...
     }
@@ -211,9 +210,9 @@ public final class PAXChecker {
     if (!isHeadless) {
       StatusGUI statGUI;
       if (emailAccount != null) {
-        statGUI = new StatusGUI(myBrowser.getExpo(), emailAccount.getUsername(), emailAccount.getAddressList());
+        statGUI = new StatusGUI(myExpo, emailAccount.getUsername(), emailAccount.getAddressList());
       } else {
-        statGUI = new StatusGUI(myBrowser.getExpo());
+        statGUI = new StatusGUI(myExpo);
       }
       myStatus = statGUI;
       if (startMinimized) {
@@ -232,9 +231,9 @@ public final class PAXChecker {
       myStatus.enableAlarm();
     }
     // SET UP CHECKERS
-    final TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myBrowser.getExpo()); // TODO: Better casting than this
+    final TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myExpo); // TODO: Better casting than this
     if (mySetup.shouldCheckTwitter()) {
-      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, emailAccount);
+      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, mySetup.shouldTextTweets() ? emailAccount : null, myChecker);
       for (String s : followList) {
         tcheck.addUser(s);
       }
@@ -336,13 +335,13 @@ public final class PAXChecker {
     download.downloadResources();
   }
 
-  private static TicketChecker initChecker(Setup mySetup, StatusGUI myStatus, String expo) {
+  private static TicketChecker initChecker(Setup mySetup, StatusGUI myStatus, Expo expo) {
     TicketChecker myChecker = new TicketChecker(myStatus);
     if (mySetup.shouldCheckPAXWebsite()) {
-      myChecker.addChecker(new CheckPaxsite(expo));
+      myChecker.addChecker(new CheckPaxsite(expo.toString())); // TODO: Replace with Expo Object
     }
     if (mySetup.shouldCheckShowclix()) {
-      myChecker.addChecker(new CheckShowclix(expo));
+      myChecker.addChecker(new CheckShowclix(expo.toString()));
     }
     if (mySetup.shouldCheckKnownEvents()) {
       myChecker.addChecker(new CheckShowclixEventPage());
@@ -351,7 +350,7 @@ public final class PAXChecker {
     return myChecker;
   }
 
-  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final EmailAccount email) {
+  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final EmailAccount email, final TicketChecker checker) {
     return new TwitterStreamer(keys) {
       @Override
       public void twitterConnected() {
@@ -370,8 +369,11 @@ public final class PAXChecker {
 
       @Override
       public void linkFound(String link, String statusText) {
+        checker.addLinkFound(link);
         Browser.openLinkInBrowser(link);
-        email.sendMessage("PAXChecker","Link found on Twitter! Tweet Text: '" + statusText + "' Expanded Link: " + link);
+        if (email != null) {
+          email.sendMessage("PAXChecker", "Link found on Twitter! Tweet Text: '" + statusText + "' Expanded Link: " + link);
+        }
       }
     };
   }
@@ -393,6 +395,7 @@ public final class PAXChecker {
         long startTime = System.currentTimeMillis();
         if (checker.isUpdated()) {
           Browser.openLinkInBrowser(checker.getLinkFound());
+          Audio.playAlarm();
           if (email != null) {
             try {
               email.sendMessage("PAXChecker", "A new link has been found: " + checker.getLinkFound());
@@ -400,8 +403,10 @@ public final class PAXChecker {
               System.out.println("Unable to send email (" + e.getMessage() + ")");
             }
           }
-          Tickets ticketWindow = new Tickets(checker.getLinkFound()); // CHECK: Should I only allow one Tickets at a time?
-          ticketWindow.showWindow();
+          if (status instanceof StatusGUI) {
+            Tickets ticketWindow = new Tickets(checker.getLinkFound()); // CHECK: Should I only allow one Tickets at a time?
+            ticketWindow.showWindow();
+          }
         }
         status.setDataUsageText(DataTracker.getDataUsedMB());
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {

@@ -79,6 +79,13 @@ public interface Setup {
   public boolean shouldFilterTwitter();
 
   /**
+   * Gets whether or not to send a text when a Tweet with a Showclix link is found.
+   *
+   * @return True to send texts, false to not
+   */
+  public boolean shouldTextTweets();
+
+  /**
    * Gets whether or not to play an alarm when a potential link is found.
    *
    * @return True to play, false to not

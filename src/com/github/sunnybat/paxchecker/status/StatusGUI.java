@@ -3,6 +3,7 @@ package com.github.sunnybat.paxchecker.status;
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.commoncode.email.EmailAddress;
 import com.github.sunnybat.paxchecker.DataTracker;
+import com.github.sunnybat.paxchecker.Expo;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.notification.NotificationWindow;
 import com.github.sunnybat.paxchecker.resources.ResourceLoader;
@@ -33,7 +34,7 @@ import javax.swing.WindowConstants;
  *
  * @author SunnyBat
  */
-public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements com.github.sunnybat.paxchecker.status.Status {
+public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements Status {
 
   private final NotificationWindow infoWindow;
   private int button;
@@ -47,7 +48,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
   private final int TEXT_DELAY_TIME = 300; // Seconds
   private final int INFORMATION_CLEAR_DELAY_TIME = 15; // Seconds
 
-  public StatusGUI(String expo) {
+  public StatusGUI(Expo expo) {
     this(expo, null, null);
   }
 
@@ -59,7 +60,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
    * @param emailAddress The email address used to send emails
    * @param addresses The List of addresses to send emails to
    */
-  public StatusGUI(final String expo, final String emailAddress, final List<EmailAddress> addresses) {
+  public StatusGUI(final Expo expo, final String emailAddress, final List<EmailAddress> addresses) {
     invokeAndWaitOnEDT(new Runnable() {
       @Override
       public void run() {
@@ -80,7 +81,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
         + "There's no need to worry about this one.");
   }
 
-  public void customComponents(final String expo, final String emailAddress, final List<EmailAddress> addresses) {
+  public void customComponents(final Expo expo, final String emailAddress, final List<EmailAddress> addresses) {
     maximizeButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,7 +123,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     getPopupMenu().addSeparator();
     getPopupMenu().add(forceCheckButton);
     try {
-      setIcon(javax.imageio.ImageIO.read(ResourceLoader.loadResource(expo.replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
+      setIcon(javax.imageio.ImageIO.read(ResourceLoader.loadResource(expo.toString().replaceAll("\\ ", "") + ".png"))); // CHECK: This seems hacky...
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -333,10 +334,14 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
       // Start
       long startTime = System.nanoTime();
       long delayTime = TEXT_DELAY_TIME * 1000000000L;
+      int lastSecondsLeft = -1;
       do {
         int secondsLeft = (int) ((delayTime - (System.nanoTime() - startTime)) / 1000000000L);
-        publish("(" + secondsLeft + ")");
-        setProgress((TEXT_DELAY_TIME - secondsLeft) / TEXT_DELAY_TIME * 100);
+        if (secondsLeft != lastSecondsLeft) {
+          publish("(" + secondsLeft + ")");
+          setProgress((TEXT_DELAY_TIME - secondsLeft) / TEXT_DELAY_TIME * 100);
+          lastSecondsLeft = secondsLeft;
+        }
       } while (System.nanoTime() - startTime < delayTime);
       // Complete
       publish("Test Text");
@@ -347,7 +352,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     @Override
     protected void process(java.util.List<String> chunks) {
       if (!chunks.isEmpty()) {
-        JBTestText.setText(chunks.get(chunks.size() - 1));
+        JBTestText.setText(chunks.get(chunks.size() - 1)); // CHECK: Move to an invokeLater block?
       }
     }
 

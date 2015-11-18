@@ -57,7 +57,7 @@ public class CheckShowclix extends Check {
 
   final void updateLinkFromSet(Set<String> mySet) {
     for (String i : mySet) {
-      if (!alreadyChecked.contains(i)) { // LOL used to check mySet instead of alreadyChecked... Never again.
+      if (!alreadyChecked.contains(i)) {
         System.out.println("Not checked: " + i);
         if (ShowclixReader.isPaxPage(i)) {
           originalLink = i;

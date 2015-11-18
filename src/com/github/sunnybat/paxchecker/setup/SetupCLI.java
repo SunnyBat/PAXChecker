@@ -17,6 +17,7 @@ public class SetupCLI implements Setup {
   private boolean checkKnownEvents;
   private boolean checkTwitter;
   private boolean filterTwitter;
+  private boolean textTweets;
   private String expoToCheck;
   private boolean playAlarm;
   private int refreshTime = 30;
@@ -147,6 +148,10 @@ public class SetupCLI implements Setup {
       }
       System.out.print("Filter Twitter (Y/N): ");
       filterTwitter = isResponseYes(myScanner);
+      if (emailAddress != null) {
+        System.out.println("Text Tweets via Email [option is redundant if you already receive alerts from Twitter] (Y/N): ");
+        textTweets = isResponseYes(myScanner);
+      }
     }
     System.out.print("Refresh Time (seconds, 10-120, numbers only): ");
     try {
@@ -213,6 +218,11 @@ public class SetupCLI implements Setup {
   @Override
   public boolean shouldFilterTwitter() {
     return filterTwitter;
+  }
+
+  @Override
+  public boolean shouldTextTweets() {
+    return textTweets;
   }
 
   @Override

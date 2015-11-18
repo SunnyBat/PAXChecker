@@ -70,15 +70,21 @@ public class ShowclixReader {
       if (text.contains("pax")) {
         System.out.println("Found PAX in page -- is PAX page.");
         return true;
-      } else if (!strictFiltering && text.contains("queue")) {
-        System.out.println("Found queue in page -- is PAX page.");
-        return true;
+      } else if (text.contains("queue")) {
+        if (strictFiltering) {
+          System.out.println("Found queue in page, but strict filtering is enabled -- returning false");
+          return false;
+        } else {
+          System.out.println("Found queue in page -- is PAX page.");
+          return true;
+        }
       } else {
+        System.out.println("Is not PAX page.");
         return false;
       }
     } catch (IOException iOException) {
-      System.out.println("IOException in ShowclixReader.isPaxPage() -- returning true");
-      return true; // Not sure if it does or not, so open just in case
+      System.out.println("IOException in ShowclixReader.isPaxPage() -- returning strictFiltering");
+      return !strictFiltering;
     }
   }
 

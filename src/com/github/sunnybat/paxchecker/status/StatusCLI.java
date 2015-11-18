@@ -18,14 +18,16 @@ public class StatusCLI implements Status {
 
   public StatusCLI() {
     input = new Scanner(System.in);
-    new Thread(new Runnable() {
+    Thread scanThread = new Thread(new Runnable() {
       @Override
       public void run() {
         while (true) {
           processCommand(input.nextLine());
         }
       }
-    }).start();
+    });
+    scanThread.setDaemon(true); // So PAXChecker will terminate when all other Threads are dead
+    scanThread.start();
   }
 
   @Override
