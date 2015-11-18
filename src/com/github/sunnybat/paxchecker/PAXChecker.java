@@ -234,7 +234,7 @@ public final class PAXChecker {
     // SET UP CHECKERS
     final TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myBrowser.getExpo()); // TODO: Better casting than this
     if (mySetup.shouldCheckTwitter()) {
-      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens);
+      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, emailAccount);
       for (String s : followList) {
         tcheck.addUser(s);
       }
@@ -351,7 +351,7 @@ public final class PAXChecker {
     return myChecker;
   }
 
-  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys) {
+  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final EmailAccount email) {
     return new TwitterStreamer(keys) {
       @Override
       public void twitterConnected() {
@@ -369,8 +369,9 @@ public final class PAXChecker {
       }
 
       @Override
-      public void linkFound(String link) {
+      public void linkFound(String link, String statusText) {
         Browser.openLinkInBrowser(link);
+        email.sendMessage("PAXChecker","Link found on Twitter! Tweet Text: '" + statusText + "' Expanded Link: " + link);
       }
     };
   }
