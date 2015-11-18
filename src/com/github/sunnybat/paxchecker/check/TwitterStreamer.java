@@ -60,8 +60,7 @@ public abstract class TwitterStreamer {
     public void onStatus(Status status) { // Only called when a user the program is watching tweets
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
       String statusText = status.getText();
-      Boolean isRetweet = status.isRetweet();
-
+      boolean isRetweet = status.isRetweet();
       String statusTextForNotification = statusText;
       if (filterKeywords && !hasKeyword(statusText)) {
         System.out.println("Does not contain keyword -- ignoring");
