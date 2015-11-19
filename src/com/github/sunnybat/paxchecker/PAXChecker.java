@@ -40,11 +40,12 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R5";
+  public static final String VERSION = "3.0.0 R6";
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
   private static TwitterStreamer myStreamer;
+  private static final Object FOUND_LOCK = new Object();
 
   /**
    * @param args the command line arguments
@@ -370,10 +371,7 @@ public final class PAXChecker {
       @Override
       public void linkFound(String link, String statusText) {
         checker.addLinkFound(link);
-        Browser.openLinkInBrowser(link);
-        if (email != null) {
-          email.sendMessage("PAXChecker", "Link found on Twitter! Tweet Text: '" + statusText + "' Expanded Link: " + link);
-        }
+        urlFound(link, email, "Link found on Twitter: " + link + " -- Tweet Text: " + statusText, myStatus instanceof StatusGUI);
       }
     };
   }
@@ -394,19 +392,7 @@ public final class PAXChecker {
         status.setLastCheckedText("Checking for Updates");
         long startTime = System.currentTimeMillis();
         if (checker.isUpdated()) {
-          Browser.openLinkInBrowser(checker.getLinkFound());
-          Audio.playAlarm();
-          if (email != null) {
-            try {
-              email.sendMessage("PAXChecker", "A new link has been found: " + checker.getLinkFound());
-            } catch (IllegalStateException e) { // In case we send too fast
-              System.out.println("Unable to send email (" + e.getMessage() + ")");
-            }
-          }
-          if (status instanceof StatusGUI) {
-            Tickets ticketWindow = new Tickets(checker.getLinkFound()); // CHECK: Should I only allow one Tickets at a time?
-            ticketWindow.showWindow();
-          }
+          urlFound(checker.getLinkFound(), email, "A new link has been found: " + checker.getLinkFound(), status instanceof StatusGUI);
         }
         status.setDataUsageText(DataTracker.getDataUsedMB());
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
@@ -452,6 +438,24 @@ public final class PAXChecker {
       }
     } else {
       status.setLastCheckedText("[Only Checking Twitter]");
+    }
+  }
+
+  private static void urlFound(String url, EmailAccount email, String messageToSend, boolean openWindow) {
+    synchronized (FOUND_LOCK) {
+      Browser.openLinkInBrowser(url);
+      Audio.playAlarm();
+      if (openWindow) {
+        Tickets ticketWindow = new Tickets(url); // CHECK: Should I only allow one Tickets at a time?
+        ticketWindow.showWindow();
+      }
+      if (email != null) {
+        try {
+          email.sendMessage("PAXChecker", messageToSend);
+        } catch (IllegalStateException e) { // In case we send too fast
+          System.out.println("Unable to send email (" + e.getMessage() + ")");
+        }
+      }
     }
   }
 }
