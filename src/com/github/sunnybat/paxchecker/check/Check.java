@@ -1,5 +1,7 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
+import com.github.sunnybat.paxchecker.status.CheckerInfoOutputCLI;
 import java.util.concurrent.Phaser;
 
 /**
@@ -8,26 +10,33 @@ import java.util.concurrent.Phaser;
  */
 public abstract class Check implements Runnable {
 
-  private javax.swing.JLabel linkLabel;
+  private CheckerInfoOutput infoOutput;
   private Phaser cycBar;
 
   public Check() {
   }
 
-  public void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
-    if (s != null) {
-      linkLabel = s.addLinkJLabel();
+  /**
+   * Initializes this Checker.
+   *
+   * @param output The non-null CheckerInfoOutput to update with new information
+   * @param cB The non-null Phaser to update when done
+   * @throws IllegalArgumentException if output or cB is null
+   */
+  public void init(CheckerInfoOutput output, java.util.concurrent.Phaser cB) {
+    if (output == null || cB == null) {
+      throw new IllegalArgumentException("output and cB cannot be null");
     }
-    updateLabel(s, "Initializing...");
+    infoOutput = output;
+    updateWithInfo("Initializing...");
     cycBar = cB;
     cycBar.register();
     reset();
+    updateWithInfo("Checker initialized");
   }
 
-  public final void updateLabel(com.github.sunnybat.paxchecker.status.StatusGUI s, String text) {
-    if (s != null) {
-      s.updateJLabel(linkLabel, text);
-    }
+  public final void updateWithInfo(String text) {
+    infoOutput.update(text);
   }
 
   @Override
@@ -46,11 +55,11 @@ public abstract class Check implements Runnable {
   public abstract void reset();
 
   final void updateLink(String link) {
-    if (linkLabel != null) {
+    if (infoOutput != null) {
       if (this.getClass().getSimpleName().length() <= 5) {
-        linkLabel.setText("Current (???) Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+        infoOutput.update("Current (???) Link: " + link);
       } else {
-        linkLabel.setText("Current " + this.getClass().getSimpleName().substring(5) + " Link: " + link); // Yea, this should be run on the EDT. I know, I know.
+        infoOutput.update("Current " + this.getClass().getSimpleName().substring(5) + " Link: " + link);
       }
     }
   }

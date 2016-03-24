@@ -94,8 +94,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
     // Main Settings Window
     String cellNum = prefs.getStringPreference("CELLNUM");
-    System.out.println("Total: " + cellNum);
     if (cellNum != null) {
+      System.out.println("Total: " + cellNum);
       if (cellNum.contains(";")) {
         String[] split = cellNum.split(";");
         boolean first = false;

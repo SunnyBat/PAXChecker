@@ -1,6 +1,8 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.paxchecker.Expo;
 import com.github.sunnybat.paxchecker.browser.PaxsiteReader;
+import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
 
 /**
  *
@@ -10,22 +12,24 @@ public class CheckPaxsite extends Check {
 
   private String lastLinkFound;
   private String currentLinkFound;
-  private final String expoToCheck;
+  private Expo expoToCheck;
+  private PaxsiteReader siteReader;
 
   /**
    * Creates a new PaxsiteChecker.
    *
    * @param expo The expo to check
    */
-  public CheckPaxsite(String expo) {
+  public CheckPaxsite(Expo expo) {
     super();
     expoToCheck = expo;
+    siteReader = new PaxsiteReader(expoToCheck);
   }
 
   @Override
-  public synchronized void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
+  public synchronized void init(CheckerInfoOutput s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    updateLabel(s, "Paxsite initialized.");
+    updateWithInfo("Paxsite initialized.");
   }
 
   @Override
@@ -38,7 +42,7 @@ public class CheckPaxsite extends Check {
       return false;
     } else if (currentLinkFound.equals("[NoFind]") || currentLinkFound.equals("[Button Parsing Error]")) {
       return false;
-    } else if (!currentLinkFound.contains("\"" + PaxsiteReader.getWebsiteLink(expoToCheck) + "\"")) {
+    } else if (!currentLinkFound.toLowerCase().contains("\"" + siteReader.getWebsiteLink(expoToCheck.toString()) + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
       return true;
     }
@@ -48,7 +52,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized final void updateLink() {
     updateLink("[Checking]");
-    currentLinkFound = PaxsiteReader.getCurrentButtonLink(expoToCheck);
+    currentLinkFound = siteReader.getCurrentButtonLink();
     updateLink(getLink());
   }
 
@@ -59,7 +63,7 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized void reset() {
-    lastLinkFound = PaxsiteReader.getCurrentButtonLink(expoToCheck);
+    lastLinkFound = siteReader.getCurrentButtonLink();
   }
 
 }

@@ -1,11 +1,11 @@
 package com.github.sunnybat.paxchecker.check;
 
-import com.github.sunnybat.paxchecker.browser.ShowclixReader;
+import com.github.sunnybat.paxchecker.Expo;
 import com.github.sunnybat.paxchecker.browser.Browser;
+import com.github.sunnybat.paxchecker.browser.ShowclixReader;
+import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
 import java.util.Set;
 import java.util.TreeSet;
-// Could replace Browser with a class variable, since all this is using is getExpo(), and then be able to have multiple instances of this running
-// But then if we change the expo later on...
 
 /**
  *
@@ -13,26 +13,25 @@ import java.util.TreeSet;
  */
 public class CheckShowclix extends Check {
 
-  static final String BASE_SHOWCLIX_LINK = "http://www.showclix.com/event/";
-  Set<String> alreadyChecked = new TreeSet<>();
-  String currentLink; // When new link found, this will not be null. This will be the final link to check, AKA the final redirect link
-  String originalLink; // The original link found to add to alreadyChecked when finished
-  final String expoToCheck;
+  private Set<String> alreadyChecked = new TreeSet<>();
+  private String currentLink; // When new link found, this will not be null. This will be the final link to check, AKA the final redirect link
+  private String originalLink; // The original link found to add to alreadyChecked when finished
+  private Expo expoToCheck;
 
   /**
    * Creates a new CheckShowclix.
    *
    * @param expo The expo to check
    */
-  public CheckShowclix(String expo) {
+  public CheckShowclix(Expo expo) {
     super();
     expoToCheck = expo;
   }
 
   @Override
-  public synchronized void init(com.github.sunnybat.paxchecker.status.StatusGUI s, java.util.concurrent.Phaser cB) {
+  public synchronized void init(CheckerInfoOutput s, java.util.concurrent.Phaser cB) {
     super.init(s, cB);
-    updateLabel(s, "Showclix initialized.");
+    updateWithInfo("Showclix initialized.");
   }
 
   @Override
@@ -52,10 +51,10 @@ public class CheckShowclix extends Check {
   }
 
   protected Set<String> getLinks() {
-    return ShowclixReader.getAllEventURLs(expoToCheck);
+    return ShowclixReader.getAllEventURLs(expoToCheck.toString()); // TODO: Replace with Expo object
   }
 
-  final void updateLinkFromSet(Set<String> mySet) {
+  private void updateLinkFromSet(Set<String> mySet) {
     for (String i : mySet) {
       if (!alreadyChecked.contains(i)) {
         System.out.println("Not checked: " + i);

@@ -5,13 +5,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Phaser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -28,8 +24,6 @@ public class ShowclixReader {
   private static final String API_EXTENSION_VENUE = "Venue/";
   private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
-  private static ExecutorService threadPool = Executors.newFixedThreadPool(5); // TODO: Make this only initialize when Deep Showclix Checking is enabled
-  private static int maxPartnerID = 100;
   private static boolean strictFiltering; // TODO: This is state and should be moved to non-static somehow
 
   /**
@@ -92,34 +86,6 @@ public class ShowclixReader {
     Set<String> retSet = getAllSellerEventURLs(expo);
     retSet.addAll(getAllPartnerEventURLs(expo));
     retSet.addAll(getAllVenueEventURLs(expo));
-    System.out.println(retSet);
-    return retSet;
-  }
-
-  public static Set<String> getAllRelevantURLs() {
-    Set<Integer> sellerIDs = getAllRelevantSellerIDs();
-    sellerIDs.add(getSellerID("Prime"));
-    sellerIDs.add(getSellerID("East"));
-    sellerIDs.add(getSellerID("South"));
-    sellerIDs.add(getSellerID("Aus"));
-    Set<Integer> partnerIDs = getAllPartners(sellerIDs);
-    partnerIDs.add(getPartnerID("Prime"));
-    partnerIDs.add(getPartnerID("East"));
-    partnerIDs.add(getPartnerID("South"));
-    partnerIDs.add(getPartnerID("Aus"));
-    final Set<String> retSet = new TreeSet<>();
-    System.out.println("Seller IDs: " + sellerIDs);
-    System.out.println("Partner IDs: " + partnerIDs);
-    for (int partnerID : partnerIDs) {
-      retSet.addAll(getAllPartnerEventURLs(partnerID));
-    }
-    for (int sellerID : sellerIDs) {
-      retSet.addAll(getAllSellerEventURLs(sellerID));
-    }
-    int[] venues = {13961, 16418, 20012, 15820};
-    for (int venueID : venues) {
-      retSet.addAll(getAllVenueEventURLs(venueID));
-    }
     return retSet;
   }
 
@@ -236,89 +202,6 @@ public class ShowclixReader {
     } catch (ParseException parseException) {
       System.out.println("ERROR parsing JSON text in Venue events!");
       parseException.printStackTrace();
-    }
-    return retSet;
-  }
-
-  private static Set<Integer> getAllPartners(Set<Integer> sellerIDs) {
-    final Set<Integer> retSet = new TreeSet<>();
-    for (int i : sellerIDs) {
-      try {
-        String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + i + "/partner"));
-        if (jsonText == null) {
-          return retSet;
-        }
-        JSONParser mP = new JSONParser();
-        JSONObject obj = (JSONObject) mP.parse(jsonText);
-        if (obj.get("partner_id") != null) {
-          try {
-            retSet.add(Integer.parseInt((String) obj.get("partner_id")));
-          } catch (NumberFormatException nfe) {
-            System.out.println("Error parsing number: " + obj.get("partner_id"));
-          }
-        }
-      } catch (MalformedURLException mue) {
-      } catch (ParseException pe) {
-      }
-    }
-    return retSet;
-  }
-
-  private static Set<Integer> getAllRelevantSellerIDs() {
-    final Phaser threadWait = new Phaser();
-    threadWait.bulkRegister(maxPartnerID); // Includes registering this Thread
-    final Set<Integer> relevantSellerIDs = new TreeSet<>();
-    final Object LOCK = new Object();
-    for (int pID = 1; pID < 100; pID++) {
-      final int partnerID = pID;
-      Runnable r = new Runnable() {
-        @Override
-        public void run() {
-          Set<Integer> mySet = getRelevantSellerIDs(partnerID);
-          synchronized (LOCK) {
-            relevantSellerIDs.addAll(mySet);
-          }
-          threadWait.arriveAndDeregister();
-        }
-      };
-      threadPool.submit(r);
-    }
-    threadWait.awaitAdvance(threadWait.arriveAndDeregister());
-    return relevantSellerIDs;
-  }
-
-  private static Set<Integer> getRelevantSellerIDs(int partnerID) {
-    Set<Integer> retSet = new TreeSet<>();
-    try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + "/sellers"));
-      if (jsonText == null) {
-        return retSet;
-      }
-      //System.out.println("JSON Text: " + jsonText);
-      JSONParser mP = new JSONParser();
-      //JSONArray array = (JSONArray) mP.parse(jsonText);
-      try {
-        JSONObject obj = (JSONObject) mP.parse(jsonText);
-        for (String s : (Iterable<String>) obj.keySet()) { // Parse through Seller IDs
-          try {
-            JSONObject obj2 = ((JSONObject) obj.get(s)); // Will throw CCE if it's not a JSONObject
-            String seller = (String) obj2.get("organization");
-            if (seller == null) {
-              System.out.println("Null (" + s + ")");
-            } else if (seller.toLowerCase().contains("pax") || seller.toLowerCase().contains("penny")) {
-              System.out.println("PAX Seller: " + obj2.get("organization"));
-              retSet.add(Integer.parseInt(s));
-            }
-          } catch (ClassCastException e) {
-            e.printStackTrace();
-          }
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
-      }
-    } catch (IOException iOException) {
-      System.out.println("Error connecting to partner " + partnerID);
-    } catch (ParseException parseException) {
     }
     return retSet;
   }

@@ -339,10 +339,10 @@ public final class PAXChecker {
   private static TicketChecker initChecker(Setup mySetup, StatusGUI myStatus, Expo expo) {
     TicketChecker myChecker = new TicketChecker(myStatus);
     if (mySetup.shouldCheckPAXWebsite()) {
-      myChecker.addChecker(new CheckPaxsite(expo.toString())); // TODO: Replace with Expo Object
+      myChecker.addChecker(new CheckPaxsite(expo));
     }
     if (mySetup.shouldCheckShowclix()) {
-      myChecker.addChecker(new CheckShowclix(expo.toString()));
+      myChecker.addChecker(new CheckShowclix(expo));
     }
     if (mySetup.shouldCheckKnownEvents()) {
       myChecker.addChecker(new CheckShowclixEventPage());

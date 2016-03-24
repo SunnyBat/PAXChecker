@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.paxchecker.status.CheckerInfoOutputCLI;
 import com.github.sunnybat.paxchecker.status.StatusGUI;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +38,6 @@ public final class TicketChecker {
    * @param c The Checker to add
    */
   public void addChecker(Check c) {
-    //c.init(status, threadWait); // MOVE LATER
     checks.add(c);
   }
 
@@ -46,7 +46,11 @@ public final class TicketChecker {
    */
   public void initCheckers() {
     for (Check c : checks) {
-      c.init(status, threadWait);
+      if (status != null) {
+        c.init(status.createNewInfoOutput(), threadWait);
+      } else {
+        c.init(new CheckerInfoOutputCLI(), threadWait);
+      }
     }
   }
 
@@ -144,47 +148,5 @@ public final class TicketChecker {
    */
   public boolean isCheckingAnything() {
     return !checks.isEmpty();
-  }
-
-  /**
-   * Checks whether or not the program is currently checking the PAX website for updates.
-   *
-   * @return True if checking the PAX website, false if not
-   */
-  public boolean isCheckingPaxsite() {
-    for (Check c : checks) {
-      if (CheckPaxsite.class.isInstance(c)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks whether or not the program is currently checking the Showclix website for updates.
-   *
-   * @return True if checking the Showclix website, false if not
-   */
-  public boolean isCheckingShowclix() {
-    for (Check c : checks) {
-      if (CheckShowclix.class.isInstance(c)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks whether or not the program is currently checking known Showclix pages for updates.
-   *
-   * @return True if checking known Showclix pages, false if not
-   */
-  public boolean isCheckingKnownPages() {
-    for (Check c : checks) {
-      if (CheckShowclixEventPage.class.isInstance(c)) {
-        return true;
-      }
-    }
-    return false;
   }
 }

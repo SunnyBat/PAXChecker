@@ -2,6 +2,7 @@ package com.github.sunnybat.paxchecker.browser;
 
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.paxchecker.DataTracker;
+import com.github.sunnybat.paxchecker.Expo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,23 +19,23 @@ import java.net.UnknownHostException;
  */
 public class PaxsiteReader {
 
-  public static String getCurrentButtonLink(String expo) {
-    return findShowclixLink(expo);
+  private Expo expoToCheck;
+
+  public PaxsiteReader(Expo toCheck) {
+    expoToCheck = toCheck;
+  }
+
+  public String getCurrentButtonLink() {
+    return findShowclixLink(); // TODO: Change to Expo object
     //return parseHRef(getCurrentButtonLinkLine(expo));
   }
 
-  private static String findShowclixLink(String expo) {
-    URL url;
-    InputStream is = null;
-    BufferedReader br;
-    String line;
+  private String findShowclixLink() {
+    BufferedReader lineReader = null;
     try {
-      url = new URL(getWebsiteLink(expo) + "/registration");
-      //is = url.openStream();
-      HttpURLConnection httpCon = Browser.setUpConnection(url);
-      is = httpCon.getInputStream();
-      br = new BufferedReader(new InputStreamReader(is));
-      while ((line = br.readLine()) != null) {
+      String line;
+      lineReader = setUpConnection();
+      while ((line = lineReader.readLine()) != null) {
         DataTracker.addDataUsed(line.length());
         line = line.trim();
         if (line.contains("www.showclix.com")) {
@@ -65,8 +66,8 @@ public class PaxsiteReader {
       return null;
     } finally {
       try {
-        if (is != null) {
-          is.close();
+        if (lineReader != null) {
+          lineReader.close();
         }
       } catch (IOException ioe) {
         // nothing to see here
@@ -77,6 +78,19 @@ public class PaxsiteReader {
     return "[NoFind]";
   }
 
+  private BufferedReader setUpConnection() throws UnknownHostException, MalformedURLException, SocketTimeoutException, IOException {
+    URL urlToConnectTo;
+    InputStream rawInputStream = null;
+    BufferedReader lineReader;
+    String line;
+    urlToConnectTo = new URL(getWebsiteLink(expoToCheck.toString()) + "/registration");
+    //is = url.openStream();
+    HttpURLConnection httpCon = Browser.setUpConnection(urlToConnectTo);
+    rawInputStream = httpCon.getInputStream();
+    lineReader = new BufferedReader(new InputStreamReader(rawInputStream));
+    return lineReader;
+  }
+
   /**
    * Returns the HTTP address of the given PAX Expo. Be sure to only use the name of the expo (ex: prime) OR the full name (ex: pax prime) as the
    * argument.
@@ -84,7 +98,7 @@ public class PaxsiteReader {
    * @param expo The PAX expo to get the website link for
    * @return The website link of the specified expo, or the PAX Prime link if invalid.
    */
-  public static String getWebsiteLink(String expo) {
+  public String getWebsiteLink(String expo) {
     if (expo == null) {
       return "http://prime.paxsite.com";
     }

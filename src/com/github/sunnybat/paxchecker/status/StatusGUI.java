@@ -282,8 +282,8 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     }
   }
 
-  public JLabel addLinkJLabel() {
-    final JLabel jL = new javax.swing.JLabel();
+  public CheckerInfoOutputGUI createNewInfoOutput() {
+    final CheckerInfoOutputGUI jL = new CheckerInfoOutputGUI();
     jL.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         openLabelLink(jL.getText());
