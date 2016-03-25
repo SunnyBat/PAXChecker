@@ -17,15 +17,21 @@ public class CheckShowclix extends Check {
   private String currentLink; // When new link found, this will not be null. This will be the final link to check, AKA the final redirect link
   private String originalLink; // The original link found to add to alreadyChecked when finished
   private Expo expoToCheck;
+  private ShowclixReader showReader;
 
   /**
    * Creates a new CheckShowclix.
    *
    * @param expo The expo to check
+   * @param shouldFilterShowclix True to use strict Showclix filtering, false to not
    */
-  public CheckShowclix(Expo expo) {
+  public CheckShowclix(Expo expo, boolean shouldFilterShowclix) {
     super();
     expoToCheck = expo;
+    showReader = new ShowclixReader(expoToCheck);
+    if (shouldFilterShowclix) {
+      showReader.strictFilter();
+    }
   }
 
   @Override
@@ -51,14 +57,14 @@ public class CheckShowclix extends Check {
   }
 
   protected Set<String> getLinks() {
-    return ShowclixReader.getAllEventURLs(expoToCheck.toString()); // TODO: Replace with Expo object
+    return showReader.getAllEventURLs(); // TODO: Replace with Expo object
   }
 
   private void updateLinkFromSet(Set<String> mySet) {
     for (String i : mySet) {
       if (!alreadyChecked.contains(i)) {
         System.out.println("Not checked: " + i);
-        if (ShowclixReader.isPaxPage(i)) {
+        if (showReader.isPaxPage(i)) {
           originalLink = i;
           currentLink = Browser.unshortenURL(i);
           System.out.println("PAX page found! OL = " + originalLink + " :: CL = " + currentLink);

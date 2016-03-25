@@ -38,20 +38,12 @@ public final class TicketChecker {
    * @param c The Checker to add
    */
   public void addChecker(Check c) {
-    checks.add(c);
-  }
-
-  /**
-   * Initializes the Checkers registered with the program.
-   */
-  public void initCheckers() {
-    for (Check c : checks) {
-      if (status != null) {
-        c.init(status.createNewInfoOutput(), threadWait);
-      } else {
-        c.init(new CheckerInfoOutputCLI(), threadWait);
-      }
+    if (status != null) {
+      c.init(status.createNewInfoOutput(), threadWait);
+    } else {
+      c.init(new CheckerInfoOutputCLI(), threadWait);
     }
+    checks.add(c);
   }
 
   /**
@@ -70,7 +62,6 @@ public final class TicketChecker {
     threadWait.arriveAndAwaitAdvance();
     System.out.println("Finished waiting");
     for (Check c : checks) {
-      //c.updateLink();
       if (c.ticketsFound()) {
         if (!hasOpenedLink(c.getLink())) {
           System.out.println("FOUND LINK: " + c.getLink());
@@ -98,7 +89,10 @@ public final class TicketChecker {
    */
   private synchronized void linkFound(String link) {
     linkFound = link;
-    addLinkFound(link);
+    if (link.endsWith("/") || link.endsWith("\\")) {
+      link = link.substring(0, link.length() - 1);
+    }
+    openedLinks.add(link);
   }
 
   /**
@@ -111,24 +105,12 @@ public final class TicketChecker {
   }
 
   /**
-   * Adds a last link found to the list of links found.
-   *
-   * @param link The link to add to the list
-   */
-  public synchronized void addLinkFound(String link) {
-    if (link.endsWith("/") || link.endsWith("\\")) {
-      link = link.substring(0, link.length() - 1);
-    }
-    openedLinks.add(link);
-  }
-
-  /**
    * Checks whether or not a link has already been opened.
    *
    * @param s The link to check
    * @return True if the link has already been opened, false if not
    */
-  public synchronized boolean hasOpenedLink(String s) {
+  private synchronized boolean hasOpenedLink(String s) {
     for (String link : openedLinks) {
       if (link.endsWith("/") || link.endsWith("\\")) {
         link = link.substring(0, link.length() - 1);

@@ -2,19 +2,15 @@ package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
+import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.startup.LoadingCLI;
 import com.github.sunnybat.commoncode.startup.LoadingWindow;
 import com.github.sunnybat.commoncode.startup.Startup;
-import com.github.sunnybat.commoncode.update.PatchNotesDownloader;
-import com.github.sunnybat.commoncode.update.UpdateDownloader;
-import com.github.sunnybat.commoncode.update.UpdatePrompt;
-import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.check.CheckPaxsite;
 import com.github.sunnybat.paxchecker.check.CheckShowclix;
 import com.github.sunnybat.paxchecker.check.CheckShowclixEventPage;
 import com.github.sunnybat.paxchecker.check.TicketChecker;
 import com.github.sunnybat.paxchecker.check.TwitterStreamer;
-import com.github.sunnybat.paxchecker.gui.Tickets;
 import com.github.sunnybat.paxchecker.notification.NotificationHandler;
 import com.github.sunnybat.paxchecker.resources.ResourceDownloader;
 import com.github.sunnybat.paxchecker.setup.Setup;
@@ -25,10 +21,7 @@ import com.github.sunnybat.paxchecker.status.Status;
 import com.github.sunnybat.paxchecker.status.StatusCLI;
 import com.github.sunnybat.paxchecker.status.StatusGUI;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +34,8 @@ import java.util.Map;
 public final class PAXChecker {
 
   public static final String VERSION = "3.0.0 R6";
-  private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
-  private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
-  private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
   private static TwitterStreamer myStreamer;
-  private static final Object FOUND_LOCK = new Object();
+  private static LinkManager myLinkManager;
 
   /**
    * @param args the command line arguments
@@ -56,37 +46,18 @@ public final class PAXChecker {
     java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
 
     // SETUP
-    boolean isHeadless = GraphicsEnvironment.isHeadless();
-    boolean isAutostart = false;
-    boolean checkUpdates = true;
-    boolean checkNotifications = true;
-    boolean startMinimized = false;
+    boolean isHeadless = GraphicsEnvironment.isHeadless() || hasArgument(args, "-cli");
     List<String> followList = new ArrayList<>();
     Map<String, String> properties = new HashMap<>();
     String[] twitterTokens = new String[4];
     for (int i = 0; i < args.length; i++) {
       switch (args[i].toLowerCase()) {
-        case "-cli":
-          isHeadless = true;
-          break;
-        case "-autostart":
-          isAutostart = true;
-          break;
-        case "-noupdate":
-          checkUpdates = false;
-          break;
 //          case "-notificationid":
 //            NotificationHandler.setLastNotificationID(args[a + 1]);
 //            break;
-        case "-nonotifications":
-          checkNotifications = false;
-          break;
         case "-follow":
         case "-checktwitter":
           followList.add(args[i + 1]);
-          break;
-        case "-startminimized":
-          startMinimized = true;
           break;
         case "-property":
           if (args.length > i + 2) {
@@ -141,13 +112,9 @@ public final class PAXChecker {
         case "-redownloadresources":
           // Used elsewhere
           break;
-        default:
-          if (args[i].startsWith("-")) {
-            System.out.println("Unknown argument: " + args[i]);
-          }
-          break;
       }
     }
+    PreferenceHandler prefs = new PreferenceHandler("paxchecker");
     final Startup loadingOutput;
     if (isHeadless) {
       ErrorBuilder.forceCommandLine();
@@ -155,22 +122,30 @@ public final class PAXChecker {
     } else {
       loadingOutput = new LoadingWindow();
     }
+    Updater programUpdater = new Updater(VERSION);
     String patchNotes = null;
     loadingOutput.start();
     loadResources(loadingOutput, hasArgument(args, "-redownloadresources"));
     if (!isHeadless) {
-      if (checkUpdates) {
-        patchNotes = loadUpdates(loadingOutput);
+      if (!hasArgument(args, "-noupdate")) {
+        if (hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false)) {
+          programUpdater.enableAnonymousMode();
+        }
+        if (programUpdater.loadUpdates(loadingOutput)) {
+          patchNotes = programUpdater.getPatchNotes();
+        } else {
+          System.out.println("Error loading patch notes");
+        }
       }
-      if (checkNotifications) {
-        loadNotifications(loadingOutput);
+      if (!hasArgument(args, "-nonotifications")) {
+        loadNotifications(loadingOutput, hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false), prefs);
       }
     } else {
       System.out.println("Updating and notifications are currently disabled in CLI mode and will be enabled in a future update.");
     }
     loadingOutput.stop();
     Setup mySetup;
-    if (isAutostart) {
+    if (hasArgument(args, "-autostart")) {
       mySetup = new SetupAuto(args);
     } else if (isHeadless) {
       mySetup = new SetupCLI(twitterTokens);
@@ -191,9 +166,6 @@ public final class PAXChecker {
 
     // SETUP
     Expo myExpo = Expo.parseExpo(mySetup.getExpoToCheck());
-    if (mySetup.shouldFilterShowclix()) {
-      com.github.sunnybat.paxchecker.browser.ShowclixReader.strictFilter(); // Laziness will be the reason I keep refactoring everything...
-    }
     Status myStatus;
     // SET UP EMAIL ACCOUNT
     EmailAccount emailAccount;
@@ -216,7 +188,7 @@ public final class PAXChecker {
         statGUI = new StatusGUI(myExpo);
       }
       myStatus = statGUI;
-      if (startMinimized) {
+      if (hasArgument(args, "-startminimized")) {
         statGUI.minimizeToTray();
       } else {
         statGUI.showWindow();
@@ -232,9 +204,10 @@ public final class PAXChecker {
       myStatus.enableAlarm();
     }
     // SET UP CHECKERS
-    final TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myExpo); // TODO: Better casting than this
+    myLinkManager = new LinkManager(emailAccount);
+    TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myExpo);
     if (mySetup.shouldCheckTwitter()) {
-      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, mySetup.shouldTextTweets() ? emailAccount : null, myChecker);
+      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, mySetup.shouldTextTweets());
       for (String s : followList) {
         tcheck.addUser(s);
       }
@@ -248,8 +221,9 @@ public final class PAXChecker {
   }
 
   private static boolean hasArgument(String[] args, String argument) {
+    argument = argument.toLowerCase();
     for (String s : args) {
-      if (s.toLowerCase().equals(argument.toLowerCase())) {
+      if (s.toLowerCase().equals(argument)) {
         return true;
       }
     }
@@ -271,58 +245,33 @@ public final class PAXChecker {
     }
   }
 
-  private static String loadUpdates(Startup window) {
-    String notes = null;
-    try {
-      window.setStatus("Checking for updates...");
-      PatchNotesDownloader notesDownloader = new PatchNotesDownloader(PATCH_NOTES_LINK);
-      notesDownloader.downloadVersionNotes(VERSION);
-      notes = notesDownloader.getVersionNotes();
-      if (notesDownloader.updateAvailable()) {
-        // TODO: Add support for anonymous downloads
-        UpdateDownloader myDownloader = new UpdateDownloader(UPDATE_LINK, BETA_UPDATE_LINK);
-        UpdatePrompt myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
-            "VERSION", notesDownloader.getVersionNotes(VERSION));
-        window.stop();
-        myPrompt.showWindow();
-        try {
-          myPrompt.waitForClose();
-        } catch (InterruptedException e) {
-        }
-        if (myPrompt.shouldUpdateProgram()) {
-          myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-          System.exit(0); // TODO: Is this actually the right way to kill the program?
-        } else {
-          window.start();
-        }
-      }
-    } catch (IOException | URISyntaxException e) {
-      e.printStackTrace();
-    }
-    return notes;
-  }
-
-  private static void loadNotifications(Startup window) {
+  private static void loadNotifications(Startup window, boolean anonymous, PreferenceHandler prefs) {
     window.setStatus("Checking for notifications...");
-    NotificationHandler notifications = new NotificationHandler(false, "-1"); // TODO: Load notifications from Preferences
+    String lastID = prefs.getStringPreference("LAST_NOTIFICATION_ID");
+    if (lastID == null) {
+      lastID = "-1";
+    }
+    NotificationHandler notifications = new NotificationHandler(anonymous, lastID); // TODO: Load notifications from Preferences
     notifications.loadNotifications();
-    notifications.showNewNotifications();
+    String newID = notifications.showNewNotifications();
+    prefs.getPreferenceObject("LAST_NOTIFICATION_ID").setValue(newID);
+    prefs.savePreferences();
   }
 
   private static void loadResources(final Startup window, boolean redownload) {
     ResourceDownloader download = new ResourceDownloader() {
-      private String currentFile;
+      private String currentFileName;
 
       @Override
       public void startingFile(String fileName) {
-        currentFile = fileName;
-        window.setStatus("Starting " + currentFile);
+        currentFileName = fileName;
+        window.setStatus("Starting " + currentFileName);
       }
 
       @Override
       public void filePercentage(int percent) {
         super.filePercentage(percent);
-        window.setStatus("Downloading " + currentFile + " (" + percent + "%)");
+        window.setStatus("Downloading " + currentFileName + " (" + percent + "%)");
       }
 
       @Override
@@ -342,16 +291,15 @@ public final class PAXChecker {
       myChecker.addChecker(new CheckPaxsite(expo));
     }
     if (mySetup.shouldCheckShowclix()) {
-      myChecker.addChecker(new CheckShowclix(expo));
+      myChecker.addChecker(new CheckShowclix(expo, mySetup.shouldFilterShowclix()));
     }
     if (mySetup.shouldCheckKnownEvents()) {
       myChecker.addChecker(new CheckShowclixEventPage());
     }
-    myChecker.initCheckers();
     return myChecker;
   }
 
-  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final EmailAccount email, final TicketChecker checker) {
+  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final boolean textTweets) {
     return new TwitterStreamer(keys) {
       @Override
       public void twitterConnected() {
@@ -370,8 +318,7 @@ public final class PAXChecker {
 
       @Override
       public void linkFound(String link, String statusText) {
-        checker.addLinkFound(link);
-        urlFound(link, email, "Link found on Twitter: " + link + " -- Tweet Text: " + statusText, myStatus instanceof StatusGUI);
+        myLinkManager.openLink(link, textTweets, "Link found on Twitter: " + link + " -- Tweet Text: " + statusText);
       }
     };
   }
@@ -392,7 +339,7 @@ public final class PAXChecker {
         status.setLastCheckedText("Checking for Updates");
         long startTime = System.currentTimeMillis();
         if (checker.isUpdated()) {
-          urlFound(checker.getLinkFound(), email, "A new link has been found: " + checker.getLinkFound(), status instanceof StatusGUI);
+          myLinkManager.openLink(checker.getLinkFound(), true);
         }
         status.setDataUsageText(DataTracker.getDataUsedMB());
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
@@ -438,24 +385,6 @@ public final class PAXChecker {
       }
     } else {
       status.setLastCheckedText("[Only Checking Twitter]");
-    }
-  }
-
-  private static void urlFound(String url, EmailAccount email, String messageToSend, boolean openWindow) {
-    synchronized (FOUND_LOCK) {
-      Browser.openLinkInBrowser(url);
-      Audio.playAlarm();
-      if (openWindow) {
-        Tickets ticketWindow = new Tickets(url); // CHECK: Should I only allow one Tickets at a time?
-        ticketWindow.showWindow();
-      }
-      if (email != null) {
-        try {
-          email.sendMessage("PAXChecker", messageToSend);
-        } catch (IllegalStateException e) { // In case we send too fast
-          System.out.println("Unable to send email (" + e.getMessage() + ")");
-        }
-      }
     }
   }
 }
