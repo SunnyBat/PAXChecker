@@ -57,7 +57,7 @@ public class CheckShowclix extends Check {
   }
 
   protected Set<String> getLinks() {
-    return showReader.getAllEventURLs(); // TODO: Replace with Expo object
+    return showReader.getAllEventURLs();
   }
 
   private void updateLinkFromSet(Set<String> mySet) {

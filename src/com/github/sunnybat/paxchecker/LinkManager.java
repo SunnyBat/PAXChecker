@@ -22,7 +22,7 @@ public class LinkManager {
   }
 
   public void openLink(String url, boolean sendEmail) {
-    openLink(url, sendEmail, "A new link has been foun: " + url);
+    openLink(url, sendEmail, "A new link has been found: " + url);
   }
 
   public void openLink(String url, boolean sendEmail, String message) {

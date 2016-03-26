@@ -7,6 +7,7 @@ import com.github.sunnybat.commoncode.update.UpdatePrompt;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Scanner;
 
 /**
  *
@@ -17,12 +18,13 @@ public class Updater {
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
-  private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
-  private static final String UPDATE_LINK_ANONYMOUS = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
-  private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
+  private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt?dl=1";
+  private static final String UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar?dl=1";
+  private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar?dl=1";
   private final String programVersion;
   private String patchNotes;
   private boolean anonymous = false;
+  private boolean headless = false;
 
   public Updater(String programVersion) {
     this.programVersion = programVersion;
@@ -33,6 +35,13 @@ public class Updater {
    */
   public void enableAnonymousMode() {
     anonymous = true;
+  }
+
+  /**
+   * Enables Headless Mode
+   */
+  public void enableHeadlessMode() {
+    headless = true;
   }
 
   /**
@@ -59,15 +68,28 @@ public class Updater {
       notes = notesDownloader.getVersionNotes();
       if (notesDownloader.updateAvailable()) {
         UpdateDownloader myDownloader = new UpdateDownloader(getUpdateLink(), getBetaUpdateLink());
-        UpdatePrompt myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
-            programVersion, notesDownloader.getVersionNotes(programVersion));
-        startupOutput.stop();
-        myPrompt.showWindow();
-        try {
-          myPrompt.waitForClose();
-        } catch (InterruptedException e) {
+        UpdatePrompt myPrompt = null;
+        boolean shouldUpdate;
+        if (!headless) {
+          myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
+              programVersion, notesDownloader.getVersionNotes(programVersion));
+          startupOutput.stop();
+          myPrompt.showWindow();
+          try {
+            myPrompt.waitForClose();
+          } catch (InterruptedException e) {
+          }
+          shouldUpdate = myPrompt.shouldUpdateProgram();
+        } else {
+          System.out.println("Update found!");
+          System.out.println("Current version: " + programVersion);
+          System.out.println("New version level = " + notesDownloader.getUpdateLevel());
+          System.out.println("Download size: " + myDownloader.getUpdateSize());
+          System.out.print("Update to new version (Y/N): ");
+          Scanner in = new Scanner(System.in);
+          shouldUpdate = in.nextLine().toUpperCase().startsWith("Y");
         }
-        if (myPrompt.shouldUpdateProgram()) {
+        if (shouldUpdate) {
           myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
           System.exit(0); // TODO: Is this actually the right way to kill the program? Or should I pass info out to safely shut down?
         } else {

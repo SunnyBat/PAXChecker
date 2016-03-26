@@ -21,7 +21,7 @@ public class NotificationHandler {
   private final String NOTIFICATIONS_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
   private final ArrayList<Notification> notificationList = new ArrayList<>();
   private String lastNotificationID = "";
-  private final boolean anonymousStatistics;
+  private boolean anonymousStatistics;
   private boolean isHeadless;
 
   /**
@@ -30,13 +30,16 @@ public class NotificationHandler {
    * @param anonymousStatistics True for anonymous statistics, false for usage tracking
    * @param lastNotificationID The ID of the last notification loaded, or null or "DISABLE" to disable notifications
    */
-  public NotificationHandler(boolean anonymousStatistics, String lastNotificationID) {
+  public NotificationHandler(String lastNotificationID) {
     if (lastNotificationID == null) {
       this.lastNotificationID = "DISABLE";
     } else {
       this.lastNotificationID = lastNotificationID;
     }
-    this.anonymousStatistics = anonymousStatistics;
+  }
+  
+  public void setAnonymous() {
+    anonymousStatistics = true;
   }
 
   public void setHeadless() {

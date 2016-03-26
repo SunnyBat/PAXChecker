@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R6";
+  public static final String VERSION = "3.0.0 R7";
   private static TwitterStreamer myStreamer;
   private static LinkManager myLinkManager;
 
@@ -114,6 +114,8 @@ public final class PAXChecker {
           break;
       }
     }
+
+    // STARTUP OPERATIONS
     PreferenceHandler prefs = new PreferenceHandler("paxchecker");
     final Startup loadingOutput;
     if (isHeadless) {
@@ -126,23 +128,29 @@ public final class PAXChecker {
     String patchNotes = null;
     loadingOutput.start();
     loadResources(loadingOutput, hasArgument(args, "-redownloadresources"));
-    if (!isHeadless) {
-      if (!hasArgument(args, "-noupdate")) {
-        if (hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false)) {
-          programUpdater.enableAnonymousMode();
-        }
-        if (programUpdater.loadUpdates(loadingOutput)) {
-          patchNotes = programUpdater.getPatchNotes();
-        } else {
-          System.out.println("Error loading patch notes");
-        }
+
+    // UPDATES
+    if (!hasArgument(args, "-noupdate") && prefs.getBooleanPreference("LOAD_UPDATES", true)) {
+      if (hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false)) {
+        programUpdater.enableAnonymousMode();
       }
-      if (!hasArgument(args, "-nonotifications")) {
-        loadNotifications(loadingOutput, hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false), prefs);
+      if (isHeadless) {
+        programUpdater.enableHeadlessMode();
       }
-    } else {
-      System.out.println("Updating and notifications are currently disabled in CLI mode and will be enabled in a future update.");
+      if (programUpdater.loadUpdates(loadingOutput)) {
+        patchNotes = programUpdater.getPatchNotes();
+      } else {
+        System.out.println("Error loading patch notes");
+      }
     }
+
+    //NOTIFICATIONS
+    if (!hasArgument(args, "-nonotifications") && prefs.getBooleanPreference("LOAD_NOTIFICATIONS", true)) {
+      loadNotifications(loadingOutput, hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false),
+          isHeadless, prefs);
+    }
+
+    // SETUP
     loadingOutput.stop();
     Setup mySetup;
     if (hasArgument(args, "-autostart")) {
@@ -245,15 +253,24 @@ public final class PAXChecker {
     }
   }
 
-  private static void loadNotifications(Startup window, boolean anonymous, PreferenceHandler prefs) {
+  private static void loadNotifications(Startup window, boolean anonymous, boolean headless, PreferenceHandler prefs) {
     window.setStatus("Checking for notifications...");
     String lastID = prefs.getStringPreference("LAST_NOTIFICATION_ID");
     if (lastID == null) {
       lastID = "-1";
     }
-    NotificationHandler notifications = new NotificationHandler(anonymous, lastID); // TODO: Load notifications from Preferences
+    NotificationHandler notifications = new NotificationHandler(lastID);
+    if (anonymous) {
+      notifications.setAnonymous();
+    }
+    if (headless) {
+      notifications.setHeadless();
+    }
     notifications.loadNotifications();
     String newID = notifications.showNewNotifications();
+    if (newID == null) {
+      newID = lastID;
+    }
     prefs.getPreferenceObject("LAST_NOTIFICATION_ID").setValue(newID);
     prefs.savePreferences();
   }

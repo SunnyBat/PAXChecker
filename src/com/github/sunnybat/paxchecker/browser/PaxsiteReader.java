@@ -26,8 +26,7 @@ public class PaxsiteReader {
   }
 
   public String getCurrentButtonLink() {
-    return findShowclixLink(); // TODO: Change to Expo object
-    //return parseHRef(getCurrentButtonLinkLine(expo));
+    return findShowclixLink();
   }
 
   private String findShowclixLink() {

@@ -25,7 +25,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_VENUE = "Venue/";
   private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
-  private boolean strictFiltering; // TODO: This is state and should be moved to non-static somehow
+  private boolean strictFiltering;
   private Expo expoToCheck;
 
   public ShowclixReader(Expo expo) {
@@ -35,7 +35,7 @@ public class ShowclixReader {
   /**
    * Sets the isPaxPage() checks to strictly filter for PAX pages.
    */
-  public void strictFilter() { // TODO: Refactor so this is non-static elsewhere
+  public void strictFilter() {
     strictFiltering = true;
   }
 
