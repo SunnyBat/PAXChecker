@@ -136,4 +136,9 @@ public class SetupAuto implements Setup {
     return getArg("-applicationsecret");
   }
 
+  @Override
+  public boolean shouldCheckForUpdatesDaily() {
+    return hasArg("-dailyupdates");
+  }
+
 }

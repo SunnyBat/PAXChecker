@@ -649,7 +649,7 @@
                                   <Component id="JCBSaveEmailSettings" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="21" pref="21" max="-2" attributes="0"/>
-                                      <Component id="JCBCheckUpdateDaily" min="-2" max="-2" attributes="0"/>
+                                      <Component id="JCBCheckUpdatesDaily" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="JCBSaveTwitterKeys" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBUseBeta" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -677,7 +677,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckUpdates" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBCheckUpdateDaily" min="-2" max="-2" attributes="0"/>
+                      <Component id="JCBCheckUpdatesDaily" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBSaveTwitterKeys" min="-2" pref="23" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -765,10 +765,9 @@
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;When enabled, the program goes through Orangedox&lt;br&gt;&#xa;to collect non-personally identifiable statistics about&lt;br&gt;&#xa;file downloads, such as the date downloaded and&lt;br&gt;&#xa;the specific file downloaded.&lt;br&gt;&#xa;NOTE that &quot;Anonymous Statistics&quot; only means going&lt;br&gt;&#xa;through Dropbox instead of Orangedox. Dropbox&apos;s&lt;br&gt;&#xa;Privacy Policy applies to you, regardless of whether&lt;br&gt;&#xa;or not this option is enabled.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBCheckUpdateDaily">
+            <Component class="javax.swing.JCheckBox" name="JCBCheckUpdatesDaily">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Every 24 hours"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

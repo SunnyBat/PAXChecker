@@ -114,4 +114,11 @@ public interface Setup {
 
   public String getTwitterApplicationSecret();
 
+  /**
+   * Gets whether or not to check for updates every 24 hours.
+   *
+   * @return True to check, false to not
+   */
+  public boolean shouldCheckForUpdatesDaily();
+
 }

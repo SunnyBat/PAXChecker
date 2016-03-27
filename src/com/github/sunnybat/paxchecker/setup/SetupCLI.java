@@ -18,6 +18,7 @@ public class SetupCLI implements Setup {
   private boolean checkTwitter;
   private boolean filterTwitter;
   private boolean textTweets;
+  private boolean checkUpdatesDaily;
   private String expoToCheck;
   private boolean playAlarm;
   private int refreshTime = 30;
@@ -163,6 +164,8 @@ public class SetupCLI implements Setup {
     }
     System.out.print("Play Alarm (Y/N): ");
     playAlarm = isResponseYes(myScanner);
+    System.out.println("Check for Updates Every 24 Hours (Y/N): ");
+    checkUpdatesDaily = isResponseYes(myScanner);
   }
 
   private boolean isResponseYes(Scanner in) {
@@ -258,6 +261,11 @@ public class SetupCLI implements Setup {
   @Override
   public String getTwitterApplicationSecret() {
     return applicationSecret;
+  }
+
+  @Override
+  public boolean shouldCheckForUpdatesDaily() {
+    return checkUpdatesDaily;
   }
 
 }

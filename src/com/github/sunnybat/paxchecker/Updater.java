@@ -62,7 +62,9 @@ public class Updater {
   public boolean loadUpdates(Startup startupOutput) {
     String notes = null;
     try {
-      startupOutput.setStatus("Checking for updates...");
+      if (startupOutput != null) {
+        startupOutput.setStatus("Checking for updates...");
+      }
       PatchNotesDownloader notesDownloader = new PatchNotesDownloader(getPatchNotesLink());
       notesDownloader.downloadVersionNotes(programVersion);
       notes = notesDownloader.getVersionNotes();
@@ -73,7 +75,9 @@ public class Updater {
         if (!headless) {
           myPrompt = new UpdatePrompt("PAXChecker", myDownloader.getUpdateSize(), notesDownloader.getUpdateLevel(),
               programVersion, notesDownloader.getVersionNotes(programVersion));
-          startupOutput.stop();
+          if (startupOutput != null) {
+            startupOutput.stop();
+          }
           myPrompt.showWindow();
           try {
             myPrompt.waitForClose();
@@ -92,8 +96,8 @@ public class Updater {
         if (shouldUpdate) {
           myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
           System.exit(0); // TODO: Is this actually the right way to kill the program? Or should I pass info out to safely shut down?
-        } else {
-          startupOutput.start();
+        } else if (startupOutput != null) {
+          startupOutput.start(); // Show Startup again
         }
       }
     } catch (IOException | URISyntaxException e) {

@@ -52,9 +52,6 @@ public final class PAXChecker {
     String[] twitterTokens = new String[4];
     for (int i = 0; i < args.length; i++) {
       switch (args[i].toLowerCase()) {
-//          case "-notificationid":
-//            NotificationHandler.setLastNotificationID(args[a + 1]);
-//            break;
         case "-follow":
         case "-checktwitter":
           followList.add(args[i + 1]);
@@ -124,12 +121,14 @@ public final class PAXChecker {
     } else {
       loadingOutput = new LoadingWindow();
     }
-    Updater programUpdater = new Updater(VERSION);
-    String patchNotes = null;
     loadingOutput.start();
+
+    // RESOURCES
     loadResources(loadingOutput, hasArgument(args, "-redownloadresources"));
 
     // UPDATES
+    Updater programUpdater = new Updater(VERSION);
+    String patchNotes = null;
     if (!hasArgument(args, "-noupdate") && prefs.getBooleanPreference("LOAD_UPDATES", true)) {
       if (hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false)) {
         programUpdater.enableAnonymousMode();
@@ -144,7 +143,7 @@ public final class PAXChecker {
       }
     }
 
-    //NOTIFICATIONS
+    // NOTIFICATIONS
     if (!hasArgument(args, "-nonotifications") && prefs.getBooleanPreference("LOAD_NOTIFICATIONS", true)) {
       loadNotifications(loadingOutput, hasArgument(args, "-anonymous") || prefs.getBooleanPreference("ANONYMOUS_STATISTICS", false),
           isHeadless, prefs);
@@ -171,6 +170,11 @@ public final class PAXChecker {
     twitterTokens[1] = mySetup.getTwitterConsumerSecret();
     twitterTokens[2] = mySetup.getTwitterApplicationKey();
     twitterTokens[3] = mySetup.getTwitterApplicationSecret();
+
+    // PERIODIC UPDATES
+    if (mySetup.shouldCheckForUpdatesDaily()) {
+      new Thread(new PeriodicUpdateChecker(programUpdater)).start();
+    }
 
     // SETUP
     Expo myExpo = Expo.parseExpo(mySetup.getExpoToCheck());

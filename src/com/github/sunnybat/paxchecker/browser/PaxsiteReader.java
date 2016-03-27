@@ -26,14 +26,25 @@ public class PaxsiteReader {
   }
 
   public String getCurrentButtonLink() {
-    return findShowclixLink();
+    try {
+      URL urlToConnectTo = new URL(getWebsiteLink(expoToCheck) + "/registration");
+      String link = findShowclixLink(urlToConnectTo);
+      if (link.equals("[NoConnection]") && expoToCheck == Expo.PRIME) {
+        System.out.println("Connection to prime.paxsite.com failed -- trying west.paxsite.com");
+        URL urlToConnectTo2 = new URL("http://west.paxsite.com/registration");
+        link = findShowclixLink(urlToConnectTo2);
+      }
+      return link;
+    } catch (MalformedURLException mue) {
+    }
+    return "[NoConnection]";
   }
 
-  private String findShowclixLink() {
+  private String findShowclixLink(URL urlToConnectTo) {
     BufferedReader lineReader = null;
     try {
       String line;
-      lineReader = setUpConnection();
+      lineReader = setUpConnection(urlToConnectTo);
       while ((line = lineReader.readLine()) != null) {
         DataTracker.addDataUsed(line.length());
         line = line.trim();
@@ -77,13 +88,9 @@ public class PaxsiteReader {
     return "[NoFind]";
   }
 
-  private BufferedReader setUpConnection() throws UnknownHostException, MalformedURLException, SocketTimeoutException, IOException {
-    URL urlToConnectTo;
+  private BufferedReader setUpConnection(URL urlToConnectTo) throws UnknownHostException, MalformedURLException, SocketTimeoutException, IOException {
     InputStream rawInputStream = null;
     BufferedReader lineReader;
-    String line;
-    urlToConnectTo = new URL(getWebsiteLink(expoToCheck.toString()) + "/registration");
-    //is = url.openStream();
     HttpURLConnection httpCon = Browser.setUpConnection(urlToConnectTo);
     rawInputStream = httpCon.getInputStream();
     lineReader = new BufferedReader(new InputStreamReader(rawInputStream));
@@ -97,24 +104,18 @@ public class PaxsiteReader {
    * @param expo The PAX expo to get the website link for
    * @return The website link of the specified expo, or the PAX Prime link if invalid.
    */
-  public String getWebsiteLink(String expo) {
+  public String getWebsiteLink(Expo expo) {
     if (expo == null) {
       return "http://prime.paxsite.com";
     }
-    switch (expo.toLowerCase()) { // toLowerCase to lower the possibilities (and readability)
-      case "prime":
-      case "pax prime":
-      case "dev":
-      case "pax dev":
+    switch (expo) {
+      case PRIME:
         return "http://prime.paxsite.com";
-      case "east":
-      case "pax east":
+      case EAST:
         return "http://east.paxsite.com";
-      case "south":
-      case "pax south":
+      case SOUTH:
         return "http://south.paxsite.com";
-      case "aus":
-      case "pax aus":
+      case AUS:
         return "http://aus.paxsite.com";
       default:
         System.out.println("Expo not found: " + expo);
