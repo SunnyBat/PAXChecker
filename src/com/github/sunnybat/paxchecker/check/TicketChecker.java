@@ -13,7 +13,7 @@ import java.util.concurrent.Phaser;
  */
 public final class TicketChecker {
 
-  private final ArrayList<Check> checks = new ArrayList<>();
+  private final ArrayList<Check> checkers = new ArrayList<>();
   private final ArrayList<String> openedLinks = new ArrayList<>();
   private StatusGUI status;
   private String linkFound = "";
@@ -35,15 +35,15 @@ public final class TicketChecker {
   /**
    * Adds a new Checker instance to the program.
    *
-   * @param c The Checker to add
+   * @param checker The Checker to add
    */
-  public void addChecker(Check c) {
+  public void addChecker(Check checker) {
     if (status != null) {
-      c.init(status.createNewInfoOutput(), threadWait);
+      checker.init(status.createNewInfoOutput(), threadWait);
     } else {
-      c.init(new CheckerInfoOutputCLI(), threadWait);
+      checker.init(new CheckerInfoOutputCLI(), threadWait);
     }
-    checks.add(c);
+    checkers.add(checker);
   }
 
   /**
@@ -55,25 +55,28 @@ public final class TicketChecker {
     if (status != null) {
       status.setForceCheckEnabled(false);
     }
-    for (Check c : checks) {
+    for (Check c : checkers) {
       threadPool.submit(c);
     }
     System.out.println("Waiting: TC");
     threadWait.arriveAndAwaitAdvance();
     System.out.println("Finished waiting");
-    for (Check c : checks) {
-      if (c.ticketsFound()) {
-        if (!hasOpenedLink(c.getLink())) {
-          System.out.println("FOUND LINK: " + c.getLink());
-          linkFound(c.getLink());
-          c.reset();
+    for (Check checker : checkers) {
+      if (checker.ticketsFound()) {
+        if (!hasOpenedLink(checker.getLink())) {
+          System.out.println("FOUND LINK: " + checker.getLink());
+          linkFound(checker.getLink());
+          checker.reset();
+          if (status != null) {
+            status.setForceCheckEnabled(true);
+          }
           return true;
         } else {
-          System.out.println("Link found, but already opened: " + c.getLink());
-          c.reset();
+          System.out.println("Link found, but already opened: " + checker.getLink());
+          checker.reset();
         }
       } else {
-        System.out.println("Link: " + c.getLink());
+        System.out.println("Link: " + checker.getLink());
       }
     }
     if (status != null) {
@@ -107,16 +110,16 @@ public final class TicketChecker {
   /**
    * Checks whether or not a link has already been opened.
    *
-   * @param s The link to check
+   * @param link The link to check
    * @return True if the link has already been opened, false if not
    */
-  private synchronized boolean hasOpenedLink(String s) {
+  private synchronized boolean hasOpenedLink(String url) {
     for (String link : openedLinks) {
       if (link.endsWith("/") || link.endsWith("\\")) {
         link = link.substring(0, link.length() - 1);
       }
-      if (link.equalsIgnoreCase(s)) {
-        System.out.println("Already found link.");
+      if (link.equalsIgnoreCase(url)) {
+        System.out.println("Already found link " + url);
         return true;
       }
     }
@@ -129,6 +132,6 @@ public final class TicketChecker {
    * @return True if checking anything, false if not
    */
   public boolean isCheckingAnything() {
-    return !checks.isEmpty();
+    return !checkers.isEmpty();
   }
 }

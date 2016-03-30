@@ -2,7 +2,7 @@ package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.paxchecker.browser.Browser;
-import com.github.sunnybat.paxchecker.gui.Tickets;
+import com.github.sunnybat.paxchecker.status.Tickets;
 import java.awt.GraphicsEnvironment;
 import java.util.HashSet;
 import java.util.Set;

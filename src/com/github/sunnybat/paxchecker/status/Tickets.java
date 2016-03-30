@@ -1,4 +1,4 @@
-package com.github.sunnybat.paxchecker.gui;
+package com.github.sunnybat.paxchecker.status;
 
 import com.github.sunnybat.paxchecker.resources.ResourceLoader;
 import java.awt.Image;

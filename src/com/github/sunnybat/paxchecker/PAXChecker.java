@@ -33,9 +33,9 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R7";
-  private static TwitterStreamer myStreamer;
-  private static LinkManager myLinkManager;
+  public static final String VERSION = "3.0.0 R8";
+  private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
+  private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
   /**
    * @param args the command line arguments
@@ -192,6 +192,7 @@ public final class PAXChecker {
     } catch (IllegalArgumentException e) {
       emailAccount = null;
     }
+    // STATUS SETUP
     if (!isHeadless) {
       StatusGUI statGUI;
       if (emailAccount != null) {

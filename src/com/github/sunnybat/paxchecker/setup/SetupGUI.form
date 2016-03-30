@@ -352,7 +352,6 @@
             <Component class="javax.swing.JCheckBox" name="JCBCheckKnownEvents">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Scan Known Potential Showclix Events"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckKnownEventsActionPerformed"/>

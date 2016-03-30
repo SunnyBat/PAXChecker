@@ -16,37 +16,6 @@ import java.net.URLConnection;
  */
 public class Browser {
 
-  private String expo; // CHECK: Should I just remove this entirely...?
-
-  /**
-   * Sets the current expo. This should adhere to the format of "PAX [expo]" or just "[expo]". Using a different format may result in Browser or
-   * program inoperability. The expo set is used multiple times throughout the program for user feedback, so it's recommended to capitalize it
-   * correctly.
-   *
-   * @param e The String to set as the expo
-   */
-  public void setExpo(String e) {
-    if (e != null) {
-      if (!e.toLowerCase().startsWith("pax ")) {
-        e = "PAX " + e;
-      }
-      expo = e;
-    }
-  }
-
-  /**
-   * Returns the expo currently set. This should adhere to the format of "PAX [expo]" or just "[expo]".
-   *
-   * @return The expo currently set
-   * @see #setExpo(java.lang.String)
-   */
-  public String getExpo() {
-    if (expo == null) {
-      return "PAX Prime";
-    }
-    return expo;
-  }
-
   /**
    * Opens the link given in the computer's default browser. Note that this will NOT work if the desktop environment isn't supported (generally a
    * non-issue).

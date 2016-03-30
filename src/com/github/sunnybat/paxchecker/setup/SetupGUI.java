@@ -127,7 +127,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
     JCBCheckTwitter.setSelected(prefs.getBooleanPreference("CHECK_TWITTER"));
     checkTwitterAction(JCBCheckTwitter.isSelected());
-    //JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS")); // TODO: Enable this when new known events are found
+    JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS"));
     JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER") && JCBCheckTwitter.isSelected());
     JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS") && JCBCheckTwitter.isSelected());
     JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
@@ -633,7 +633,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     JCBFilterTwitter.setToolTipText("<html>\nFilters out Tweets that do not contains specific<br>\nkeywords. This limits the amount of links opened<br>\nby the PAXChecker, and may in fact prevent the<br>\nPAXChecker from opening the ticket sale page if<br>\nPAX's Tweet doesn't contain specific words.<br>\nThe use of this is NOT recommended.\n</html>");
 
     JCBCheckKnownEvents.setText("Scan Known Potential Showclix Events");
-    JCBCheckKnownEvents.setEnabled(false);
     JCBCheckKnownEvents.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         JCBCheckKnownEventsActionPerformed(evt);

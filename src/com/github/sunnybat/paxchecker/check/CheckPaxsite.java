@@ -42,7 +42,7 @@ public class CheckPaxsite extends Check {
       return false;
     } else if (currentLinkFound.equals("[NoFind]") || currentLinkFound.equals("[Button Parsing Error]")) {
       return false;
-    } else if (!currentLinkFound.toLowerCase().contains("\"" + siteReader.getWebsiteLink(expoToCheck.toString()) + "\"")) {
+    } else if (!currentLinkFound.toLowerCase().contains("\"" + siteReader.getWebsiteLink(expoToCheck) + "\"")) {
       System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
       return true;
     }

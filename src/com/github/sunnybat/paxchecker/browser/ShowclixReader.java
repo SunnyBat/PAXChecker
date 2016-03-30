@@ -213,18 +213,12 @@ public class ShowclixReader {
     if (expo == null) {
       return 48;
     }
-    switch (expo.toString().toLowerCase()) {
-      case "prime":
-      case "pax prime":
-      case "dev":
-      case "pax dev":
-      case "east":
-      case "pax east":
-      case "south":
-      case "pax south":
+    switch (expo) {
+      case PRIME:
+      case EAST:
+      case SOUTH:
         return 48;
-      case "aus":
-      case "pax aus":
+      case AUS:
         return 75;
       default:
         System.out.println("Unknown expo: " + expo);
@@ -236,20 +230,14 @@ public class ShowclixReader {
     if (expo == null) {
       return 16886;
     }
-    switch (expo.toString().toLowerCase()) {
-      case "prime":
-      case "pax prime":
-      case "dev":
-      case "pax dev":
+    switch (expo) {
+      case PRIME:
         return 16886;
-      case "east":
-      case "pax east":
+      case EAST:
         return 17792;
-      case "south":
-      case "pax south":
+      case SOUTH:
         return 19042;
-      case "aus":
-      case "pax aus":
+      case AUS:
         return 15374;
       default:
         System.out.println("Unknown expo: " + expo);
@@ -261,20 +249,14 @@ public class ShowclixReader {
     if (expo == null) {
       return 13961;
     }
-    switch (expo.toString().toLowerCase()) {
-      case "prime":
-      case "pax prime":
-      case "dev":
-      case "pax dev":
+    switch (expo) {
+      case PRIME:
         return 13961;
-      case "east":
-      case "pax east":
+      case EAST:
         return 16418;
-      case "south":
-      case "pax south":
+      case SOUTH:
         return 20012;
-      case "aus":
-      case "pax aus":
+      case AUS:
         return 15820;
       default:
         System.out.println("Unknown expo: " + expo);

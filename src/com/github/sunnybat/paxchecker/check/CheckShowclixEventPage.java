@@ -4,6 +4,7 @@ import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,15 @@ import java.util.List;
  */
 public class CheckShowclixEventPage extends Check {
 
-  private static final String EVENT_BASE_URL = "http://www.showclix.com/event/";
-  private List<String> eventCheckList = new ArrayList<>();
-  private String validPageID = null;
+  private static final String SHOWCLIX_EVENT_BASE_URL = "http://www.showclix.com/event/"; // Would do HTTPS, however I've had issues with this before
+  private List<String> pageCheckList = new ArrayList<>();                                 // and will follow redirects to HTTPS instead
+  private String validPageURL = null;
 
   public CheckShowclixEventPage() {
-    //eventCheckList.add("3925916"); // "Prime 2015"
-    //eventCheckList.add("3926134"); // "Prime 2015 BYOC"
-    //eventCheckList.add("3926157"); // "Dev 2015"
+    pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXWest16"); // Thanks for the convenient IDs, Showclix/PA
+    pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXWest2016");
+    pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXPrime16");
+    pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXPrime2016");
   }
 
   @Override
@@ -32,49 +34,79 @@ public class CheckShowclixEventPage extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    return validPageID != null;
+    return validPageURL != null;
   }
 
   @Override
   public synchronized final void updateLink() {
     updateLink("[Checking]");
-    for (String s : eventCheckList) {
-      HttpURLConnection conn = null;
+    for (String url : pageCheckList) {
       try {
-        conn = Browser.setUpConnection(new URL(EVENT_BASE_URL + s));
-        if (conn == null) { // In case it fails to set up correctly
-          System.out.println("URLConnection failed to set up for " + EVENT_BASE_URL + s);
-          continue;
+        URL connectTo = new URL(url);
+        if (testURL(connectTo)) {
+          break; // Found a link, we're done
         }
-        conn.getInputStream(); // Will throw IOException if 404 -- simplest way to force it
-        System.out.println(conn.getURL());
-        validPageID = s;
-        break; // Found valid page, stop checking
-      } catch (IOException ioe) { // getInputStream() threw exception -- 404 or unable to connect
-        if (conn != null) {
-          System.out.println("Link redirected to: " + conn.getURL());
-        } else {
-          System.out.println("Unable to find link from " + s);
-        }
+      } catch (MalformedURLException mue) {
+        System.out.println("Invalid URL: " + url);
       }
     }
     updateLink(getLink());
   }
 
+  private boolean testURL(URL connectTo) {
+    if (connectTo == null) {
+      return false;
+    }
+    HttpURLConnection conn = null;
+    try {
+      conn = Browser.setUpConnection(connectTo);
+      if (conn == null) { // In case it fails to set up correctly
+        System.out.println("URLConnection failed to set up for " + connectTo);
+        return false;
+      }
+      if (conn.getResponseCode() >= 400 && conn.getResponseCode() < 500) { // getResponseCode() will throw IOE if unable to properly set up connection
+        if (conn.getResponseCode() != 404) { // I don't think it should ever be 404, but if it is, we don't need to report it
+          System.out.println("Unexpected error response code " + conn.getResponseCode());
+        }
+        return false;
+      } else if (conn.getResponseCode() >= 300 && conn.getResponseCode() < 400) { // Redirect, however it's probably going from HTTP
+        System.out.println("Location = " + conn.getHeaderField("Location"));      // to HTTPS, which Java does not do for security
+        return testURL(new URL(conn.getHeaderField("Location"))); // Will throw MalformedURLException if getHF() is null, we're catching this
+      } else if (conn.getResponseCode() >= 200 && conn.getResponseCode() < 300) {
+        if (conn.getResponseCode() != 200) {
+          System.out.println("Found :: URL = " + conn.getURL() + " :: Code = " + conn.getResponseCode());
+        }
+        validPageURL = connectTo.toString();
+        return true;
+      } else {
+        System.out.println("Unexpected response code " + conn.getResponseCode());
+        return false;
+      }
+    } catch (IOException ioe) {
+      if (conn != null) {
+        System.out.println("Unsure of URL " + conn.getURL() + " (" + connectTo + ")");
+        ioe.printStackTrace();
+      } else {
+        System.out.println("Unable to find link from " + connectTo);
+      }
+      return false;
+    }
+  }
+
   @Override
   public synchronized String getLink() {
-    if (validPageID == null) {
+    if (validPageURL == null) {
       return "[None Found]";
     } else {
-      return EVENT_BASE_URL + validPageID;
+      return validPageURL;
     }
   }
 
   @Override
   public synchronized void reset() {
-    if (validPageID != null) {
-      eventCheckList.remove(validPageID);
-      validPageID = null;
+    if (validPageURL != null) {
+      pageCheckList.remove(validPageURL);
+      validPageURL = null;
     }
   }
 
