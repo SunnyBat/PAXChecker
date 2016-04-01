@@ -21,7 +21,7 @@ public class ShowclixReader {
 
   private static final String API_LINK_BASE = "http://api.showclix.com/";
   private static final String API_EXTENSION_SELLER = "Seller/";
-  private static final String API_EXTENSION_PARTNER = "Partner/"; // Partner IDs -- Prime, East, South = 48 -- Aus = 75
+  private static final String API_EXTENSION_PARTNER = "Partner/";
   private static final String API_EXTENSION_VENUE = "Venue/";
   private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
@@ -55,10 +55,18 @@ public class ShowclixReader {
    * @param URL The URL to check
    * @return True if it is, false if not
    */
-  public boolean isPaxPage(String URL) {
+  public boolean isPaxPage(String URL) { // CHECK: Move this (and strict filtering) to somewhere else?
     try {
       HttpURLConnection connect = Browser.setUpConnection(new URL(URL));
-      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream())); // Throws IOException if 404
+      if (connect.getResponseCode() >= 300 && connect.getResponseCode() < 400) { // Throws IOException if 404
+        if (connect.getHeaderField("Location") != null) {
+          return isPaxPage(connect.getHeaderField("Location"));
+        } else {
+          System.out.println(connect.getResponseCode() + " respose found, but no Location was specified");
+          return false;
+        }
+      }
+      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
       String text = "";
       String line;
       while ((line = reader.readLine()) != null) {
@@ -129,82 +137,52 @@ public class ShowclixReader {
    * @return The Set of all the Event URLs listed on the given page. This is guaranteed to be non-null.
    */
   private Set<String> getAllSellerEventURLs(int sellerID) {
-    Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
-      if (jsonText == null) {
-        return retSet;
-      }
-      JSONParser mP = new JSONParser();
-      try {
-        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
-        if (obj.containsKey("events")) {
-          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
-        } else {
-          retSet.addAll(getAllEventURLs(obj));
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
-      }
+      String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
+      return parseEvents(jsonText);
     } catch (IOException iOException) {
       System.out.println("ERROR connecting to Seller " + sellerID);
-    } catch (ParseException parseException) {
-      System.out.println("ERROR parsing JSON text in Seller events!");
-      parseException.printStackTrace();
     }
-    return retSet;
+    return new TreeSet<>();
   }
 
   private Set<String> getAllPartnerEventURLs(int partnerID) {
-    Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
-      if (jsonText == null) {
-        return retSet;
-      }
-      JSONParser mP = new JSONParser();
-      try {
-        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
-        if (obj.containsKey("events")) {
-          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
-        } else {
-          retSet.addAll(getAllEventURLs(obj));
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getName() + ": " + mP.parse(jsonText));
-      }
+      String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
+      return parseEvents(jsonText);
     } catch (IOException iOException) {
-      System.out.println("Error connecting to partner " + partnerID);
-    } catch (ParseException parseException) {
-      System.out.println("ERROR parsing JSON text in Partner events!");
-      parseException.printStackTrace();
+      System.out.println("Error connecting to Partner " + partnerID);
     }
-    return retSet;
+    return new TreeSet<>();
   }
 
   private Set<String> getAllVenueEventURLs(int venueID) {
-    Set<String> retSet = new TreeSet<>();
     try {
-      String jsonText = parseJSON(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
-      if (jsonText == null) {
-        return retSet;
-      }
-      JSONParser mP = new JSONParser();
-      try {
-        JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
-        if (obj.containsKey("events")) {
-          retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
-        } else {
-          retSet.addAll(getAllEventURLs(obj));
-        }
-      } catch (ClassCastException cce) {
-        System.out.println("ClassCastException from " + mP.parse(jsonText).getClass().getSimpleName() + ": " + mP.parse(jsonText));
-      }
+      String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
+      return parseEvents(jsonText);
     } catch (IOException iOException) {
       System.out.println("ERROR connecting to Venue " + venueID);
-    } catch (ParseException parseException) {
-      System.out.println("ERROR parsing JSON text in Venue events!");
-      parseException.printStackTrace();
+    }
+    return new TreeSet<>();
+  }
+
+  private Set<String> parseEvents(String jsonText) {
+    Set<String> retSet = new TreeSet<>();
+    if (jsonText == null) {
+      return retSet;
+    }
+    JSONParser mP = new JSONParser();
+    try {
+      JSONObject obj = (JSONObject) (JSONObject) mP.parse(jsonText);
+      if (obj.containsKey("events")) {
+        retSet.addAll(getAllEventURLs((JSONObject) obj.get("events")));
+      } else {
+        retSet.addAll(getAllEventURLs(obj));
+      }
+    } catch (ClassCastException cce) {
+      cce.printStackTrace();
+    } catch (ParseException pe) {
+      System.out.println("Error parsing JSON: " + jsonText);
     }
     return retSet;
   }
@@ -271,7 +249,7 @@ public class ShowclixReader {
    * @param url The URL to parse from
    * @return The (fixed) text from the page
    */
-  private static String parseJSON(URL url) {
+  private static String readJSONFromURL(URL url) {
     try {
       HttpURLConnection httpCon = Browser.setUpConnection(url);
       httpCon.setConnectTimeout(500);

@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0 R8";
+  public static final String VERSION = "3.0.0";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -104,10 +104,11 @@ public final class PAXChecker {
           }
           break;
         case "-alarmfile":
-          Audio.setAlarmFile(args[i + 1]);
-          break;
-        case "-redownloadresources":
-          // Used elsewhere
+          if (i < args.length - 1 && !args[i + 1].startsWith("-")) {
+            Audio.setAlarmFile(args[i + 1]);
+          } else {
+            System.out.println("Invalid alarmfile specified!");
+          }
           break;
       }
     }
