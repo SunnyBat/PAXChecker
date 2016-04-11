@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.0";
+  public static final String VERSION = "3.0.1 R1";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 

@@ -68,7 +68,15 @@ public abstract class TwitterStreamer {
           System.out.println("Expanded URL: " + url.getExpandedURL());
           System.out.println("Text: " + url.getText());
           System.out.println("URL: " + url.getURL());
-          linkFound(url.getExpandedURL(), status.getText());
+          if (url.getExpandedURL().contains("showclix.com")) {
+            linkFound(url.getExpandedURL(), status.getText());
+          } else {
+            System.out.println("URL is not Showclix -- following redirects");
+            String finalURL = Browser.unshortenURL(url.getExpandedURL());
+            if (finalURL.contains("showclix.com")) {
+              linkFound(finalURL, status.getText());
+            }
+          }
         }
       }
     }

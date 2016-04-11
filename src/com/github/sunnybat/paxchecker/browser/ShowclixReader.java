@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Set;
 import java.util.TreeSet;
 import org.json.simple.JSONObject;
@@ -50,48 +51,36 @@ public class ShowclixReader {
   }
 
   /**
-   * Checks whether or not the given URL is a PAX ticket page or a queue page.
+   * Checks whether or not the given URL is a PAX ticket page or a queue page. Note that this does NOT follow any redirects.
    *
-   * @param URL The URL to check
+   * @param link The URL to check
    * @return True if it is, false if not
    */
-  public boolean isPaxPage(String URL) { // CHECK: Move this (and strict filtering) to somewhere else?
+  public boolean isPaxPage(String link) { // CHECK: Move this (and strict filtering) to somewhere else?
     try {
-      HttpURLConnection connect = Browser.setUpConnection(new URL(URL));
-      if (connect.getResponseCode() >= 300 && connect.getResponseCode() < 400) { // Throws IOException if 404
-        if (connect.getHeaderField("Location") != null) {
-          return isPaxPage(connect.getHeaderField("Location"));
-        } else {
-          System.out.println(connect.getResponseCode() + " respose found, but no Location was specified");
-          return false;
-        }
-      }
+      URLConnection connect = new URL(link).openConnection();
       BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-      String text = "";
       String line;
-      while ((line = reader.readLine()) != null) {
+      while ((line = reader.readLine().toLowerCase()) != null) {
         DataTracker.addDataUsed(line.length());
-        text += line.toLowerCase();
-      }
-      if (text.contains("pax")) {
-        System.out.println("Found PAX in page -- is PAX page.");
-        return true;
-      } else if (text.contains("queue")) {
-        if (strictFiltering) {
-          System.out.println("Found queue in page, but strict filtering is enabled -- returning false");
-          return false;
-        } else {
-          System.out.println("Found queue in page -- is PAX page.");
+        if (line.contains("pax")) {
+          System.out.println("Found PAX in page -- is PAX page.");
           return true;
+        } else if (line.contains("queue")) {
+          if (strictFiltering) {
+            System.out.println("Found queue in page, but strict filtering is enabled");
+          } else {
+            System.out.println("Found queue in page -- is PAX page.");
+            return true;
+          }
         }
-      } else {
-        System.out.println("Is not PAX page.");
-        return false;
       }
     } catch (IOException iOException) {
       System.out.println("IOException in ShowclixReader.isPaxPage() -- returning strictFiltering");
       return !strictFiltering;
     }
+    System.out.println("Is not PAX page.");
+    return false;
   }
 
   /**

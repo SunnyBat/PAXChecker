@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  *
@@ -86,24 +85,27 @@ public class Browser {
   }
 
   /**
-   * Gets the actual link from the given shortened URL.
+   * Gets the actual link from the given shortened URL. The URL should be an HTTP or HTTPS URL.
    *
    * @param toShorten The URL to unshorten
-   * @return The actual URL that will be served
+   * @return The actual URL that will be served, or null if an error occurs
    */
   public static String unshortenURL(String toShorten) {
-    URLConnection myConn = null;
     try {
-      URL myURL = new URL(toShorten);
-      myConn = myURL.openConnection(); // As long as Java follows redirects (called from PAXChecker.main()) we're good!
-      myConn.getInputStream();
+      HttpURLConnection connection = (HttpURLConnection) new URL(toShorten).openConnection(); // Create new HttpURLConnection
+      if (connection.getResponseCode() >= 300 && connection.getResponseCode() < 400) { // Throws IOException if 404
+        if (connection.getHeaderField("Location") != null) {
+          return unshortenURL(connection.getHeaderField("Location"));
+        } else {
+          System.out.println(connection.getResponseCode() + " respose found, but no Location was specified");
+          return null;
+        }
+      }
     } catch (Exception e) {
+      e.printStackTrace();
+      return null;
     }
-    if (myConn != null) {
-      return myConn.getURL().toString();
-    } else {
-      return toShorten;
-    }
+    return toShorten;
   }
 
   /**

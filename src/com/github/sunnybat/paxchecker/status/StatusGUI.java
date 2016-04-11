@@ -68,17 +68,17 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
         customComponents(expo, emailAddress, addresses);
       }
     });
-    infoWindow = new NotificationWindow("What's happening???", "If the Showclix scanner is pointing to a seemingly unrelated event, that's expected. "
-        + "This is happening because of changes in the Showclix API, which forced me to scan pages with more than just PAX content. This is just the "
-        + "most recent event created.\n\n"
+    infoWindow = new NotificationWindow("What's happening???", "If a link is pointing to a seemingly unrelated event, that's expected. "
+        + "This is happening because the PAX website has not removed the current Showclix link (which normally 404s after the event has taken "
+        + "place). This is fine.\n\n"
         + "There are several reasons why you might be seeing [messages].\n"
         + "For the PAX Website, you might be seeing [NoFind]. Currently, this is only happening with PAX East. This means that the program was "
         + "unable to find the button on the PAX registration page.\n"
-        + "For the Showclix Scanner, you might be seeing [No API Connection]. This is a bit more serious -- it means that the PAXChecker was "
-        + "unable to connect to the Showclix API, or was unable to read it correctly. If you're seeing this for more than an hour or so, contact "
-        + "/u/SunnyBat about the issue.\n"
+        + "For the Showclix Scanner, you might be seeing [No New Events]. This is also fine. It means that the PAXChecker did not find any new PAX "
+        + "events in the Showclix database -- in other words, nothing has changed. \n"
         + "For the Known Pages option, you'll most likely be seeing [None Found]. This is normal, and it means that no known links have been found. "
-        + "There's no need to worry about this one.");
+        + "There's no need to worry about this one.\n\n"
+        + "Feel free to message /u/SunnyBat if you have any further questions.");
   }
 
   public void customComponents(final Expo expo, final String emailAddress, final List<EmailAddress> addresses) {
@@ -463,7 +463,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
 
     JLLinksExplanation.setFont(new Font("Tahoma", 2, 10)); // NOI18N
     JLLinksExplanation.setForeground(new Color(0, 0, 238));
-    JLLinksExplanation.setText("Why are these links pointing to random events??? What's up with [Message]??");
+    JLLinksExplanation.setText("Why are these links pointing to random events? What's up with [Message]?");
     JLLinksExplanation.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         JLLinksExplanationMousePressed(evt);
