@@ -1,10 +1,10 @@
 package com.github.sunnybat.paxchecker.status;
 
+import com.github.sunnybat.paxchecker.PAXChecker;
 import com.github.sunnybat.paxchecker.resources.ResourceLoader;
 import java.awt.Image;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  *
@@ -30,8 +30,9 @@ public class Tickets extends com.github.sunnybat.commoncode.javax.swing.JFrame {
         initComponents();
         setIconImage(myIcon);
         String newline = System.getProperty("line.separator");
-        jTextArea1.append(newline + newline + "Tickets found at " + currentTime() + newline + "NOTE: The hours in this time may be off... The minutes and seconds are correct!");
+        jTextArea1.append(newline + newline + "Tickets found at " + currentTime());
         jTextArea1.append(newline + newline + "URL found: " + link);
+        jTextArea1.append(newline + newline + "Version: " + PAXChecker.VERSION);
         setAlwaysOnTop(true);
         setVisible(true);
         toFront();
@@ -41,27 +42,26 @@ public class Tickets extends com.github.sunnybat.commoncode.javax.swing.JFrame {
   }
 
   private static String currentTime() {
+    StringBuilder ret = new StringBuilder();
     Calendar myCal = Calendar.getInstance();
-    long ctm = myCal.getTimeInMillis();
-    if (myCal.getTimeZone().getRawOffset() != -28800000) {
-      System.out.println("NOTE: Timezone is NOT in PST! Time will be converted to PST. (Test feature, verify times)");
-      ctm += -28800000 - myCal.getTimeZone().getRawOffset(); // Test lol, not sure if it will work or not
-    }
-    ctm -= 28800000; // PST is 8 hours behind UST -- adjust time accordingly
-    /*
-     * ctm + inDaylightTime == Account for Daylight Savings Time
-     * ctm / 1000 / 60 / 60 == Convert CurrentTimeMillis to seconds->minutes->hours
-     * * 60 == Convert hours to minutes
-     * % (24*60) == Take off time to cover only today, formatTime also converts 0 hourMinutes into 12:00 AM
-     */
-    long hourMinutes = ((((ctm / 1000 / 60 / 60)) * 60) + (myCal.getTimeZone().inDaylightTime(new Date()) ? 60 : 0)) % (24 * 60);
-    long minutes = (ctm / 1000 / 60) % 60;
-    long seconds = (ctm / 1000) % 60;
-    int hours = (int) (hourMinutes / 60) % 12;
+    int hours = myCal.get(Calendar.HOUR);
     if (hours == 0) {
-      hours = 12;
+      hours = 12; // noon+midnight are 0, not 12, so fix it
     }
-    return hours + ":" + minutes + ":" + seconds;
+    ret.append(hours).append(":");
+    int minutes = myCal.get(Calendar.MINUTE);
+    ret.append(minutes).append(":");
+    int seconds = myCal.get(Calendar.SECOND);
+    ret.append(seconds).append(" ");
+    int ampm = myCal.get(Calendar.AM_PM);
+    if (ampm == Calendar.AM) {
+      ret.append("AM");
+    } else if (ampm == Calendar.PM) {
+      ret.append("PM");
+    } else {
+      ret.append("[AM/PM?]");
+    }
+    return ret.toString();
   }
 
   /**

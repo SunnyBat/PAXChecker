@@ -73,7 +73,7 @@ public abstract class TwitterStreamer {
           } else {
             System.out.println("URL is not Showclix -- following redirects");
             String finalURL = Browser.unshortenURL(url.getExpandedURL());
-            if (finalURL.contains("showclix.com")) {
+            if (finalURL != null && finalURL.contains("showclix.com")) {
               linkFound(finalURL, status.getText());
             }
           }

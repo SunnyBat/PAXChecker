@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Set;
@@ -24,6 +25,7 @@ public class ShowclixReader {
   private static final String API_EXTENSION_SELLER = "Seller/";
   private static final String API_EXTENSION_PARTNER = "Partner/";
   private static final String API_EXTENSION_VENUE = "Venue/";
+  private static final String API_EXTENSION_EVENT = "Event/";
   private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
   private boolean strictFiltering;
@@ -38,6 +40,53 @@ public class ShowclixReader {
    */
   public void strictFilter() {
     strictFiltering = true;
+  }
+
+  /**
+   * Gets the best URL to use for the event. The returned URL should be used instead of the URL passed in.
+   *
+   * @param url The Showclix URL to finalize
+   * @return The final URL to check, or null if url is null
+   */
+  public String getNamedURL(String url) {
+    if (url == null) {
+      return null;
+    }
+    if (!url.contains(EVENT_LINK_BASE)) {
+      return url;
+    }
+    int id;
+    try {
+      id = Integer.parseInt(url.substring(EVENT_LINK_BASE.length())); // Throws NFE if not number
+      String json = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_EVENT + id));
+      JSONParser mP = new JSONParser();
+      JSONObject listing = (JSONObject) mP.parse(json);
+      if (listing.containsKey("listing_url")) {
+        if (listing.get("listing_url") instanceof String) {
+          System.out.println("Final URL: " + listing.get("listing_url"));
+          return (String) listing.get("listing_url");
+        } else {
+          System.out.println("listing_url !instanceOf String");
+        }
+      } else if (listing.containsKey("short_name")) {
+        if (listing.get("short_name") instanceof String) {
+          System.out.println("Final URL: " + EVENT_LINK_BASE + listing.get("short_name"));
+          return EVENT_LINK_BASE + listing.get("short_name");
+        } else {
+          System.out.println("short_name !instanceOf String");
+        }
+      } else {
+        System.out.println("Unknown URL from JSON " + json);
+      }
+    } catch (NumberFormatException nfe) {
+      System.out.println("Unable to parse number from event URL");
+    } catch (MalformedURLException | ClassCastException e) {
+      e.printStackTrace();
+    } catch (ParseException | NullPointerException e) {
+      System.out.println("Unable to parse JSON (" + url + ")");
+      e.printStackTrace();
+    }
+    return url;
   }
 
   /**

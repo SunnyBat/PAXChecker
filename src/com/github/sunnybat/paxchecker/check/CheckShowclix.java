@@ -61,7 +61,16 @@ public class CheckShowclix extends Check {
   private void updateLinkFromSet(Set<String> allLinksFound) {
     for (String link : allLinksFound) {
       if (!alreadyChecked.contains(link)) {
-        link = Browser.unshortenURL(link);
+        String tempURL = Browser.unshortenURL(link);
+        if (tempURL != null) { // Followed redirects, we're happy
+          if (!tempURL.equals(link)) { // Different URL found
+            alreadyChecked.add(link); // So we don't check this URL again (every time)
+            link = tempURL;
+          }
+        } else { // Didn't follow redirects, need to use Showclix API to get event URL
+          alreadyChecked.add(link); // So we don't check this URL again (every time)
+          link = showReader.getNamedURL(link);
+        }
         if (!alreadyChecked.contains(link)) {
           System.out.println("Not checked: " + link);
           if (showReader.isPaxPage(link)) {

@@ -100,12 +100,16 @@ public class Browser {
           System.out.println(connection.getResponseCode() + " respose found, but no Location was specified");
           return null;
         }
+      } else if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
+        return toShorten;
+      } else {
+        System.out.println("Browser.unshortenURL(): Unknown response code: " + connection.getResponseCode());
+        return null; // Unknown response code
       }
     } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
-    return toShorten;
   }
 
   /**
