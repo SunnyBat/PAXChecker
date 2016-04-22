@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.1 R2";
+  public static final String VERSION = "3.0.1";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -284,6 +284,7 @@ public final class PAXChecker {
   private static void loadResources(final Startup window, boolean redownload) {
     ResourceDownloader download = new ResourceDownloader() {
       private String currentFileName;
+      private int lastPercentage = -5;
 
       @Override
       public void startingFile(String fileName) {
@@ -294,7 +295,9 @@ public final class PAXChecker {
       @Override
       public void filePercentage(int percent) {
         super.filePercentage(percent);
-        window.setStatus("Downloading " + currentFileName + " (" + percent + "%)");
+        if (percent >= lastPercentage + 5) { // Avoid spamming CLI
+          window.setStatus("Downloading " + currentFileName + " (" + percent + "%)");
+        }
       }
 
       @Override
@@ -302,10 +305,12 @@ public final class PAXChecker {
         window.setStatus("Finished downloading " + fileName);
       }
     };
+    System.out.println("Downloading resources...");
     if (redownload) {
       download.forceRedownload();
     }
     download.downloadResources();
+    System.out.println("Done downloading resources");
   }
 
   private static TicketChecker initChecker(Setup mySetup, StatusGUI myStatus, Expo expo) {

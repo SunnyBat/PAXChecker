@@ -92,7 +92,7 @@ public class Browser {
    */
   public static String unshortenURL(String toShorten) {
     try {
-      HttpURLConnection connection = (HttpURLConnection) new URL(toShorten).openConnection(); // Create new HttpURLConnection
+      HttpURLConnection connection = setUpConnection(new URL(toShorten)); // Create new HttpURLConnection
       if (connection.getResponseCode() >= 300 && connection.getResponseCode() < 400) { // Throws IOException if 404
         if (connection.getHeaderField("Location") != null) {
           return unshortenURL(connection.getHeaderField("Location"));
@@ -102,8 +102,11 @@ public class Browser {
         }
       } else if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
         return toShorten;
+      } else if (connection.getResponseCode() == 404) {
+        System.out.println(toShorten + " 404'd");
+        return null;
       } else {
-        System.out.println("Browser.unshortenURL(): Unknown response code: " + connection.getResponseCode());
+        System.out.println("Browser.unshortenURL(): Unknown response code: " + connection.getResponseCode() + " (" + toShorten + ")");
         return null; // Unknown response code
       }
     } catch (Exception e) {

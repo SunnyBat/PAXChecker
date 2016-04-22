@@ -1,6 +1,7 @@
 package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.Expo;
+import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.browser.PaxsiteReader;
 import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
 
@@ -34,25 +35,26 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    if (currentLinkFound.equals(lastLinkFound)) {
+    if (currentLinkFound == null) {
       return false;
-    } else if (currentLinkFound == null) {
+    } else if (currentLinkFound.equals(lastLinkFound) || currentLinkFound.startsWith("[")) {
       return false;
-    } else if (currentLinkFound.equals("[IOException]") || currentLinkFound.equals("[NoConnection]")) {
-      return false;
-    } else if (currentLinkFound.equals("[NoFind]") || currentLinkFound.equals("[Button Parsing Error]")) {
-      return false;
-    } else if (!currentLinkFound.toLowerCase().contains("\"" + siteReader.getWebsiteLink(expoToCheck) + "\"")) {
+    } else if (currentLinkFound.toLowerCase().contains("showclix.com")) {
       System.out.println("OMG IT'S UPDATED: " + currentLinkFound);
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
   @Override
   public synchronized final void updateLink() {
     updateLink("[Checking]");
     currentLinkFound = siteReader.getCurrentButtonLink();
+    String redirectedURL = Browser.unshortenURL(currentLinkFound);
+    if (redirectedURL != null) {
+      currentLinkFound = redirectedURL;
+    }
     updateLink(getLink());
   }
 
@@ -63,7 +65,11 @@ public class CheckPaxsite extends Check {
 
   @Override
   public synchronized void reset() {
-    lastLinkFound = siteReader.getCurrentButtonLink();
+    if (currentLinkFound == null) {
+      lastLinkFound = siteReader.getCurrentButtonLink();
+    } else {
+      lastLinkFound = currentLinkFound;
+    }
   }
 
 }

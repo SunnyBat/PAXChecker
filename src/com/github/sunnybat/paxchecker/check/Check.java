@@ -1,7 +1,6 @@
 package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
-import com.github.sunnybat.paxchecker.status.CheckerInfoOutputCLI;
 import java.util.concurrent.Phaser;
 
 /**
