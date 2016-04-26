@@ -94,6 +94,9 @@ public class Updater {
           shouldUpdate = in.nextLine().toUpperCase().startsWith("Y");
         }
         if (shouldUpdate) {
+          if (notesDownloader.getUpdateLevel() == 1) {
+            myDownloader.setUseBeta();
+          }
           myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
           System.exit(0); // TODO: Is this actually the right way to kill the program? Or should I pass info out to safely shut down?
         } else if (startupOutput != null) {
