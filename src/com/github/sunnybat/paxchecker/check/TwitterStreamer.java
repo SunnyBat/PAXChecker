@@ -56,26 +56,31 @@ public abstract class TwitterStreamer {
 
   private final UserStreamListener listener = new UserStreamListener() {
     @Override
-    public void onStatus(Status status) { // Only called when a user the program is watching tweets
+    public void onStatus(Status status) { // Looks like this is called on every tweet and @user
       System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
       if (status.isRetweet()) {
         System.out.println("Retweet -- ignoring");
       } else if (filterKeywords && !hasKeyword(status.getText())) {
         System.out.println("Does not contain keyword -- ignoring");
       } else {
-        for (twitter4j.URLEntity url : status.getURLEntities()) {
-          System.out.println("Display URL: " + url.getDisplayURL());
-          System.out.println("Expanded URL: " + url.getExpandedURL());
-          System.out.println("Text: " + url.getText());
-          System.out.println("URL: " + url.getURL());
-          if (url.getExpandedURL().contains("showclix.com")) {
-            linkFound(url.getExpandedURL(), status.getText());
-          } else {
-            System.out.println("URL is not Showclix -- following redirects");
-            String finalURL = Browser.unshortenURL(url.getExpandedURL());
-            if (finalURL != null && finalURL.contains("showclix.com")) {
-              linkFound(finalURL, status.getText());
+        for (String user : usersToCheck) {
+          if (user.equalsIgnoreCase(status.getUser().getScreenName())) {
+            for (twitter4j.URLEntity url : status.getURLEntities()) {
+              System.out.println("Display URL: " + url.getDisplayURL());
+              System.out.println("Expanded URL: " + url.getExpandedURL());
+              System.out.println("Text: " + url.getText());
+              System.out.println("URL: " + url.getURL());
+              if (url.getExpandedURL().contains("showclix.com")) {
+                linkFound(url.getExpandedURL(), status.getText());
+              } else {
+                System.out.println("URL is not Showclix -- following redirects");
+                String finalURL = Browser.unshortenURL(url.getExpandedURL());
+                if (finalURL != null && finalURL.contains("showclix.com")) {
+                  linkFound(finalURL, status.getText());
+                }
+              }
             }
+            break;
           }
         }
       }

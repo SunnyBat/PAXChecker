@@ -107,15 +107,24 @@ public class ShowclixReader {
    */
   public boolean isPaxPage(String link) { // CHECK: Move this (and strict filtering) to somewhere else?
     try {
-      URLConnection connect = new URL(link).openConnection();
+      URLConnection connect = Browser.setUpConnection(new URL(link));
       BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
       String line;
-      while ((line = reader.readLine().toLowerCase()) != null) {
+      while ((line = reader.readLine()) != null) {
+        line = line.toLowerCase();
         DataTracker.addDataUsed(line.length());
         if (line.contains("pax")) {
           System.out.println("Found PAX in page -- is PAX page.");
           return true;
         } else if (line.contains("queue")) {
+          int firstIndex = line.indexOf("queue");
+          if (firstIndex == line.indexOf("queuetime")) {
+            System.out.println("Found queueTime on Showclix page -- ignoring");
+            line = line.substring(firstIndex + 9); // Skip "queueTime", check again
+            if (!line.contains("queue")) { // Queue not found, continue reading rest of page
+              continue;
+            }
+          }
           if (strictFiltering) {
             System.out.println("Found queue in page, but strict filtering is enabled");
           } else {
