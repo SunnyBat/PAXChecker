@@ -61,29 +61,29 @@ public class ShowclixReader {
       String json = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_EVENT + id));
       JSONParser mP = new JSONParser();
       JSONObject listing = (JSONObject) mP.parse(json);
-      if (listing.containsKey("listing_url")) {
+      if (listing.get("listing_url") != null) {
         if (listing.get("listing_url") instanceof String) {
-          System.out.println("Final URL: " + listing.get("listing_url"));
+          System.out.println("SR: Final URL: " + listing.get("listing_url"));
           return (String) listing.get("listing_url");
         } else {
-          System.out.println("listing_url !instanceOf String");
+          System.out.println("SR: listing_url !instanceOf String");
         }
-      } else if (listing.containsKey("short_name")) {
+      } else if (listing.get("short_name") != null) {
         if (listing.get("short_name") instanceof String) {
-          System.out.println("Final URL: " + EVENT_LINK_BASE + listing.get("short_name"));
+          System.out.println("SR: Final URL: " + EVENT_LINK_BASE + listing.get("short_name"));
           return EVENT_LINK_BASE + listing.get("short_name");
         } else {
-          System.out.println("short_name !instanceOf String");
+          System.out.println("SR: short_name !instanceOf String");
         }
       } else {
-        System.out.println("Unknown URL from JSON " + json);
+        System.out.println("SR: Unknown URL from JSON " + json);
       }
     } catch (NumberFormatException nfe) {
-      System.out.println("Unable to parse number from event URL");
+      System.out.println("SR: Unable to parse number from event URL");
     } catch (MalformedURLException | ClassCastException e) {
       e.printStackTrace();
     } catch (ParseException | NullPointerException e) {
-      System.out.println("Unable to parse JSON (" + url + ")");
+      System.out.println("SR: Unable to parse JSON (" + url + ")");
       e.printStackTrace();
     }
     return url;
@@ -114,30 +114,30 @@ public class ShowclixReader {
         line = line.toLowerCase();
         DataTracker.addDataUsed(line.length());
         if (line.contains("pax")) {
-          System.out.println("Found PAX in page -- is PAX page.");
+          System.out.println("SR: Found PAX in page -- is PAX page.");
           return true;
         } else if (line.contains("queue")) {
           int firstIndex = line.indexOf("queue");
           if (firstIndex == line.indexOf("queuetime")) {
-            System.out.println("Found queueTime on Showclix page -- ignoring");
+            System.out.println("SR: Found queueTime on Showclix page -- ignoring");
             line = line.substring(firstIndex + 9); // Skip "queueTime", check again
             if (!line.contains("queue")) { // Queue not found, continue reading rest of page
               continue;
             }
           }
           if (strictFiltering) {
-            System.out.println("Found queue in page, but strict filtering is enabled");
+            System.out.println("SR: Found queue in page, but strict filtering is enabled");
           } else {
-            System.out.println("Found queue in page -- is PAX page.");
+            System.out.println("SR: Found queue in page -- is PAX page.");
             return true;
           }
         }
       }
     } catch (IOException iOException) {
-      System.out.println("IOException in ShowclixReader.isPaxPage() -- returning strictFiltering");
+      System.out.println("SR: IOException in isPaxPage() -- returning strictFiltering");
       return !strictFiltering;
     }
-    System.out.println("Is not PAX page.");
+    System.out.println("SR: Is not PAX page.");
     return false;
   }
 
@@ -167,11 +167,33 @@ public class ShowclixReader {
 
   private Set<String> getAllEventURLs(JSONObject obj) {
     Set<String> retSet = new TreeSet<>();
-    for (String s : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
-      if (obj.get(s) instanceof JSONObject || !((String) obj.get(s)).equals("HIDDEN")) {
-        retSet.add(EVENT_LINK_BASE + s);
-      } else {
-        System.out.println("Event " + s + " is currently hidden");
+    for (String eventID : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
+      try {
+        if (obj.get(eventID) instanceof JSONObject) {
+          JSONObject jObj = (JSONObject) obj.get(eventID);
+          if (jObj.containsKey("event")) {
+            if (jObj.get("event") == null) {
+              if (strictFiltering) {
+                System.out.println("SR: Event " + eventID + " is null, strictFiltering, ignoring");
+              } else {
+                System.out.println("SR: Event " + eventID + " is null, !strictFiltering, adding");
+                retSet.add(EVENT_LINK_BASE + eventID);
+              }
+            } else if (jObj.get("event").toString().toLowerCase().contains("pax")) {
+              System.out.println("SR: SC: PAX event found: " + eventID + " (" + jObj.get("event") + ")");
+              retSet.add(EVENT_LINK_BASE + eventID);
+            } // else event is not PAX, ignoring
+          } else {
+            System.out.println("SR: Event " + eventID + " does not contain an event title -- adding");
+            retSet.add(EVENT_LINK_BASE + eventID);
+          }
+        } else if (((String) obj.get(eventID)).equals("HIDDEN")) {
+          System.out.println("SR: Event " + eventID + " is currently hidden");
+        } else {
+          System.out.println("SR: Unknown event: " + obj);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     }
     return retSet;
@@ -188,7 +210,7 @@ public class ShowclixReader {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
       return parseEvents(jsonText);
     } catch (IOException iOException) {
-      System.out.println("ERROR connecting to Seller " + sellerID);
+      System.out.println("SR: ERROR connecting to Seller " + sellerID);
     }
     return new TreeSet<>();
   }
@@ -198,7 +220,7 @@ public class ShowclixReader {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
       return parseEvents(jsonText);
     } catch (IOException iOException) {
-      System.out.println("Error connecting to Partner " + partnerID);
+      System.out.println("SR: Error connecting to Partner " + partnerID);
     }
     return new TreeSet<>();
   }
@@ -208,7 +230,7 @@ public class ShowclixReader {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
       return parseEvents(jsonText);
     } catch (IOException iOException) {
-      System.out.println("ERROR connecting to Venue " + venueID);
+      System.out.println("SR: ERROR connecting to Venue " + venueID);
     }
     return new TreeSet<>();
   }
@@ -229,7 +251,7 @@ public class ShowclixReader {
     } catch (ClassCastException cce) {
       cce.printStackTrace();
     } catch (ParseException pe) {
-      System.out.println("Error parsing JSON: " + jsonText);
+      System.out.println("SR: Error parsing JSON: " + jsonText);
     }
     return retSet;
   }
@@ -246,7 +268,7 @@ public class ShowclixReader {
       case AUS:
         return 75;
       default:
-        System.out.println("Unknown expo: " + expo);
+        System.out.println("SR: Unknown expo: " + expo);
         return 48;
     }
   }
@@ -265,7 +287,7 @@ public class ShowclixReader {
       case AUS:
         return 15374;
       default:
-        System.out.println("Unknown expo: " + expo);
+        System.out.println("SR: Unknown expo: " + expo);
         return 16886;
     }
   }
@@ -284,7 +306,7 @@ public class ShowclixReader {
       case AUS:
         return 15820;
       default:
-        System.out.println("Unknown expo: " + expo);
+        System.out.println("SR: Unknown expo: " + expo);
         return 13961;
     }
   }

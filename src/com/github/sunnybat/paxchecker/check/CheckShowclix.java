@@ -68,17 +68,27 @@ public class CheckShowclix extends Check {
             link = tempURL;
           }
         } else { // Didn't follow redirects, need to use Showclix API to get event URL
-          alreadyChecked.add(link); // So we don't check this URL again (every time)
-          link = showReader.getNamedURL(link);
+          String temp2 = showReader.getNamedURL(link);
+          if (temp2 == null) {
+            System.out.println("CS: Unable to update URL " + link);
+          } else if (Browser.unshortenURL(temp2) == null) { // 404'd again
+            System.out.println("CS: URL " + link + " and updated URL " + temp2 + " unable to resolve -- checking again later");
+            continue;
+          } else {
+            if (!temp2.equalsIgnoreCase(link)) {
+              alreadyChecked.add(link); // So we don't check this URL again (every time)
+              link = temp2;
+            }
+          }
         }
         if (!alreadyChecked.contains(link)) {
-          System.out.println("Not checked: " + link);
+          System.out.println("CS: Not checked: " + link);
           if (showReader.isPaxPage(link)) {
             currentLink = link;
-            System.out.println("PAX page found: " + currentLink);
+            System.out.println("CS: PAX page found: " + currentLink);
             break;
           } else {
-            System.out.println("Link is not pax page. Ignoring.");
+            System.out.println("CS: Link is not pax page. Ignoring.");
             alreadyChecked.add(link);
           }
         }
@@ -97,7 +107,7 @@ public class CheckShowclix extends Check {
   @Override
   public synchronized void reset() {
     if (currentLink != null) {
-      System.out.println("Adding " + currentLink + " to alreadyChecked");
+      System.out.println("CS: Adding " + currentLink + " to alreadyChecked");
       alreadyChecked.add(currentLink);
       currentLink = null;
     }
