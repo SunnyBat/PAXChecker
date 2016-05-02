@@ -25,6 +25,7 @@ public class Updater {
   private String patchNotes;
   private boolean anonymous = false;
   private boolean headless = false;
+  private boolean beta = false;
 
   public Updater(String programVersion) {
     this.programVersion = programVersion;
@@ -42,6 +43,13 @@ public class Updater {
    */
   public void enableHeadlessMode() {
     headless = true;
+  }
+
+  /**
+   * Enables BETA updating
+   */
+  public void enableBetaUpdates() {
+    beta = true;
   }
 
   /**
@@ -66,6 +74,9 @@ public class Updater {
         startupOutput.setStatus("Checking for updates...");
       }
       PatchNotesDownloader notesDownloader = new PatchNotesDownloader(getPatchNotesLink());
+      if (beta) {
+        notesDownloader.enableBetaDownload();
+      }
       notesDownloader.downloadVersionNotes(programVersion);
       notes = notesDownloader.getVersionNotes();
       if (notesDownloader.updateAvailable()) {

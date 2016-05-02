@@ -342,6 +342,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
           setProgress((TEXT_DELAY_TIME - secondsLeft) / TEXT_DELAY_TIME * 100);
           lastSecondsLeft = secondsLeft;
         }
+        Thread.sleep(250);
       } while (System.nanoTime() - startTime < delayTime);
       // Complete
       publish("Test Text");
@@ -350,9 +351,14 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     }
 
     @Override
-    protected void process(java.util.List<String> chunks) {
+    protected void process(final java.util.List<String> chunks) {
       if (!chunks.isEmpty()) {
-        JBTestText.setText(chunks.get(chunks.size() - 1)); // CHECK: Move to an invokeLater block?
+        invokeAndWaitOnEDT(new Runnable() {
+          @Override
+          public void run() {
+            JBTestText.setText(chunks.get(chunks.size() - 1));
+          }
+        });
       }
     }
 
@@ -372,6 +378,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
       do {
         int secondsLeft = (int) ((delayTime - (System.nanoTime() - startTime)) / 1000000000L);
         setProgress((INFORMATION_CLEAR_DELAY_TIME - secondsLeft) / INFORMATION_CLEAR_DELAY_TIME * 100);
+        Thread.sleep(250);
       } while (System.nanoTime() - startTime < delayTime && !super.isCancelled());
       // Complete
       setProgress(100);
@@ -381,7 +388,12 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     @Override
     protected void done() {
       if (!super.isCancelled()) {
-        setInformationText(" ");
+        invokeAndWaitOnEDT(new Runnable() {
+          @Override
+          public void run() {
+            JLInformation.setText(" ");
+          }
+        });
       }
     }
   }

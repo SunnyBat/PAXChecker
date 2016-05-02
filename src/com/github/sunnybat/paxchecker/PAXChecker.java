@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.2 R2";
+  public static final String VERSION = "3.0.2 R3";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -136,6 +136,9 @@ public final class PAXChecker {
       }
       if (isHeadless) {
         programUpdater.enableHeadlessMode();
+      }
+      if (hasArgument(args, "-beta") || prefs.getBooleanPreference("USE_BETA")) {
+        programUpdater.enableBetaUpdates();
       }
       if (programUpdater.loadUpdates(loadingOutput)) {
         patchNotes = programUpdater.getPatchNotes();

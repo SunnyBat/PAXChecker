@@ -29,11 +29,6 @@ public class PaxsiteReader {
     try {
       URL urlToConnectTo = new URL(getWebsiteLink(expoToCheck) + "/registration");
       String link = findShowclixLink(urlToConnectTo);
-      if (link.equals("[NoConnection]") && expoToCheck == Expo.PRIME) {
-        System.out.println("Connection to prime.paxsite.com failed -- trying west.paxsite.com");
-        URL urlToConnectTo2 = new URL("http://west.paxsite.com/registration");
-        link = findShowclixLink(urlToConnectTo2);
-      }
       return link;
     } catch (MalformedURLException mue) {
     }
@@ -106,11 +101,11 @@ public class PaxsiteReader {
    */
   public String getWebsiteLink(Expo expo) {
     if (expo == null) {
-      return "http://prime.paxsite.com";
+      return "http://west.paxsite.com";
     }
     switch (expo) {
       case PRIME:
-        return "http://prime.paxsite.com";
+        return "http://west.paxsite.com";
       case EAST:
         return "http://east.paxsite.com";
       case SOUTH:
@@ -119,7 +114,7 @@ public class PaxsiteReader {
         return "http://aus.paxsite.com";
       default:
         System.out.println("Expo not found: " + expo);
-        return "http://prime.paxsite.com";
+        return "http://west.paxsite.com";
     }
   }
 
