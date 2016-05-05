@@ -51,9 +51,11 @@ public class CheckPaxsite extends Check {
   public synchronized final void updateLink() {
     updateLink("[Checking]");
     currentLinkFound = siteReader.getCurrentButtonLink();
-    String redirectedURL = Browser.unshortenURL(currentLinkFound);
-    if (redirectedURL != null) {
-      currentLinkFound = redirectedURL;
+    if (!currentLinkFound.startsWith("[")) {
+      String redirectedURL = Browser.unshortenURL(currentLinkFound);
+      if (redirectedURL != null) {
+        currentLinkFound = redirectedURL;
+      }
     }
     updateLink(getLink());
   }

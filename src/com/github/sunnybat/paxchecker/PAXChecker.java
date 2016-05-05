@@ -41,6 +41,7 @@ public final class PAXChecker {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
+    System.out.println("PAXChecker v" + VERSION);
     removeOldPreferences();
     System.out.println("Initializing...");
     java.net.HttpURLConnection.setFollowRedirects(true); // Follow all redirects automatically, so when checking Showclix event pages, it works!
@@ -373,36 +374,41 @@ public final class PAXChecker {
           myLinkManager.openLink(checker.getLinkFound(), true);
         }
         status.setDataUsageText(DataTracker.getDataUsedMB());
+        sleepLoop:
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
           synchronized (status) {
-            int button = status.getButtonPressed();
-            if (button > 0) {
+            Status.ACTION_TYPE action = status.getActionRequested();
+            if (action != null) {
               status.resetButtonPressed();
-              if (button == 1) {
-                break;
-              } else if (button == 2) {
-                if (email != null) {
-                  status.setInformationText("Sending test text...");
-                  try {
-                    if (email.sendMessage("PAXChecker", "This is a test text.")) {
-                      status.setInformationText("Test text sent successfully!");
-                    } else {
-                      status.setInformationText("Unable to send test text");
+              switch (action) {
+                case FORCE_CHECK:
+                  break sleepLoop;
+                case TEST_TEXT:
+                  if (email != null) {
+                    status.setInformationText("Sending test text...");
+                    try {
+                      if (email.sendMessage("PAXChecker", "This is a test text.")) {
+                        status.setInformationText("Test text sent successfully!");
+                      } else {
+                        status.setInformationText("Unable to send test text");
+                      }
+                    } catch (IllegalStateException e) { // In case we send too fast
+                      status.setInformationText("Unable to send test text (sent too fast?)");
                     }
-                  } catch (IllegalStateException e) { // In case we send too fast
-                    status.setInformationText("Unable to send test text (sent too fast?)");
                   }
-                }
-              } else if (button == 3) {
-                if (Audio.playAlarm()) {
-                  status.setInformationText("Alarm started.");
-                } else {
-                  status.setInformationText("Unable to play alarm.");
-                }
-              } else if (button == 4) {
-                if (myStreamer != null) {
-                  myStreamer.startStreamingTwitter();
-                }
+                  break;
+                case TEST_ALARM:
+                  if (Audio.playAlarm()) {
+                    status.setInformationText("Alarm started.");
+                  } else {
+                    status.setInformationText("Unable to play alarm.");
+                  }
+                  break;
+                case RECONNECT_TWITTER:
+                  if (myStreamer != null) {
+                    myStreamer.startStreamingTwitter();
+                  }
+                  break;
               }
             }
           }

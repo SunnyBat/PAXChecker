@@ -6,6 +6,10 @@ package com.github.sunnybat.paxchecker.status;
  */
 public interface Status {
 
+  public enum ACTION_TYPE {
+    FORCE_CHECK, TEST_TEXT, TEST_ALARM, RECONNECT_TWITTER
+  }
+
   public void enableEmail();
   public void enableAlarm();
   public void enableTwitter();
@@ -18,7 +22,7 @@ public interface Status {
   public void setForceCheckEnabled(boolean enabled);
   public void setDataUsageText(double dataUsed);
   public void setDataUsageText(String dataUsed);
-  public int getButtonPressed();
+  public ACTION_TYPE getActionRequested();
   public void resetButtonPressed();
 
 }

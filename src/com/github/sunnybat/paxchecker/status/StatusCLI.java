@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class StatusCLI implements Status {
 
   private Scanner input;
-  private int button;
+  private ACTION_TYPE actionRequested;
   private boolean twitterEnabled = false;
   private boolean twitterConnected = false;
   private boolean forceCheckEnabled = true;
@@ -92,18 +92,18 @@ public class StatusCLI implements Status {
   }
 
   @Override
-  public int getButtonPressed() {
-    return button;
+  public ACTION_TYPE getActionRequested() {
+    return actionRequested;
   }
 
   @Override
   public void resetButtonPressed() {
-    button = 0;
+    actionRequested = null;
   }
 
-  private void buttonPressed(int button) {
+  private void actionRequested(ACTION_TYPE button) {
     synchronized (this) {
-      this.button = button;
+      this.actionRequested = button;
       this.notify();
     }
   }
@@ -112,21 +112,21 @@ public class StatusCLI implements Status {
     switch (command.toLowerCase()) {
       case "refresh":
         if (forceCheckEnabled) {
-          buttonPressed(1);
+          actionRequested(ACTION_TYPE.FORCE_CHECK);
         } else {
           System.out.println("Force checking is currently disabled (probably checking right now)");
         }
         break;
       case "testtext":
         if (email) {
-          buttonPressed(2);
+          actionRequested(ACTION_TYPE.TEST_TEXT);
         } else {
           System.out.println("Email is disabled");
         }
         break;
       case "testalarm":
         if (alarm) {
-          buttonPressed(3);
+          actionRequested(ACTION_TYPE.TEST_ALARM);
         } else {
           System.out.println("Alarm is disabled.");
         }
@@ -136,7 +136,7 @@ public class StatusCLI implements Status {
           if (twitterConnected) {
             System.out.println("Twitter is already enabled!");
           } else {
-            buttonPressed(4); // CHECK: Should I enable this right now?
+            actionRequested(ACTION_TYPE.RECONNECT_TWITTER); // CHECK: Should I enable this right now?
           }
         } else {
           System.out.println("Twitter is disabled.");

@@ -37,7 +37,7 @@ import javax.swing.WindowConstants;
 public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements Status {
 
   private final NotificationWindow infoWindow;
-  private int button;
+  private ACTION_TYPE actionRequested;
   private SwingWorker infoReset = new InformationResetter();
   private MenuItem maximizeButton = new MenuItem("Restore Window");
   private MenuItem closeButton = new MenuItem("Close Program");
@@ -97,25 +97,25 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     forceCheckButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        buttonPressed(1);
+        buttonPressed(ACTION_TYPE.FORCE_CHECK);
       }
     });
     testTextButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        buttonPressed(2);
+        buttonPressed(ACTION_TYPE.TEST_TEXT);
       }
     });
     testAlarmButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        buttonPressed(3);
+        buttonPressed(ACTION_TYPE.TEST_ALARM);
       }
     });
     reconnectTwitterButton.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        buttonPressed(4);
+        buttonPressed(ACTION_TYPE.RECONNECT_TWITTER);
       }
     });
     getPopupMenu().add(maximizeButton);
@@ -311,19 +311,18 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
   }
 
   @Override
-  public int getButtonPressed() {
-    return button;
+  public ACTION_TYPE getActionRequested() {
+    return actionRequested;
   }
 
   @Override
   public void resetButtonPressed() {
-    button = 0;
+    actionRequested = null;
   }
 
-  private void buttonPressed(int button) {
+  private void buttonPressed(ACTION_TYPE button) {
     synchronized (this) {
-      this.button = button;
-      //this.notify();
+      this.actionRequested = button;
     }
   }
 
@@ -557,18 +556,18 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
   }// </editor-fold>//GEN-END:initComponents
 
   private void JBForceCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBForceCheckActionPerformed
-    buttonPressed(1);
+    buttonPressed(ACTION_TYPE.FORCE_CHECK);
   }//GEN-LAST:event_JBForceCheckActionPerformed
 
   private void JBTestTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestTextActionPerformed
     JBTestText.setEnabled(false); // TODO: Move this to TextCountdown so it doesn't have to be called here
     SwingWorker worker = new TextCountdown();
     worker.execute();
-    buttonPressed(2);
+    buttonPressed(ACTION_TYPE.TEST_TEXT);
   }//GEN-LAST:event_JBTestTextActionPerformed
 
   private void JBTestAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBTestAlarmActionPerformed
-    buttonPressed(3);
+    buttonPressed(ACTION_TYPE.TEST_ALARM);
   }//GEN-LAST:event_JBTestAlarmActionPerformed
 
   private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
@@ -580,7 +579,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
   }//GEN-LAST:event_JLLinksExplanationMousePressed
 
   private void JBReconnectTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBReconnectTwitterActionPerformed
-    buttonPressed(4);
+    buttonPressed(ACTION_TYPE.RECONNECT_TWITTER);
     setTwitterStatus("Twitter Feed: Reconnecting...");
     JBReconnectTwitter.setVisible(false);
     getPopupMenu().remove(reconnectTwitterButton);

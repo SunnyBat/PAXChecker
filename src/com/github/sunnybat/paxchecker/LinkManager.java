@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker;
 
+import com.github.sunnybat.commoncode.audio.Sound;
 import com.github.sunnybat.commoncode.email.EmailAccount;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.status.Tickets;
@@ -15,10 +16,20 @@ public class LinkManager {
 
   private EmailAccount email;
   private Set<String> linksOpened;
+  private Sound alarm;
 
   public LinkManager(EmailAccount email) {
     this.email = email;
     linksOpened = new HashSet<>();
+  }
+
+  /**
+   * Sets the sound to play when a new link is opened. If set to null, no sound will be played.
+   *
+   * @param alarm The Sound to play
+   */
+  public void setAlarm(Sound alarm) {
+    this.alarm = alarm;
   }
 
   public void openLink(String url, boolean sendEmail) {
@@ -29,6 +40,9 @@ public class LinkManager {
     if (url != null && !hasOpenedLink(url)) {
       linksOpened.add(url);
       Browser.openLinkInBrowser(url);
+      /*if (alarm != null) {
+        alarm.play();
+      }*/
       Audio.playAlarm();
       if (!GraphicsEnvironment.isHeadless()) {
         Tickets ticketWindow = new Tickets(url); // CHECK: Should I only allow one Tickets at a time?
