@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.2 R3";
+  public static final String VERSION = "3.0.2";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -376,40 +376,43 @@ public final class PAXChecker {
         status.setDataUsageText(DataTracker.getDataUsedMB());
         sleepLoop:
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
+          Status.ACTION_TYPE action;
           synchronized (status) {
-            Status.ACTION_TYPE action = status.getActionRequested();
+            action = status.getActionRequested();
             if (action != null) {
               status.resetButtonPressed();
-              switch (action) {
-                case FORCE_CHECK:
-                  break sleepLoop;
-                case TEST_TEXT:
-                  if (email != null) {
-                    status.setInformationText("Sending test text...");
-                    try {
-                      if (email.sendMessage("PAXChecker", "This is a test text.")) {
-                        status.setInformationText("Test text sent successfully!");
-                      } else {
-                        status.setInformationText("Unable to send test text");
-                      }
-                    } catch (IllegalStateException e) { // In case we send too fast
-                      status.setInformationText("Unable to send test text (sent too fast?)");
+            }
+          }
+          if (action != null) {
+            switch (action) {
+              case FORCE_CHECK:
+                break sleepLoop;
+              case TEST_TEXT:
+                if (email != null) {
+                  status.setInformationText("Sending test text...");
+                  try {
+                    if (email.sendMessage("PAXChecker", "This is a test text.")) {
+                      status.setInformationText("Test text sent successfully!");
+                    } else {
+                      status.setInformationText("Unable to send test text");
                     }
+                  } catch (IllegalStateException e) { // In case we send too fast
+                    status.setInformationText("Unable to send test text (sent too fast?)");
                   }
-                  break;
-                case TEST_ALARM:
-                  if (Audio.playAlarm()) {
-                    status.setInformationText("Alarm started.");
-                  } else {
-                    status.setInformationText("Unable to play alarm.");
-                  }
-                  break;
-                case RECONNECT_TWITTER:
-                  if (myStreamer != null) {
-                    myStreamer.startStreamingTwitter();
-                  }
-                  break;
-              }
+                }
+                break;
+              case TEST_ALARM:
+                if (Audio.playAlarm()) {
+                  status.setInformationText("Alarm started.");
+                } else {
+                  status.setInformationText("Unable to play alarm.");
+                }
+                break;
+              case RECONNECT_TWITTER:
+                if (myStreamer != null) {
+                  myStreamer.startStreamingTwitter();
+                }
+                break;
             }
           }
           status.setLastCheckedText(checkTime - (int) ((System.currentTimeMillis() - startTime) / 1000));

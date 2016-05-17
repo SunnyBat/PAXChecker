@@ -26,9 +26,9 @@ public class CheckShowclix extends Check {
   public CheckShowclix(Expo expo, boolean shouldFilterShowclix) {
     super();
     showReader = new ShowclixReader(expo);
-    if (shouldFilterShowclix) {
+    //if (shouldFilterShowclix) {
       showReader.strictFilter();
-    }
+    //}
   }
 
   @Override
@@ -83,14 +83,14 @@ public class CheckShowclix extends Check {
         }
         if (!alreadyChecked.contains(link)) {
           System.out.println("CS: Not checked: " + link);
-          if (showReader.isPaxPage(link)) {
+          /*if (showReader.isPaxPage(link)) {*/
             currentLink = link;
             System.out.println("CS: PAX page found: " + currentLink);
             break;
-          } else {
+          /*} else {
             System.out.println("CS: Link is not pax page. Ignoring.");
             alreadyChecked.add(link);
-          }
+          }*/
         }
       }
     }
