@@ -261,7 +261,7 @@ public class ShowclixReader {
       return 48;
     }
     switch (expo) {
-      case PRIME:
+      case WEST:
       case EAST:
       case SOUTH:
         return 48;
@@ -278,7 +278,7 @@ public class ShowclixReader {
       return 16886;
     }
     switch (expo) {
-      case PRIME:
+      case WEST:
         return 16886;
       case EAST:
         return 17792;
@@ -297,7 +297,7 @@ public class ShowclixReader {
       return 13961;
     }
     switch (expo) {
-      case PRIME:
+      case WEST:
         return 13961;
       case EAST:
         return 16418;

@@ -100,7 +100,7 @@ public interface Setup {
   public int timeBetweenChecks();
 
   /**
-   * Gets the name of the expo to check. Values returned include Prime, South, East, Aus. These may or may not be preceded with "PAX ".
+   * Gets the name of the expo to check. Values returned include West, South, East, Aus. These may or may not be preceded with "PAX ".
    *
    * @return The name of the expo to check
    */

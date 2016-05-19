@@ -92,7 +92,10 @@ public class SetupCLI implements Setup {
         case "prime":
         case "paxprime":
         case "pax prime":
-          expoToCheck = "PAX Prime";
+        case "west":
+        case "paxwest":
+        case "pax west":
+          expoToCheck = "PAX West";
           break;
         case "east":
         case "paxeast":
@@ -113,8 +116,8 @@ public class SetupCLI implements Setup {
           expoToCheck = "PAX Aus";
           break;
         default:
-          System.out.println("Invalid expo (" + input + ")! Setting to Prime...");
-          expoToCheck = "PAX Prime";
+          System.out.println("Invalid expo (" + input + ")! Setting to West...");
+          expoToCheck = "PAX West";
           break;
       }
     } catch (Exception e) {

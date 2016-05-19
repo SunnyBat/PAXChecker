@@ -285,14 +285,14 @@
             <Component class="javax.swing.JCheckBox" name="JCBPlayAlarm">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Play Alarm when Tickets Found"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;If checked, the program will play a sound when an update to&lt;br&gt;&#xa;the PAX Prime website OR the Showclix website (whichever one(s)&lt;br&gt;&#xa;you have enabled) is found.&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;If checked, the program will play a sound when&lt;br&gt;&#xa;a new link is found.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="JCBExpo">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
-                    <StringItem index="0" value="PAX Prime"/>
+                    <StringItem index="0" value="PAX West"/>
                     <StringItem index="1" value="PAX East"/>
                     <StringItem index="2" value="PAX South"/>
                     <StringItem index="3" value="PAX Aus"/>

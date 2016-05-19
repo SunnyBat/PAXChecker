@@ -8,7 +8,7 @@ package com.github.sunnybat.paxchecker.resources;
 class ResourceConstants {
 
   public static final String RESOURCE_LOCATION = getResourceLocation();
-  public static final String[] DEFAULT_FILE_NAMES = {"Alarm.wav", "Alert.png", "PAXPrime.png", "PAXEast.png", "PAXSouth.png", "PAXAus.png"};
+  public static final String[] DEFAULT_FILE_NAMES = {"Alarm.wav", "Alert.png", "PAXWest.png", "PAXEast.png", "PAXSouth.png", "PAXAus.png"};
 
   private static String getResourceLocation() {
     String os = System.getProperty("os.name").toLowerCase();

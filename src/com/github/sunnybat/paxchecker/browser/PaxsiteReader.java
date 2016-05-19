@@ -93,18 +93,18 @@ public class PaxsiteReader {
   }
 
   /**
-   * Returns the HTTP address of the given PAX Expo. Be sure to only use the name of the expo (ex: prime) OR the full name (ex: pax prime) as the
+   * Returns the HTTP address of the given PAX Expo. Be sure to only use the name of the expo (ex: west) OR the full name (ex: pax west) as the
    * argument.
    *
    * @param expo The PAX expo to get the website link for
-   * @return The website link of the specified expo, or the PAX Prime link if invalid.
+   * @return The website link of the specified expo, or the PAX West link if invalid.
    */
   public String getWebsiteLink(Expo expo) {
     if (expo == null) {
       return "http://west.paxsite.com";
     }
     switch (expo) {
-      case PRIME:
+      case WEST:
         return "http://west.paxsite.com";
       case EAST:
         return "http://east.paxsite.com";

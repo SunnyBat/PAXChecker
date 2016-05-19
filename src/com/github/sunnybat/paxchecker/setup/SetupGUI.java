@@ -179,7 +179,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
       return 0;
     }
     switch (eventName.toLowerCase()) {
-      case "pax prime":
+      case "pax prime": // Keep for backwards compatibility with Preferences
+      case "pax west":
       default:
         return 0;
       case "pax east":
@@ -596,9 +597,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     });
 
     JCBPlayAlarm.setText("Play Alarm when Tickets Found");
-    JCBPlayAlarm.setToolTipText("<html>\nIf checked, the program will play a sound when an update to<br>\nthe PAX Prime website OR the Showclix website (whichever one(s)<br>\nyou have enabled) is found.\n</html>");
+    JCBPlayAlarm.setToolTipText("<html>\nIf checked, the program will play a sound when<br>\na new link is found.\n</html>");
 
-    JCBExpo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX Prime", "PAX East", "PAX South", "PAX Aus" }));
+    JCBExpo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PAX West", "PAX East", "PAX South", "PAX Aus" }));
 
     jLabel5.setText("PAX Expo to Check");
 

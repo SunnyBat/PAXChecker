@@ -6,7 +6,7 @@ package com.github.sunnybat.paxchecker;
  */
 public enum Expo {
 
-  PRIME, EAST, SOUTH, AUS;
+  WEST, EAST, SOUTH, AUS;
 
   @Override
   public String toString() {
@@ -16,8 +16,8 @@ public enum Expo {
 
   public static Expo parseExpo(String expo) {
     expo = expo.toLowerCase();
-    if (expo.contains("prime")) {
-      return PRIME;
+    if (expo.contains("prime") || expo.contains("west")) {
+      return WEST;
     } else if (expo.contains("east")) {
       return EAST;
     } else if (expo.contains("south")) {
