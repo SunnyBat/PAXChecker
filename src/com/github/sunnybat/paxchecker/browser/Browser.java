@@ -76,7 +76,7 @@ public class Browser {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
       httpCon.setConnectTimeout(5000);
-      httpCon.setReadTimeout(2000);
+      httpCon.setReadTimeout(3100); // Showclix API request throttling = 3 seconds
       return httpCon;
     } catch (Exception e) {
       e.printStackTrace();

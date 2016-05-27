@@ -480,10 +480,8 @@
             </Container>
             <Component class="javax.swing.JCheckBox" name="JCBFilterShowclix">
               <Properties>
-                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Strict Filtering"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Enabling this will hopefully reduce the&lt;br&gt;&#xa;amount of false positives, however&lt;br&gt;&#xa;might also cause the PAXChecker to&lt;br&gt;&#xa;miss the queue. Use at your own risk.&#xa;&lt;/html&gt;"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBTextTweets">

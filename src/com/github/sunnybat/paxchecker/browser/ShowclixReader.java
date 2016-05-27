@@ -90,66 +90,30 @@ public class ShowclixReader {
   }
 
   /**
-   * Checks whether or not the page associated with the given Showclix EventID is a PAX ticket page.
-   *
-   * @param showclixID The Showclix ID to check
-   * @return True if it is, false if not
-   */
-  public boolean isPaxPage(int showclixID) {
-    return isPaxPage(EVENT_LINK_BASE + showclixID);
-  }
-
-  /**
-   * Checks whether or not the given URL is a PAX ticket page or a queue page. Note that this does NOT follow any redirects.
-   *
-   * @param link The URL to check
-   * @return True if it is, false if not
-   */
-  public boolean isPaxPage(String link) { // CHECK: Move this (and strict filtering) to somewhere else?
-    try {
-      URLConnection connect = Browser.setUpConnection(new URL(link));
-      BufferedReader reader = new BufferedReader(new InputStreamReader(connect.getInputStream()));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        line = line.toLowerCase();
-        DataTracker.addDataUsed(line.length());
-        if (line.contains("pax")) {
-          System.out.println("SR: Found PAX in page -- is PAX page.");
-          return true;
-        } else if (line.contains("queue")) {
-          int firstIndex = line.indexOf("queue");
-          if (firstIndex == line.indexOf("queuetime")) {
-            System.out.println("SR: Found queueTime on Showclix page -- ignoring");
-            line = line.substring(firstIndex + 9); // Skip "queueTime", check again
-            if (!line.contains("queue")) { // Queue not found, continue reading rest of page
-              continue;
-            }
-          }
-          if (strictFiltering) {
-            System.out.println("SR: Found queue in page, but strict filtering is enabled");
-          } else {
-            System.out.println("SR: Found queue in page -- is PAX page.");
-            return true;
-          }
-        }
-      }
-    } catch (IOException iOException) {
-      System.out.println("SR: IOException in isPaxPage() -- returning strictFiltering");
-      return !strictFiltering;
-    }
-    System.out.println("SR: Is not PAX page.");
-    return false;
-  }
-
-  /**
    * Gets all relevant event URLs. These will not be sorted in any particular order.
    *
    * @return All relevant event URLs
    */
   public Set<String> getAllEventURLs() {
-    Set<String> retSet = getAllSellerEventURLs(expoToCheck);
-    retSet.addAll(getAllPartnerEventURLs(expoToCheck));
-    retSet.addAll(getAllVenueEventURLs(expoToCheck));
+    Set<String> retSet = new TreeSet<>();
+    Set<String> sellerEvents = getAllSellerEventURLs(expoToCheck);
+    if (sellerEvents == null) {
+      System.out.println("SR: Error downloading Seller Event URLs");
+      return null;
+    }
+    retSet.addAll(sellerEvents);
+    Set<String> partnerEvents = getAllPartnerEventURLs(expoToCheck);
+    if (partnerEvents == null) {
+      System.out.println("SR: Error downloading Partner Event URLs");
+      return null;
+    }
+    retSet.addAll(partnerEvents);
+    Set<String> venueEvents = getAllVenueEventURLs(expoToCheck);
+    if (venueEvents == null) {
+      System.out.println("SR: Error downloading Partner Event URLs");
+      return null;
+    }
+    retSet.addAll(venueEvents);
     return retSet;
   }
 
@@ -173,19 +137,20 @@ public class ShowclixReader {
           JSONObject jObj = (JSONObject) obj.get(eventID);
           if (jObj.containsKey("event")) {
             if (jObj.get("event") == null) {
-              if (strictFiltering) {
-                System.out.println("SR: Event " + eventID + " is null, strictFiltering, ignoring");
-              } else {
-                System.out.println("SR: Event " + eventID + " is null, !strictFiltering, adding");
-                retSet.add(EVENT_LINK_BASE + eventID);
+              System.out.println("SR: Event " + eventID + " is null, ignoring");
+            } else {
+              String eventName = jObj.get("event").toString().toLowerCase();
+              if (eventName.contains("pax")) {
+                System.out.println("SR: PAX event found: " + eventID + " (" + jObj.get("event") + ")");
+                if (!strictFiltering || eventName.contains(expoToCheck.toString().toLowerCase())) {
+                  retSet.add(EVENT_LINK_BASE + eventID);
+                } else {
+                  System.out.println("SR: Strict Filtering is on, ignoring");
+                }
               }
-            } else if (jObj.get("event").toString().toLowerCase().contains("pax")) {
-              System.out.println("SR: SC: PAX event found: " + eventID + " (" + jObj.get("event") + ")");
-              retSet.add(EVENT_LINK_BASE + eventID);
             } // else event is not PAX, ignoring
           } else {
-            System.out.println("SR: Event " + eventID + " does not contain an event title -- adding");
-            retSet.add(EVENT_LINK_BASE + eventID);
+            System.out.println("SR: Event " + eventID + " does not contain an event title -- ignoring");
           }
         } else if (((String) obj.get(eventID)).equals("HIDDEN")) {
           System.out.println("SR: Event " + eventID + " is currently hidden");
@@ -208,31 +173,40 @@ public class ShowclixReader {
   private Set<String> getAllSellerEventURLs(int sellerID) {
     try {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
+      if (jsonText == null) {
+        return null;
+      }
       return parseEvents(jsonText);
     } catch (IOException iOException) {
       System.out.println("SR: ERROR connecting to Seller " + sellerID);
     }
-    return new TreeSet<>();
+    return null;
   }
 
   private Set<String> getAllPartnerEventURLs(int partnerID) {
     try {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
+      if (jsonText == null) {
+        return null;
+      }
       return parseEvents(jsonText);
     } catch (IOException iOException) {
       System.out.println("SR: Error connecting to Partner " + partnerID);
     }
-    return new TreeSet<>();
+    return null;
   }
 
   private Set<String> getAllVenueEventURLs(int venueID) {
     try {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
+      if (jsonText == null) {
+        return null;
+      }
       return parseEvents(jsonText);
     } catch (IOException iOException) {
       System.out.println("SR: ERROR connecting to Venue " + venueID);
     }
-    return new TreeSet<>();
+    return null;
   }
 
   private Set<String> parseEvents(String jsonText) {
@@ -336,6 +310,7 @@ public class ShowclixReader {
       reader.close();
       return build.toString();
     } catch (IOException iOException) {
+      iOException.printStackTrace();
       return null;
     }
   }

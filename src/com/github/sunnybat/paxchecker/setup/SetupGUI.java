@@ -707,10 +707,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         .addComponent(jLabel6))
     );
 
-    JCBFilterShowclix.setSelected(true);
     JCBFilterShowclix.setText("Strict Filtering");
     JCBFilterShowclix.setToolTipText("<html>\nEnabling this will hopefully reduce the<br>\namount of false positives, however<br>\nmight also cause the PAXChecker to<br>\nmiss the queue. Use at your own risk.\n</html>");
-    JCBFilterShowclix.setEnabled(false);
 
     JCBTextTweets.setText("Text Tweets");
     JCBTextTweets.setToolTipText("<html>\nSend a text to the given email address<br>\nif a link is found in a Tweet.If you receive<br>\nTweets directly from Twitter, this option<br>\nwill likely be redundant (and therefore not<br>\nrecommended).\n</html>");

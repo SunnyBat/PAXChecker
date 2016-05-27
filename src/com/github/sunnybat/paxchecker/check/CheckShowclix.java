@@ -14,7 +14,7 @@ import java.util.TreeSet;
 public class CheckShowclix extends Check {
 
   private Set<String> alreadyChecked = new TreeSet<>();
-  private String currentLink; // When new link found, this will not be null
+  private String currentLink; // Null until the API returns events found
   private ShowclixReader showReader;
 
   /**
@@ -26,9 +26,9 @@ public class CheckShowclix extends Check {
   public CheckShowclix(Expo expo, boolean shouldFilterShowclix) {
     super();
     showReader = new ShowclixReader(expo);
-    //if (shouldFilterShowclix) {
+    if (shouldFilterShowclix) {
       showReader.strictFilter();
-    //}
+    }
   }
 
   @Override
@@ -39,15 +39,21 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized boolean ticketsFound() {
-    return currentLink != null; // currentLink is not null if a new link has been found
+    return currentLink != null && !currentLink.startsWith("["); // currentLink is not null if a new link has been found
   }
 
   @Override
   public synchronized void updateLink() {
     updateLink("[Checking]");
     Set<String> allLinksFound = getLinks();
-    if (alreadyChecked.isEmpty()) { // In case there was no API connection before, we don't want to alert for ALL the events found
+    if (allLinksFound == null) {
+      updateLink("[Error Connecting]");
+      return;
+    }
+    if (currentLink == null) { // In case there was no API connection before, we don't want to alert for ALL the events found
+      System.out.println("currentLink is null, adding all links");
       alreadyChecked.addAll(allLinksFound);
+      currentLink = "[No New Events]";
     } else {
       updateLinkFromSet(allLinksFound);
     }
@@ -74,23 +80,15 @@ public class CheckShowclix extends Check {
           } else if (Browser.unshortenURL(temp2) == null) { // 404'd again
             System.out.println("CS: URL " + link + " and updated URL " + temp2 + " unable to resolve -- checking again later");
             continue;
-          } else {
-            if (!temp2.equalsIgnoreCase(link)) {
-              alreadyChecked.add(link); // So we don't check this URL again (every time)
-              link = temp2;
-            }
+          } else if (!temp2.equalsIgnoreCase(link)) {
+            alreadyChecked.add(link); // So we don't check this URL again (every time)
+            link = temp2;
           }
         }
         if (!alreadyChecked.contains(link)) {
-          System.out.println("CS: Not checked: " + link);
-          /*if (showReader.isPaxPage(link)) {*/
-            currentLink = link;
-            System.out.println("CS: PAX page found: " + currentLink);
-            break;
-          /*} else {
-            System.out.println("CS: Link is not pax page. Ignoring.");
-            alreadyChecked.add(link);
-          }*/
+          currentLink = link;
+          System.out.println("CS: PAX page found: " + currentLink);
+          break;
         }
       }
     }
@@ -109,7 +107,7 @@ public class CheckShowclix extends Check {
     if (currentLink != null) {
       System.out.println("CS: Adding " + currentLink + " to alreadyChecked");
       alreadyChecked.add(currentLink);
-      currentLink = null;
+      currentLink = "[No New Events]";
     }
   }
 

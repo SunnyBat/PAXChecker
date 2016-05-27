@@ -47,7 +47,7 @@ public class CheckShowclixEventPage extends Check {
           break; // Found a link, we're done
         }
       } catch (MalformedURLException mue) {
-        System.out.println("Invalid URL: " + url);
+        System.out.println("CSEP: Invalid URL: " + url);
       }
     }
     updateLink(getLink());
@@ -61,21 +61,19 @@ public class CheckShowclixEventPage extends Check {
     try {
       conn = Browser.setUpConnection(connectTo);
       if (conn == null) { // In case it fails to set up correctly
-        System.out.println("URLConnection failed to set up for " + connectTo);
+        System.out.println("CSEP: URLConnection failed to set up for " + connectTo);
         return false;
       }
       if (conn.getResponseCode() >= 400 && conn.getResponseCode() < 500) { // getResponseCode() will throw IOE if unable to properly set up connection
         if (conn.getResponseCode() != 404) { // I don't think it should ever be 404, but if it is, we don't need to report it
-          System.out.println("Unexpected error response code " + conn.getResponseCode());
+          System.out.println("CSEP: Unexpected error response code " + conn.getResponseCode());
         }
         return false;
       } else if (conn.getResponseCode() >= 300 && conn.getResponseCode() < 400) { // Redirect, however it's probably going from HTTP
-        System.out.println("Location = " + conn.getHeaderField("Location"));      // to HTTPS, which Java does not do for security
+        System.out.println("CSEP: Location = " + conn.getHeaderField("Location"));      // to HTTPS, which Java does not do for security
         return testURL(new URL(conn.getHeaderField("Location"))); // Will throw MalformedURLException if getHF() is null, we're catching this
       } else if (conn.getResponseCode() >= 200 && conn.getResponseCode() < 300) {
-        if (conn.getResponseCode() != 200) {
-          System.out.println("Found :: URL = " + conn.getURL() + " :: Code = " + conn.getResponseCode());
-        }
+        System.out.println("CSEP: Found :: URL = " + conn.getURL() + " :: Code = " + conn.getResponseCode());
         validPageURL = connectTo.toString();
         return true;
       } else {
@@ -84,10 +82,10 @@ public class CheckShowclixEventPage extends Check {
       }
     } catch (IOException ioe) {
       if (conn != null) {
-        System.out.println("Unsure of URL " + conn.getURL() + " (" + connectTo + ")");
+        System.out.println("CSEP: Unsure of URL " + conn.getURL() + " (" + connectTo + ")");
         ioe.printStackTrace();
       } else {
-        System.out.println("Unable to find link from " + connectTo);
+        System.out.println("CSEP: Unable to find link from " + connectTo);
       }
       return false;
     }
