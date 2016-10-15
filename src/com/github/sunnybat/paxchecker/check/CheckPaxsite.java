@@ -50,7 +50,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized final void updateLink() {
     updateLink("[Checking]");
-    currentLinkFound = siteReader.getCurrentButtonLink();
+    currentLinkFound = siteReader.getCurrentShowclixLink();
     if (!currentLinkFound.startsWith("[")) {
       String redirectedURL = Browser.unshortenURL(currentLinkFound);
       if (redirectedURL != null) {
@@ -68,7 +68,7 @@ public class CheckPaxsite extends Check {
   @Override
   public synchronized void reset() {
     if (currentLinkFound == null) {
-      lastLinkFound = siteReader.getCurrentButtonLink();
+      lastLinkFound = siteReader.getCurrentShowclixLink();
     } else {
       lastLinkFound = currentLinkFound;
     }

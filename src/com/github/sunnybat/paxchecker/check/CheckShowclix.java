@@ -16,6 +16,7 @@ public class CheckShowclix extends Check {
   private Set<String> alreadyChecked = new TreeSet<>();
   private String currentLink; // Null until the API returns events found
   private ShowclixReader showReader;
+  private boolean fullListFound = false;
 
   /**
    * Creates a new CheckShowclix.
@@ -46,14 +47,20 @@ public class CheckShowclix extends Check {
   public synchronized void updateLink() {
     updateLink("[Checking]");
     Set<String> allLinksFound = getLinks();
-    if (allLinksFound == null) {
+    System.out.println("Error = " + showReader.wasErrorConnecting());
+    if (allLinksFound == null || allLinksFound.isEmpty()) {
       updateLink("[Error Connecting]");
       return;
     }
-    if (currentLink == null) { // In case there was no API connection before, we don't want to alert for ALL the events found
-      System.out.println("currentLink is null, adding all links");
-      alreadyChecked.addAll(allLinksFound);
-      currentLink = "[No New Events]";
+    if (!fullListFound) { // In case there was no API connection before, we don't want to alert for ALL the events found
+      if (!showReader.wasErrorConnecting()) { // We've found all events,
+        alreadyChecked.addAll(allLinksFound);
+        System.out.println("All events downloaded, ready to trigger");
+        fullListFound = true;
+        currentLink = "[No New Events]";
+      } else {
+        currentLink = "[Waiting for All Events]";
+      }
     } else {
       updateLinkFromSet(allLinksFound);
     }
@@ -96,8 +103,12 @@ public class CheckShowclix extends Check {
 
   @Override
   public synchronized String getLink() {
-    if (currentLink == null) {
-      return "[No New Events]";
+    if (!ticketsFound()) {
+      if (showReader.wasErrorConnecting()) {
+        return "[No New Events / Partial Error Connecting]";
+      } else {
+        return "[No New Events]";
+      }
     }
     return currentLink;
   }

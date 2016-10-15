@@ -5,9 +5,8 @@ Program download is available here: https://dl.dropboxusercontent.com/u/16152108
 
 Save the file to your computer, then run it. If it doesn't run, check to make sure you have Java 7 or above installed. If not, you'll need to install it. Feel free to message or email me if you're having trouble running it.
 
-
-
-Features include:
+Features
+==========
 
 -PAX Prime, East, South and Aus scanning capability
 
@@ -38,4 +37,21 @@ emailtextmessages.com and put your carrier's ending after your cell number -- se
 
 -Automatically detect and offer to download new program versions (with patch notes)
 
-(Feature list taken directly from Reddit thread, http://redd.it/2g9vo7)
+
+
+Setup
+==========
+
+You can set up the PAXChecker in your favorite IDE.
+
+The following libraries are used for the PAXChecker:
+
+-JSON Simple (1.1.1)
+
+-JavaMail (1.4.7)
+
+-Twitter4j (4.0.4)
+
+-CommonCode (https://www.github.com/SunnyBat/PAXChecker)
+
+You can download all the libraries (except CommonCode, which I recommend adding as a project dependency in your IDE and pulling whenever an update is availabe) here: https://dl.dropboxusercontent.com/u/16152108/PAXCheckerLibraries.zip

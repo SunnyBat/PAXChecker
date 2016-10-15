@@ -305,13 +305,13 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     prefs.getPreferenceObject("REFRESHTIME").setShouldSave(JCBSaveCheckSettings.isSelected());
     prefs.getPreferenceObject("REFRESHTIME").setValue(JSCheckTime.getValue());
     prefs.getPreferenceObject("TWITTER_CONSUMER_KEY").setShouldSave(JCBSaveTwitterKeys.isSelected());
-    prefs.getPreferenceObject("TWITTER_CONSUMER_KEY").setValue(Encryption.encrypt(JTFConsumerKey.getText()));
+    prefs.getPreferenceObject("TWITTER_CONSUMER_KEY").setValue(Encryption.encrypt(getTwitterConsumerKey()));
     prefs.getPreferenceObject("TWITTER_CONSUMER_SECRET").setShouldSave(JCBSaveTwitterKeys.isSelected());
-    prefs.getPreferenceObject("TWITTER_CONSUMER_SECRET").setValue(Encryption.encrypt(JTFConsumerSecret.getText()));
+    prefs.getPreferenceObject("TWITTER_CONSUMER_SECRET").setValue(Encryption.encrypt(getTwitterConsumerSecret()));
     prefs.getPreferenceObject("TWITTER_APP_KEY").setShouldSave(JCBSaveTwitterKeys.isSelected());
-    prefs.getPreferenceObject("TWITTER_APP_KEY").setValue(Encryption.encrypt(JTFApplicationKey.getText()));
+    prefs.getPreferenceObject("TWITTER_APP_KEY").setValue(Encryption.encrypt(getTwitterApplicationKey()));
     prefs.getPreferenceObject("TWITTER_APP_SECRET").setShouldSave(JCBSaveTwitterKeys.isSelected());
-    prefs.getPreferenceObject("TWITTER_APP_SECRET").setValue(Encryption.encrypt(JTFApplicationSecret.getText()));
+    prefs.getPreferenceObject("TWITTER_APP_SECRET").setValue(Encryption.encrypt(getTwitterApplicationSecret()));
     prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
     prefs.savePreferences();
   }
@@ -362,8 +362,8 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
   }
 
   private boolean twitterSetUpCorrectly() {
-    return JCBCheckTwitter.isSelected() && JTFApplicationKey.getText().length() > 10 && JTFApplicationSecret.getText().length() > 10
-        && JTFConsumerKey.getText().length() > 10 && JTFConsumerSecret.getText().length() > 10;
+    return JCBCheckTwitter.isSelected() && getTwitterApplicationKey().length() > 10 && getTwitterApplicationSecret().length() > 10
+        && getTwitterConsumerKey().length() > 10 && getTwitterConsumerSecret().length() > 10;
   }
 
   @Override
@@ -448,22 +448,22 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
   @Override
   public String getTwitterConsumerKey() {
-    return JTFConsumerKey.getText();
+    return JTFConsumerKey.getText().trim();
   }
 
   @Override
   public String getTwitterConsumerSecret() {
-    return JTFConsumerSecret.getText();
+    return JTFConsumerSecret.getText().trim();
   }
 
   @Override
   public String getTwitterApplicationKey() {
-    return JTFApplicationKey.getText();
+    return JTFApplicationKey.getText().trim();
   }
 
   @Override
   public String getTwitterApplicationSecret() {
-    return JTFApplicationSecret.getText();
+    return JTFApplicationSecret.getText().trim();
   }
 
   @Override

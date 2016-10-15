@@ -65,9 +65,10 @@ public class Updater {
    * Checks for updates. This loads Patch Notes and prompts the user if they want to update. If the user does update, it kills the PAXChecker.
    *
    * @param startupOutput The Startup object to update with information as updates are loaded
+   * @param args The arguments to restart the PAXChecker with
    * @return True if updates were checked for successfully, false if not
    */
-  public boolean loadUpdates(Startup startupOutput) {
+  public boolean loadUpdates(Startup startupOutput, String[] args) {
     String notes = null;
     try {
       if (startupOutput != null) {
@@ -108,8 +109,19 @@ public class Updater {
           if (notesDownloader.getUpdateLevel() == 1) {
             myDownloader.setUseBeta();
           }
-          myDownloader.updateProgram(myPrompt, new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-          System.exit(0); // TODO: Is this actually the right way to kill the program? Or should I pass info out to safely shut down?
+          File jarToDownloadTo = new File(PAXChecker.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+          myDownloader.updateProgram(myPrompt, jarToDownloadTo);
+          if (!headless) { // Don't want to start a new instance on the command-line -- it's harder to access than just manually starting the PAXChecker again
+            myPrompt.setStatusLabelText("Starting new instance of the PAXChecker...");
+            StringBuilder command = new StringBuilder();
+            command.append("java -jar ").append(jarToDownloadTo.getPath());
+            for (String arg : args) {
+              command.append(" ").append(arg);
+            }
+            command.append(" -noupdate"); // Force no rechecking for updates
+            Runtime.getRuntime().exec(command.toString(), args);
+          }
+          System.exit(0);
         } else if (startupOutput != null) {
           startupOutput.start(); // Show Startup again
         }

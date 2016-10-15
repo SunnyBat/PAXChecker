@@ -21,11 +21,24 @@ public class PaxsiteReader {
 
   private Expo expoToCheck;
 
+  /**
+   * Creates a new PaxsiteReader for the given Expo. If toCheck is null, this defaults to Expo.WEST.
+   *
+   * @param toCheck The Expo to check
+   */
   public PaxsiteReader(Expo toCheck) {
+    if (toCheck == null) {
+      toCheck = Expo.WEST;
+    }
     expoToCheck = toCheck;
   }
 
-  public String getCurrentButtonLink() {
+  /**
+   * Gets the current Showclix link on the registration page.
+   *
+   * @return The first Showclix link found, or "[STATUS]" if an exception occurs
+   */
+  public String getCurrentShowclixLink() {
     try {
       URL urlToConnectTo = new URL(getWebsiteLink(expoToCheck) + "/registration");
       String link = findShowclixLink(urlToConnectTo);
@@ -35,6 +48,12 @@ public class PaxsiteReader {
     return "[NoConnection]";
   }
 
+  /**
+   * Finds the first Showclix link on the given page.
+   *
+   * @param urlToConnectTo The URL to connect to
+   * @return The first Showclix link found, or "[STATUS]" if an exception occurs.
+   */
   private String findShowclixLink(URL urlToConnectTo) {
     BufferedReader lineReader = null;
     try {
@@ -68,7 +87,7 @@ public class PaxsiteReader {
           .setErrorMessage("An unknown error has occurred while attempting to read the PAX website.")
           .buildWindow();
       System.out.println("ERROR");
-      return null;
+      return "[ERROR]";
     } finally {
       try {
         if (lineReader != null) {
@@ -83,7 +102,14 @@ public class PaxsiteReader {
     return "[NoFind]";
   }
 
-  private BufferedReader setUpConnection(URL urlToConnectTo) throws UnknownHostException, MalformedURLException, SocketTimeoutException, IOException {
+  /**
+   * Sets up a BufferedReader to read from the given URL.
+   *
+   * @param urlToConnectTo The URL to read from
+   * @return The BufferedReader to read from
+   * @throws IOException If an IOException occurs while setting up the connection
+   */
+  private BufferedReader setUpConnection(URL urlToConnectTo) throws IOException {
     InputStream rawInputStream = null;
     BufferedReader lineReader;
     HttpURLConnection httpCon = Browser.setUpConnection(urlToConnectTo);

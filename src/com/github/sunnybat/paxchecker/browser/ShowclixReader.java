@@ -30,8 +30,17 @@ public class ShowclixReader {
   private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
   private boolean strictFiltering;
   private Expo expoToCheck;
+  private boolean errorConnecting;
 
+  /**
+   * Creates a new ShowclixReader object for the given Expo. If expo is null, this defaults to Expo.WEST.
+   *
+   * @param expo The Expo to check
+   */
   public ShowclixReader(Expo expo) {
+    if (expo == null) {
+      expo = Expo.WEST;
+    }
     expoToCheck = expo;
   }
 
@@ -95,40 +104,77 @@ public class ShowclixReader {
    * @return All relevant event URLs
    */
   public Set<String> getAllEventURLs() {
+    errorConnecting = false;
     Set<String> retSet = new TreeSet<>();
     Set<String> sellerEvents = getAllSellerEventURLs(expoToCheck);
     if (sellerEvents == null) {
       System.out.println("SR: Error downloading Seller Event URLs");
-      return null;
+      errorConnecting = true;
+    } else {
+      retSet.addAll(sellerEvents);
     }
-    retSet.addAll(sellerEvents);
     Set<String> partnerEvents = getAllPartnerEventURLs(expoToCheck);
     if (partnerEvents == null) {
       System.out.println("SR: Error downloading Partner Event URLs");
-      return null;
+      errorConnecting = true;
+    } else {
+      retSet.addAll(partnerEvents);
     }
-    retSet.addAll(partnerEvents);
     Set<String> venueEvents = getAllVenueEventURLs(expoToCheck);
     if (venueEvents == null) {
       System.out.println("SR: Error downloading Partner Event URLs");
-      return null;
+      errorConnecting = true;
+    } else {
+      retSet.addAll(venueEvents);
     }
-    retSet.addAll(venueEvents);
     return retSet;
   }
 
+  /**
+   * Returns whether or not the last call to getAllEventURLs() was unable to download all of the events.
+   *
+   * @return True if an error occurred, false if not
+   */
+  public boolean wasErrorConnecting() {
+    return errorConnecting;
+  }
+
+  /**
+   * Gets all the relevant Event URLs from the Partner class in the Showclix API.
+   *
+   * @param expo The Expo to get events for
+   * @return A Set with all the events, or null if an error occurred
+   */
   private Set<String> getAllPartnerEventURLs(Expo expo) {
     return getAllPartnerEventURLs(getPartnerID(expo));
   }
 
+  /**
+   * Gets all the relevant Event URLs from the Seller class in the Showclix API.
+   *
+   * @param expo The Expo to get events for
+   * @return A Set with all the events, or null if an error occurred
+   */
   private Set<String> getAllSellerEventURLs(Expo expo) {
     return getAllSellerEventURLs(getSellerID(expo));
   }
 
+  /**
+   * Gets all the relevant Event URLs from the Venue class in the Showclix API.
+   *
+   * @param expo The Expo to get events for
+   * @return A Set with all the events, or null if an error occurred
+   */
   private Set<String> getAllVenueEventURLs(Expo expo) {
     return getAllVenueEventURLs(getVenueID(expo));
   }
 
+  /**
+   * Gets all the Event URLs from the give JSONObject. This assumes the standard format from the api.showclix.com/[CLASS]/[ID]/events page.
+   *
+   * @param obj The JSONObject to parse
+   * @return A Set with all the relevant ID URLs. This will never be null.
+   */
   private Set<String> getAllEventURLs(JSONObject obj) {
     Set<String> retSet = new TreeSet<>();
     for (String eventID : (Iterable<String>) obj.keySet()) { // Parse through Event IDs
@@ -168,7 +214,7 @@ public class ShowclixReader {
    * Gets all Event URLs from the given Seller ID. Note that the page should be JSON-formatted.
    *
    * @param sellerID The Seller ID to read
-   * @return The Set of all the Event URLs listed on the given page. This is guaranteed to be non-null.
+   * @return The Set of all the Event URLs listed on the given page, or null if an error occurs.
    */
   private Set<String> getAllSellerEventURLs(int sellerID) {
     try {
@@ -183,6 +229,12 @@ public class ShowclixReader {
     return null;
   }
 
+  /**
+   * Gets all Event URLs from the given Partner ID. Note that the page should be JSON-formatted.
+   *
+   * @param partnerID The Partner ID to read
+   * @return The Set of all the Event URLs listed on the given page, or null if an error occurs.
+   */
   private Set<String> getAllPartnerEventURLs(int partnerID) {
     try {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_PARTNER + partnerID + EVENTS_ATTRIBUTE_LINK));
@@ -196,6 +248,12 @@ public class ShowclixReader {
     return null;
   }
 
+  /**
+   * Gets all Event URLs from the given Venue ID. Note that the page should be JSON-formatted.
+   *
+   * @param venueID The Venue ID to read
+   * @return The Set of all the Event URLs listed on the given page, or null if an error occurs.
+   */
   private Set<String> getAllVenueEventURLs(int venueID) {
     try {
       String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_VENUE + venueID + EVENTS_ATTRIBUTE_LINK));
@@ -209,6 +267,12 @@ public class ShowclixReader {
     return null;
   }
 
+  /**
+   * Parses the given JSON text for any events.
+   *
+   * @param jsonText The JSON to parse
+   * @return A Set with all the relevant events from jsonText. This is guaranteed to be non-null, but may be empty.
+   */
   private Set<String> parseEvents(String jsonText) {
     Set<String> retSet = new TreeSet<>();
     if (jsonText == null) {
@@ -230,6 +294,12 @@ public class ShowclixReader {
     return retSet;
   }
 
+  /**
+   * Gets the Partner ID for the given expo.
+   *
+   * @param expo The Expo to get the Partner ID for
+   * @return The Parter ID for the given Expo
+   */
   private static int getPartnerID(Expo expo) {
     if (expo == null) {
       return 48;
@@ -247,6 +317,12 @@ public class ShowclixReader {
     }
   }
 
+  /**
+   * Gets the Seller ID for the given expo.
+   *
+   * @param expo The Expo to get the Seller ID for
+   * @return The Seller ID for the given Expo
+   */
   private static int getSellerID(Expo expo) {
     if (expo == null) {
       return 16886;
@@ -266,6 +342,12 @@ public class ShowclixReader {
     }
   }
 
+  /**
+   * Gets the Venue ID for the given expo.
+   *
+   * @param expo The Expo to get the Venue ID for
+   * @return The Venue ID for the given Expo
+   */
   private static int getVenueID(Expo expo) {
     if (expo == null) {
       return 13961;

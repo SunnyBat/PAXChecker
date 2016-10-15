@@ -71,12 +71,21 @@ public class Browser {
     }
   }
 
+  /**
+   * Sets up a new HttpURLConnection with PAXChecker defaults. Connection has a 5-second connection timeout, 6-second read timeout.
+   *
+   * @param url The URL to connect to
+   * @return A new HttpURLConnection, or null if unable to set it up or if url is null
+   */
   public static HttpURLConnection setUpConnection(URL url) { // NOTE: getURL() method on this will only change to redicted URL once data has been read
+    if (url == null) {
+      return null;
+    }
     try {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
       httpCon.setConnectTimeout(5000);
-      httpCon.setReadTimeout(3100); // Showclix API request throttling = 3 seconds
+      httpCon.setReadTimeout(6000); // Showclix API request throttling = 3 seconds, give some extra time
       return httpCon;
     } catch (Exception e) {
       e.printStackTrace();
@@ -93,6 +102,9 @@ public class Browser {
   public static String unshortenURL(String toShorten) {
     try {
       HttpURLConnection connection = setUpConnection(new URL(toShorten)); // Create new HttpURLConnection
+      if (connection == null) {
+        return null;
+      }
       if (connection.getResponseCode() >= 300 && connection.getResponseCode() < 400) { // Throws IOException if 404
         if (connection.getHeaderField("Location") != null) {
           return unshortenURL(connection.getHeaderField("Location"));
