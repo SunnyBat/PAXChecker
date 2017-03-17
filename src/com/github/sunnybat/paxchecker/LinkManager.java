@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.audio.Sound;
-import com.github.sunnybat.commoncode.email.EmailAccount;
+import com.github.sunnybat.commoncode.email.smtp.EmailAccount;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.status.Tickets;
 import java.awt.GraphicsEnvironment;

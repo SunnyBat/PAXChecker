@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
 public class NotificationHandler {
 
   private final String NOTIFICATIONS_LINK = "https://dl.orangedox.com/mNPQJr3JDBfyk3ytaQ/PAXCheckerNotifications.txt?dl=1";
-  private final String NOTIFICATIONS_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerNotifications.txt";
+  private final String NOTIFICATIONS_LINK_ANONYMOUS = "https://www.dropbox.com/s/gsy3dfraghhse80/PAXCheckerNotifications.txt?dl=1";
   private final ArrayList<Notification> notificationList = new ArrayList<>();
   private String lastNotificationID = "";
   private boolean anonymousStatistics;
@@ -37,7 +37,7 @@ public class NotificationHandler {
       this.lastNotificationID = lastNotificationID;
     }
   }
-  
+
   public void setAnonymous() {
     anonymousStatistics = true;
   }

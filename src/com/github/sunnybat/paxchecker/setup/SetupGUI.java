@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker.setup;
 
-import com.github.sunnybat.commoncode.email.EmailAddress;
+import com.github.sunnybat.commoncode.email.smtp.EmailAddress;
 import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.utilities.Encryption;
 import com.github.sunnybat.paxchecker.PAXChecker;

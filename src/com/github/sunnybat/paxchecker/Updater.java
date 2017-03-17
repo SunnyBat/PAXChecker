@@ -18,9 +18,9 @@ public class Updater {
   private static final String PATCH_NOTES_LINK = "https://dl.orangedox.com/r29siEtUhPNW4FKg7T/PAXCheckerUpdates.txt?dl=1";
   private static final String UPDATE_LINK = "https://dl.orangedox.com/TXu5eUDa2Ds3RSKVUI/PAXChecker.jar?dl=1";
   private static final String BETA_UPDATE_LINK = "https://dl.orangedox.com/BqkMXYrpYjlBEbfVmd/PAXCheckerBETA.jar?dl=1";
-  private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerUpdates.txt?dl=1";
-  private static final String UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar?dl=1";
-  private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerBETA.jar?dl=1";
+  private static final String PATCH_NOTES_LINK_ANONYMOUS = "https://www.dropbox.com/s/fr3cg7nc99pztkk/PAXCheckerUpdates.txt?dl=1";
+  private static final String UPDATE_LINK_ANONYMOUS = "https://www.dropbox.com/s/4rzsmbvtblm8ee9/PAXChecker.jar?dl=1";
+  private static final String BETA_UPDATE_LINK_ANONYMOUS = "https://www.dropbox.com/s/ugctx94a0vmsv6n/PAXCheckerBETA.jar?dl=1";
   private final String programVersion;
   private String patchNotes;
   private boolean anonymous = false;

@@ -14,7 +14,6 @@ import java.net.URLConnection;
  */
 public class ResourceDownloader {
 
-  private final String BASE_URL = "https://dl.dropboxusercontent.com/u/16152108/PAXCheckerResources/";
   private boolean redownload;
 
   public ResourceDownloader() {
@@ -29,7 +28,7 @@ public class ResourceDownloader {
   }
 
   public void downloadResources() {
-    for (String fileName : ResourceConstants.DEFAULT_FILE_NAMES) {
+    for (String fileName : ResourceConstants.DEFAULT_FILE_INFO.keySet()) {
       downloadIfNecessary(fileName, new File(ResourceConstants.RESOURCE_LOCATION + fileName));
     }
   }
@@ -38,7 +37,7 @@ public class ResourceDownloader {
     if (!downloadTo.exists() || redownload) {
       startingFile(fileName);
       try {
-        downloadResource(BASE_URL + fileName, downloadTo);
+        downloadResource(ResourceConstants.DEFAULT_FILE_INFO.get(fileName), downloadTo);
       } catch (IOException ioe) {
         ioe.printStackTrace();
       }

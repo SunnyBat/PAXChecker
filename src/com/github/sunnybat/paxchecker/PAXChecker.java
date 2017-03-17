@@ -1,6 +1,6 @@
 package com.github.sunnybat.paxchecker;
 
-import com.github.sunnybat.commoncode.email.EmailAccount;
+import com.github.sunnybat.commoncode.email.smtp.EmailAccount;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.startup.LoadingCLI;
@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.4 R1";
+  public static final String VERSION = "3.0.4";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
