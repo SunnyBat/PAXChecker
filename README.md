@@ -1,7 +1,7 @@
 PAXChecker
 ==========
 
-Program download is available here: https://dl.dropboxusercontent.com/u/16152108/PAXChecker.jar
+Program download is available here: https://www.dropbox.com/s/4rzsmbvtblm8ee9/PAXChecker.jar?dl=1
 
 Save the file to your computer, then run it. If it doesn't run, check to make sure you have Java 7 or above installed. If not, you'll need to install it. Feel free to message or email me if you're having trouble running it.
 
@@ -54,4 +54,4 @@ The following libraries are used for the PAXChecker:
 
 -CommonCode (https://www.github.com/SunnyBat/PAXChecker)
 
-You can download all the libraries (except CommonCode, which I recommend adding as a project dependency in your IDE and pulling whenever an update is availabe) here: https://dl.dropboxusercontent.com/u/16152108/PAXCheckerLibraries.zip
+You can download all the libraries (except CommonCode, which I recommend adding as a project dependency in your IDE and pulling whenever an update is availabe) here: https://www.dropbox.com/s/6pq55jdi9mfaj8o/PAXCheckerLibraries.zip?dl=0
