@@ -84,6 +84,7 @@ public class Browser {
     try {
       HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
       httpCon.addRequestProperty("User-Agent", "Mozilla/4.0");
+      httpCon.addRequestProperty("Cache-Control", "no-cache"); // Request that nothing cache the webpage so we get the latest version
       httpCon.setConnectTimeout(5000);
       httpCon.setReadTimeout(6000); // Showclix API request throttling = 3 seconds, give some extra time
       return httpCon;

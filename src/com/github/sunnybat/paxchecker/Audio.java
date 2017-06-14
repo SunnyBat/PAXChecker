@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
@@ -92,10 +93,7 @@ public class Audio {
     try {
       if (clip != null) {
         clip.stop();
-        clip.setFramePosition(0);
       }
-      clip = AudioSystem.getClip();
-      clip.addLineListener(listener);
       InputStream audioSrc;
       if (alarmFile != null) {
         audioSrc = new FileInputStream(alarmFile);
@@ -104,11 +102,19 @@ public class Audio {
       }
       InputStream bufferedIn = new BufferedInputStream(audioSrc);
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
+      DataLine.Info lineInfo = new DataLine.Info(Clip.class, inputStream.getFormat());
+      clip = (Clip) AudioSystem.getLine(lineInfo);
+      clip.addLineListener(new LListener());
       clip.open(inputStream);
       clip.start();
       return true;
-    } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
+      new ErrorBuilder()
+          .setErrorTitle(e.toString())
+          .setErrorMessage(e.getMessage() == null ? "An error has occurred while attempting to play the alarm." : e.getMessage())
+          .setError(e)
+          .buildWindow();
     }
     return false;
   }
