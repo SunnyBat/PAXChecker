@@ -37,7 +37,13 @@ public class LinkManager {
   }
 
   public void openLink(String url, boolean sendEmail, String message) {
-    if (url != null && !hasOpenedLink(url)) {
+    if (url == null) {
+      return;
+    }
+    if (url.endsWith("/")) {
+      url = url.substring(0, url.length() - 1);
+    }
+    if (!hasOpenedLink(url)) {
       linksOpened.add(url);
       Browser.openLinkInBrowser(url);
       /*if (alarm != null) {

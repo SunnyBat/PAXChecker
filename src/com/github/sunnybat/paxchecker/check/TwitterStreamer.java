@@ -28,7 +28,7 @@ import twitter4j.conf.ConfigurationBuilder;
 public abstract class TwitterStreamer {
 
   private Twitter myTwitter;
-  private List<String> usersToCheck = new ArrayList<>(Arrays.asList("Official_PAX", "rkhoo")); // No @ in the raw list!
+  private List<String> usersToCheck = new ArrayList<>(Arrays.asList("PAX_Badges", "Official_PAX", "rkhoo")); // No @ in the raw list!
   private List<String> keywords = new ArrayList<>(Arrays.asList("pax", "passes", "ticket", "tix", "sale", "badge", "showclix", "byoc", "hotel")); // All lowercase
   private TwitterStream myStream;
   private int successiveErrorCount;
