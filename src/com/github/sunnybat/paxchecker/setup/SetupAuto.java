@@ -31,9 +31,13 @@ public class SetupAuto implements Setup {
   }
 
   private String getArg(String arg) {
+      return getArg(arg, 1);
+  }
+
+  private String getArg(String arg, int indexesOut) {
     for (int i = 0; i < args.length; i++) {
-      if (args[i].equals(arg) && i < args.length - 1) {
-        return args[i+1];
+      if (args[i].equals(arg) && i < args.length - indexesOut) {
+        return args[i+indexesOut];
       }
     }
     return ""; // Probably shouldn't return null?
@@ -118,22 +122,22 @@ public class SetupAuto implements Setup {
 
   @Override
   public String getTwitterConsumerKey() {
-    return getArg("-consumerkey");
+    return getArg("-twitterkeys", 1);
   }
 
   @Override
   public String getTwitterConsumerSecret() {
-    return getArg("-consumersecret");
+    return getArg("-twitterkeys", 2);
   }
 
   @Override
   public String getTwitterApplicationKey() {
-    return getArg("-applicationkey");
+    return getArg("-twitterkeys", 3);
   }
 
   @Override
   public String getTwitterApplicationSecret() {
-    return getArg("-applicationsecret");
+    return getArg("-twitterkeys", 4);
   }
 
   @Override

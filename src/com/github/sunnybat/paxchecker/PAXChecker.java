@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.5";
+  public static final String VERSION = "3.0.9 R1";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -52,7 +52,10 @@ public final class PAXChecker {
     Map<String, String> properties = new HashMap<>();
     String[] twitterTokens = new String[4];
     for (int i = 0; i < args.length; i++) {
-      switch (args[i].toLowerCase()) {
+      if (args[i].startsWith("-")) { // Lowercase everything
+        args[i] = args[i].toLowerCase();
+      }
+      switch (args[i]) {
         case "-follow":
         case "-checktwitter":
           followList.add(args[i + 1]);
