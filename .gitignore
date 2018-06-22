@@ -18,6 +18,8 @@ lib/
 nbproject/
 build.xml
 manifest.mf
+\.gradle/
+\.nb-gradle/
 
 # Ignore project-specific stuff #
 /PAXChecker.iml

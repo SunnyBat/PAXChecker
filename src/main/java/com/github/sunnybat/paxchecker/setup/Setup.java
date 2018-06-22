@@ -1,5 +1,6 @@
 package com.github.sunnybat.paxchecker.setup;
 
+import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import java.util.List;
 
 /**
@@ -16,25 +17,11 @@ public interface Setup {
   public void promptForSettings();
 
   /**
-   * Gets the username to use for sending emails and logging into the email account.
+   * Gets the GmailAccount to use for sending emails. This will be configured such that all that needs to be called is sendEmail().
    *
-   * @return The username to use
+   * @return The GmailAccount to use
    */
-  public String getEmailUsername();
-
-  /**
-   * Gets the password to use for logging into the email account.
-   *
-   * @return The password to use
-   */
-  public String getEmailPassword();
-
-  /**
-   * Gets all the email addresses to send emails to. This may contain any amount of addresses, including none.
-   *
-   * @return The email addresses to send emails to.
-   */
-  public List<String> getEmailAddresses();
+  public EmailAccount getEmailAccount();
 
   /**
    * Gets whether or not to check the PAX website for updates.

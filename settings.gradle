@@ -1,0 +1,5 @@
+rootProject.name = 'PAXChecker'
+
+// Include CommonCode from different folder
+include ":CommonCode"
+project(":CommonCode").projectDir = file("../CommonCode")

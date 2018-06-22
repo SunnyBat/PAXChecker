@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.audio.Sound;
-import com.github.sunnybat.commoncode.email.smtp.EmailAccount;
+import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.status.Tickets;
 import java.awt.GraphicsEnvironment;
@@ -51,12 +51,12 @@ public class LinkManager {
       }*/
       Audio.playAlarm();
       if (!GraphicsEnvironment.isHeadless()) {
-        Tickets ticketWindow = new Tickets(url); // CHECK: Should I only allow one Tickets at a time?
+        Tickets ticketWindow = new Tickets(url);
         ticketWindow.showWindow();
       }
       if (email != null && sendEmail) {
         try {
-          email.sendMessage("PAXChecker", message);
+          email.sendEmail("PAXChecker", message);
         } catch (IllegalStateException e) { // In case we send too fast
           System.out.println("Unable to send email (" + e.getMessage() + ")");
         }

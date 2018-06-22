@@ -8,10 +8,10 @@ import java.util.TreeMap;
  *
  * @author SunnyBat
  */
-class ResourceConstants {
+public class ResourceConstants {
 
   public static final String RESOURCE_LOCATION = getResourceLocation();
-  public static final String[] DEFAULT_FILE_NAMES = {"Alarm.wav", "Alert.png", "PAXWest.png", "PAXEast.png", "PAXSouth.png", "PAXAus.png"};
+  public static final String CLIENT_SECRET_JSON_PATH = "client_secret.json";
   public static final Map<String, String> DEFAULT_FILE_INFO = getDefaultFileInfo();
 
   private static Map<String, String> getDefaultFileInfo() { // TODO: Better method than this... Probably file with constants
@@ -31,7 +31,7 @@ class ResourceConstants {
       return System.getenv("APPDATA") + "/PAXChecker/"; // Has / and \ in path, but Java apparently doesn't care
     } else if (os.contains("mac")) {
       System.out.println("RD PATH: " + System.getProperty("user.home") + "/Library/Application Support/PAXChecker/");
-      return System.getProperty("user.home") + "/Library/Application Support/PAXChecker/"; // TODO: Mac location
+      return System.getProperty("user.home") + "/Library/Application Support/PAXChecker/";
     } else if (os.contains("linux") || os.contains("ubuntu")) {
       return System.getProperty("user.home") + "/.PAXChecker/";
     } else { // Store in current folder, we have no clue what OS this is

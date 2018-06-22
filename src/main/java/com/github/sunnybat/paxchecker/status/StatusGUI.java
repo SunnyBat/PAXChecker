@@ -1,7 +1,6 @@
 package com.github.sunnybat.paxchecker.status;
 
-import com.github.sunnybat.commoncode.email.smtp.EmailAccount;
-import com.github.sunnybat.commoncode.email.smtp.EmailAddress;
+import com.github.sunnybat.commoncode.email.EmailAddress;
 import com.github.sunnybat.paxchecker.DataTracker;
 import com.github.sunnybat.paxchecker.Expo;
 import com.github.sunnybat.paxchecker.browser.Browser;
@@ -138,7 +137,7 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
     } else {
       JLEmailPhone.setText(emailAddress + " -- Multiple Numbers (Mouse Here to View)");
       String list = "<html>";
-      String[] allAddresses = EmailAccount.convertToString(addresses).split(";");
+      String[] allAddresses = EmailAddress.convertToString(addresses).split(";");
       for (int a = 0; a < allAddresses.length; a++) {
         list += allAddresses[a].trim();
         if (a + 1 != allAddresses.length) {

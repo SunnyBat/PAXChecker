@@ -25,21 +25,21 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
+          <Component id="JTPMainPane" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" max="32767" attributes="0"/>
+          <Component id="JTPMainPane" alignment="0" pref="529" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+    <Container class="javax.swing.JTabbedPane" name="JTPMainPane">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="jPanel1">
+        <Container class="javax.swing.JPanel" name="JPSetup">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Setup">
@@ -54,29 +54,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel2" max="32767" attributes="0"/>
-                          <Component id="jLabel1" alignment="0" pref="392" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="jLabel4" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="jLabel2" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="jLabel3" min="-2" pref="65" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="JTFEmail" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="JPFPassword" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="JTFCellNum" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="JCBCarrier" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                          </Group>
-                          <Component id="JPPhonePanel" alignment="0" max="32767" attributes="0"/>
-                          <Component id="JBAddPhone" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
                           <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
                           <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
                           <Component id="JLSecondsBetweenChecks" alignment="0" max="32767" attributes="0"/>
@@ -108,6 +86,32 @@
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jLabel11" max="32767" attributes="0"/>
+                                  <Component id="jLabel2" max="32767" attributes="0"/>
+                                  <Component id="jLabel3" max="32767" attributes="0"/>
+                                  <Component id="jLabel4" alignment="1" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="JLEmailType" min="-2" max="-2" attributes="0"/>
+                                          <Component id="JLEmailStatus" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="jButton1" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="JLEmailAddress" min="-2" max="-2" attributes="0"/>
+                                          <Component id="JLEmailList" min="-2" pref="316" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -118,29 +122,32 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JLEmailType" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="JLEmailStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jButton1" max="32767" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JTFEmail" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                          <Component id="JLEmailAddress" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JPFPassword" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JLEmailList" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JTFCellNum" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBCarrier" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="JPPhonePanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JBAddPhone" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="JCBCheckWebsite" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -183,56 +190,6 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="PAXChecker Setup"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Email"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="JTFEmail">
-              <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Email address to send texts with. Currently,&lt;br&gt;&#xa;only Yahoo! and Gmail are supported.&lt;br&gt;&#xa;Put your full email addres in, otherwise it&lt;br&gt;&#xa;defaults to @yahoo.com.&lt;br&gt;&#xa;See the Instructions tab for how to use emails&lt;br&gt;&#xa;other than Yahoo! or Gmail.&#xa;&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JPasswordField" name="JPFPassword">
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Password"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Cell Num"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="JTFCellNum">
-              <Properties>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Specify the number you want to receive texts at.&lt;br&gt;&#xa;Only put your number - no spaces, no leading 1.&lt;br&gt;&#xa;You may use dashes -- or perentheses ().&lt;br&gt;&#xa;If you use a different carrier, you may find their&lt;br&gt;&#xa;texting email address extension at&lt;br&gt;&#xa;www.emailtextmessages.com and put it onto the&lt;br&gt;&#xa;end of your number.&lt;br&gt;&#xa;Examples:&lt;br&gt;&#xa;(123)-456-7890 [Verizon selected in dropdown box]&lt;br&gt;&#xa;1234567890@car.rier.net&lt;br&gt;&#xa;123-4567890@car.rier.net&lt;br&gt;&#xa;&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="JCBCarrier">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="15">
-                    <StringItem index="0" value="AT&amp;T (MMS)"/>
-                    <StringItem index="1" value="AT&amp;T (SMS)"/>
-                    <StringItem index="2" value="Verizon"/>
-                    <StringItem index="3" value="Sprint"/>
-                    <StringItem index="4" value="T-Mobile"/>
-                    <StringItem index="5" value="U.S. Cellular"/>
-                    <StringItem index="6" value="Bell"/>
-                    <StringItem index="7" value="Rogers"/>
-                    <StringItem index="8" value="Fido"/>
-                    <StringItem index="9" value="Koodo"/>
-                    <StringItem index="10" value="Telus"/>
-                    <StringItem index="11" value="Virgin (CAN)"/>
-                    <StringItem index="12" value="Wind"/>
-                    <StringItem index="13" value="Sasktel"/>
-                    <StringItem index="14" value="[Other]"/>
-                  </StringArray>
-                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="JLSecondsBetweenChecks">
@@ -305,36 +262,6 @@
                 <Property name="text" type="java.lang.String" value="PAX Expo to Check"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="jPanel2">
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-            </Container>
-            <Container class="javax.swing.JPanel" name="JPPhonePanel">
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="JPPhonePanel.setLayout(new javax.swing.BoxLayout(JPPhonePanel, javax.swing.BoxLayout.Y_AXIS));"/>
-              </AuxValues>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
-            </Container>
-            <Component class="javax.swing.JButton" name="JBAddPhone">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Add Another Phone Number"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBAddPhoneActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JCheckBox" name="JCBCheckTwitter">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Scan @Offical_PAX Twitter"/>
@@ -376,7 +303,7 @@
                                   <Component id="filler1" min="-2" pref="6" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="JTFConsumerKey" alignment="1" pref="280" max="32767" attributes="0"/>
+                                      <Component id="JTFConsumerKey" alignment="1" max="32767" attributes="0"/>
                                       <Component id="JTFConsumerSecret" alignment="1" max="32767" attributes="0"/>
                                       <Component id="JTFApplicationKey" max="32767" attributes="0"/>
                                       <Component id="JTFApplicationSecret" alignment="1" max="32767" attributes="0"/>
@@ -490,9 +417,57 @@
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Send a text to the given email address&lt;br&gt;&#xa;if a link is found in a Tweet.If you receive&lt;br&gt;&#xa;Tweets directly from Twitter, this option&lt;br&gt;&#xa;will likely be redundant (and therefore not&lt;br&gt;&#xa;recommended).&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JLabel" name="jLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Email Type:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="JLEmailType">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Email Status:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="JLEmailStatus">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="jButton1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Configure Email"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Email Account:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="JLEmailAddress">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel11">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Email List:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="JLEmailList">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel6">
+        <Container class="javax.swing.JPanel" name="JPInstructions">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Instructions">
@@ -509,7 +484,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane5" alignment="0" pref="517" max="32767" attributes="0"/>
+                  <Component id="jScrollPane5" alignment="0" pref="501" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -537,7 +512,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel4">
+        <Container class="javax.swing.JPanel" name="JPPatchNotes">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Patch Notes">
@@ -554,7 +529,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane4" alignment="0" pref="517" max="32767" attributes="0"/>
+                  <Component id="jScrollPane4" alignment="0" pref="501" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -566,7 +541,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea4">
+                <Component class="javax.swing.JTextArea" name="JTAPatchNotes">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="columns" type="int" value="20"/>
@@ -580,7 +555,7 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel3">
+        <Container class="javax.swing.JPanel" name="JPExtras">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Extra">
@@ -597,7 +572,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane6" alignment="0" pref="517" max="32767" attributes="0"/>
+                  <Component id="jScrollPane6" alignment="0" pref="501" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -609,24 +584,24 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextPane" name="JTPExtra">
+                <Component class="javax.swing.JTextPane" name="JTPExtras">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
                     </Property>
                     <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
-                    <Property name="text" type="java.lang.String" value="[Located in Extra.html]" preCode="JTPExtra.setEditable(false);&#xa;JTPExtra.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType(&quot;text/html&quot;));"/>
+                    <Property name="text" type="java.lang.String" value="[Located in Extra.html]" preCode="JTPExtras.setEditable(false);&#xa;JTPExtras.setEditorKit(javax.swing.JEditorPane.createEditorKitForContentType(&quot;text/html&quot;));"/>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JTPExtra.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {&#xa;    public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {&#xa;        if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {&#xa;            Browser.openLinkInBrowser(e.getURL());&#xa;        }&#xa;    }&#xa;});"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="JTPExtras.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {&#xa;    public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent e) {&#xa;        if (e.getEventType() == javax.swing.event.HyperlinkEvent.EventType.ACTIVATED) {&#xa;            Browser.openLinkInBrowser(e.getURL());&#xa;        }&#xa;    }&#xa;});"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="jPanel5">
+        <Container class="javax.swing.JPanel" name="JPPreferences">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Preferences">
@@ -686,7 +661,7 @@
                       <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
                       <Component id="JBSaveSettings" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="243" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="227" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

@@ -1,6 +1,7 @@
 package com.github.sunnybat.paxchecker;
 
-import com.github.sunnybat.commoncode.email.smtp.EmailAccount;
+import com.github.sunnybat.commoncode.email.account.EmailAccount;
+import com.github.sunnybat.commoncode.email.account.SmtpAccount;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.startup.LoadingCLI;
@@ -33,7 +34,7 @@ import java.util.Map;
  */
 public final class PAXChecker {
 
-  public static final String VERSION = "3.0.9 R1";
+  public static final String VERSION = "4.0.0 R1";
   private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
   private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
@@ -158,7 +159,7 @@ public final class PAXChecker {
     }
 
     // SETUP
-    loadingOutput.stop();
+    loadingOutput.setStatus("Creating Setup");
     Setup mySetup;
     if (hasArgument(args, "-autostart")) {
       mySetup = new SetupAuto(args);
@@ -173,6 +174,7 @@ public final class PAXChecker {
       }
       mySetup = myGUI;
     }
+    loadingOutput.stop();
     mySetup.promptForSettings(); // Might take a while
     twitterTokens[0] = mySetup.getTwitterConsumerKey();
     twitterTokens[1] = mySetup.getTwitterConsumerSecret();
@@ -190,13 +192,8 @@ public final class PAXChecker {
     // SET UP EMAIL ACCOUNT
     EmailAccount emailAccount;
     try {
-      emailAccount = new EmailAccount(mySetup.getEmailUsername(), mySetup.getEmailPassword());
-      for (String s : mySetup.getEmailAddresses()) {
-        emailAccount.addEmailAddress(s);
-      }
-      for (String key : properties.keySet()) {
-        emailAccount.setProperty(key, properties.get(key));
-      }
+      emailAccount = mySetup.getEmailAccount();
+      // TODO: Add Properties to SmtpAccount if necessary
     } catch (IllegalArgumentException e) {
       emailAccount = null;
     }
@@ -204,7 +201,7 @@ public final class PAXChecker {
     if (!isHeadless) {
       StatusGUI statGUI;
       if (emailAccount != null) {
-        statGUI = new StatusGUI(myExpo, emailAccount.getUsername(), emailAccount.getAddressList());
+        statGUI = new StatusGUI(myExpo, emailAccount.getEmailAddress(), emailAccount.getBccAddressList());
       } else {
         statGUI = new StatusGUI(myExpo);
       }
@@ -364,7 +361,7 @@ public final class PAXChecker {
    *
    * @param status The StatusGUI window to update
    * @param checker The TicketChecker to use
-   * @param email The EmailAccount to use, or null for none
+   * @param email The SmtpAccount to use, or null for none
    * @param checkTime The time between checks
    * @throws NullPointerException if any arguments besides email are null
    */
@@ -394,7 +391,7 @@ public final class PAXChecker {
                 if (email != null) {
                   status.setInformationText("Sending test text...");
                   try {
-                    if (email.sendMessage("PAXChecker", "This is a test text.")) {
+                    if (email.sendEmail("PAXChecker", "This is a test text.")) {
                       status.setInformationText("Test text sent successfully!");
                     } else {
                       status.setInformationText("Unable to send test text");
