@@ -1,7 +1,6 @@
 package com.github.sunnybat.paxchecker;
 
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
-import com.github.sunnybat.commoncode.email.account.SmtpAccount;
 import com.github.sunnybat.commoncode.error.ErrorBuilder;
 import com.github.sunnybat.commoncode.preferences.PreferenceHandler;
 import com.github.sunnybat.commoncode.startup.LoadingCLI;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import twitter4j.Twitter;
 
 /**
  *
@@ -51,7 +51,6 @@ public final class PAXChecker {
     boolean isHeadless = GraphicsEnvironment.isHeadless() || hasArgument(args, "-cli");
     List<String> followList = new ArrayList<>();
     Map<String, String> properties = new HashMap<>();
-    String[] twitterTokens = new String[4];
     for (int i = 0; i < args.length; i++) {
       if (args[i].startsWith("-")) { // Lowercase everything
         args[i] = args[i].toLowerCase();
@@ -72,25 +71,6 @@ public final class PAXChecker {
             }
           } else {
             System.out.println("Not enough arguments specified for -property!");
-          }
-          break;
-        case "-twitterkeys":
-          if (args.length > i + 4) {
-            twitterTokens[0] = args[i + 1];
-            twitterTokens[1] = args[i + 2];
-            twitterTokens[2] = args[i + 3];
-            twitterTokens[3] = args[i + 4];
-            for (String s : twitterTokens) { // Note to myself: YES this is verified working, stop checking it
-              if (s.startsWith("-")) {
-                System.out.println("Invalid argument for -twitterkeys [" + s + "] ignoring -twitterkeys arguments");
-                for (int j = 0; j < twitterTokens.length; j++) {
-                  twitterTokens[j] = null;
-                }
-                break;
-              }
-            }
-          } else {
-            System.out.println("Not enough arguments specified for -twitterkeys!");
           }
           break;
         case "-savelog":
@@ -164,9 +144,9 @@ public final class PAXChecker {
     if (hasArgument(args, "-autostart")) {
       mySetup = new SetupAuto(args);
     } else if (isHeadless) {
-      mySetup = new SetupCLI(twitterTokens);
+      mySetup = new SetupCLI();
     } else {
-      SetupGUI myGUI = new SetupGUI(twitterTokens);
+      SetupGUI myGUI = new SetupGUI();
       if (patchNotes != null) {
         myGUI.setPatchNotesText(patchNotes);
       } else {
@@ -176,10 +156,6 @@ public final class PAXChecker {
     }
     loadingOutput.stop();
     mySetup.promptForSettings(); // Might take a while
-    twitterTokens[0] = mySetup.getTwitterConsumerKey();
-    twitterTokens[1] = mySetup.getTwitterConsumerSecret();
-    twitterTokens[2] = mySetup.getTwitterApplicationKey();
-    twitterTokens[3] = mySetup.getTwitterApplicationSecret();
 
     // PERIODIC UPDATES
     if (mySetup.shouldCheckForUpdatesDaily()) {
@@ -225,7 +201,7 @@ public final class PAXChecker {
     myLinkManager = new LinkManager(emailAccount);
     TicketChecker myChecker = initChecker(mySetup, isHeadless ? null : (StatusGUI) myStatus, myExpo);
     if (mySetup.shouldCheckTwitter()) {
-      TwitterStreamer tcheck = setupTwitter(myStatus, twitterTokens, mySetup.shouldTextTweets());
+      TwitterStreamer tcheck = setupTwitter(myStatus, mySetup.getTwitterAccount(), mySetup.shouldTextTweets());
       for (String s : followList) {
         tcheck.addUser(s);
       }
@@ -331,8 +307,8 @@ public final class PAXChecker {
     return myChecker;
   }
 
-  private static TwitterStreamer setupTwitter(final Status myStatus, final String[] keys, final boolean textTweets) {
-    return new TwitterStreamer(keys) {
+  private static TwitterStreamer setupTwitter(final Status myStatus, final Twitter myTwitter, final boolean textTweets) {
+    return new TwitterStreamer(myTwitter) {
       @Override
       public void twitterConnected() {
         myStatus.setTwitterStatus(true);

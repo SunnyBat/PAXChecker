@@ -4,12 +4,13 @@ import com.github.sunnybat.commoncode.email.EmailAddress;
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import com.github.sunnybat.commoncode.email.account.GmailAccount;
 import com.github.sunnybat.commoncode.email.account.SmtpAccount;
+import com.github.sunnybat.paxchecker.check.TwitterAccount;
+import com.github.sunnybat.paxchecker.check.TwitterAccountAuth;
 import com.github.sunnybat.paxchecker.resources.ResourceConstants;
 import com.google.api.client.util.ArrayMap;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import twitter4j.Twitter;
 
 /**
  * A command-line Setup. Gets all the information needed to run the PAXChecker
@@ -31,6 +32,7 @@ public class SetupCLI implements Setup {
     private boolean playAlarm;
     private int refreshTime = 30;
     private EmailAccount emailAccount;
+    private Twitter twitterAccount;
     private String consumerKey;
     private String consumerSecret;
     private String applicationKey;
@@ -256,22 +258,60 @@ public class SetupCLI implements Setup {
         System.out.print("Check Twitter (Y/N): ");
         checkTwitter = isResponseYes(in);
         if (checkTwitter) { // Checking Twitter
-            boolean inputKeys = true;
-            if (consumerKey != null) { // Keys have been specified
-                System.out.print("Twitter keys have already been specified. Would you like to specify new ones (Y/N)? ");
-                inputKeys = isResponseYes(in);
-            }
-            if (inputKeys) {
-                System.out.println("The next four prompts are for Twitter authentication. If you do not input valid keys for all of them,"
-                    + "Twitter scanning will not work. For more information, see http://redd.it/2nct50");
-                System.out.print("Twitter Consumer Key: ");
-                consumerKey = in.nextLine().trim();
-                System.out.print("Twitter Consumer Secret: ");
-                consumerSecret = in.nextLine().trim();
-                System.out.print("Twitter Application Key: ");
-                applicationKey = in.nextLine().trim();
-                System.out.print("Twitter Application Secret: ");
-                applicationSecret = in.nextLine().trim();
+            System.out.println("Would you like to authenticate with your Twitter account or use Twitter API keys?");
+            System.out.println("If you're not sure, it's easier to use your Twitter account.");
+            System.out.println("1. Use Twitter account");
+            System.out.println("2. Use API keys");
+            System.out.println("3. Don't use Twitter");
+            System.out.print("Option: ");
+            whileLoop:
+            while (true) {
+                int option = readNumericOption(in);
+                switch (option) {
+                    case -1: // Invalid option, prompt again
+                        continue;
+                    case 1:
+                        CommandLineTwitterAuth clAuth = new CommandLineTwitterAuth(in);
+                        while (!clAuth.isAuthenticated) {
+                            System.out.println("Authenticating with Twitter account.");
+                            TwitterAccount acc = new TwitterAccount();
+                            acc.authenticate(clAuth, true);
+                            if (!clAuth.isAuthenticated) {
+                                System.out.print("Would you like to try authenticating with Twitter again (Y/N)? ");
+                                if (isResponseYes(in)) {
+                                    break;
+                                }
+                            } else {
+                                twitterAccount = acc.getAccount();
+                            }
+                        }
+                        // TODO Twitter account auth
+                        break whileLoop;
+                    case 2:
+                        boolean inputKeys = true;
+                        if (consumerKey != null) { // Keys have been specified
+                            System.out.print("Twitter keys have already been specified. Would you like to specify new ones (Y/N)? ");
+                            inputKeys = isResponseYes(in);
+                        }
+                        if (inputKeys) {
+                            System.out.println("The next four prompts are for Twitter authentication. If you do not input valid keys for all of them,"
+                                + "Twitter scanning will not work. For more information, see http://redd.it/2nct50");
+                            System.out.print("Twitter Consumer Key: ");
+                            consumerKey = in.nextLine().trim();
+                            System.out.print("Twitter Consumer Secret: ");
+                            consumerSecret = in.nextLine().trim();
+                            System.out.print("Twitter Application Key: ");
+                            applicationKey = in.nextLine().trim();
+                            System.out.print("Twitter Application Secret: ");
+                            applicationSecret = in.nextLine().trim();
+                        }
+                        break whileLoop;
+                    case 3:
+                        checkTwitter = false;
+                        return;
+                    default:
+                        System.out.println("Invalid option. Please enter a valid option.");
+                }
             }
             System.out.print("Filter Twitter (Y/N): ");
             filterTwitter = isResponseYes(in);
@@ -299,6 +339,16 @@ public class SetupCLI implements Setup {
             e.printStackTrace();
             System.out.println("ERROR -- Unable to read input. Defaulting to YES/TRUE. Program will function normally.");
             return true;
+        }
+    }
+
+    private int readNumericOption(Scanner in) {
+        try {
+            return Integer.parseInt(in.nextLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Unable to read input. Please only enter a numeric value.");
+            return -1;
         }
     }
 
@@ -358,28 +408,66 @@ public class SetupCLI implements Setup {
     }
 
     @Override
-    public String getTwitterConsumerKey() {
-        return consumerKey;
-    }
-
-    @Override
-    public String getTwitterConsumerSecret() {
-        return consumerSecret;
-    }
-
-    @Override
-    public String getTwitterApplicationKey() {
-        return applicationKey;
-    }
-
-    @Override
-    public String getTwitterApplicationSecret() {
-        return applicationSecret;
+    public Twitter getTwitterAccount() {
+        return null;
     }
 
     @Override
     public boolean shouldCheckForUpdatesDaily() {
         return checkUpdatesDaily;
+    }
+
+    private class CommandLineTwitterAuth implements TwitterAccountAuth {
+
+        private boolean isAuthenticated = false;
+        private Scanner in;
+
+        public CommandLineTwitterAuth(Scanner in) {
+            this.in = in;
+        }
+
+        @Override
+        public void authFailure() {
+            isAuthenticated = false;
+            System.out.println("Twitter authentication failure");
+        }
+
+        @Override
+        public void authSuccess() {
+            isAuthenticated = true;
+            System.out.println("Successfully authenticated Twitter");
+        }
+
+        @Override
+        public void setAuthUrl(String url) {
+            System.out.println("If you do not have a browser on this machine, you can open it on another one. If your default browser does not automatically open, you must open this URL manually.");
+            System.out.println(url);
+        }
+
+        @Override
+        public String getAuthorizationPin() {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException iE) {
+            }
+            if (in.hasNextLine()) {
+                return in.nextLine();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public void promptForAuthorizationPin() {
+            System.out.println("Please complete the setup steps in your browser, then input the resulting PIN into this prompt.");
+            System.out.print("Twitter authentication PIN: ");
+        }
+
+        @Override
+        public void updateStatus(String status) {
+            System.out.println(status);
+        }
+
     }
 
 }

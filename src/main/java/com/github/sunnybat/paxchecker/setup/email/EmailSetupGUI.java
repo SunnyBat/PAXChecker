@@ -74,6 +74,8 @@ public class EmailSetupGUI extends javax.swing.JFrame {
             }
         }
 
+        // TODO: we need to initialize everything here, including Send To
+        // addresses and the EmailAccount we're using
         if (emailType != null && emailType.equalsIgnoreCase("SMTP")) {
             JRBSMTP.setSelected(true);
             setAuthPanel(authSmtp);
@@ -83,6 +85,7 @@ public class EmailSetupGUI extends javax.swing.JFrame {
             } else {
                 System.out.println("smtpIsNull");
             }
+            authSmtp.recordCurrentFields();
         } else {
             JRBGmail.setSelected(true);
             setAuthPanel(authGmail);
@@ -90,7 +93,10 @@ public class EmailSetupGUI extends javax.swing.JFrame {
             if (emailType != null) { // Assumed to be Gmail
                 authGmail.authenticate();
             }
+            authGmail.recordCurrentFields();
         }
+        savedEmailAddresses = getCurrentEmails();
+        savedIsGmail = JRBGmail.isSelected();
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {

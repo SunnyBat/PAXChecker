@@ -3,8 +3,10 @@ package com.github.sunnybat.paxchecker.setup;
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import com.github.sunnybat.commoncode.email.account.GmailAccount;
 import com.github.sunnybat.commoncode.email.account.SmtpAccount;
+import com.github.sunnybat.paxchecker.check.TwitterAccount;
+import com.github.sunnybat.paxchecker.check.TwitterAccountAuth;
 import com.github.sunnybat.paxchecker.resources.ResourceConstants;
-import com.github.sunnybat.paxchecker.resources.ResourceDownloader;
+import twitter4j.Twitter;
 
 /**
  *
@@ -128,23 +130,50 @@ public class SetupAuto implements Setup {
     }
 
     @Override
-    public String getTwitterConsumerKey() {
-        return getArg("-twitterkeys", 1);
-    }
+    public Twitter getTwitterAccount() {
+        final TwitterAccount myAccount;
+        if (hasArg("-twitterkeys")) {
+            myAccount = new TwitterAccount(getArg("-twitterkeys", 1), getArg("-twitterkeys", 2), getArg("-twitterkeys", 3), getArg("-twitterkeys", 4));
+        } else {
+            myAccount = new TwitterAccount();
+        }
 
-    @Override
-    public String getTwitterConsumerSecret() {
-        return getArg("-twitterkeys", 2);
-    }
+        // TODO Timeout after 60 seconds
+        myAccount.authenticate(new TwitterAccountAuth() {
+            @Override
+            public void authFailure() {
+                System.out.println("Unable to authenticate Twitter account.");
+            }
 
-    @Override
-    public String getTwitterApplicationKey() {
-        return getArg("-twitterkeys", 3);
-    }
+            @Override
+            public void authSuccess() {
+                System.out.println("Twitter account authenticated");
+            }
 
-    @Override
-    public String getTwitterApplicationSecret() {
-        return getArg("-twitterkeys", 4);
+            @Override
+            public void setAuthUrl(String url) {
+                System.out.println("Authorization URL: " + url);
+                System.out.println("You'll need to manually verify Twitter via command-line aruments before you can use it with auto-start.");
+                myAccount.interrupt();
+            }
+
+            @Override
+            public String getAuthorizationPin() {
+                return null;
+            }
+
+            @Override
+            public void promptForAuthorizationPin() {
+                System.out.println("PIN authorization request. Interrupting.");
+                myAccount.interrupt();
+            }
+
+            @Override
+            public void updateStatus(String status) {
+                System.out.println(status);
+            }
+        }, true); // Force PIN auth just so we don't try to open a ServerSocket
+        return myAccount.getAccount();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.github.sunnybat.paxchecker.setup;
 
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
-import java.util.List;
+import twitter4j.Twitter;
 
 /**
  * A basic Setup for the PAXChecker. Contains all the information needed to run the program.
@@ -93,13 +93,7 @@ public interface Setup {
    */
   public String getExpoToCheck();
 
-  public String getTwitterConsumerKey();
-
-  public String getTwitterConsumerSecret();
-
-  public String getTwitterApplicationKey();
-
-  public String getTwitterApplicationSecret();
+  public Twitter getTwitterAccount();
 
   /**
    * Gets whether or not to check for updates every 24 hours.
