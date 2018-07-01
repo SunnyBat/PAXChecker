@@ -3,8 +3,8 @@ package com.github.sunnybat.paxchecker.setup;
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import com.github.sunnybat.commoncode.email.account.GmailAccount;
 import com.github.sunnybat.commoncode.email.account.SmtpAccount;
+import com.github.sunnybat.commoncode.oauth.OauthStatusUpdater;
 import com.github.sunnybat.paxchecker.check.TwitterAccount;
-import com.github.sunnybat.paxchecker.check.TwitterAccountAuth;
 import com.github.sunnybat.paxchecker.resources.ResourceConstants;
 import twitter4j.Twitter;
 
@@ -52,24 +52,28 @@ public class SetupAuto implements Setup {
     public EmailAccount getEmailAccount() {
         EmailAccount toAuth;
         if (hasArg("-gmailapi")) {
-            toAuth = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
+            GmailAccount gmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
+            if (!gmailAccount.checkAutoAuth()) {
+                return null;
+            }
+            toAuth = gmailAccount;
         } else {
             String username = getArg("-username");
             String password = getArg("-password");
             if (username != null && password != null) {
-                toAuth = new SmtpAccount(username, password);
+                SmtpAccount smtpAccount = new SmtpAccount(username, password);
+                if (!smtpAccount.checkAuthentication()) {
+                    return null;
+                }
+                toAuth = smtpAccount;
             } else {
                 return null;
             }
         }
-        if (toAuth.checkAuthentication()) {
-            String emails = getArg("-cellnum");
-            if (emails != null) {
-                toAuth.addBccEmailAddress(emails);
-                return toAuth;
-            } else {
-                return null;
-            }
+        String emails = getArg("-cellnum");
+        if (emails != null) {
+            toAuth.addBccEmailAddress(emails);
+            return toAuth;
         } else {
             return null;
         }
@@ -139,7 +143,7 @@ public class SetupAuto implements Setup {
         }
 
         // TODO Timeout after 60 seconds
-        myAccount.authenticate(new TwitterAccountAuth() {
+        myAccount.authenticate(new OauthStatusUpdater() {
             @Override
             public void authFailure() {
                 System.out.println("Unable to authenticate Twitter account.");
@@ -172,7 +176,7 @@ public class SetupAuto implements Setup {
             public void updateStatus(String status) {
                 System.out.println(status);
             }
-        }, true); // Force PIN auth just so we don't try to open a ServerSocket
+        }, true, true);
         return myAccount.getAccount();
     }
 

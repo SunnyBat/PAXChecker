@@ -27,6 +27,7 @@ dependencies {
 
 compileJava.doLast {
     tasks.copyToLib.execute()
+    tasks.fatJar.execute()
 }
 
 task copyToLib(type: Copy) {
@@ -34,6 +35,20 @@ task copyToLib(type: Copy) {
     from configurations.runtime.findAll {
         !it.name.equals("CommonCode.jar") // Exclude CommonCode from lib folder
     }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
+    }
+    baseName = 'PAXChecker'
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    from "src/main/resources"
+    with jar
 }
 
 jar {
@@ -44,4 +59,8 @@ jar {
             it.isDirectory() ? it : zipTree(it) // And zip with the output jar
         }
     }
+    manifest {
+        attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
+    }
+    archivesBaseName = 'PAXCheckerSlim' // Rename resulting jar so we can copy+paste directly
 }

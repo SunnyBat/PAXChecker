@@ -1,5 +1,8 @@
 package com.github.sunnybat.paxchecker.check;
 
+import com.github.sunnybat.commoncode.oauth.OauthCallbackServer;
+import com.github.sunnybat.commoncode.oauth.OauthRequired;
+import com.github.sunnybat.commoncode.oauth.OauthStatusUpdater;
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.resources.ResourceConstants;
 import java.io.BufferedReader;
@@ -8,18 +11,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.URLDecoder;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -35,25 +29,20 @@ public class TwitterAccount {
 
     private static final int MINIMUM_PORT_NUMBER = 32685;
     private static final int MAXIMUM_PORT_NUMBER = 32694;
-    private static final String CALLBACK_URL_FORMAT = "http://localhost:%1$d/PAXChecker/twittercallback";
-    private static final String CALLBACK_URL_GET_PATH = "/PAXChecker/twittercallback";
-    private static final String RESPONSE_HTML_SUCCESS = "HTTP/1.0 200 OK\r\n\r\n<html><head><title>Success</title></head><body>The PAXChecker successfully authenticated. You may close this window.</body></html>";
-    private static final String RESPONSE_HTML_FAILURE = "HTTP/1.0 401 Unauthorized\r\n\r\n<html><head><title>Failure</title></head><body>The PAXChecker was unable to be authenticated with Twitter. Please try again or <a href=\"https://www.reddit.com/message/compose/?to=SunnyBat\">contact /u/SunnyBat</a>.</body></html>";
     private static final String AUTH_TOKEN_FILE_PATH = ResourceConstants.RESOURCE_LOCATION + "TwitterToken";
-    private static final String OAUTH_CREDENTIALS_FILE_PATH = ResourceConstants.TWITTER_KEYS_PATH;
 
     private String[] apiKeys;
     private Twitter twitterAccount;
     private AccessToken accessToken;
     private OauthClientKeys clientKeys;
-    private boolean interrupt = false;
-    private final Object interruptLock = new Object();
+    private OauthCallbackServer<TwitterCallbackParameters> callbackServer;
 
     public TwitterAccount() {
         clientKeys = getClientKeys();
         if (clientKeys == null) {
             throw new NullPointerException("Unable to find clientKeys");
         }
+        createNewCallbackServer();
     }
 
     public TwitterAccount(String consumerKey, String consumerSecret, String applicationKey, String applicationSecret) {
@@ -62,6 +51,15 @@ public class TwitterAccount {
         } else {
             apiKeys = new String[]{consumerKey, consumerSecret, applicationKey, applicationSecret};
         }
+        createNewCallbackServer();
+    }
+
+    private void createNewCallbackServer() {
+        int[] ports = new int[MAXIMUM_PORT_NUMBER - MINIMUM_PORT_NUMBER + 1];
+        for (int port = MINIMUM_PORT_NUMBER; port <= MAXIMUM_PORT_NUMBER; port++) {
+            ports[port - MINIMUM_PORT_NUMBER] = port;
+        }
+        callbackServer = new OauthCallbackServer<>(ports, "/PAXChecker/twittercallback");
     }
 
     public TwitterAccount(String[] apiKeys) {
@@ -72,7 +70,7 @@ public class TwitterAccount {
         }
     }
 
-    public void authenticate(final TwitterAccountAuth userInteractor, boolean forcePinAuth) {
+    public void authenticate(final OauthStatusUpdater userInteractor, boolean forcePinAuth, boolean failIfNoAutoAuth) {
         try {
             userInteractor.updateStatus("Attempting to read saved auth token");
             // Read stored Twitter token
@@ -94,18 +92,13 @@ public class TwitterAccount {
                 TwitterFactory tf = new TwitterFactory(cb.build());
                 twitterAccount = tf.getInstance();
                 accessToken = twitterAccount.getOAuthAccessToken();
-            } else { // No Twitter token found
+            } else if (!failIfNoAutoAuth) { // No Twitter token found
                 // Create new Twitter to use for authentication
                 twitterAccount = new TwitterFactory().getInstance();
                 twitterAccount.setOAuthConsumer(clientKeys.consumerKey, clientKeys.consumerSecret);
 
-                // Create callback service
-                ServerSocket callbackListener = null;
-                if (!forcePinAuth) {
-                    callbackListener = openNewServerSocket();
-                }
-                if (callbackListener != null) {
-                    String callbackUrl = String.format(CALLBACK_URL_FORMAT, callbackListener.getLocalPort());
+                if (!forcePinAuth && callbackServer.openListener()) {
+                    String callbackUrl = callbackServer.getLocalCallbackUri();
                     RequestToken requestToken;
                     try {
                         requestToken = twitterAccount.getOAuthRequestToken(callbackUrl);
@@ -127,54 +120,16 @@ public class TwitterAccount {
                     userInteractor.setAuthUrl(requestToken.getAuthorizationURL());
                     Browser.openLinkInBrowser(requestToken.getAuthorizationURL());
 
-                    // Set the socket listen timeout to 250ms, so it times out every
-                    // 250ms. This allows us to check for interrupts.
-                    callbackListener.setSoTimeout(250);
-
                     // Listen for callback
                     userInteractor.updateStatus("Waiting for authorization");
-                    Socket s;
-                    while (true) {
-                        try {
-                            s = callbackListener.accept();
-                            callbackListener.close();
-                            break;
-                        } catch (SocketTimeoutException ste) {
-                            synchronized (interruptLock) {
-                                if (interrupt) {
-                                    callbackListener.close();
-                                    authFailed(userInteractor, "Authentication cancelled");
-                                    return;
-                                }
-                            }
-                        } catch (IOException ioe) {
-                            authFailed(userInteractor, "Unable to obtain Request Token");
-                            return;
-                        }
-                    }
-
-                    // Read the callback
-                    InputStream toRead = s.getInputStream();
-                    OutputStream responseStream = s.getOutputStream();
-                    String finalFirstString = readFirstLineOfHttpResponse(toRead);
-
-                    // Parse the callback
-                    OauthCallback callbackInfo = parseGetCallbackUrlLine(finalFirstString);
+                    TwitterCallbackParameters callbackInfo = new TwitterCallbackParameters();
 
                     // Act on the callback
-                    if (callbackInfo == null) {
-                        userInteractor.updateStatus("Error receiving authorization codes");
-                        respondWithPage(responseStream, false);
-                    } else if (callbackInfo.oauth_token == null || !callbackInfo.oauth_token.equals(requestToken.getToken())) {
-                        authFailed(userInteractor, "Request and OAuth tokens don't match");
-                        System.out.println("Error: Request Token and Oauth Token are different. Rejecting authentication.");
-                        System.out.println("Request Token: " + requestToken.getToken());
-                        System.out.println("Oauth Token:   " + callbackInfo.oauth_token);
-                        respondWithPage(responseStream, false);
-                    } else {
+                    if (callbackServer.listenForConnection(callbackInfo)) {
                         userInteractor.updateStatus("Received Twitter authorization, logging in");
                         accessToken = twitterAccount.getOAuthAccessToken(requestToken, callbackInfo.oauth_verifier);
-                        respondWithPage(responseStream, true);
+                    } else {
+                        userInteractor.updateStatus("Error receiving authorization codes");
                     }
                 } else { // Backup in case we can't open a callback listener
                     RequestToken requestToken;
@@ -192,14 +147,10 @@ public class TwitterAccount {
                     // Authenticate with PIN
                     userInteractor.updateStatus("Waiting for authorization");
                     userInteractor.promptForAuthorizationPin();
-                    String pin;
-                    while ((pin = userInteractor.getAuthorizationPin()) == null) {
-                        synchronized (interruptLock) {
-                            if (interrupt) {
-                                authFailed(userInteractor, "Authentication cancelled");
-                                return;
-                            }
-                        }
+                    String pin = userInteractor.getAuthorizationPin();
+                    if (pin == null || pin.isEmpty()) {
+                        authFailed(userInteractor, "PIN entry cancelled");
+                        return;
                     }
                     try {
                         accessToken = twitterAccount.getOAuthAccessToken(requestToken, pin);
@@ -231,17 +182,14 @@ public class TwitterAccount {
         }
     }
 
-    private void authFailed(TwitterAccountAuth userInteractor, String message) {
+    private void authFailed(OauthStatusUpdater userInteractor, String message) {
         userInteractor.updateStatus("Error: " + message);
         twitterAccount = null;
         userInteractor.authFailure();
-        interrupt = false;
     }
 
     public void interrupt() {
-        synchronized (interruptLock) {
-            interrupt = true;
-        }
+        callbackServer.cancelListeningForConnection();
     }
 
     public Twitter getAccount() {
@@ -273,7 +221,7 @@ public class TwitterAccount {
     private OauthClientKeys getClientKeys() {
         try {
             OauthClientKeys ret = new OauthClientKeys();
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(OAUTH_CREDENTIALS_FILE_PATH)));
+            BufferedReader inputStream = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(ResourceConstants.TWITTER_KEYS_PATH)));
             String nextLine;
             while ((nextLine = inputStream.readLine()) != null) {
                 String[] lineSplit = nextLine.split("=");
@@ -294,120 +242,9 @@ public class TwitterAccount {
             } else {
                 return null;
             }
-        } catch (IOException ioe) {
+        } catch (Exception e) {
             return null;
         }
-    }
-
-    private String readFirstLineOfHttpResponse(InputStream toRead) throws IOException {
-        byte[] buff = new byte[128];
-        StringBuilder allReadContent = new StringBuilder();
-        while (toRead.read(buff) != -1) {
-            String currentInput = new String(buff);
-            System.out.print(currentInput);
-            if (currentInput.contains("\r\n")) {
-                allReadContent.append(currentInput.substring(0, currentInput.indexOf("\r\n")));
-                break;
-            } else {
-                allReadContent.append(currentInput);
-            }
-        }
-        return allReadContent.toString();
-    }
-
-    private void respondWithPage(OutputStream toWrite, boolean success) throws IOException {
-        if (success) {
-            toWrite.write(RESPONSE_HTML_SUCCESS.getBytes());
-        } else {
-            toWrite.write(RESPONSE_HTML_FAILURE.getBytes());
-        }
-        toWrite.close();
-    }
-
-    private ServerSocket openNewServerSocket() {
-        for (int currentPort = MINIMUM_PORT_NUMBER; currentPort <= MAXIMUM_PORT_NUMBER; currentPort++) {
-            try {
-                ServerSocket toUse = new ServerSocket(currentPort, 0, InetAddress.getLoopbackAddress());
-                System.out.println("Using port " + currentPort + " for callback");
-                return toUse;
-            } catch (IOException ioe) {
-                System.out.println("Port " + currentPort + " is already open");
-            }
-        }
-        System.out.println("All ports are open. We can't receive a callback.");
-        return null;
-    }
-
-    private OauthCallback parseGetCallbackUrlLine(String urlLine) {
-        OauthCallback ret = new OauthCallback();
-        if (urlLine.contains(CALLBACK_URL_GET_PATH) // Check for valid callback path
-            && urlLine.contains("GET") // Ensure proper request
-            && urlLine.contains("?") // Ensure URL parameters specified
-            && urlLine.contains("HTTP/1.1")) { // Ensure valid HTTP request we understand
-
-            // 1. Strip to start of URL parameters
-            String urlParameters = urlLine.substring(urlLine.indexOf("?") + 1);
-            // 2. Strip off end of GET request to only URL parameters
-            urlParameters = urlParameters.substring(0, urlParameters.indexOf("HTTP/1.1") - 1);
-            // 3. Split URL parameters by &, so we get "key=value" in each index
-            String[] paramsSplit = urlParameters.split("&");
-
-            // 4. Evaluate each Key and Value
-            for (String keyValueString : paramsSplit) {
-                // Split by = -- index 0 is the key and index 1 is the value
-                String[] keyValueSplit = keyValueString.split("=");
-                if (keyValueSplit.length == 2) {
-                    String keyName = keyValueSplit[0];
-                    String keyValue = keyValueSplit[1];
-
-                    // At this point, we need to URL decode the key and value
-                    // We can't do it before, since if there is a URL encoded
-                    // & or = in the key or value, it will mess up our splitting
-                    try {
-                        keyName = URLDecoder.decode(keyName, "UTF-8");
-                        keyValue = URLDecoder.decode(keyValue, "UTF-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        System.out.println("Unable to decode URL parameter value; attempting to parse and strip");
-                    }
-
-                    // Now, we need to assign the key and value to the field
-                    // in our OauthCallback object
-                    try {
-                        // Reflect in and get the field that has the same name
-                        // as the key
-                        Field callbackField = ret.getClass().getField(keyName);
-                        // And set the value
-                        callbackField.set(ret, keyValue);
-                    } catch (NoSuchFieldException nsfe) {
-                        System.out.println("Unrecognized keyValuePair in Twitter callback URL: " + keyValueString);
-                    } catch (IllegalAccessException | SecurityException e) {
-                        System.out.println("Unable to set OauthCallback value " + keyName + " to " + keyValue + " -- something has likely gone wrong.");
-                        System.out.println("Exception: " + e.getMessage());
-                    }
-                } else {
-                    System.out.println("Invalid keyValuePair in Twitter callback URL: " + keyValueString);
-                }
-            }
-
-            // Verify that all of our expected fields have been saved
-            // Later on, if we have optional fields that we're reading, we can
-            // make an @Optional custom annotation and ignore fields that are
-            // decorated with this.
-            try {
-                for (Field toCheck : ret.getClass().getFields()) { // Get all public fields
-                    if (toCheck.get(ret) == null) { // Check to make sure it's been set
-                        System.out.println("Unable to parse full Twitter callback response: " + urlLine);
-                        System.out.println("Twitter will not be authenticated.");
-                        return null;
-                    }
-                }
-            } catch (IllegalArgumentException | IllegalAccessException iae) {
-                System.out.println("Internal error while verifying callback response: " + urlLine);
-                System.out.println("Twitter will not be authenticated.");
-                return null;
-            }
-        }
-        return ret;
     }
 
     private AccessToken getStoredAccessToken() throws IOException {
@@ -435,9 +272,11 @@ public class TwitterAccount {
      * Represents the URL arguments in a success GET callback from the Twitter
      * API.
      */
-    private class OauthCallback {
+    public class TwitterCallbackParameters {
 
+        @OauthRequired
         public String oauth_token;
+        @OauthRequired
         public String oauth_verifier;
     }
 

@@ -4,8 +4,8 @@ import com.github.sunnybat.commoncode.email.EmailAddress;
 import com.github.sunnybat.commoncode.email.account.EmailAccount;
 import com.github.sunnybat.commoncode.email.account.GmailAccount;
 import com.github.sunnybat.commoncode.email.account.SmtpAccount;
+import com.github.sunnybat.commoncode.oauth.OauthStatusUpdater;
 import com.github.sunnybat.paxchecker.check.TwitterAccount;
-import com.github.sunnybat.paxchecker.check.TwitterAccountAuth;
 import com.github.sunnybat.paxchecker.resources.ResourceConstants;
 import com.google.api.client.util.ArrayMap;
 import java.util.Map;
@@ -100,9 +100,9 @@ public class SetupCLI implements Setup {
             System.out.println("2. SMTP");
             System.out.println("3. Disable Email");
             System.out.print("Select an option: ");
-            String selectedOption = in.nextLine();
+            int selectedOption = readNumericOption(in);
             switch (selectedOption) {
-                case "1": // Laziness!
+                case 1:
                     System.out.println("Authenticating with Gmail. This will attempt to open your default browser to authenticate. If it does not open, you must do so manually.");
                     GmailAccount gmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
                     if (gmailAccount.checkAuthentication()) {
@@ -119,13 +119,12 @@ public class SetupCLI implements Setup {
                         }
                     }
                     break;
-                case "2":
+                case 2:
                     System.out.print("Email (leave blank and press ENTER to cancel): ");
                     try {
                         String emailAddress = in.nextLine();
                         if (emailAddress.length() == 0) {
                             // Do nothing, skipping email
-                            continue;
                         } else if (emailAddress.length() < 5) {
                             System.out.println("Invalid username. Please input a valid username.");
                         } else { // Valid email address
@@ -153,9 +152,11 @@ public class SetupCLI implements Setup {
                         return;
                     }
                     break;
-                case "3":
+                case 3:
                     System.out.println("Email will be disabled.");
                     return;
+                case -1:
+                    continue;
                 default:
                     System.out.println("Invalid option! Please select a valid option.");
                     break;
@@ -275,7 +276,7 @@ public class SetupCLI implements Setup {
                         while (!clAuth.isAuthenticated) {
                             System.out.println("Authenticating with Twitter account.");
                             TwitterAccount acc = new TwitterAccount();
-                            acc.authenticate(clAuth, true);
+                            acc.authenticate(clAuth, true, false);
                             if (!clAuth.isAuthenticated) {
                                 System.out.print("Would you like to try authenticating with Twitter again (Y/N)? ");
                                 if (isResponseYes(in)) {
@@ -417,7 +418,7 @@ public class SetupCLI implements Setup {
         return checkUpdatesDaily;
     }
 
-    private class CommandLineTwitterAuth implements TwitterAccountAuth {
+    private class CommandLineTwitterAuth implements OauthStatusUpdater {
 
         private boolean isAuthenticated = false;
         private Scanner in;
@@ -446,15 +447,7 @@ public class SetupCLI implements Setup {
 
         @Override
         public String getAuthorizationPin() {
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException iE) {
-            }
-            if (in.hasNextLine()) {
-                return in.nextLine();
-            } else {
-                return null;
-            }
+            return in.nextLine();
         }
 
         @Override

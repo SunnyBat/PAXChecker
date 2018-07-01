@@ -37,7 +37,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         prefs = new PreferenceHandler("paxchecker");
         myEmailGui = new EmailSetupGUI(prefs);
         myEmailGui.setLocationRelativeTo(this);
-        myTwitterGui = new TwitterSetupGUI();
+        myTwitterGui = new TwitterSetupGUI(prefs);
         myTwitterGui.setLocationRelativeTo(this);
         invokeAndWaitOnEDT(new Runnable() {
             @Override
@@ -45,9 +45,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                 initComponents();
                 customComponents();
                 updateEmailAccountInfo();
+                updateTwitterInfo();
             }
         });
-        pack();
     }
 
     @Override
@@ -57,9 +57,9 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
     private void customComponents() {
         setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-        JTPExtras.setText(loadHtml("/com/github/sunnybat/paxchecker/setup/Extra.html"));
+        JTPExtras.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Extra.html"));
         JTPExtras.setCaretPosition(0);
-        JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/setup/Instructions.html"));
+        JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Instructions.html"));
         JTPInstructions.setCaretPosition(0);
         // Preferences Tab
         JCBSaveEmailSettings.setSelected(prefs.getBooleanPreference("SAVE_EMAIL_SETTINGS"));
@@ -72,15 +72,10 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         } else {
             JCBCheckUpdatesDaily.setEnabled(false);
         }
-        JCBSaveTwitterKeys.setSelected(prefs.getBooleanPreference("SAVE_TWITTER_KEYS"));
         JCBStatistics.setSelected(prefs.getBooleanPreference("ANONYMOUS_STATISTICS"));
         JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX", true));
         JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
-        // TODO Autoconfigure Twitter if necessary
-        //JCBCheckTwitter.setSelected(prefs.getBooleanPreference("CHECK_TWITTER"));
         JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS"));
-        JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER") && JCBCheckTwitter.isSelected());
-        JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS") && JCBCheckTwitter.isSelected());
         JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
         JCBPlayAlarm.setSelected(prefs.getBooleanPreference("PLAY_ALARM"));
         JSCheckTime.setValue(prefs.getIntegerPreference("REFRESHTIME"));
@@ -192,7 +187,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         prefs.getPreferenceObject("LOAD_UPDATES").setValue(JCBCheckUpdates.isSelected());
         prefs.getPreferenceObject("DAILY_UPDATES").setShouldSave(JCBCheckUpdates.isSelected()); // If update checking is disabled, don't check every 24 hours
         prefs.getPreferenceObject("DAILY_UPDATES").setValue(JCBCheckUpdatesDaily.isSelected());
-        prefs.getPreferenceObject("SAVE_TWITTER_KEYS").setValue(JCBSaveTwitterKeys.isSelected());
         prefs.getPreferenceObject("USE_BETA").setValue(JCBUseBeta.isSelected());
         prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
         prefs.getPreferenceObject("EMAIL").setShouldSave(JCBSaveEmailSettings.isSelected());
@@ -203,14 +197,11 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         prefs.getPreferenceObject("CHECK_PAX").setValue(JCBCheckWebsite.isSelected());
         prefs.getPreferenceObject("CHECK_SHOWCLIX").setShouldSave(JCBSaveCheckSettings.isSelected());
         prefs.getPreferenceObject("CHECK_SHOWCLIX").setValue(JCBCheckShowclix.isSelected());
-        prefs.getPreferenceObject("CHECK_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("CHECK_TWITTER").setValue(JCBCheckTwitter.isSelected()); // TODO Save selected only if it's set up correctly
         prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setShouldSave(JCBSaveCheckSettings.isSelected());
         prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setValue(JCBCheckKnownEvents.isSelected());
+        prefs.getPreferenceObject("CHECK_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
         prefs.getPreferenceObject("FILTER_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected() && JCBCheckTwitter.isSelected());
         prefs.getPreferenceObject("TEXT_TWEETS").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("TEXT_TWEETS").setValue(JCBTextTweets.isSelected() && JCBCheckTwitter.isSelected());
         prefs.getPreferenceObject("EVENT").setShouldSave(JCBSaveCheckSettings.isSelected());
         prefs.getPreferenceObject("EVENT").setValue(JCBExpo.getSelectedItem().toString());
         prefs.getPreferenceObject("PLAY_ALARM").setShouldSave(JCBSaveCheckSettings.isSelected());
@@ -224,11 +215,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     private void updateStart() {
         JSCheckTime.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
         JLSecondsBetweenChecks.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || twitterSetUpCorrectly() || JCBCheckKnownEvents.isSelected());
-    }
-
-    private boolean twitterSetUpCorrectly() {
-        return JCBCheckTwitter.isSelected();
+        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || myTwitterGui.isTwitterEnabled() || JCBCheckKnownEvents.isSelected());
     }
 
     @Override
@@ -266,17 +253,17 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
     @Override
     public boolean shouldCheckTwitter() {
-        return JCBCheckTwitter.isSelected() && twitterSetUpCorrectly();
+        return myTwitterGui.getTwitterAccount() != null;
     }
 
     @Override
     public boolean shouldFilterTwitter() {
-        return JCBFilterTwitter.isSelected();
+        return myTwitterGui.shouldFilterTwitter();
     }
 
     @Override
     public boolean shouldTextTweets() {
-        return JCBTextTweets.isSelected();
+        return myTwitterGui.shouldTextTweets();
     }
 
     @Override
@@ -320,6 +307,14 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         }
     }
 
+    private void updateTwitterInfo() {
+        if (myTwitterGui.getTwitterAccount() != null) {
+            JLTwitterStatus.setText("Enabled");
+        } else {
+            JLTwitterStatus.setText("Disabled");
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -340,20 +335,20 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         JCBPlayAlarm = new javax.swing.JCheckBox();
         JCBExpo = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
-        JCBCheckTwitter = new javax.swing.JCheckBox();
-        JCBFilterTwitter = new javax.swing.JCheckBox();
         JCBCheckKnownEvents = new javax.swing.JCheckBox();
         JCBFilterShowclix = new javax.swing.JCheckBox();
-        JCBTextTweets = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         JLEmailType = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         JLEmailStatus = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        JBConfigureEmail = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         JLEmailAddress = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         JLEmailList = new javax.swing.JLabel();
+        JBConfigureTwitter = new javax.swing.JButton();
+        JLTwitterStatus = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         JPInstructions = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         JTPInstructions = new javax.swing.JTextPane();
@@ -372,7 +367,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         JBSaveSettings = new javax.swing.JButton();
         JCBLoadNotifications = new javax.swing.JCheckBox();
         JCBCheckUpdates = new javax.swing.JCheckBox();
-        JCBSaveTwitterKeys = new javax.swing.JCheckBox();
         JCBStatistics = new javax.swing.JCheckBox();
         JCBCheckUpdatesDaily = new javax.swing.JCheckBox();
 
@@ -429,16 +423,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
         jLabel5.setText("PAX Expo to Check");
 
-        JCBCheckTwitter.setText("Scan @Offical_PAX Twitter");
-        JCBCheckTwitter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JCBCheckTwitterActionPerformed(evt);
-            }
-        });
-
-        JCBFilterTwitter.setText("Filter by Keywords");
-        JCBFilterTwitter.setToolTipText("<html>\nFilters out Tweets that do not contains specific<br>\nkeywords. This limits the amount of links opened<br>\nby the PAXChecker, and may in fact prevent the<br>\nPAXChecker from opening the ticket sale page if<br>\nPAX's Tweet doesn't contain specific words.<br>\nThe use of this is NOT recommended.\n</html>");
-
         JCBCheckKnownEvents.setText("Scan Known Potential Showclix Events");
         JCBCheckKnownEvents.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -449,9 +433,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         JCBFilterShowclix.setText("Strict Filtering");
         JCBFilterShowclix.setToolTipText("<html>\nEnabling this will hopefully reduce the<br>\namount of false positives, however<br>\nmight also cause the PAXChecker to<br>\nmiss the queue. Use at your own risk.\n</html>");
 
-        JCBTextTweets.setText("Text Tweets");
-        JCBTextTweets.setToolTipText("<html>\nSend a text to the given email address<br>\nif a link is found in a Tweet.If you receive<br>\nTweets directly from Twitter, this option<br>\nwill likely be redundant (and therefore not<br>\nrecommended).\n</html>");
-
         jLabel2.setText("Email Type:");
 
         JLEmailType.setText("Disabled");
@@ -460,10 +441,10 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
         JLEmailStatus.setText("Disabled");
 
-        jButton1.setText("Configure Email");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        JBConfigureEmail.setText("Configure Email");
+        JBConfigureEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                JBConfigureEmailActionPerformed(evt);
             }
         });
 
@@ -475,6 +456,17 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
         JLEmailList.setText("Disabled");
 
+        JBConfigureTwitter.setText("Configure Twitter");
+        JBConfigureTwitter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBConfigureTwitterActionPerformed(evt);
+            }
+        });
+
+        JLTwitterStatus.setText("Disabled");
+
+        jLabel7.setText("Twitter Status");
+
         javax.swing.GroupLayout JPSetupLayout = new javax.swing.GroupLayout(JPSetup);
         JPSetup.setLayout(JPSetupLayout);
         JPSetupLayout.setHorizontalGroup(
@@ -482,51 +474,56 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
             .addGroup(JPSetupLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(JBStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(JSCheckTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(JLSecondsBetweenChecks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(JPSetupLayout.createSequentialGroup()
                         .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(JCBCheckKnownEvents)
-                            .addComponent(JCBCheckWebsite)
+                            .addComponent(JCBPlayAlarm)
                             .addGroup(JPSetupLayout.createSequentialGroup()
                                 .addComponent(JCBCheckShowclix)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(JCBFilterShowclix))
-                            .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(JPSetupLayout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(JCBExpo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addComponent(JCBPlayAlarm))
                             .addGroup(JPSetupLayout.createSequentialGroup()
-                                .addComponent(JCBCheckTwitter)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(JCBFilterTwitter)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(JCBTextTweets)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(JCBExpo, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(JPSetupLayout.createSequentialGroup()
-                        .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(JBStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(JSCheckTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(JLSecondsBetweenChecks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(JPSetupLayout.createSequentialGroup()
                                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(JLEmailType)
-                                    .addComponent(JLEmailStatus))
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jLabel7))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(JPSetupLayout.createSequentialGroup()
+                                        .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(JLEmailType)
+                                            .addComponent(JLEmailStatus))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(JBConfigureEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(JPSetupLayout.createSequentialGroup()
+                                            .addComponent(JLTwitterStatus)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(JBConfigureTwitter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGroup(JPSetupLayout.createSequentialGroup()
+                                            .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(JLEmailAddress)
+                                                .addComponent(JLEmailList, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGap(0, 0, Short.MAX_VALUE)))))
                             .addGroup(JPSetupLayout.createSequentialGroup()
                                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(JLEmailAddress)
-                                    .addComponent(JLEmailList, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
+                                    .addComponent(JCBCheckKnownEvents)
+                                    .addComponent(JCBCheckWebsite))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         JPSetupLayout.setVerticalGroup(
             JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -543,7 +540,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                         .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
                             .addComponent(JLEmailStatus)))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(JBConfigureEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
@@ -553,6 +550,11 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                     .addComponent(jLabel11)
                     .addComponent(JLEmailList))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLTwitterStatus)
+                    .addComponent(jLabel7)
+                    .addComponent(JBConfigureTwitter))
+                .addGap(6, 6, 6)
                 .addComponent(JCBCheckWebsite)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -561,21 +563,16 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JCBCheckKnownEvents)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(JCBCheckTwitter)
-                    .addComponent(JCBFilterTwitter)
-                    .addComponent(JCBTextTweets))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JCBPlayAlarm)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(JPSetupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(JCBExpo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(JLSecondsBetweenChecks)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JSCheckTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JBStart)
                 .addContainerGap())
         );
@@ -692,9 +689,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
             }
         });
 
-        JCBSaveTwitterKeys.setText("Save Encrypted Twitter Keys");
-        JCBSaveTwitterKeys.setToolTipText("<html>\nNOTE: This saves your Twitter API<br>\nkeys in an encrypted format. Your<br>\nkeys will still be obtainable if you or<br>\nsomeone else has access to this<br>\nprogram's source code (which is<br>\npublicly available). Save at your<br>\nown risk!\n</html>");
-
         JCBStatistics.setText("Anonymous Statistics");
         JCBStatistics.setToolTipText("<html>\nWhen enabled, the program goes through Orangedox<br>\nto collect non-personally identifiable statistics about<br>\nfile downloads, such as the date downloaded and<br>\nthe specific file downloaded.<br>\nNOTE that \"Anonymous Statistics\" only means going<br>\nthrough Dropbox instead of Orangedox. Dropbox's<br>\nPrivacy Policy applies to you, regardless of whether<br>\nor not this option is enabled.\n</html>");
 
@@ -715,12 +709,11 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                             .addGroup(JPPreferencesLayout.createSequentialGroup()
                                 .addGap(21, 21, 21)
                                 .addComponent(JCBCheckUpdatesDaily))
-                            .addComponent(JCBSaveTwitterKeys)
                             .addComponent(JCBUseBeta)
                             .addComponent(JCBStatistics)
                             .addComponent(JCBLoadNotifications)
                             .addComponent(JCBCheckUpdates))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 265, Short.MAX_VALUE))
                     .addComponent(JBSaveSettings, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -738,12 +731,10 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JCBCheckUpdatesDaily)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(JCBSaveTwitterKeys, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JCBUseBeta)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JCBStatistics)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(25, 25, 25)
                 .addComponent(JBSaveSettings)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
@@ -784,16 +775,6 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
       savePreferences();
   }//GEN-LAST:event_JBSaveSettingsActionPerformed
 
-  private void JCBCheckTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckTwitterActionPerformed
-      if (JCBCheckTwitter.isSelected()) {
-          new TwitterConfiguration().execute();
-      } else {
-          JCBFilterTwitter.setEnabled(false);
-          JCBTextTweets.setEnabled(false);
-      }
-      updateStart();
-  }//GEN-LAST:event_JCBCheckTwitterActionPerformed
-
   private void JCBCheckUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckUpdatesActionPerformed
       JCBCheckUpdatesDaily.setEnabled(JCBCheckUpdates.isSelected());
   }//GEN-LAST:event_JCBCheckUpdatesActionPerformed
@@ -802,35 +783,38 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
       updateStart();
   }//GEN-LAST:event_JCBCheckKnownEventsActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void JBConfigureEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBConfigureEmailActionPerformed
         new EmailConfiguration().execute();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_JBConfigureEmailActionPerformed
+
+    private void JBConfigureTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBConfigureTwitterActionPerformed
+        new TwitterConfiguration().execute();
+    }//GEN-LAST:event_JBConfigureTwitterActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton JBConfigureEmail;
+    private javax.swing.JButton JBConfigureTwitter;
     private javax.swing.JButton JBSaveSettings;
     private javax.swing.JButton JBStart;
     private javax.swing.JCheckBox JCBCheckKnownEvents;
     private javax.swing.JCheckBox JCBCheckShowclix;
-    private javax.swing.JCheckBox JCBCheckTwitter;
     private javax.swing.JCheckBox JCBCheckUpdates;
     private javax.swing.JCheckBox JCBCheckUpdatesDaily;
     private javax.swing.JCheckBox JCBCheckWebsite;
     private javax.swing.JComboBox JCBExpo;
     private javax.swing.JCheckBox JCBFilterShowclix;
-    private javax.swing.JCheckBox JCBFilterTwitter;
     private javax.swing.JCheckBox JCBLoadNotifications;
     private javax.swing.JCheckBox JCBPlayAlarm;
     private javax.swing.JCheckBox JCBSaveCheckSettings;
     private javax.swing.JCheckBox JCBSaveEmailSettings;
-    private javax.swing.JCheckBox JCBSaveTwitterKeys;
     private javax.swing.JCheckBox JCBStatistics;
-    private javax.swing.JCheckBox JCBTextTweets;
     private javax.swing.JCheckBox JCBUseBeta;
     private javax.swing.JLabel JLEmailAddress;
     private javax.swing.JLabel JLEmailList;
     private javax.swing.JLabel JLEmailStatus;
     private javax.swing.JLabel JLEmailType;
     private javax.swing.JLabel JLSecondsBetweenChecks;
+    private javax.swing.JLabel JLTwitterStatus;
     private javax.swing.JPanel JPExtras;
     private javax.swing.JPanel JPInstructions;
     private javax.swing.JPanel JPPatchNotes;
@@ -841,13 +825,13 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     private javax.swing.JTextPane JTPExtras;
     private javax.swing.JTextPane JTPInstructions;
     private javax.swing.JTabbedPane JTPMainPane;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -891,14 +875,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
         }
 
         public void done() {
-            if (myTwitterGui.getTwitterAccount() != null) {
-                JCBFilterTwitter.setEnabled(true);
-                JCBTextTweets.setEnabled(true);
-            } else {
-                JCBCheckTwitter.setSelected(false);
-                JCBFilterTwitter.setEnabled(false);
-                JCBTextTweets.setEnabled(false);
-            }
+            updateTwitterInfo();
             setEnabled(true);
             toFront();
         }

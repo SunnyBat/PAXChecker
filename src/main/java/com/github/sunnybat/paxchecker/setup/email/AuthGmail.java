@@ -33,6 +33,8 @@ public class AuthGmail extends javax.swing.JPanel implements AuthEmail {
 
     /**
      * Creates new form AuthGmail
+     *
+     * @param authCallback The callback for authentication
      */
     public AuthGmail(Runnable authCallback) {
         System.out.println(new java.io.File("").getAbsolutePath());
@@ -63,17 +65,17 @@ public class AuthGmail extends javax.swing.JPanel implements AuthEmail {
 
     public void authenticate() {
         try {
-            authWithoutWait().get();
+            authWithoutWait(true).get();
         } catch (InterruptedException | ExecutionException e) {
         }
     }
 
-    private AuthenticationWorker authWithoutWait() {
+    private AuthenticationWorker authWithoutWait(boolean failIfNoAutoAuth) {
         authCallback.run();
         currentGmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
         JBAuthNow.setEnabled(false);
         JLAuthStatus.setText("<Authenticating>");
-        AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount);
+        AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount, failIfNoAutoAuth);
         myAuthWorker.execute();
         return myAuthWorker;
     }
@@ -175,7 +177,7 @@ public class AuthGmail extends javax.swing.JPanel implements AuthEmail {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBAuthNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAuthNowActionPerformed
-        authWithoutWait();
+        authWithoutWait(false);
     }//GEN-LAST:event_JBAuthNowActionPerformed
 
     private void JBCopyAuthUrlActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBCopyAuthUrlActionPerformed
@@ -192,6 +194,8 @@ public class AuthGmail extends javax.swing.JPanel implements AuthEmail {
             if (result == JOptionPane.YES_OPTION) {
                 System.out.println("Delete!");
                 currentGmailAccount.deleteCredentials();
+                currentGmailAccount = null;
+                savedGmailAccount = null;
                 updatePanel(false);
                 // TODO Force save all options
             } else {
@@ -218,13 +222,18 @@ public class AuthGmail extends javax.swing.JPanel implements AuthEmail {
     private class AuthenticationWorker extends SwingWorker<Boolean, Integer> {
 
         private GmailAccount toCheck;
+        private boolean failIfNoAutoAuth;
 
-        public AuthenticationWorker(GmailAccount toCheck) {
+        public AuthenticationWorker(GmailAccount toCheck, boolean failIfNoAutoAuth) {
             this.toCheck = toCheck;
+            this.failIfNoAutoAuth = failIfNoAutoAuth;
         }
 
         @Override
         protected Boolean doInBackground() throws Exception {
+            if (failIfNoAutoAuth) {
+                return toCheck.checkAutoAuth();
+            }
             return toCheck.checkAuthentication();
         }
 

@@ -52,67 +52,77 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
-                          <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
-                          <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
-                          <Component id="JLSecondsBetweenChecks" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
-                                  <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Component id="JCBPlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
                                       <Component id="JCBCheckShowclix" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="JCBFilterShowclix" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="JCBExpo" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Component id="JCBPlayAlarm" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="JCBCheckTwitter" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JCBFilterTwitter" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="JCBTextTweets" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="JCBExpo" min="-2" pref="100" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="294" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="jLabel11" max="32767" attributes="0"/>
-                                  <Component id="jLabel2" max="32767" attributes="0"/>
-                                  <Component id="jLabel3" max="32767" attributes="0"/>
-                                  <Component id="jLabel4" alignment="1" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
+                                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="JBStart" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="JSCheckTime" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="JLSecondsBetweenChecks" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="JLEmailType" min="-2" max="-2" attributes="0"/>
-                                          <Component id="JLEmailStatus" min="-2" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                              <Component id="jLabel11" max="32767" attributes="0"/>
+                                              <Component id="jLabel2" max="32767" attributes="0"/>
+                                              <Component id="jLabel3" max="32767" attributes="0"/>
+                                              <Component id="jLabel4" alignment="1" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="jButton1" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="JLEmailType" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="JLEmailStatus" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="JBConfigureEmail" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="JLTwitterStatus" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="JBConfigureTwitter" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="JLEmailAddress" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="JLEmailList" min="-2" pref="316" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                      </Group>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="JLEmailAddress" min="-2" max="-2" attributes="0"/>
-                                          <Component id="JLEmailList" min="-2" pref="316" max="-2" attributes="0"/>
+                                          <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
+                                          <Component id="JCBCheckWebsite" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -134,7 +144,7 @@
                                   <Component id="JLEmailStatus" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <Component id="jButton1" max="32767" attributes="0"/>
+                          <Component id="JBConfigureEmail" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -147,6 +157,12 @@
                           <Component id="JLEmailList" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="JLTwitterStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="JBConfigureTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Component id="JCBCheckWebsite" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -156,23 +172,17 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckKnownEvents" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="JCBCheckTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBFilterTwitter" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="JCBTextTweets" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBPlayAlarm" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="JCBExpo" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace pref="31" max="32767" attributes="0"/>
                       <Component id="JLSecondsBetweenChecks" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JSCheckTime" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="JBStart" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -259,20 +269,6 @@
                 <Property name="text" type="java.lang.String" value="PAX Expo to Check"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBCheckTwitter">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Scan @Offical_PAX Twitter"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckTwitterActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBFilterTwitter">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Filter by Keywords"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Filters out Tweets that do not contains specific&lt;br&gt;&#xa;keywords. This limits the amount of links opened&lt;br&gt;&#xa;by the PAXChecker, and may in fact prevent the&lt;br&gt;&#xa;PAXChecker from opening the ticket sale page if&lt;br&gt;&#xa;PAX&apos;s Tweet doesn&apos;t contain specific words.&lt;br&gt;&#xa;The use of this is NOT recommended.&#xa;&lt;/html&gt;"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JCheckBox" name="JCBCheckKnownEvents">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Scan Known Potential Showclix Events"/>
@@ -285,12 +281,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Strict Filtering"/>
                 <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Enabling this will hopefully reduce the&lt;br&gt;&#xa;amount of false positives, however&lt;br&gt;&#xa;might also cause the PAXChecker to&lt;br&gt;&#xa;miss the queue. Use at your own risk.&#xa;&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBTextTweets">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Text Tweets"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Send a text to the given email address&lt;br&gt;&#xa;if a link is found in a Tweet.If you receive&lt;br&gt;&#xa;Tweets directly from Twitter, this option&lt;br&gt;&#xa;will likely be redundant (and therefore not&lt;br&gt;&#xa;recommended).&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
@@ -313,12 +303,12 @@
                 <Property name="text" type="java.lang.String" value="Disabled"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="JBConfigureEmail">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Configure Email"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBConfigureEmailActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
@@ -339,6 +329,24 @@
             <Component class="javax.swing.JLabel" name="JLEmailList">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="JBConfigureTwitter">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Configure Twitter"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBConfigureTwitterActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="JLTwitterStatus">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Disabled"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel7">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Twitter Status"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -501,13 +509,12 @@
                                       <EmptySpace min="21" pref="21" max="-2" attributes="0"/>
                                       <Component id="JCBCheckUpdatesDaily" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="JCBSaveTwitterKeys" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBUseBeta" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBStatistics" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBLoadNotifications" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="JCBCheckUpdates" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="265" max="32767" attributes="0"/>
                           </Group>
                           <Component id="JBSaveSettings" alignment="0" pref="392" max="32767" attributes="0"/>
                       </Group>
@@ -529,12 +536,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBCheckUpdatesDaily" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="JCBSaveTwitterKeys" min="-2" pref="23" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBUseBeta" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="JCBStatistics" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       <Component id="JBSaveSettings" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="209" max="32767" attributes="0"/>
@@ -602,12 +607,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JCBCheckUpdatesActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="JCBSaveTwitterKeys">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Save Encrypted Twitter Keys"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;NOTE: This saves your Twitter API&lt;br&gt;&#xa;keys in an encrypted format. Your&lt;br&gt;&#xa;keys will still be obtainable if you or&lt;br&gt;&#xa;someone else has access to this&lt;br&gt;&#xa;program&apos;s source code (which is&lt;br&gt;&#xa;publicly available). Save at your&lt;br&gt;&#xa;own risk!&#xa;&lt;/html&gt;"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="JCBStatistics">
               <Properties>
