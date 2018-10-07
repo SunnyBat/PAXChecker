@@ -88,6 +88,12 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
     }
 
     @Override
+    public void cancelAuthorizationPinPrompt() {
+        JTFPin.setText(null);
+        authPinCountdown.countDown();
+    }
+
+    @Override
     public String getAuthorizationPin() {
         try {
             authPinCountdown.await();
@@ -140,7 +146,7 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
     private AuthenticationWorker authWithoutWait(boolean failIfNoAutoAuth) {
         authCallback.run();
         currentGmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
-        JBAuthenticate.setText("Cancel Auth");
+        JBAuthenticate.setText("Cancel Authentication");
         JLAuthStatus.setText("<Authenticating>");
         AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount, failIfNoAutoAuth, JCBForcePinAuth.isSelected(), this);
         myAuthWorker.execute();
@@ -151,12 +157,15 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
         if (authSuccessful) {
             JLAuthStatus.setText("Success");
             JBAuthenticate.setText("(Already authenticated)");
+            JBAuthenticate.setEnabled(false);
+            JCBForcePinAuth.setEnabled(false);
             JBResetLogin.setEnabled(true);
         } else {
+            currentGmailAccount = null;
             JLAuthStatus.setText("Failed");
             JBAuthenticate.setText("Authenticate");
-            currentGmailAccount = null;
             JBAuthenticate.setEnabled(true);
+            JCBForcePinAuth.setEnabled(true);
             JBResetLogin.setEnabled(false);
         }
         JBCopyAuthUrl.setEnabled(false);
@@ -397,7 +406,7 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
             } else {
                 JTFAuthUrl.setBackground(Color.WHITE);
                 JCBForcePinAuth.setEnabled(false);
-                wasAuthSuccessful = toCheck.checkAuthentication(true, !forcePinAuth, true, userInteractor);
+                wasAuthSuccessful = toCheck.checkAuthentication(true, !forcePinAuth, forcePinAuth, userInteractor);
             }
             updatePanel(wasAuthSuccessful);
             authenticating = false;

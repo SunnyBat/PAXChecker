@@ -173,6 +173,12 @@ public class SetupAuto implements Setup {
             }
 
             @Override
+            public void cancelAuthorizationPinPrompt() {
+                System.out.println("PIN cancellation request. Interrupting.");
+                myAccount.interrupt();
+            }
+
+            @Override
             public void updateStatus(String status) {
                 System.out.println(status);
             }

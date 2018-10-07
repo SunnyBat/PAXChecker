@@ -451,6 +451,11 @@ public class SetupCLI implements Setup {
         }
 
         @Override
+        public void cancelAuthorizationPinPrompt() {
+            System.out.println("Unable to cancel PIN prompt. Press ENTER to continue.");
+        }
+
+        @Override
         public void promptForAuthorizationPin() {
             System.out.println("Please complete the setup steps in your browser, then input the resulting PIN into this prompt.");
             System.out.print("Twitter authentication PIN: ");

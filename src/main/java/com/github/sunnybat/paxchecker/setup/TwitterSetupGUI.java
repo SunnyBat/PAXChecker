@@ -89,6 +89,12 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
     }
 
     @Override
+    public void cancelAuthorizationPinPrompt() {
+        JTFBackupPin.setText(null);
+        authPinCountdown.countDown();
+    }
+
+    @Override
     public String getAuthorizationPin() {
         try {
             authPinCountdown.await();
