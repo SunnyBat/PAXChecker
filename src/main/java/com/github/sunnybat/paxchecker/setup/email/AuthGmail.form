@@ -21,22 +21,37 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="JBAuthNow" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="JBCopyAuthUrl" max="32767" attributes="0"/>
-                          <Component id="JBResetLogin" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="JBAuthenticate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="JCBForcePinAuth" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="70" max="32767" attributes="0"/>
+                      <Component id="JBResetLogin" min="-2" pref="105" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="JLAuthStatus" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="162" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="JLAuthUrl" min="-2" max="-2" attributes="0"/>
+                          <Component id="JLPin" alignment="0" min="-2" pref="45" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="JTFPin" max="32767" attributes="0"/>
+                          <Component id="JTFAuthUrl" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="JBCopyAuthUrl" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="JBSubmitPin" alignment="1" min="-2" pref="79" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -52,13 +67,24 @@
                   <Component id="JLAuthStatus" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="JBAuthNow" pref="93" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="JBCopyAuthUrl" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="JBResetLogin" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="JLAuthUrl" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="JTFAuthUrl" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="JBCopyAuthUrl" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="JBSubmitPin" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="JTFPin" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="JLPin" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="13" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="JBAuthenticate" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="JCBForcePinAuth" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="JBResetLogin" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -76,17 +102,17 @@
         <Property name="text" type="java.lang.String" value="&lt;Not Attempted&gt;"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="JBAuthNow">
+    <Component class="javax.swing.JButton" name="JBAuthenticate">
       <Properties>
         <Property name="text" type="java.lang.String" value="Authenticate"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBAuthNowActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBAuthenticateActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="JBCopyAuthUrl">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Copy Auth URL"/>
+        <Property name="text" type="java.lang.String" value="Copy URL"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -101,6 +127,43 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBResetLoginActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="JTFAuthUrl">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="JLAuthUrl">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auth URL"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="JLPin">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auth PIN"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="JBSubmitPin">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Submit"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBSubmitPinActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="JTFPin">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="JTFPinKeyTyped"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="JCBForcePinAuth">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Force PIN Auth"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

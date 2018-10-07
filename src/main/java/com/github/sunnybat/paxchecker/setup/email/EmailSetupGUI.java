@@ -97,12 +97,6 @@ public class EmailSetupGUI extends javax.swing.JFrame {
         }
         savedEmailAddresses = getCurrentEmails();
         savedIsGmail = JRBGmail.isSelected();
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent event) {
-                JBCancelChangesActionPerformed(null); // Hacky hacks oh boy
-            }
-        });
     }
 
     /**

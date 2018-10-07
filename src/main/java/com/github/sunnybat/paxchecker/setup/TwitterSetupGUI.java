@@ -95,7 +95,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
         } catch (InterruptedException ex) {
             System.out.println("Interrupted while waiting for PIN input, proceeding");
         }
-        String pin = getTextFromComponent(JTFBackupPin);
+        String pin = getTextFromComponent(JTFBackupPin).trim();
         setPinInputState(false);
         return pin;
     }
@@ -196,7 +196,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jLabel2.setText("Status:");
+        jLabel2.setText("Authentication Status:");
 
         JLStatus.setText("Not Authenticated");
 
