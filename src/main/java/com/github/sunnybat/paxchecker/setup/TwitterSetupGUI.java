@@ -56,16 +56,12 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
 
     @Override
     public void authFailure() {
-        setPinInputState(false);
         JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
         JBAuthenticate.setText("Authenticate");
-        JTFAuthUrl.setText(null);
     }
 
     @Override
     public void authSuccess() {
-        setPinInputState(false);
-        JTFAuthUrl.setText(null);
         JBAuthenticate.setEnabled(false);
         JBAuthenticate.setText("Authenticate");
         JBClearAuthentication.setEnabled(true);
@@ -76,6 +72,9 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                JLAuthUrl.setEnabled(true);
+                JTFAuthUrl.setEnabled(true);
+                JTFAuthUrl.setBackground(Color.WHITE);
                 JTFAuthUrl.setText(url);
                 JTFAuthUrl.setCaretPosition(0);
             }
@@ -90,8 +89,10 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
 
     @Override
     public void cancelAuthorizationPinPrompt() {
-        JTFBackupPin.setText(null);
-        authPinCountdown.countDown();
+        setPinInputState(false);
+        if (authPinCountdown != null) {
+            authPinCountdown.countDown();
+        }
     }
 
     @Override
@@ -151,6 +152,27 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
         if (!enabled) {
             JTFBackupPin.setText(null);
         }
+    }
+
+    private void setAuthenticationState(boolean authenticating) {
+            synchronized (authLock) {
+                isAuthenticating = authenticating;
+                if (authenticating) {
+                    JBSave.setEnabled(false);
+                    JCBForcePinAuth.setEnabled(false);
+                    JBCopyUrl.setEnabled(true);
+                    JBCopyUrl.setText("Copy URL");
+                } else {
+                    setPinInputState(false);
+                    JBSave.setEnabled(true);
+                    JCBForcePinAuth.setEnabled(true);
+                    JBCopyUrl.setEnabled(false);
+                    JLAuthUrl.setEnabled(false);
+                    JTFAuthUrl.setEnabled(false);
+                    JTFAuthUrl.setText(null);
+                    JTFAuthUrl.setBackground(new Color(240, 240, 240));
+                }
+            }
     }
 
     private AuthWorker executeAuthentication(boolean failIfNoAutoAuth) {
@@ -392,6 +414,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
             if (isAuthenticating) {
                 JBAuthenticate.setEnabled(false);
                 myTwitterAccount.interrupt();
+                cancelAuthorizationPinPrompt();
             } else {
                 JBAuthenticate.setText("Cancel Auth");
                 executeAuthentication(false);
@@ -446,9 +469,9 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
             if (isAuthenticating) {
                 JBAuthenticate.setEnabled(false);
                 myTwitterAccount.interrupt();
-            } else {
-                disableTwitter = true;
+                cancelAuthorizationPinPrompt();
             }
+            disableTwitter = true;
         }
         setVisible(false);
         updatePreferences();
@@ -490,25 +513,10 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
 
         @Override
         protected Boolean doInBackground() {
-            JBSave.setEnabled(false);
-            JCBForcePinAuth.setEnabled(false);
-            JTFAuthUrl.setEnabled(true); // Technically not the right time to enable, but it's close enough
-            JTFAuthUrl.setBackground(Color.WHITE);
-            JBCopyUrl.setEnabled(true);
-            JBCopyUrl.setText("Copy URL");
-            synchronized (authLock) {
-                isAuthenticating = true;
-            }
+            setAuthenticationState(true);
             myTwitterAccount.authenticate(authInterface, forcePinAuth, failIfNoAutoAuth);
-            synchronized (authLock) {
-                isAuthenticating = false;
-            }
-            JTFAuthUrl.setEnabled(false);
-            JBCopyUrl.setEnabled(false);
-            JBSave.setEnabled(true);
-            JCBForcePinAuth.setEnabled(true);
-            JTFAuthUrl.setBackground(new Color(240, 240, 240));
-            return true;
+            setAuthenticationState(false);
+            return isTwitterEnabled();
         }
     }
 
