@@ -140,7 +140,7 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
     private AuthenticationWorker authWithoutWait(boolean failIfNoAutoAuth) {
         authCallback.run();
         currentGmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
-        JBAuthenticate.setEnabled(false);
+        JBAuthenticate.setText("Cancel Auth");
         JLAuthStatus.setText("<Authenticating>");
         AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount, failIfNoAutoAuth, JCBForcePinAuth.isSelected(), this);
         myAuthWorker.execute();
@@ -304,7 +304,11 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
 
     private void JBAuthenticateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAuthenticateActionPerformed
         if (authenticating) {
-            System.out.println("Currently authenticating?");
+            if (currentGmailAccount != null) {
+                currentGmailAccount.interrupt(); // TODO less hacky than this solution =/
+            } else {
+                System.out.println("Current gmail account is null?");
+            }
         } else {
             authWithoutWait(false);
         }
