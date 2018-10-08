@@ -311,12 +311,16 @@ public class StatusGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame
 
   @Override
   public ACTION_TYPE getActionRequested() {
-    return actionRequested;
+    synchronized(this) {
+      return actionRequested;
+    }
   }
 
   @Override
   public void resetButtonPressed() {
-    actionRequested = null;
+    synchronized (this) {
+      actionRequested = null;
+    }
   }
 
   private void buttonPressed(ACTION_TYPE button) {

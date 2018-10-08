@@ -353,11 +353,9 @@ public final class PAXChecker {
         sleepLoop:
         while (System.currentTimeMillis() - startTime < checkTime * 1000) {
           Status.ACTION_TYPE action;
-          synchronized (status) {
-            action = status.getActionRequested();
-            if (action != null) {
-              status.resetButtonPressed();
-            }
+          action = status.getActionRequested();
+          if (action != null) {
+            status.resetButtonPressed();
           }
           if (action != null) {
             switch (action) {

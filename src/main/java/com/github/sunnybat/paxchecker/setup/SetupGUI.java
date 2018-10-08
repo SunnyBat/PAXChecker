@@ -308,7 +308,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     }
 
     private void updateTwitterInfo() {
-        if (myTwitterGui.getTwitterAccount() != null) {
+        if (myTwitterGui.isTwitterEnabled()) {
             JLTwitterStatus.setText("Enabled");
         } else {
             JLTwitterStatus.setText("Disabled");
@@ -876,6 +876,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
         public void done() {
             updateTwitterInfo();
+            updateStart();
             setEnabled(true);
             toFront();
         }

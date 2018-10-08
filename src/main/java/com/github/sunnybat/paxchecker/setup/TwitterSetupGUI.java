@@ -58,6 +58,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
     public void authFailure() {
         JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
         JBAuthenticate.setText("Authenticate");
+        JCBForcePinAuth.setEnabled(true);
     }
 
     @Override
@@ -165,7 +166,6 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
                 } else {
                     setPinInputState(false);
                     JBSave.setEnabled(true);
-                    JCBForcePinAuth.setEnabled(true);
                     JBCopyUrl.setEnabled(false);
                     JLAuthUrl.setEnabled(false);
                     JTFAuthUrl.setEnabled(false);
@@ -436,6 +436,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
             myTwitterAccount.clearAccessToken();
             myTwitterAccount = new TwitterAccount();
             JBAuthenticate.setEnabled(true);
+            JCBForcePinAuth.setEnabled(true);
             JBClearAuthentication.setEnabled(false);
             JLStatus.setText("Authentication cleared");
         }
