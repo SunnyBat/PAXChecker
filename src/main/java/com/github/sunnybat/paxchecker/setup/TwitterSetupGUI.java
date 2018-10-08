@@ -32,173 +32,172 @@ import twitter4j.Twitter;
  */
 public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements OauthStatusUpdater {
 
-    private CountDownLatch authPinCountdown;
-    private TwitterAccount myTwitterAccount = new TwitterAccount();
-    private final Object authLock = new Object();
-    private boolean isAuthenticating;
-    private boolean disableTwitter = false;
-    private PreferenceHandler prefs;
+	private CountDownLatch authPinCountdown;
+	private TwitterAccount myTwitterAccount = new TwitterAccount();
+	private final Object authLock = new Object();
+	private boolean isAuthenticating;
+	private boolean disableTwitter = false;
+	private PreferenceHandler prefs;
 
-    /**
-     * Creates new form TwitterSetupGUI
-     */
-    public TwitterSetupGUI(PreferenceHandler prefs) {
-        this.prefs = prefs;
-        initComponents();
-        customComponents();
-    }
+	/**
+	 * Creates new form TwitterSetupGUI
+	 */
+	public TwitterSetupGUI(PreferenceHandler prefs) {
+		this.prefs = prefs;
+		initComponents();
+		customComponents();
+	}
 
-    private void customComponents() {
-        waitForAutoAuthentication();
-        JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER"));
-        JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS"));
-    }
+	private void customComponents() {
+		waitForAutoAuthentication();
+		JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER"));
+		JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS"));
+	}
 
-    @Override
-    public void authFailure() {
-        JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
-        JBAuthenticate.setText("Authenticate");
-        JCBForcePinAuth.setEnabled(true);
-    }
+	@Override
+	public void authFailure() {
+		JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
+		JBAuthenticate.setText("Authenticate");
+		JCBForcePinAuth.setEnabled(true);
+	}
 
-    @Override
-    public void authSuccess() {
-        JBAuthenticate.setEnabled(false);
-        JBAuthenticate.setText("Authenticate");
-        JBClearAuthentication.setEnabled(true);
-    }
+	@Override
+	public void authSuccess() {
+		JBAuthenticate.setEnabled(false);
+		JBAuthenticate.setText("Authenticate");
+		JBClearAuthentication.setEnabled(true);
+	}
 
-    @Override
-    public void setAuthUrl(final String url) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JLAuthUrl.setEnabled(true);
-                JTFAuthUrl.setEnabled(true);
-                JTFAuthUrl.setBackground(Color.WHITE);
-                JTFAuthUrl.setText(url);
-                JTFAuthUrl.setCaretPosition(0);
-            }
-        });
-    }
+	@Override
+	public void setAuthUrl(final String url) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JLAuthUrl.setEnabled(true);
+				JTFAuthUrl.setEnabled(true);
+				JTFAuthUrl.setBackground(Color.WHITE);
+				JTFAuthUrl.setText(url);
+				JTFAuthUrl.setCaretPosition(0);
+			}
+		});
+	}
 
-    @Override
-    public void promptForAuthorizationPin() {
-        setPinInputState(true);
-        authPinCountdown = new CountDownLatch(1);
-    }
+	@Override
+	public void promptForAuthorizationPin() {
+		setPinInputState(true);
+		authPinCountdown = new CountDownLatch(1);
+	}
 
-    @Override
-    public void cancelAuthorizationPinPrompt() {
-        setPinInputState(false);
-        if (authPinCountdown != null) {
-            authPinCountdown.countDown();
-        }
-    }
+	@Override
+	public void cancelAuthorizationPinPrompt() {
+		setPinInputState(false);
+		if (authPinCountdown != null) {
+			authPinCountdown.countDown();
+		}
+	}
 
-    @Override
-    public String getAuthorizationPin() {
-        try {
-            authPinCountdown.await();
-        } catch (InterruptedException ex) {
-            System.out.println("Interrupted while waiting for PIN input, proceeding");
-        }
-        String pin = getTextFromComponent(JTFBackupPin).trim();
-        setPinInputState(false);
-        return pin;
-    }
+	@Override
+	public String getAuthorizationPin() {
+		try {
+			authPinCountdown.await();
+		} catch (InterruptedException ex) {
+			System.out.println("Interrupted while waiting for PIN input, proceeding");
+		}
+		String pin = getTextFromComponent(JTFBackupPin).trim();
+		setPinInputState(false);
+		return pin;
+	}
 
-    @Override
-    public void updateStatus(final String status) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JLStatus.setText(status);
-            }
-        });
-    }
+	@Override
+	public void updateStatus(final String status) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JLStatus.setText(status);
+			}
+		});
+	}
 
-    public Twitter getTwitterAccount() {
-        return myTwitterAccount.getAccount();
-    }
+	public Twitter getTwitterAccount() {
+		return myTwitterAccount.getAccount();
+	}
 
-    public void waitForAutoAuthentication() {
-        try {
-            executeAuthentication(true).get();
-        } catch (InterruptedException | ExecutionException e) {
-        }
-        if (getTwitterAccount() != null) {
-            JLStatus.setText("Authenticated");
-        } else {
-            JLStatus.setText("Not Authenticated");
-        }
-    }
+	public void waitForAutoAuthentication() {
+		try {
+			executeAuthentication(true).get();
+		} catch (InterruptedException | ExecutionException e) {
+		}
+		if (getTwitterAccount() != null) {
+			JLStatus.setText("Authenticated");
+		} else {
+			JLStatus.setText("Not Authenticated");
+		}
+	}
 
-    public boolean shouldFilterTwitter() {
-        return JCBFilterTwitter.isSelected();
-    }
+	public boolean shouldFilterTwitter() {
+		return JCBFilterTwitter.isSelected();
+	}
 
-    public boolean shouldTextTweets() {
-        return JCBTextTweets.isSelected();
-    }
+	public boolean shouldTextTweets() {
+		return JCBTextTweets.isSelected();
+	}
 
-    public boolean isTwitterEnabled() {
-        return !disableTwitter && myTwitterAccount.getAccount() != null;
-    }
+	public boolean isTwitterEnabled() {
+		return !disableTwitter && myTwitterAccount.getAccount() != null;
+	}
 
-    private void setPinInputState(boolean enabled) {
-        JBSubmitPin.setEnabled(enabled);
-        JTFBackupPin.setEnabled(enabled);
-        JLBackupPin.setEnabled(enabled);
-        if (!enabled) {
-            JTFBackupPin.setText(null);
-        }
-    }
+	private void setPinInputState(boolean enabled) {
+		JBSubmitPin.setEnabled(enabled);
+		JTFBackupPin.setEnabled(enabled);
+		JLBackupPin.setEnabled(enabled);
+		if (!enabled) {
+			JTFBackupPin.setText(null);
+		}
+	}
 
-    private void setAuthenticationState(boolean authenticating) {
-            synchronized (authLock) {
-                isAuthenticating = authenticating;
-                if (authenticating) {
-                    JBSave.setEnabled(false);
-                    JCBForcePinAuth.setEnabled(false);
-                    JBCopyUrl.setEnabled(true);
-                    JBCopyUrl.setText("Copy URL");
-                } else {
-                    setPinInputState(false);
-                    JBSave.setEnabled(true);
-                    JBCopyUrl.setEnabled(false);
-                    JLAuthUrl.setEnabled(false);
-                    JTFAuthUrl.setEnabled(false);
-                    JTFAuthUrl.setText(null);
-                    JTFAuthUrl.setBackground(new Color(240, 240, 240));
-                }
-            }
-    }
+	private void setAuthenticationState(boolean authenticating) {
+		synchronized (authLock) {
+			isAuthenticating = authenticating;
+			if (authenticating) {
+				JBSave.setEnabled(false);
+				JCBForcePinAuth.setEnabled(false);
+				JBCopyUrl.setEnabled(true);
+				JBCopyUrl.setText("Copy URL");
+			} else {
+				setPinInputState(false);
+				JBSave.setEnabled(true);
+				JBCopyUrl.setEnabled(false);
+				JLAuthUrl.setEnabled(false);
+				JTFAuthUrl.setEnabled(false);
+				JTFAuthUrl.setText(null);
+				JTFAuthUrl.setBackground(new Color(240, 240, 240));
+			}
+		}
+	}
 
-    private AuthWorker executeAuthentication(boolean failIfNoAutoAuth) {
-        AuthWorker myAuthWorker = new AuthWorker(this, JCBForcePinAuth.isSelected(), failIfNoAutoAuth);
-        myAuthWorker.execute();
-        return myAuthWorker;
-    }
+	private AuthWorker executeAuthentication(boolean failIfNoAutoAuth) {
+		AuthWorker myAuthWorker = new AuthWorker(this, JCBForcePinAuth.isSelected(), failIfNoAutoAuth);
+		myAuthWorker.execute();
+		return myAuthWorker;
+	}
 
-    private void updatePreferences() {
-        if (isTwitterEnabled()) {
-            prefs.getPreferenceObject("CHECK_TWITTER").setValue(true);
-            prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected());
-            prefs.getPreferenceObject("TEXT_TWEETS").setValue(JCBTextTweets.isSelected());
-        } else {
-            prefs.getPreferenceObject("CHECK_TWITTER").setValue(false);
-            prefs.getPreferenceObject("FILTER_TWITTER").setValue(false);
-            prefs.getPreferenceObject("TEXT_TWEETS").setValue(false);
-        }
-    }
+	private void updatePreferences() {
+		if (isTwitterEnabled()) {
+			prefs.getPreferenceObject("CHECK_TWITTER").setValue(true);
+			prefs.getPreferenceObject("FILTER_TWITTER").setValue(JCBFilterTwitter.isSelected());
+			prefs.getPreferenceObject("TEXT_TWEETS").setValue(JCBTextTweets.isSelected());
+		} else {
+			prefs.getPreferenceObject("CHECK_TWITTER").setValue(false);
+			prefs.getPreferenceObject("FILTER_TWITTER").setValue(false);
+			prefs.getPreferenceObject("TEXT_TWEETS").setValue(false);
+		}
+	}
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+	 * modify this code. The content of this method is always regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -410,72 +409,72 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBAuthenticateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBAuthenticateActionPerformed
-        synchronized (authLock) {
-            if (isAuthenticating) {
-                JBAuthenticate.setEnabled(false);
-                myTwitterAccount.interrupt();
-                cancelAuthorizationPinPrompt();
-            } else {
-                JBAuthenticate.setText("Cancel Auth");
-                executeAuthentication(false);
-            }
-        }
+			synchronized (authLock) {
+				if (isAuthenticating) {
+					JBAuthenticate.setEnabled(false);
+					myTwitterAccount.interrupt();
+					cancelAuthorizationPinPrompt();
+				} else {
+					JBAuthenticate.setText("Cancel Auth");
+					executeAuthentication(false);
+				}
+			}
     }//GEN-LAST:event_JBAuthenticateActionPerformed
 
     private void JBSubmitPinActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBSubmitPinActionPerformed
-        authPinCountdown.countDown();
+			authPinCountdown.countDown();
     }//GEN-LAST:event_JBSubmitPinActionPerformed
 
     private void JBClearAuthenticationActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBClearAuthenticationActionPerformed
-        int result = JOptionPane.showConfirmDialog(null,
-            "This will clear your saved Twitter credentials, and you will have to log in again through your browser in order to use Twitter. This is not reversible.\r\nAre you sure you want to delete your Twitter credentials?",
-            "Delete Credentials",
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.WARNING_MESSAGE);
-        if (result == JOptionPane.YES_OPTION) {
-            myTwitterAccount.clearAccessToken();
-            myTwitterAccount = new TwitterAccount();
-            JBAuthenticate.setEnabled(true);
-            JCBForcePinAuth.setEnabled(true);
-            JBClearAuthentication.setEnabled(false);
-            JLStatus.setText("Authentication cleared");
-        }
+			int result = JOptionPane.showConfirmDialog(null,
+					"This will clear your saved Twitter credentials, and you will have to log in again through your browser in order to use Twitter. This is not reversible.\r\nAre you sure you want to delete your Twitter credentials?",
+					"Delete Credentials",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.YES_OPTION) {
+				myTwitterAccount.clearAccessToken();
+				myTwitterAccount = new TwitterAccount();
+				JBAuthenticate.setEnabled(true);
+				JCBForcePinAuth.setEnabled(true);
+				JBClearAuthentication.setEnabled(false);
+				JLStatus.setText("Authentication cleared");
+			}
     }//GEN-LAST:event_JBClearAuthenticationActionPerformed
 
     private void JTFBackupPinKeyTyped(KeyEvent evt) {//GEN-FIRST:event_JTFBackupPinKeyTyped
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            authPinCountdown.countDown();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+				authPinCountdown.countDown();
+			}
     }//GEN-LAST:event_JTFBackupPinKeyTyped
 
     private void JBSaveActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBSaveActionPerformed
-        setVisible(false);
-        disableTwitter = false;
-        if (myTwitterAccount.getAccount() != null) {
-            JLStatus.setText("Authenticated");
-        } else {
-            JLStatus.setText("Not Authenticated");
-        }
-        updatePreferences();
+			setVisible(false);
+			disableTwitter = false;
+			if (myTwitterAccount.getAccount() != null) {
+				JLStatus.setText("Authenticated");
+			} else {
+				JLStatus.setText("Not Authenticated");
+			}
+			updatePreferences();
     }//GEN-LAST:event_JBSaveActionPerformed
 
     private void JBCopyUrlActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBCopyUrlActionPerformed
-        StringSelection authUrl = new StringSelection(JTFAuthUrl.getText());
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(authUrl, authUrl);
-        JBCopyUrl.setText("Copied");
+			StringSelection authUrl = new StringSelection(JTFAuthUrl.getText());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(authUrl, authUrl);
+			JBCopyUrl.setText("Copied");
     }//GEN-LAST:event_JBCopyUrlActionPerformed
 
     private void JBDisableTwitterActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBDisableTwitterActionPerformed
-        synchronized (authLock) {
-            if (isAuthenticating) {
-                JBAuthenticate.setEnabled(false);
-                myTwitterAccount.interrupt();
-                cancelAuthorizationPinPrompt();
-            }
-            disableTwitter = true;
-        }
-        setVisible(false);
-        updatePreferences();
+			synchronized (authLock) {
+				if (isAuthenticating) {
+					JBAuthenticate.setEnabled(false);
+					myTwitterAccount.interrupt();
+					cancelAuthorizationPinPrompt();
+				}
+				disableTwitter = true;
+			}
+			setVisible(false);
+			updatePreferences();
     }//GEN-LAST:event_JBDisableTwitterActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -500,25 +499,25 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
     private JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
 
-    private class AuthWorker extends SwingWorker<Boolean, Integer> {
+	private class AuthWorker extends SwingWorker<Boolean, Integer> {
 
-        private OauthStatusUpdater authInterface;
-        private boolean forcePinAuth;
-        private boolean failIfNoAutoAuth;
+		private OauthStatusUpdater authInterface;
+		private boolean forcePinAuth;
+		private boolean failIfNoAutoAuth;
 
-        public AuthWorker(OauthStatusUpdater authInterface, boolean forcePinAuth, boolean failIfNoAutoAuth) {
-            this.authInterface = authInterface;
-            this.forcePinAuth = forcePinAuth;
-            this.failIfNoAutoAuth = failIfNoAutoAuth;
-        }
+		public AuthWorker(OauthStatusUpdater authInterface, boolean forcePinAuth, boolean failIfNoAutoAuth) {
+			this.authInterface = authInterface;
+			this.forcePinAuth = forcePinAuth;
+			this.failIfNoAutoAuth = failIfNoAutoAuth;
+		}
 
-        @Override
-        protected Boolean doInBackground() {
-            setAuthenticationState(true);
-            myTwitterAccount.authenticate(authInterface, forcePinAuth, failIfNoAutoAuth);
-            setAuthenticationState(false);
-            return isTwitterEnabled();
-        }
-    }
+		@Override
+		protected Boolean doInBackground() {
+			setAuthenticationState(true);
+			myTwitterAccount.authenticate(authInterface, forcePinAuth, failIfNoAutoAuth);
+			setAuthenticationState(false);
+			return isTwitterEnabled();
+		}
+	}
 
 }

@@ -6,6 +6,6 @@ package com.github.sunnybat.paxchecker.status;
  */
 public interface CheckerInfoOutput {
 
-  public void update(String output);
+	public void update(String output);
 
 }

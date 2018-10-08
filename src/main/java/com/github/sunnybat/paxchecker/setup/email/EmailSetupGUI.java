@@ -40,227 +40,224 @@ import javax.swing.table.DefaultTableModel;
  */
 public class EmailSetupGUI extends javax.swing.JFrame {
 
-    private AuthenticationCallback myCallback = new AuthenticationCallback();
-    private AuthGmail authGmail = new AuthGmail(myCallback);
-    private AuthSMTP authSmtp = new AuthSMTP(myCallback);
-    private PreferenceHandler prefs;
-    private EmailAccount finalizedEmailAccount;
-    private boolean disableEmail = false;
-    private List<EmailAddress> savedEmailAddresses;
-    private boolean savedIsGmail;
+	private AuthenticationCallback myCallback = new AuthenticationCallback();
+	private AuthGmail authGmail = new AuthGmail(myCallback);
+	private AuthSMTP authSmtp = new AuthSMTP(myCallback);
+	private PreferenceHandler prefs;
+	private EmailAccount finalizedEmailAccount;
+	private boolean disableEmail = false;
+	private List<EmailAddress> savedEmailAddresses;
+	private boolean savedIsGmail;
 
-    /**
-     * Creates new form EmailUIWrapper
-     *
-     * @param prefs The Preferences to save email configuration settings to and
-     * load from
-     */
-    public EmailSetupGUI(PreferenceHandler prefs) {
-        this.prefs = prefs;
-        initComponents();
-        customComponents();
-    }
+	/**
+	 * Creates new form EmailUIWrapper
+	 *
+	 * @param prefs The Preferences to save email configuration settings to and load from
+	 */
+	public EmailSetupGUI(PreferenceHandler prefs) {
+		this.prefs = prefs;
+		initComponents();
+		customComponents();
+	}
 
-    private void customComponents() {
-        String smtpAddress = prefs.getStringPreference("EMAIL");
-        String emailString = prefs.getStringPreference("CELLNUM");
-        String emailType = prefs.getStringPreference("EMAILTYPE");
+	private void customComponents() {
+		String smtpAddress = prefs.getStringPreference("EMAIL");
+		String emailString = prefs.getStringPreference("CELLNUM");
+		String emailType = prefs.getStringPreference("EMAILTYPE");
 
-        if (emailString != null) {
-            List<EmailAddress> addresses = EmailAddress.convertToList(emailString);
-            for (EmailAddress address : addresses) {
-                DefaultTableModel table = (DefaultTableModel) JTCellNumbers.getModel();
-                table.addRow(new Object[]{address.getAddressBeginning(), address.getAddressEnding()});
-            }
-        }
+		if (emailString != null) {
+			List<EmailAddress> addresses = EmailAddress.convertToList(emailString);
+			for (EmailAddress address : addresses) {
+				DefaultTableModel table = (DefaultTableModel) JTCellNumbers.getModel();
+				table.addRow(new Object[]{address.getAddressBeginning(), address.getAddressEnding()});
+			}
+		}
 
-        // TODO: we need to initialize everything here, including Send To
-        // addresses and the EmailAccount we're using
-        if (emailType != null && emailType.equalsIgnoreCase("SMTP")) {
-            JRBSMTP.setSelected(true);
-            setAuthPanel(authSmtp);
-            savedIsGmail = false;
-            if (smtpAddress != null) {
-                authSmtp.setEmailAddress(smtpAddress);
-            } else {
-                System.out.println("smtpIsNull");
-            }
-            authSmtp.recordCurrentFields();
-        } else {
-            JRBGmail.setSelected(true);
-            setAuthPanel(authGmail);
-            savedIsGmail = true;
-            if (emailType != null) { // Assumed to be Gmail
-                authGmail.authenticate();
-            }
-            authGmail.recordCurrentFields();
-        }
-        savedEmailAddresses = getCurrentEmails();
-        savedIsGmail = JRBGmail.isSelected();
-    }
+		// TODO: we need to initialize everything here, including Send To
+		// addresses and the EmailAccount we're using
+		if (emailType != null && emailType.equalsIgnoreCase("SMTP")) {
+			JRBSMTP.setSelected(true);
+			setAuthPanel(authSmtp);
+			savedIsGmail = false;
+			if (smtpAddress != null) {
+				authSmtp.setEmailAddress(smtpAddress);
+			} else {
+				System.out.println("smtpIsNull");
+			}
+			authSmtp.recordCurrentFields();
+		} else {
+			JRBGmail.setSelected(true);
+			setAuthPanel(authGmail);
+			savedIsGmail = true;
+			if (emailType != null) { // Assumed to be Gmail
+				authGmail.authenticate();
+			}
+			authGmail.recordCurrentFields();
+		}
+		savedEmailAddresses = getCurrentEmails();
+		savedIsGmail = JRBGmail.isSelected();
+	}
 
-    /**
-     * Gets the currently configured EmailAccount. This includes the email
-     * addresses currently configured to be sent to. The EmailAccount must be
-     * successfully authenticated, otherwise null will be returned.
-     *
-     * @return The EmailAccount configured, or null if not set up
-     */
-    public EmailAccount getEmailAccount() {
-        if (disableEmail) {
-            return null;
-        }
+	/**
+	 * Gets the currently configured EmailAccount. This includes the email addresses currently
+	 * configured to be sent to. The EmailAccount must be successfully authenticated, otherwise null
+	 * will be returned.
+	 *
+	 * @return The EmailAccount configured, or null if not set up
+	 */
+	public EmailAccount getEmailAccount() {
+		if (disableEmail) {
+			return null;
+		}
 
-        EmailAccount account;
-        if (JRBGmail.isSelected() && authGmail.isAuthenticated()) {
-            account = authGmail.getEmailAccount();
-        } else if (JRBSMTP.isSelected() && authSmtp.isAuthenticated()) {
-            account = authSmtp.getEmailAccount();
-        } else {
-            return null;
-        }
+		EmailAccount account;
+		if (JRBGmail.isSelected() && authGmail.isAuthenticated()) {
+			account = authGmail.getEmailAccount();
+		} else if (JRBSMTP.isSelected() && authSmtp.isAuthenticated()) {
+			account = authSmtp.getEmailAccount();
+		} else {
+			return null;
+		}
 
-        // === Add emails to account ===
-        account.clearAllSendAddresses(); // TODO Check to make sure this is the right thing to do, or if there's a better way
-        DefaultTableModel tableModel = (DefaultTableModel) JTCellNumbers.getModel();
-        if (tableModel.getRowCount() == 0) {
-            return null;
-        } else {
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                EmailAddress toAdd;
-                String emailBeginning = (String) tableModel.getValueAt(i, 0);
-                String emailCarrier = (String) tableModel.getValueAt(i, 1);
-                if (emailCarrier.equalsIgnoreCase("[Other]")) {
-                    toAdd = new EmailAddress(emailBeginning);
-                } else {
-                    toAdd = new EmailAddress(emailBeginning + EmailAddress.getCarrierExtension(emailCarrier));
-                }
-                account.addBccEmailAddress(toAdd);
-            }
-        }
+		// === Add emails to account ===
+		account.clearAllSendAddresses(); // TODO Check to make sure this is the right thing to do, or if there's a better way
+		DefaultTableModel tableModel = (DefaultTableModel) JTCellNumbers.getModel();
+		if (tableModel.getRowCount() == 0) {
+			return null;
+		} else {
+			for (int i = 0; i < tableModel.getRowCount(); i++) {
+				EmailAddress toAdd;
+				String emailBeginning = (String) tableModel.getValueAt(i, 0);
+				String emailCarrier = (String) tableModel.getValueAt(i, 1);
+				if (emailCarrier.equalsIgnoreCase("[Other]")) {
+					toAdd = new EmailAddress(emailBeginning);
+				} else {
+					toAdd = new EmailAddress(emailBeginning + EmailAddress.getCarrierExtension(emailCarrier));
+				}
+				account.addBccEmailAddress(toAdd);
+			}
+		}
 
-        finalizedEmailAccount = account;
-        return finalizedEmailAccount;
-    }
+		finalizedEmailAccount = account;
+		return finalizedEmailAccount;
+	}
 
-    public String getEmailType() {
-        if (JRBGmail.isSelected() && authGmail.isAuthenticated()) {
-            return "Gmail API";
-        } else if (JRBSMTP.isSelected() && authSmtp.isAuthenticated()) {
-            return "SMTP";
-        } else {
-            return "Disabled";
-        }
-    }
+	public String getEmailType() {
+		if (JRBGmail.isSelected() && authGmail.isAuthenticated()) {
+			return "Gmail API";
+		} else if (JRBSMTP.isSelected() && authSmtp.isAuthenticated()) {
+			return "SMTP";
+		} else {
+			return "Disabled";
+		}
+	}
 
-    /**
-     * Gets the semicolon-delimited String representing all of the email
-     * addresses configured.
-     *
-     * @return All the configured email addresses
-     */
-    public String getEmailAddressesString() {
-        List<EmailAddress> addresses = getCurrentEmails();
-        StringBuilder allAddresses = new StringBuilder();
-        for (int i = 0; i < addresses.size(); i++) {
-            if (i > 0) {
-                allAddresses.append(";");
-            }
-            allAddresses.append(addresses.get(i).getCompleteAddress());
-        }
-        return allAddresses.toString();
-    }
+	/**
+	 * Gets the semicolon-delimited String representing all of the email addresses configured.
+	 *
+	 * @return All the configured email addresses
+	 */
+	public String getEmailAddressesString() {
+		List<EmailAddress> addresses = getCurrentEmails();
+		StringBuilder allAddresses = new StringBuilder();
+		for (int i = 0; i < addresses.size(); i++) {
+			if (i > 0) {
+				allAddresses.append(";");
+			}
+			allAddresses.append(addresses.get(i).getCompleteAddress());
+		}
+		return allAddresses.toString();
+	}
 
-    private List<EmailAddress> getCurrentEmails() {
-        List<EmailAddress> ret = new ArrayList<>();
-        DefaultTableModel tableModel = (DefaultTableModel) JTCellNumbers.getModel();
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            try {
-                EmailAddress toAdd;
-                String emailBeginning = (String) tableModel.getValueAt(i, 0);
-                String emailCarrier = (String) tableModel.getValueAt(i, 1);
-                if (emailCarrier.equalsIgnoreCase("[Other]")) {
-                    toAdd = new EmailAddress(emailBeginning);
-                } else {
-                    toAdd = new EmailAddress(emailBeginning + EmailAddress.getCarrierExtension(emailCarrier));
-                }
+	private List<EmailAddress> getCurrentEmails() {
+		List<EmailAddress> ret = new ArrayList<>();
+		DefaultTableModel tableModel = (DefaultTableModel) JTCellNumbers.getModel();
+		for (int i = 0; i < tableModel.getRowCount(); i++) {
+			try {
+				EmailAddress toAdd;
+				String emailBeginning = (String) tableModel.getValueAt(i, 0);
+				String emailCarrier = (String) tableModel.getValueAt(i, 1);
+				if (emailCarrier.equalsIgnoreCase("[Other]")) {
+					toAdd = new EmailAddress(emailBeginning);
+				} else {
+					toAdd = new EmailAddress(emailBeginning + EmailAddress.getCarrierExtension(emailCarrier));
+				}
 
-                ret.add(toAdd);
-            } catch (IllegalArgumentException iae) {
-                System.out.println("Invalid email address: " + tableModel.getValueAt(i, 0) + tableModel.getValueAt(i, 1));
-            }
-        }
-        return ret;
-    }
+				ret.add(toAdd);
+			} catch (IllegalArgumentException iae) {
+				System.out.println("Invalid email address: " + tableModel.getValueAt(i, 0) + tableModel.getValueAt(i, 1));
+			}
+		}
+		return ret;
+	}
 
-    private void addEmail() {
-        String cellNumber = JTFCellNumber.getText();
-        String carrier = JCBCarrier.getSelectedItem().toString();
-        if (!cellNumber.isEmpty()) {
-            if (cellNumber.contains("@")) { // Full email configured
-                carrier = "[Other]";
-            }
-            ((DefaultTableModel) JTCellNumbers.getModel()).addRow(new Object[]{cellNumber, carrier});
-            JTFCellNumber.setText(null);
-            JCBCarrier.setSelectedIndex(0);
-            JTFCellNumber.requestFocus();
-        }
-    }
+	private void addEmail() {
+		String cellNumber = JTFCellNumber.getText();
+		String carrier = JCBCarrier.getSelectedItem().toString();
+		if (!cellNumber.isEmpty()) {
+			if (cellNumber.contains("@")) { // Full email configured
+				carrier = "[Other]";
+			}
+			((DefaultTableModel) JTCellNumbers.getModel()).addRow(new Object[]{cellNumber, carrier});
+			JTFCellNumber.setText(null);
+			JCBCarrier.setSelectedIndex(0);
+			JTFCellNumber.requestFocus();
+		}
+	}
 
-    private void resetChanges() {
-        DefaultTableModel model = (DefaultTableModel) JTCellNumbers.getModel();
-        for (int i = model.getRowCount() - 1; i >= 0; i--) {
-            model.removeRow(i);
-        }
-        if (savedEmailAddresses != null) {
-            for (EmailAddress address : savedEmailAddresses) {
-                model.addRow(new Object[]{address.getAddressBeginning(), EmailAddress.getProvider(address.getAddressEnding())});
-            }
-        }
-        if (savedIsGmail) {
-            JRBGmail.setSelected(true);
-            setAuthPanel(authGmail);
-        } else {
-            JRBSMTP.setSelected(true);
-            setAuthPanel(authSmtp);
-        }
-    }
+	private void resetChanges() {
+		DefaultTableModel model = (DefaultTableModel) JTCellNumbers.getModel();
+		for (int i = model.getRowCount() - 1; i >= 0; i--) {
+			model.removeRow(i);
+		}
+		if (savedEmailAddresses != null) {
+			for (EmailAddress address : savedEmailAddresses) {
+				model.addRow(new Object[]{address.getAddressBeginning(), EmailAddress.getProvider(address.getAddressEnding())});
+			}
+		}
+		if (savedIsGmail) {
+			JRBGmail.setSelected(true);
+			setAuthPanel(authGmail);
+		} else {
+			JRBSMTP.setSelected(true);
+			setAuthPanel(authSmtp);
+		}
+	}
 
-    private void setAuthPanel(JPanel toUse) {
-        JPAuthInfo.removeAll();
-        JPAuthInfo.add(toUse);
-        JPAuthInfo.revalidate();
-        JPAuthInfo.repaint();
-        pack();
-    }
+	private void setAuthPanel(JPanel toUse) {
+		JPAuthInfo.removeAll();
+		JPAuthInfo.add(toUse);
+		JPAuthInfo.revalidate();
+		JPAuthInfo.repaint();
+		pack();
+	}
 
-    private void resetUserInputFields() {
-        JTPComponents.setSelectedIndex(0);
-        JTFCellNumber.setText(null);
-        JCBCarrier.setSelectedIndex(0);
-    }
+	private void resetUserInputFields() {
+		JTPComponents.setSelectedIndex(0);
+		JTFCellNumber.setText(null);
+		JCBCarrier.setSelectedIndex(0);
+	}
 
-    private void updatePreferences() {
-        EmailAccount toSave = getEmailAccount();
-        if (!disableEmail && toSave != null) {
-            prefs.getPreferenceObject("EMAIL").setValue(toSave.getEmailAddress());
-            prefs.getPreferenceObject("CELLNUM").setValue(getEmailAddressesString());
-            prefs.getPreferenceObject("EMAILTYPE").setValue(getEmailType());
-            prefs.getPreferenceObject("EMAILENABLED").setValue(true);
-        } else {
-            prefs.getPreferenceObject("EMAIL").setValue(null);
-            prefs.getPreferenceObject("CELLNUM").setValue(null);
-            prefs.getPreferenceObject("EMAILTYPE").setValue(null);
-            prefs.getPreferenceObject("EMAILENABLED").setValue(false);
-        }
-    }
+	private void updatePreferences() {
+		EmailAccount toSave = getEmailAccount();
+		if (!disableEmail && toSave != null) {
+			prefs.getPreferenceObject("EMAIL").setValue(toSave.getEmailAddress());
+			prefs.getPreferenceObject("CELLNUM").setValue(getEmailAddressesString());
+			prefs.getPreferenceObject("EMAILTYPE").setValue(getEmailType());
+			prefs.getPreferenceObject("EMAILENABLED").setValue(true);
+		} else {
+			prefs.getPreferenceObject("EMAIL").setValue(null);
+			prefs.getPreferenceObject("CELLNUM").setValue(null);
+			prefs.getPreferenceObject("EMAILTYPE").setValue(null);
+			prefs.getPreferenceObject("EMAILENABLED").setValue(false);
+		}
+	}
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+	 * modify this code. The content of this method is always regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -472,85 +469,85 @@ public class EmailSetupGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JRBGmailActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JRBGmailActionPerformed
-        setAuthPanel(authGmail);
+			setAuthPanel(authGmail);
     }//GEN-LAST:event_JRBGmailActionPerformed
 
     private void JRBSMTPActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JRBSMTPActionPerformed
-        setAuthPanel(authSmtp);
+			setAuthPanel(authSmtp);
     }//GEN-LAST:event_JRBSMTPActionPerformed
 
     private void JBAddNumberActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBAddNumberActionPerformed
-        addEmail();
+			addEmail();
     }//GEN-LAST:event_JBAddNumberActionPerformed
 
     private void JTCellNumbersKeyPressed(KeyEvent evt) {//GEN-FIRST:event_JTCellNumbersKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-            int[] selectedIndeces = JTCellNumbers.getSelectedRows();
-            for (int i = selectedIndeces.length - 1; i >= 0; i--) { // Iterate from the bottom up
-                ((DefaultTableModel) JTCellNumbers.getModel()).removeRow(selectedIndeces[i]);
-            }
-        } else if (evt.getKeyCode() == KeyEvent.VK_TAB) {
-            this.transferFocus();
-            evt.consume();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+				int[] selectedIndeces = JTCellNumbers.getSelectedRows();
+				for (int i = selectedIndeces.length - 1; i >= 0; i--) { // Iterate from the bottom up
+					((DefaultTableModel) JTCellNumbers.getModel()).removeRow(selectedIndeces[i]);
+				}
+			} else if (evt.getKeyCode() == KeyEvent.VK_TAB) {
+				this.transferFocus();
+				evt.consume();
+			}
     }//GEN-LAST:event_JTCellNumbersKeyPressed
 
     private void JTFCellNumberKeyPressed(KeyEvent evt) {//GEN-FIRST:event_JTFCellNumberKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            addEmail();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+				addEmail();
+			}
     }//GEN-LAST:event_JTFCellNumberKeyPressed
 
     private void JCBCarrierKeyPressed(KeyEvent evt) {//GEN-FIRST:event_JCBCarrierKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            addEmail();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+				addEmail();
+			}
     }//GEN-LAST:event_JCBCarrierKeyPressed
 
     private void JBAddNumberKeyPressed(KeyEvent evt) {//GEN-FIRST:event_JBAddNumberKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            addEmail();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+				addEmail();
+			}
     }//GEN-LAST:event_JBAddNumberKeyPressed
 
     private void JBSaveChangesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBSaveChangesActionPerformed
-        if (getCurrentEmails().isEmpty()) {
-            int result = JOptionPane.showConfirmDialog(null, "You have no Send To emails configured. This means emails will still be disabled.\r\nAre you sure you want to save your changes?\r\nPress Yes to save your changes, or No to add email addresses.",
-                "No Emails Input",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            if (result == JOptionPane.NO_OPTION) {
-                JTPComponents.setSelectedComponent(JPSendTo);
-                return;
-            }
-        }
-        authGmail.recordCurrentFields();
-        authSmtp.recordCurrentFields();
-        savedEmailAddresses = getCurrentEmails();
-        savedIsGmail = JRBGmail.isSelected();
-        disableEmail = false;
-        setVisible(false);
-        resetUserInputFields();
-        updatePreferences();
+			if (getCurrentEmails().isEmpty()) {
+				int result = JOptionPane.showConfirmDialog(null, "You have no Send To emails configured. This means emails will still be disabled.\r\nAre you sure you want to save your changes?\r\nPress Yes to save your changes, or No to add email addresses.",
+						"No Emails Input",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE);
+				if (result == JOptionPane.NO_OPTION) {
+					JTPComponents.setSelectedComponent(JPSendTo);
+					return;
+				}
+			}
+			authGmail.recordCurrentFields();
+			authSmtp.recordCurrentFields();
+			savedEmailAddresses = getCurrentEmails();
+			savedIsGmail = JRBGmail.isSelected();
+			disableEmail = false;
+			setVisible(false);
+			resetUserInputFields();
+			updatePreferences();
     }//GEN-LAST:event_JBSaveChangesActionPerformed
 
     private void JBCancelChangesActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBCancelChangesActionPerformed
-        authGmail.resetChanges();
-        authSmtp.resetChanges();
-        resetChanges();
-        setVisible(false);
-        resetUserInputFields();
-        updatePreferences();
+			authGmail.resetChanges();
+			authSmtp.resetChanges();
+			resetChanges();
+			setVisible(false);
+			resetUserInputFields();
+			updatePreferences();
     }//GEN-LAST:event_JBCancelChangesActionPerformed
 
     private void JBDisableEmailActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBDisableEmailActionPerformed
-        disableEmail = true;
-        authGmail.resetChanges();
-        authSmtp.resetChanges();
-        resetChanges();
-        setVisible(false);
-        resetUserInputFields();
-        updatePreferences();
+			disableEmail = true;
+			authGmail.resetChanges();
+			authSmtp.resetChanges();
+			resetChanges();
+			setVisible(false);
+			resetUserInputFields();
+			updatePreferences();
     }//GEN-LAST:event_JBDisableEmailActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -573,17 +570,17 @@ public class EmailSetupGUI extends javax.swing.JFrame {
     private JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    private class AuthenticationCallback implements Runnable {
+	private class AuthenticationCallback implements Runnable {
 
-        private boolean nextEnabledState = false;
+		private boolean nextEnabledState = false;
 
-        public void run() {
-            JBSaveChanges.setEnabled(nextEnabledState);
-            JBCancelChanges.setEnabled(nextEnabledState);
-            JBDisableEmail.setEnabled(nextEnabledState);
-            JRBGmail.setEnabled(nextEnabledState);
-            JRBSMTP.setEnabled(nextEnabledState);
-            nextEnabledState = !nextEnabledState; // Invert
-        }
-    }
+		public void run() {
+			JBSaveChanges.setEnabled(nextEnabledState);
+			JBCancelChanges.setEnabled(nextEnabledState);
+			JBDisableEmail.setEnabled(nextEnabledState);
+			JRBGmail.setEnabled(nextEnabledState);
+			JRBSMTP.setEnabled(nextEnabledState);
+			nextEnabledState = !nextEnabledState; // Invert
+		}
+	}
 }

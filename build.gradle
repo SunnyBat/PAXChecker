@@ -4,63 +4,63 @@ sourceCompatibility = '1.7'
 [compileJava]*.options*.encoding = 'UTF-8'
 
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'com.github.sunnybat.paxchecker.PAXChecker'
+	ext.mainClass = 'com.github.sunnybat.paxchecker.PAXChecker'
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 configurations {
-    provided
-    // Make compile extend from our provided configuration so that things added to bundled end up on the compile classpath
-    compile.extendsFrom(provided)
+	provided
+	// Make compile extend from our provided configuration so that things added to bundled end up on the compile classpath
+	compile.extendsFrom(provided)
 }
 
 dependencies {
-    //provided fileTree(dir: 'lib', include: ['*.jar'])
-    provided project(":CommonCode") // Defined in settings.gradle; includes all depdencies from CommonCode
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    compile group: 'javax.mail', name: 'mail', version: '1.4.7' // TODO: Migrate this over to CommonCode
-    compile group: 'org.twitter4j', name: 'twitter4j-stream', version: '4.0.6'
+	//provided fileTree(dir: 'lib', include: ['*.jar'])
+	provided project(":CommonCode") // Defined in settings.gradle; includes all depdencies from CommonCode
+	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+	compile group: 'javax.mail', name: 'mail', version: '1.4.7' // TODO: Migrate this over to CommonCode
+	compile group: 'org.twitter4j', name: 'twitter4j-stream', version: '4.0.6'
 }
 
 compileJava.doLast {
-    tasks.copyToLib.execute()
-    tasks.fatJar.execute()
+	tasks.copyToLib.execute()
+	tasks.fatJar.execute()
 }
 
 task copyToLib(type: Copy) {
-    into "$buildDir/lib"
-    from configurations.runtime.findAll {
-        !it.name.equals("CommonCode.jar") // Exclude CommonCode from lib folder
-    }
+	into "$buildDir/lib"
+	from configurations.runtime.findAll {
+		!it.name.equals("CommonCode.jar") // Exclude CommonCode from lib folder
+	}
 }
 
 task fatJar(type: Jar) {
-    manifest {
-        attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
-    }
-    baseName = 'PAXChecker'
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    from "src/main/resources"
-    with jar
+	manifest {
+		attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
+	}
+	baseName = 'PAXChecker'
+	from {
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	from "src/main/resources"
+	with jar
 }
 
 jar {
-    from {
-        configurations.provided.findAll {
-            it.name.equals("CommonCode.jar") // Include only CommonCode.jar, no depdenencies
-        }.collect {
-            it.isDirectory() ? it : zipTree(it) // And zip with the output jar
-        }
-    }
-    manifest {
-        attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
-    }
-    archivesBaseName = 'PAXCheckerSlim' // Rename resulting jar so we can copy+paste directly
+	from {
+		configurations.provided.findAll {
+			it.name.equals("CommonCode.jar") // Include only CommonCode.jar, no depdenencies
+		}.collect {
+			it.isDirectory() ? it : zipTree(it) // And zip with the output jar
+		}
+	}
+	manifest {
+		attributes 'Main-Class': 'com.github.sunnybat.paxchecker.PAXChecker'
+	}
+	archivesBaseName = 'PAXCheckerSlim' // Rename resulting jar so we can copy+paste directly
 }

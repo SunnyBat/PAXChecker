@@ -11,17 +11,17 @@ import java.io.InputStream;
  */
 public class ResourceLoader {
 
-  /**
-   * Attempts to load the given file from the PAXChecker resources.
-   *
-   * @param fileName The name of the file to load
-   * @return The InputStream containing the File
-   * @throws FileNotFoundException If the file does not exist
-   */
-  public static InputStream loadResource(String fileName) throws FileNotFoundException {
-    File inputFile = new File(ResourceConstants.RESOURCE_LOCATION + fileName);
-    InputStream in = new java.io.FileInputStream(inputFile);
-    return in;
-  }
+	/**
+	 * Attempts to load the given file from the PAXChecker resources.
+	 *
+	 * @param fileName The name of the file to load
+	 * @return The InputStream containing the File
+	 * @throws FileNotFoundException If the file does not exist
+	 */
+	public static InputStream loadResource(String fileName) throws FileNotFoundException {
+		File inputFile = new File(ResourceConstants.RESOURCE_LOCATION + fileName);
+		InputStream in = new java.io.FileInputStream(inputFile);
+		return in;
+	}
 
 }

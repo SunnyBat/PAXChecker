@@ -10,317 +10,313 @@ import javax.swing.SwingWorker;
 import twitter4j.Twitter;
 
 /**
- * Creates a new Setup GUI for the user to configure the program at will. Saves
- * Preferences independent of the rest of the program for quick loading
- * afterwards.
+ * Creates a new Setup GUI for the user to configure the program at will. Saves Preferences
+ * independent of the rest of the program for quick loading afterwards.
  *
  * @author SunnyBat
  */
 public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame implements Setup {
 
-    private NotificationWindow twitterDisabledWindow;
-    private PreferenceHandler prefs;
-    private EmailSetupGUI myEmailGui;
-    private TwitterSetupGUI myTwitterGui;
-    private boolean isOpen = true;
+	private NotificationWindow twitterDisabledWindow;
+	private PreferenceHandler prefs;
+	private EmailSetupGUI myEmailGui;
+	private TwitterSetupGUI myTwitterGui;
+	private boolean isOpen = true;
 
-    /**
-     * Creates new form Setup
-     */
-    public SetupGUI() {
-        twitterDisabledWindow = new NotificationWindow("API Keys", "The Twitter API requires API keys to access it. Unfortunately, putting API keys in "
-            + "an open-source project runs the risk of having the keys disabled due to malicious people. As such, you must use your own Twitter API "
-            + "keys. For more information, press the More Info button.\n\nIt's recommended to check the \"Save Encrypted Twitter Keys\" checkbox in the "
-            + "Preferences tab if you do not want to enter them into the program every time.\nNOTE: You should only save your Twitter keys on a private "
-            + "and trusted computer!");
-        twitterDisabledWindow.setMoreInfoButtonLink("https://redd.it/2nct50");
-        prefs = new PreferenceHandler("paxchecker");
-        myEmailGui = new EmailSetupGUI(prefs);
-        myEmailGui.setLocationRelativeTo(this);
-        myTwitterGui = new TwitterSetupGUI(prefs);
-        myTwitterGui.setLocationRelativeTo(this);
-        invokeAndWaitOnEDT(new Runnable() {
-            @Override
-            public void run() {
-                initComponents();
-                customComponents();
-                updateEmailAccountInfo();
-                updateTwitterInfo();
-            }
-        });
-    }
+	/**
+	 * Creates new form Setup
+	 */
+	public SetupGUI() {
+		twitterDisabledWindow = new NotificationWindow("API Keys", "The Twitter API requires API keys to access it. Unfortunately, putting API keys in "
+				+ "an open-source project runs the risk of having the keys disabled due to malicious people. As such, you must use your own Twitter API "
+				+ "keys. For more information, press the More Info button.\n\nIt's recommended to check the \"Save Encrypted Twitter Keys\" checkbox in the "
+				+ "Preferences tab if you do not want to enter them into the program every time.\nNOTE: You should only save your Twitter keys on a private "
+				+ "and trusted computer!");
+		twitterDisabledWindow.setMoreInfoButtonLink("https://redd.it/2nct50");
+		prefs = new PreferenceHandler("paxchecker");
+		myEmailGui = new EmailSetupGUI(prefs);
+		myEmailGui.setLocationRelativeTo(this);
+		myTwitterGui = new TwitterSetupGUI(prefs);
+		myTwitterGui.setLocationRelativeTo(this);
+		invokeAndWaitOnEDT(new Runnable() {
+			@Override
+			public void run() {
+				initComponents();
+				customComponents();
+				updateEmailAccountInfo();
+				updateTwitterInfo();
+			}
+		});
+	}
 
-    @Override
-    public Twitter getTwitterAccount() {
-        return myTwitterGui.getTwitterAccount();
-    }
+	@Override
+	public Twitter getTwitterAccount() {
+		return myTwitterGui.getTwitterAccount();
+	}
 
-    private void customComponents() {
-        setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
-        JTPExtras.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Extra.html"));
-        JTPExtras.setCaretPosition(0);
-        JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Instructions.html"));
-        JTPInstructions.setCaretPosition(0);
-        // Preferences Tab
-        JCBSaveEmailSettings.setSelected(prefs.getBooleanPreference("SAVE_EMAIL_SETTINGS"));
-        JCBSaveCheckSettings.setSelected(prefs.getBooleanPreference("SAVE_CHECK_SETTINGS", true));
-        JCBUseBeta.setSelected(prefs.getBooleanPreference("USE_BETA"));
-        JCBLoadNotifications.setSelected(prefs.getBooleanPreference("LOAD_NOTIFICATIONS", true));
-        JCBCheckUpdates.setSelected(prefs.getBooleanPreference("LOAD_UPDATES", true));
-        if (JCBCheckUpdates.isSelected()) {
-            JCBCheckUpdatesDaily.setSelected(prefs.getBooleanPreference("DAILY_UPDATES"));
-        } else {
-            JCBCheckUpdatesDaily.setEnabled(false);
-        }
-        JCBStatistics.setSelected(prefs.getBooleanPreference("ANONYMOUS_STATISTICS"));
-        JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX", true));
-        JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
-        JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS"));
-        JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
-        JCBPlayAlarm.setSelected(prefs.getBooleanPreference("PLAY_ALARM"));
-        JSCheckTime.setValue(prefs.getIntegerPreference("REFRESHTIME"));
-        updateStart();
-    }
+	private void customComponents() {
+		setTitle("Setup :: PAXChecker v" + PAXChecker.VERSION);
+		JTPExtras.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Extra.html"));
+		JTPExtras.setCaretPosition(0);
+		JTPInstructions.setText(loadHtml("/com/github/sunnybat/paxchecker/resources/html/Instructions.html"));
+		JTPInstructions.setCaretPosition(0);
+		// Preferences Tab
+		JCBSaveEmailSettings.setSelected(prefs.getBooleanPreference("SAVE_EMAIL_SETTINGS"));
+		JCBSaveCheckSettings.setSelected(prefs.getBooleanPreference("SAVE_CHECK_SETTINGS", true));
+		JCBUseBeta.setSelected(prefs.getBooleanPreference("USE_BETA"));
+		JCBLoadNotifications.setSelected(prefs.getBooleanPreference("LOAD_NOTIFICATIONS", true));
+		JCBCheckUpdates.setSelected(prefs.getBooleanPreference("LOAD_UPDATES", true));
+		if (JCBCheckUpdates.isSelected()) {
+			JCBCheckUpdatesDaily.setSelected(prefs.getBooleanPreference("DAILY_UPDATES"));
+		} else {
+			JCBCheckUpdatesDaily.setEnabled(false);
+		}
+		JCBStatistics.setSelected(prefs.getBooleanPreference("ANONYMOUS_STATISTICS"));
+		JCBCheckWebsite.setSelected(prefs.getBooleanPreference("CHECK_PAX", true));
+		JCBCheckShowclix.setSelected(prefs.getBooleanPreference("CHECK_SHOWCLIX", true));
+		JCBCheckKnownEvents.setSelected(prefs.getBooleanPreference("CHECK_KNOWN_EVENTS"));
+		JCBExpo.setSelectedIndex(getIndexOfEvent(prefs.getStringPreference("EVENT")));
+		JCBPlayAlarm.setSelected(prefs.getBooleanPreference("PLAY_ALARM"));
+		JSCheckTime.setValue(prefs.getIntegerPreference("REFRESHTIME"));
+		updateStart();
+	}
 
-    /**
-     * Gets the index of the given Expo for the Setup JComboBox. The proper
-     * input for the method is the same Strings as the JComboBox in the Setup
-     * GUI.
-     *
-     * @param eventName The expo ("Pax EXPO") to get the index of
-     * @return The index of the given expo, or 0 for incorrect inputs.
-     */
-    public static final int getIndexOfEvent(String eventName) {
-        if (eventName == null) {
-            return 0;
-        }
-        switch (eventName.toLowerCase()) {
-            case "pax prime": // Keep for backwards compatibility with Preferences
-            case "pax west":
-            default:
-                return 0;
-            case "pax east":
-                return 1;
-            case "pax south":
-                return 2;
-            case "pax aus":
-                return 3;
-        }
-    }
+	/**
+	 * Gets the index of the given Expo for the Setup JComboBox. The proper input for the method is
+	 * the same Strings as the JComboBox in the Setup GUI.
+	 *
+	 * @param eventName The expo ("Pax EXPO") to get the index of
+	 * @return The index of the given expo, or 0 for incorrect inputs.
+	 */
+	public static final int getIndexOfEvent(String eventName) {
+		if (eventName == null) {
+			return 0;
+		}
+		switch (eventName.toLowerCase()) {
+			case "pax prime": // Keep for backwards compatibility with Preferences
+			case "pax west":
+			default:
+				return 0;
+			case "pax east":
+				return 1;
+			case "pax south":
+				return 2;
+			case "pax aus":
+				return 3;
+		}
+	}
 
-    /**
-     * Gets the index of the given provider for the Set JComboBox. The proper
-     * input for this method is the same Strings as the JComboBox in the Setup
-     * GUI.
-     *
-     * @param provider The provider to get the index of
-     * @return The index of the given provider, or 0 for incorrect inputs.
-     */
-    public static final int getIndexOfProvider(String provider) {
-        if (provider == null) {
-            return 0;
-        }
-        switch (provider.toLowerCase()) {
-            case "at&t (mms)":
-            default:
-                return 0;
-            case "at&t (sms)":
-                return 1;
-            case "verizon":
-                return 2;
-            case "sprint":
-                return 3;
-            case "t-mobile":
-                return 4;
-            case "u.s. cellular":
-                return 5;
-            case "bell":
-                return 6;
-            case "rogers":
-                return 7;
-            case "fido":
-                return 8;
-            case "koodo":
-                return 9;
-            case "telus":
-                return 10;
-            case "virgin (CAN)":
-                return 11;
-            case "wind":
-                return 12;
-            case "sasktel":
-                return 13;
-            case "[other]":
-                return 14;
-        }
-    }
+	/**
+	 * Gets the index of the given provider for the Set JComboBox. The proper input for this method is
+	 * the same Strings as the JComboBox in the Setup GUI.
+	 *
+	 * @param provider The provider to get the index of
+	 * @return The index of the given provider, or 0 for incorrect inputs.
+	 */
+	public static final int getIndexOfProvider(String provider) {
+		if (provider == null) {
+			return 0;
+		}
+		switch (provider.toLowerCase()) {
+			case "at&t (mms)":
+			default:
+				return 0;
+			case "at&t (sms)":
+				return 1;
+			case "verizon":
+				return 2;
+			case "sprint":
+				return 3;
+			case "t-mobile":
+				return 4;
+			case "u.s. cellular":
+				return 5;
+			case "bell":
+				return 6;
+			case "rogers":
+				return 7;
+			case "fido":
+				return 8;
+			case "koodo":
+				return 9;
+			case "telus":
+				return 10;
+			case "virgin (CAN)":
+				return 11;
+			case "wind":
+				return 12;
+			case "sasktel":
+				return 13;
+			case "[other]":
+				return 14;
+		}
+	}
 
-    public void setPatchNotesText(final String text) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JTAPatchNotes.setText(text);
-                JTAPatchNotes.setCaretPosition(0);
-            }
-        });
-    }
+	public void setPatchNotesText(final String text) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JTAPatchNotes.setText(text);
+				JTAPatchNotes.setCaretPosition(0);
+			}
+		});
+	}
 
-    private static String loadHtml(String localPath) {
-        try {
-            java.io.InputStream in = Setup.class.getResourceAsStream(localPath);
-            java.util.Scanner scan = new java.util.Scanner(in);
-            String text = "";
-            while (scan.hasNext()) {
-                text += scan.nextLine();
-            }
-            return text;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "[ERROR LOADING " + localPath + "]";
-        }
-    }
+	private static String loadHtml(String localPath) {
+		try {
+			java.io.InputStream in = Setup.class.getResourceAsStream(localPath);
+			java.util.Scanner scan = new java.util.Scanner(in);
+			String text = "";
+			while (scan.hasNext()) {
+				text += scan.nextLine();
+			}
+			return text;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "[ERROR LOADING " + localPath + "]";
+		}
+	}
 
-    private void savePreferences() {
-        prefs.getPreferenceObject("SAVE_EMAIL_SETTINGS").setValue(JCBSaveEmailSettings.isSelected());
-        prefs.getPreferenceObject("SAVE_CHECK_SETTINGS").setValue(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("LOAD_NOTIFICATIONS").setValue(JCBLoadNotifications.isSelected());
-        prefs.getPreferenceObject("LOAD_UPDATES").setValue(JCBCheckUpdates.isSelected());
-        prefs.getPreferenceObject("DAILY_UPDATES").setShouldSave(JCBCheckUpdates.isSelected()); // If update checking is disabled, don't check every 24 hours
-        prefs.getPreferenceObject("DAILY_UPDATES").setValue(JCBCheckUpdatesDaily.isSelected());
-        prefs.getPreferenceObject("USE_BETA").setValue(JCBUseBeta.isSelected());
-        prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
-        prefs.getPreferenceObject("EMAIL").setShouldSave(JCBSaveEmailSettings.isSelected());
-        prefs.getPreferenceObject("CELLNUM").setShouldSave(JCBSaveEmailSettings.isSelected());
-        prefs.getPreferenceObject("EMAILTYPE").setShouldSave(JCBSaveEmailSettings.isSelected());
-        prefs.getPreferenceObject("EMAILENABLED").setShouldSave(JCBSaveEmailSettings.isSelected());
-        prefs.getPreferenceObject("CHECK_PAX").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("CHECK_PAX").setValue(JCBCheckWebsite.isSelected());
-        prefs.getPreferenceObject("CHECK_SHOWCLIX").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("CHECK_SHOWCLIX").setValue(JCBCheckShowclix.isSelected());
-        prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setValue(JCBCheckKnownEvents.isSelected());
-        prefs.getPreferenceObject("CHECK_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("FILTER_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("TEXT_TWEETS").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("EVENT").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("EVENT").setValue(JCBExpo.getSelectedItem().toString());
-        prefs.getPreferenceObject("PLAY_ALARM").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("PLAY_ALARM").setValue(JCBPlayAlarm.isSelected());
-        prefs.getPreferenceObject("REFRESHTIME").setShouldSave(JCBSaveCheckSettings.isSelected());
-        prefs.getPreferenceObject("REFRESHTIME").setValue(JSCheckTime.getValue());
-        prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
-        prefs.savePreferences();
-    }
+	private void savePreferences() {
+		prefs.getPreferenceObject("SAVE_EMAIL_SETTINGS").setValue(JCBSaveEmailSettings.isSelected());
+		prefs.getPreferenceObject("SAVE_CHECK_SETTINGS").setValue(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("LOAD_NOTIFICATIONS").setValue(JCBLoadNotifications.isSelected());
+		prefs.getPreferenceObject("LOAD_UPDATES").setValue(JCBCheckUpdates.isSelected());
+		prefs.getPreferenceObject("DAILY_UPDATES").setShouldSave(JCBCheckUpdates.isSelected()); // If update checking is disabled, don't check every 24 hours
+		prefs.getPreferenceObject("DAILY_UPDATES").setValue(JCBCheckUpdatesDaily.isSelected());
+		prefs.getPreferenceObject("USE_BETA").setValue(JCBUseBeta.isSelected());
+		prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
+		prefs.getPreferenceObject("EMAIL").setShouldSave(JCBSaveEmailSettings.isSelected());
+		prefs.getPreferenceObject("CELLNUM").setShouldSave(JCBSaveEmailSettings.isSelected());
+		prefs.getPreferenceObject("EMAILTYPE").setShouldSave(JCBSaveEmailSettings.isSelected());
+		prefs.getPreferenceObject("EMAILENABLED").setShouldSave(JCBSaveEmailSettings.isSelected());
+		prefs.getPreferenceObject("CHECK_PAX").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("CHECK_PAX").setValue(JCBCheckWebsite.isSelected());
+		prefs.getPreferenceObject("CHECK_SHOWCLIX").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("CHECK_SHOWCLIX").setValue(JCBCheckShowclix.isSelected());
+		prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("CHECK_KNOWN_EVENTS").setValue(JCBCheckKnownEvents.isSelected());
+		prefs.getPreferenceObject("CHECK_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("FILTER_TWITTER").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("TEXT_TWEETS").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("EVENT").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("EVENT").setValue(JCBExpo.getSelectedItem().toString());
+		prefs.getPreferenceObject("PLAY_ALARM").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("PLAY_ALARM").setValue(JCBPlayAlarm.isSelected());
+		prefs.getPreferenceObject("REFRESHTIME").setShouldSave(JCBSaveCheckSettings.isSelected());
+		prefs.getPreferenceObject("REFRESHTIME").setValue(JSCheckTime.getValue());
+		prefs.getPreferenceObject("ANONYMOUS_STATISTICS").setValue(JCBStatistics.isSelected());
+		prefs.savePreferences();
+	}
 
-    private void updateStart() {
-        JSCheckTime.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
-        JLSecondsBetweenChecks.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
-        JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || myTwitterGui.isTwitterEnabled() || JCBCheckKnownEvents.isSelected());
-    }
+	private void updateStart() {
+		JSCheckTime.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
+		JLSecondsBetweenChecks.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || JCBCheckKnownEvents.isSelected());
+		JBStart.setEnabled(JCBCheckWebsite.isSelected() || JCBCheckShowclix.isSelected() || myTwitterGui.isTwitterEnabled() || JCBCheckKnownEvents.isSelected());
+	}
 
-    @Override
-    public void promptForSettings() {
-        showWindow();
-        try {
-            while (isOpen) { // Should be valid until disposed
-                Thread.sleep(250);
-            }
-        } catch (InterruptedException iE) {
-            iE.printStackTrace();
-            System.out.println("Uh... Interrupted while sleeping and waiting for GUI?");
-        }
-    }
+	@Override
+	public void promptForSettings() {
+		showWindow();
+		try {
+			while (isOpen) { // Should be valid until disposed
+				Thread.sleep(250);
+			}
+		} catch (InterruptedException iE) {
+			iE.printStackTrace();
+			System.out.println("Uh... Interrupted while sleeping and waiting for GUI?");
+		}
+	}
 
-    @Override
-    public EmailAccount getEmailAccount() {
-        return myEmailGui.getEmailAccount();
-    }
+	@Override
+	public EmailAccount getEmailAccount() {
+		return myEmailGui.getEmailAccount();
+	}
 
-    @Override
-    public boolean shouldCheckPAXWebsite() {
-        return JCBCheckWebsite.isSelected();
-    }
+	@Override
+	public boolean shouldCheckPAXWebsite() {
+		return JCBCheckWebsite.isSelected();
+	}
 
-    @Override
-    public boolean shouldCheckShowclix() {
-        return JCBCheckShowclix.isSelected();
-    }
+	@Override
+	public boolean shouldCheckShowclix() {
+		return JCBCheckShowclix.isSelected();
+	}
 
-    @Override
-    public boolean shouldCheckKnownEvents() {
-        return JCBCheckKnownEvents.isSelected();
-    }
+	@Override
+	public boolean shouldCheckKnownEvents() {
+		return JCBCheckKnownEvents.isSelected();
+	}
 
-    @Override
-    public boolean shouldCheckTwitter() {
-        return myTwitterGui.getTwitterAccount() != null;
-    }
+	@Override
+	public boolean shouldCheckTwitter() {
+		return myTwitterGui.getTwitterAccount() != null;
+	}
 
-    @Override
-    public boolean shouldFilterTwitter() {
-        return myTwitterGui.shouldFilterTwitter();
-    }
+	@Override
+	public boolean shouldFilterTwitter() {
+		return myTwitterGui.shouldFilterTwitter();
+	}
 
-    @Override
-    public boolean shouldTextTweets() {
-        return myTwitterGui.shouldTextTweets();
-    }
+	@Override
+	public boolean shouldTextTweets() {
+		return myTwitterGui.shouldTextTweets();
+	}
 
-    @Override
-    public boolean shouldPlayAlarm() {
-        return JCBPlayAlarm.isSelected();
-    }
+	@Override
+	public boolean shouldPlayAlarm() {
+		return JCBPlayAlarm.isSelected();
+	}
 
-    @Override
-    public int timeBetweenChecks() {
-        return JSCheckTime.getValue();
-    }
+	@Override
+	public int timeBetweenChecks() {
+		return JSCheckTime.getValue();
+	}
 
-    @Override
-    public String getExpoToCheck() {
-        return JCBExpo.getSelectedItem().toString();
-    }
+	@Override
+	public String getExpoToCheck() {
+		return JCBExpo.getSelectedItem().toString();
+	}
 
-    @Override
-    public boolean shouldFilterShowclix() {
-        return JCBFilterShowclix.isSelected();
-    }
+	@Override
+	public boolean shouldFilterShowclix() {
+		return JCBFilterShowclix.isSelected();
+	}
 
-    @Override
-    public boolean shouldCheckForUpdatesDaily() {
-        return JCBCheckUpdates.isSelected() && JCBCheckUpdatesDaily.isSelected();
-    }
+	@Override
+	public boolean shouldCheckForUpdatesDaily() {
+		return JCBCheckUpdates.isSelected() && JCBCheckUpdatesDaily.isSelected();
+	}
 
-    private void updateEmailAccountInfo() {
-        EmailAccount myAccount = myEmailGui.getEmailAccount();
-        if (myAccount != null) {
-            JLEmailType.setText(myEmailGui.getEmailType());
-            JLEmailStatus.setText("Enabled");
-            JLEmailAddress.setText(myAccount.getEmailAddress());
-            String addressList = myEmailGui.getEmailAddressesString();
-            JLEmailList.setText(addressList.substring(0, Math.min(addressList.length(), 500)));
-        } else {
-            JLEmailType.setText("Disabled");
-            JLEmailAddress.setText("Disabled");
-            JLEmailStatus.setText("Disabled");
-            JLEmailList.setText("Disabled");
-        }
-    }
+	private void updateEmailAccountInfo() {
+		EmailAccount myAccount = myEmailGui.getEmailAccount();
+		if (myAccount != null) {
+			JLEmailType.setText(myEmailGui.getEmailType());
+			JLEmailStatus.setText("Enabled");
+			JLEmailAddress.setText(myAccount.getEmailAddress());
+			String addressList = myEmailGui.getEmailAddressesString();
+			JLEmailList.setText(addressList.substring(0, Math.min(addressList.length(), 500)));
+		} else {
+			JLEmailType.setText("Disabled");
+			JLEmailAddress.setText("Disabled");
+			JLEmailStatus.setText("Disabled");
+			JLEmailList.setText("Disabled");
+		}
+	}
 
-    private void updateTwitterInfo() {
-        if (myTwitterGui.isTwitterEnabled()) {
-            JLTwitterStatus.setText("Enabled");
-        } else {
-            JLTwitterStatus.setText("Disabled");
-        }
-    }
+	private void updateTwitterInfo() {
+		if (myTwitterGui.isTwitterEnabled()) {
+			JLTwitterStatus.setText("Enabled");
+		} else {
+			JLTwitterStatus.setText("Disabled");
+		}
+	}
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+	 * modify this code. The content of this method is always regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -758,37 +754,37 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     }// </editor-fold>//GEN-END:initComponents
 
   private void JCBCheckShowclixActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckShowclixActionPerformed
-      updateStart();
+		updateStart();
   }//GEN-LAST:event_JCBCheckShowclixActionPerformed
 
   private void JCBCheckWebsiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckWebsiteActionPerformed
-      updateStart();
+		updateStart();
   }//GEN-LAST:event_JCBCheckWebsiteActionPerformed
 
   private void JBStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBStartActionPerformed
-      dispose();
-      savePreferences();
-      isOpen = false;
+		dispose();
+		savePreferences();
+		isOpen = false;
   }//GEN-LAST:event_JBStartActionPerformed
 
   private void JBSaveSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBSaveSettingsActionPerformed
-      savePreferences();
+		savePreferences();
   }//GEN-LAST:event_JBSaveSettingsActionPerformed
 
   private void JCBCheckUpdatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckUpdatesActionPerformed
-      JCBCheckUpdatesDaily.setEnabled(JCBCheckUpdates.isSelected());
+		JCBCheckUpdatesDaily.setEnabled(JCBCheckUpdates.isSelected());
   }//GEN-LAST:event_JCBCheckUpdatesActionPerformed
 
   private void JCBCheckKnownEventsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCBCheckKnownEventsActionPerformed
-      updateStart();
+		updateStart();
   }//GEN-LAST:event_JCBCheckKnownEventsActionPerformed
 
     private void JBConfigureEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBConfigureEmailActionPerformed
-        new EmailConfiguration().execute();
+			new EmailConfiguration().execute();
     }//GEN-LAST:event_JBConfigureEmailActionPerformed
 
     private void JBConfigureTwitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBConfigureTwitterActionPerformed
-        new TwitterConfiguration().execute();
+			new TwitterConfiguration().execute();
     }//GEN-LAST:event_JBConfigureTwitterActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -839,46 +835,46 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 
-    private class EmailConfiguration extends SwingWorker<Boolean, Boolean> {
+	private class EmailConfiguration extends SwingWorker<Boolean, Boolean> {
 
-        public Boolean doInBackground() {
-            setEnabled(false);
-            myEmailGui.setVisible(true);
-            try {
-                while (myEmailGui.isVisible()) {
-                    Thread.sleep(250);
-                }
-            } catch (InterruptedException iE) {
-            }
-            return true;
-        }
+		public Boolean doInBackground() {
+			setEnabled(false);
+			myEmailGui.setVisible(true);
+			try {
+				while (myEmailGui.isVisible()) {
+					Thread.sleep(250);
+				}
+			} catch (InterruptedException iE) {
+			}
+			return true;
+		}
 
-        public void done() {
-            updateEmailAccountInfo();
-            setEnabled(true);
-            toFront();
-        }
-    }
+		public void done() {
+			updateEmailAccountInfo();
+			setEnabled(true);
+			toFront();
+		}
+	}
 
-    private class TwitterConfiguration extends SwingWorker {
+	private class TwitterConfiguration extends SwingWorker {
 
-        public Object doInBackground() {
-            setEnabled(false);
-            myTwitterGui.setVisible(true);
-            try {
-                while (myTwitterGui.isVisible()) {
-                    Thread.sleep(250);
-                }
-            } catch (InterruptedException iE) {
-            }
-            return null;
-        }
+		public Object doInBackground() {
+			setEnabled(false);
+			myTwitterGui.setVisible(true);
+			try {
+				while (myTwitterGui.isVisible()) {
+					Thread.sleep(250);
+				}
+			} catch (InterruptedException iE) {
+			}
+			return null;
+		}
 
-        public void done() {
-            updateTwitterInfo();
-            updateStart();
-            setEnabled(true);
-            toFront();
-        }
-    }
+		public void done() {
+			updateTwitterInfo();
+			updateStart();
+			setEnabled(true);
+			toFront();
+		}
+	}
 }

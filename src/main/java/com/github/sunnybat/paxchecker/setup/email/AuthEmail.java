@@ -8,12 +8,12 @@ import com.github.sunnybat.commoncode.email.account.EmailAccount;
  */
 public interface AuthEmail {
 
-    public boolean isAuthenticated();
+	public boolean isAuthenticated();
 
-    public EmailAccount getEmailAccount();
+	public EmailAccount getEmailAccount();
 
-    public void recordCurrentFields();
+	public void recordCurrentFields();
 
-    public void resetChanges();
+	public void resetChanges();
 
 }

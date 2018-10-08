@@ -6,11 +6,11 @@ package com.github.sunnybat.paxchecker.status;
  */
 public class CheckerInfoOutputCLI implements CheckerInfoOutput {
 
-  @Override
-  public void update(String output) {
-    if (output != null) {
-      System.out.println(output);
-    }
-  }
+	@Override
+	public void update(String output) {
+		if (output != null) {
+			System.out.println(output);
+		}
+	}
 
 }

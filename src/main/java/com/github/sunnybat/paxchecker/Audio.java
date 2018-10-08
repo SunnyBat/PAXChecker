@@ -22,116 +22,120 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class Audio {
 
-  private static boolean playSound;
-  private static Clip clip;
-  private static final LListener listener = new LListener();
-  private static File alarmFile;
+	private static boolean playSound;
+	private static Clip clip;
+	private static final LListener listener = new LListener();
+	private static File alarmFile;
 
-  /**
-   * Checks whether or not sound is currently enabled. This is set using {@link #enableAlarm(boolean)}.
-   *
-   * @return True to play sound, false to not
-   */
-  public static boolean soundEnabled() {
-    return playSound;
-  }
+	/**
+	 * Checks whether or not sound is currently enabled. This is set using
+	 * {@link #enableAlarm(boolean)}.
+	 *
+	 * @return True to play sound, false to not
+	 */
+	public static boolean soundEnabled() {
+		return playSound;
+	}
 
-  /**
-   * Sets whether to play the alarm sound when an update is found. This can be called at any time.
-   *
-   * @param play True to play sound, false to not
-   */
-  public static void enableAlarm() {
-    playSound = true;
-  }
+	/**
+	 * Sets whether to play the alarm sound when an update is found. This can be called at any time.
+	 *
+	 * @param play True to play sound, false to not
+	 */
+	public static void enableAlarm() {
+		playSound = true;
+	}
 
-  /**
-   * Sets the file to play when the alarm is triggered. Note that this currently only works with .WAV files.
-   *
-   * @param file The path (relative or absolute) to the File to play
-   */
-  public static void setAlarmFile(String file) {
-    setAlarmFile(new File(file));
-  }
+	/**
+	 * Sets the file to play when the alarm is triggered. Note that this currently only works with
+	 * .WAV files.
+	 *
+	 * @param file The path (relative or absolute) to the File to play
+	 */
+	public static void setAlarmFile(String file) {
+		setAlarmFile(new File(file));
+	}
 
-  /**
-   * Sets the file to play when the alarm is triggered. Note that this currently only works with .WAV files.
-   *
-   * @param alarmFile The File to play
-   */
-  public static void setAlarmFile(File alarmFile) {
-    if (!alarmFile.exists()) {
-      new ErrorBuilder()
-          .setErrorTitle("File Not Found")
-          .setErrorMessage("The alarm file was unable to be found. Please ensure that a file exists at the following location:\n"
-              + alarmFile.getAbsolutePath())
-          .buildWindow();
-      System.out.println("Alarm file does not exist.");
-    } else if (!alarmFile.getName().toLowerCase().endsWith(".wav")) {
-      System.out.println("File is not a WAV file.");
-      new ErrorBuilder()
-          .setErrorTitle("Cannot use audio file")
-          .setErrorMessage("Currently, the only supported alarm audio format is .WAV files. If you would like"
-              + " to see support for other audio formats, let me know!")
-          .buildWindow();
-    } else {
-      Audio.alarmFile = alarmFile;
-      System.out.println("Set alarm file to " + alarmFile.getName());
-    }
-  }
+	/**
+	 * Sets the file to play when the alarm is triggered. Note that this currently only works with
+	 * .WAV files.
+	 *
+	 * @param alarmFile The File to play
+	 */
+	public static void setAlarmFile(File alarmFile) {
+		if (!alarmFile.exists()) {
+			new ErrorBuilder()
+					.setErrorTitle("File Not Found")
+					.setErrorMessage("The alarm file was unable to be found. Please ensure that a file exists at the following location:\n"
+							+ alarmFile.getAbsolutePath())
+					.buildWindow();
+			System.out.println("Alarm file does not exist.");
+		} else if (!alarmFile.getName().toLowerCase().endsWith(".wav")) {
+			System.out.println("File is not a WAV file.");
+			new ErrorBuilder()
+					.setErrorTitle("Cannot use audio file")
+					.setErrorMessage("Currently, the only supported alarm audio format is .WAV files. If you would like"
+							+ " to see support for other audio formats, let me know!")
+					.buildWindow();
+		} else {
+			Audio.alarmFile = alarmFile;
+			System.out.println("Set alarm file to " + alarmFile.getName());
+		}
+	}
 
-  /**
-   * Plays the alarm. Note that this checks {@link #soundEnabled()} to make sure it's supposed to play. This method only allows one sound to play at a
-   * time, and resets the sound currently playing to the beginning.
-   *
-   * @return True if the alarm was successfully started, false if not
-   */
-  public static boolean playAlarm() {
-    if (!playSound) {
-      return false;
-    }
-    try {
-      if (clip != null) {
-        clip.stop();
-      }
-      InputStream audioSrc;
-      if (alarmFile != null) {
-        audioSrc = new FileInputStream(alarmFile);
-      } else {
-        audioSrc = ResourceLoader.loadResource("Alarm.wav");
-      }
-      InputStream bufferedIn = new BufferedInputStream(audioSrc);
-      AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
-      DataLine.Info lineInfo = new DataLine.Info(Clip.class, inputStream.getFormat());
-      clip = (Clip) AudioSystem.getLine(lineInfo);
-      clip.addLineListener(new LListener());
-      clip.open(inputStream);
-      clip.start();
-      return true;
-    } catch (Exception e) {
-      e.printStackTrace();
-      new ErrorBuilder()
-          .setErrorTitle(e.toString())
-          .setErrorMessage(e.getMessage() == null ? "An error has occurred while attempting to play the alarm." : e.getMessage())
-          .setError(e)
-          .buildWindow();
-    }
-    return false;
-  }
+	/**
+	 * Plays the alarm. Note that this checks {@link #soundEnabled()} to make sure it's supposed to
+	 * play. This method only allows one sound to play at a time, and resets the sound currently
+	 * playing to the beginning.
+	 *
+	 * @return True if the alarm was successfully started, false if not
+	 */
+	public static boolean playAlarm() {
+		if (!playSound) {
+			return false;
+		}
+		try {
+			if (clip != null) {
+				clip.stop();
+			}
+			InputStream audioSrc;
+			if (alarmFile != null) {
+				audioSrc = new FileInputStream(alarmFile);
+			} else {
+				audioSrc = ResourceLoader.loadResource("Alarm.wav");
+			}
+			InputStream bufferedIn = new BufferedInputStream(audioSrc);
+			AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedIn);
+			DataLine.Info lineInfo = new DataLine.Info(Clip.class, inputStream.getFormat());
+			clip = (Clip) AudioSystem.getLine(lineInfo);
+			clip.addLineListener(new LListener());
+			clip.open(inputStream);
+			clip.start();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			new ErrorBuilder()
+					.setErrorTitle(e.toString())
+					.setErrorMessage(e.getMessage() == null ? "An error has occurred while attempting to play the alarm." : e.getMessage())
+					.setError(e)
+					.buildWindow();
+		}
+		return false;
+	}
 
-  /**
-   * A custom LineListener implementation used for stopping the default clip when it's told to stop
-   */
-  private static class LListener implements LineListener {
+	/**
+	 * A custom LineListener implementation used for stopping the default clip when it's told to stop
+	 */
+	private static class LListener implements LineListener {
 
-    @Override
-    public void update(LineEvent le) {
-      if (le.getType() == LineEvent.Type.STOP) {
-        clip.removeLineListener(listener);
-        clip.close();
-      }
-    }
+		@Override
+		public void update(LineEvent le) {
+			if (le.getType() == LineEvent.Type.STOP) {
+				clip.removeLineListener(listener);
+				clip.close();
+			}
+		}
 
-  }
+	}
 
 }

@@ -14,61 +14,61 @@ import java.util.Set;
  */
 public class LinkManager {
 
-  private EmailAccount email;
-  private Set<String> linksOpened;
-  private Sound alarm;
+	private EmailAccount email;
+	private Set<String> linksOpened;
+	private Sound alarm;
 
-  public LinkManager(EmailAccount email) {
-    this.email = email;
-    linksOpened = new HashSet<>();
-  }
+	public LinkManager(EmailAccount email) {
+		this.email = email;
+		linksOpened = new HashSet<>();
+	}
 
-  /**
-   * Sets the sound to play when a new link is opened. If set to null, no sound will be played.
-   *
-   * @param alarm The Sound to play
-   */
-  public void setAlarm(Sound alarm) {
-    this.alarm = alarm;
-  }
+	/**
+	 * Sets the sound to play when a new link is opened. If set to null, no sound will be played.
+	 *
+	 * @param alarm The Sound to play
+	 */
+	public void setAlarm(Sound alarm) {
+		this.alarm = alarm;
+	}
 
-  public void openLink(String url, boolean sendEmail) {
-    openLink(url, sendEmail, "A new link has been found: " + url);
-  }
+	public void openLink(String url, boolean sendEmail) {
+		openLink(url, sendEmail, "A new link has been found: " + url);
+	}
 
-  public void openLink(String url, boolean sendEmail, String message) {
-    if (url == null) {
-      return;
-    }
-    if (url.endsWith("/")) {
-      url = url.substring(0, url.length() - 1);
-    }
-    if (!hasOpenedLink(url)) {
-      linksOpened.add(url);
-      Browser.openLinkInBrowser(url);
-      /*if (alarm != null) {
+	public void openLink(String url, boolean sendEmail, String message) {
+		if (url == null) {
+			return;
+		}
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+		if (!hasOpenedLink(url)) {
+			linksOpened.add(url);
+			Browser.openLinkInBrowser(url);
+			/*if (alarm != null) {
         alarm.play();
       }*/
-      Audio.playAlarm();
-      if (!GraphicsEnvironment.isHeadless()) {
-        Tickets ticketWindow = new Tickets(url);
-        ticketWindow.showWindow();
-      }
-      if (email != null && sendEmail) {
-        try {
-          email.sendEmail("PAXChecker", message);
-        } catch (IllegalStateException e) { // In case we send too fast
-          System.out.println("Unable to send email (" + e.getMessage() + ")");
-        }
-      }
-    }
-  }
+			Audio.playAlarm();
+			if (!GraphicsEnvironment.isHeadless()) {
+				Tickets ticketWindow = new Tickets(url);
+				ticketWindow.showWindow();
+			}
+			if (email != null && sendEmail) {
+				try {
+					email.sendEmail("PAXChecker", message);
+				} catch (IllegalStateException e) { // In case we send too fast
+					System.out.println("Unable to send email (" + e.getMessage() + ")");
+				}
+			}
+		}
+	}
 
-  public boolean hasOpenedLink(String url) {
-    if (url == null) {
-      return false;
-    }
-    return linksOpened.contains(url);
-  }
+	public boolean hasOpenedLink(String url) {
+		if (url == null) {
+			return false;
+		}
+		return linksOpened.contains(url);
+	}
 
 }

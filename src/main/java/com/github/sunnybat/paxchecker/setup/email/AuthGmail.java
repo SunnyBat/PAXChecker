@@ -36,157 +36,156 @@ import javax.swing.SwingWorker;
  */
 public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel implements AuthEmail, OauthStatusUpdater {
 
-    private GmailAccount savedGmailAccount;
-    private GmailAccount currentGmailAccount;
-    private Runnable authCallback;
-    private CountDownLatch authPinCountdown;
-    private boolean authenticating;
+	private GmailAccount savedGmailAccount;
+	private GmailAccount currentGmailAccount;
+	private Runnable authCallback;
+	private CountDownLatch authPinCountdown;
+	private boolean authenticating;
 
-    /**
-     * Creates new form AuthGmail
-     *
-     * @param authCallback The callback for authentication
-     */
-    public AuthGmail(Runnable authCallback) {
-        this.authCallback = authCallback;
-        initComponents();
-    }
+	/**
+	 * Creates new form AuthGmail
+	 *
+	 * @param authCallback The callback for authentication
+	 */
+	public AuthGmail(Runnable authCallback) {
+		this.authCallback = authCallback;
+		initComponents();
+	}
 
-    @Override
-    public void authFailure() {
-        setPinInputState(false);
-        JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
-        JBAuthenticate.setText("Authenticate");
-        JTFAuthUrl.setText(null);
-    }
+	@Override
+	public void authFailure() {
+		setPinInputState(false);
+		JBAuthenticate.setEnabled(true); // Possible interrupted, so this would be disabled
+		JBAuthenticate.setText("Authenticate");
+		JTFAuthUrl.setText(null);
+	}
 
-    @Override
-    public void authSuccess() {
-        setPinInputState(false);
-        JTFAuthUrl.setText(null);
-        JBAuthenticate.setEnabled(false);
-        JBAuthenticate.setText("Authenticate");
-        JBResetLogin.setEnabled(true);
-    }
+	@Override
+	public void authSuccess() {
+		setPinInputState(false);
+		JTFAuthUrl.setText(null);
+		JBAuthenticate.setEnabled(false);
+		JBAuthenticate.setText("Authenticate");
+		JBResetLogin.setEnabled(true);
+	}
 
-    @Override
-    public void setAuthUrl(final String url) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JTFAuthUrl.setText(url);
-                JTFAuthUrl.setCaretPosition(0);
-                JBCopyAuthUrl.setEnabled(url != null);
-            }
-        });
-    }
+	@Override
+	public void setAuthUrl(final String url) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JTFAuthUrl.setText(url);
+				JTFAuthUrl.setCaretPosition(0);
+				JBCopyAuthUrl.setEnabled(url != null);
+			}
+		});
+	}
 
-    @Override
-    public void promptForAuthorizationPin() {
-        setPinInputState(true);
-        authPinCountdown = new CountDownLatch(1);
-    }
+	@Override
+	public void promptForAuthorizationPin() {
+		setPinInputState(true);
+		authPinCountdown = new CountDownLatch(1);
+	}
 
-    @Override
-    public void cancelAuthorizationPinPrompt() {
-        JTFPin.setText(null);
-        authPinCountdown.countDown();
-    }
+	@Override
+	public void cancelAuthorizationPinPrompt() {
+		JTFPin.setText(null);
+		authPinCountdown.countDown();
+	}
 
-    @Override
-    public String getAuthorizationPin() {
-        try {
-            authPinCountdown.await();
-        } catch (InterruptedException ex) {
-            System.out.println("Interrupted while waiting for PIN input, proceeding");
-        }
-        String pin = getTextFromComponent(JTFPin).trim();
-        setPinInputState(false);
-        return pin;
-    }
+	@Override
+	public String getAuthorizationPin() {
+		try {
+			authPinCountdown.await();
+		} catch (InterruptedException ex) {
+			System.out.println("Interrupted while waiting for PIN input, proceeding");
+		}
+		String pin = getTextFromComponent(JTFPin).trim();
+		setPinInputState(false);
+		return pin;
+	}
 
-    @Override
-    public void updateStatus(final String status) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JLAuthStatus.setText(status);
-            }
-        });
-    }
+	@Override
+	public void updateStatus(final String status) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JLAuthStatus.setText(status);
+			}
+		});
+	}
 
-    @Override
-    public void recordCurrentFields() {
-        savedGmailAccount = currentGmailAccount;
-    }
+	@Override
+	public void recordCurrentFields() {
+		savedGmailAccount = currentGmailAccount;
+	}
 
-    @Override
-    public void resetChanges() {
-        currentGmailAccount = savedGmailAccount;
-        updatePanel(isAuthenticated());
-    }
+	@Override
+	public void resetChanges() {
+		currentGmailAccount = savedGmailAccount;
+		updatePanel(isAuthenticated());
+	}
 
-    @Override
-    public boolean isAuthenticated() {
-        return currentGmailAccount != null;
-    }
+	@Override
+	public boolean isAuthenticated() {
+		return currentGmailAccount != null;
+	}
 
-    @Override
-    public GmailAccount getEmailAccount() {
-        return currentGmailAccount;
-    }
+	@Override
+	public GmailAccount getEmailAccount() {
+		return currentGmailAccount;
+	}
 
-    public void authenticate() {
-        try {
-            authWithoutWait(true).get();
-        } catch (InterruptedException | ExecutionException e) {
-        }
-    }
+	public void authenticate() {
+		try {
+			authWithoutWait(true).get();
+		} catch (InterruptedException | ExecutionException e) {
+		}
+	}
 
-    private AuthenticationWorker authWithoutWait(boolean failIfNoAutoAuth) {
-        authCallback.run();
-        currentGmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
-        JBAuthenticate.setText("Cancel Authentication");
-        JLAuthStatus.setText("<Authenticating>");
-        AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount, failIfNoAutoAuth, JCBForcePinAuth.isSelected(), this);
-        myAuthWorker.execute();
-        return myAuthWorker;
-    }
+	private AuthenticationWorker authWithoutWait(boolean failIfNoAutoAuth) {
+		authCallback.run();
+		currentGmailAccount = new GmailAccount("PAXChecker", ResourceConstants.RESOURCE_LOCATION, ResourceConstants.CLIENT_SECRET_JSON_PATH);
+		JBAuthenticate.setText("Cancel Authentication");
+		JLAuthStatus.setText("<Authenticating>");
+		AuthenticationWorker myAuthWorker = new AuthenticationWorker(currentGmailAccount, failIfNoAutoAuth, JCBForcePinAuth.isSelected(), this);
+		myAuthWorker.execute();
+		return myAuthWorker;
+	}
 
-    private void updatePanel(boolean authSuccessful) {
-        if (authSuccessful) {
-            JLAuthStatus.setText("Success");
-            JBAuthenticate.setText("(Already authenticated)");
-            JBAuthenticate.setEnabled(false);
-            JCBForcePinAuth.setEnabled(false);
-            JBResetLogin.setEnabled(true);
-        } else {
-            currentGmailAccount = null;
-            JLAuthStatus.setText("Failed");
-            JBAuthenticate.setText("Authenticate");
-            JBAuthenticate.setEnabled(true);
-            JCBForcePinAuth.setEnabled(true);
-            JBResetLogin.setEnabled(false);
-        }
-        JBCopyAuthUrl.setEnabled(false);
-        JTFAuthUrl.setBackground(new Color(240, 240, 240));
-    }
+	private void updatePanel(boolean authSuccessful) {
+		if (authSuccessful) {
+			JLAuthStatus.setText("Success");
+			JBAuthenticate.setText("(Already authenticated)");
+			JBAuthenticate.setEnabled(false);
+			JCBForcePinAuth.setEnabled(false);
+			JBResetLogin.setEnabled(true);
+		} else {
+			currentGmailAccount = null;
+			JLAuthStatus.setText("Failed");
+			JBAuthenticate.setText("Authenticate");
+			JBAuthenticate.setEnabled(true);
+			JCBForcePinAuth.setEnabled(true);
+			JBResetLogin.setEnabled(false);
+		}
+		JBCopyAuthUrl.setEnabled(false);
+		JTFAuthUrl.setBackground(new Color(240, 240, 240));
+	}
 
-    private void setPinInputState(boolean enabled) {
-        JBSubmitPin.setEnabled(enabled);
-        JTFPin.setEnabled(enabled);
-        JLPin.setEnabled(enabled);
-        if (!enabled) {
-            JTFPin.setText(null);
-        }
-    }
+	private void setPinInputState(boolean enabled) {
+		JBSubmitPin.setEnabled(enabled);
+		JTFPin.setEnabled(enabled);
+		JLPin.setEnabled(enabled);
+		if (!enabled) {
+			JTFPin.setText(null);
+		}
+	}
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+	/**
+	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT
+	 * modify this code. The content of this method is always regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -312,62 +311,61 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
     }// </editor-fold>//GEN-END:initComponents
 
     private void JBAuthenticateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBAuthenticateActionPerformed
-        if (authenticating) {
-            if (currentGmailAccount != null) {
-                currentGmailAccount.interrupt(); // TODO less hacky than this solution =/
-            } else {
-                System.out.println("Current gmail account is null?");
-            }
-        } else {
-            authWithoutWait(false);
-        }
+			if (authenticating) {
+				if (currentGmailAccount != null) {
+					currentGmailAccount.interrupt(); // TODO less hacky than this solution =/
+				} else {
+					System.out.println("Current gmail account is null?");
+				}
+			} else {
+				authWithoutWait(false);
+			}
     }//GEN-LAST:event_JBAuthenticateActionPerformed
 
     private void JBCopyAuthUrlActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBCopyAuthUrlActionPerformed
-        if (JTFAuthUrl.getText() != null && !JTFAuthUrl.getText().isEmpty()) {
-            StringSelection stringSelection = new StringSelection(JTFAuthUrl.getText());
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
-            System.out.println("Copied to clipboard");
-        }
+			if (JTFAuthUrl.getText() != null && !JTFAuthUrl.getText().isEmpty()) {
+				StringSelection stringSelection = new StringSelection(JTFAuthUrl.getText());
+				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(stringSelection, null);
+				System.out.println("Copied to clipboard");
+			}
     }//GEN-LAST:event_JBCopyAuthUrlActionPerformed
 
     private void JBResetLoginActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBResetLoginActionPerformed
-        try {
-            int result = JOptionPane.showConfirmDialog(null,
-                "This will clear your saved Gmail credentials, and you will have to log in again through your browser in order to use the Gmail API email option. This is not reversible.\r\nAre you sure you want to delete your Gmail credentials?",
-                "Delete Credentials",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-            if (result == JOptionPane.YES_OPTION) {
-                System.out.println("Delete!");
-                currentGmailAccount.deleteCredentials();
-                currentGmailAccount = null;
-                savedGmailAccount = null;
-                updatePanel(false);
-                // TODO Force save all options
-            } else {
-                System.out.println("No delete");
-            }
-        } catch (IOException ioe) {
-            new ErrorBuilder()
-                .setErrorMessage("Unable to delete credentials. If you wish to "
-                    + "delete them manually, delete the .credentials folder in "
-                    + ResourceConstants.RESOURCE_LOCATION)
-                .buildWindow();
-        }
+			try {
+				int result = JOptionPane.showConfirmDialog(null,
+						"This will clear your saved Gmail credentials, and you will have to log in again through your browser in order to use the Gmail API email option. This is not reversible.\r\nAre you sure you want to delete your Gmail credentials?",
+						"Delete Credentials",
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				if (result == JOptionPane.YES_OPTION) {
+					System.out.println("Delete!");
+					currentGmailAccount.deleteCredentials();
+					currentGmailAccount = null;
+					savedGmailAccount = null;
+					updatePanel(false);
+					// TODO Force save all options
+				} else {
+					System.out.println("No delete");
+				}
+			} catch (IOException ioe) {
+				new ErrorBuilder()
+						.setErrorMessage("Unable to delete credentials. If you wish to "
+								+ "delete them manually, delete the .credentials folder in "
+								+ ResourceConstants.RESOURCE_LOCATION)
+						.buildWindow();
+			}
     }//GEN-LAST:event_JBResetLoginActionPerformed
 
     private void JBSubmitPinActionPerformed(ActionEvent evt) {//GEN-FIRST:event_JBSubmitPinActionPerformed
-        authPinCountdown.countDown();
+			authPinCountdown.countDown();
     }//GEN-LAST:event_JBSubmitPinActionPerformed
 
     private void JTFPinKeyTyped(KeyEvent evt) {//GEN-FIRST:event_JTFPinKeyTyped
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            authPinCountdown.countDown();
-        }
+			if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+				authPinCountdown.countDown();
+			}
     }//GEN-LAST:event_JTFPinKeyTyped
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton JBAuthenticate;
@@ -383,40 +381,40 @@ public class AuthGmail extends com.github.sunnybat.commoncode.javax.swing.JPanel
     private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
-    private class AuthenticationWorker extends SwingWorker<Boolean, Integer> {
+	private class AuthenticationWorker extends SwingWorker<Boolean, Integer> {
 
-        private GmailAccount toCheck;
-        private boolean onlyAutoAuth;
-        private boolean forcePinAuth;
-        private OauthStatusUpdater userInteractor;
+		private GmailAccount toCheck;
+		private boolean onlyAutoAuth;
+		private boolean forcePinAuth;
+		private OauthStatusUpdater userInteractor;
 
-        public AuthenticationWorker(GmailAccount toCheck, boolean onlyAutoAuth, boolean forcePinAuth, OauthStatusUpdater userInteractor) {
-            this.toCheck = toCheck;
-            this.onlyAutoAuth = onlyAutoAuth;
-            this.forcePinAuth = forcePinAuth;
-            this.userInteractor = userInteractor;
-        }
+		public AuthenticationWorker(GmailAccount toCheck, boolean onlyAutoAuth, boolean forcePinAuth, OauthStatusUpdater userInteractor) {
+			this.toCheck = toCheck;
+			this.onlyAutoAuth = onlyAutoAuth;
+			this.forcePinAuth = forcePinAuth;
+			this.userInteractor = userInteractor;
+		}
 
-        @Override
-        protected Boolean doInBackground() throws Exception {
-            authenticating = true;
-            boolean wasAuthSuccessful;
-            if (onlyAutoAuth) {
-                wasAuthSuccessful =  toCheck.checkAutoAuth();
-            } else {
-                JTFAuthUrl.setBackground(Color.WHITE);
-                JCBForcePinAuth.setEnabled(false);
-                wasAuthSuccessful = toCheck.checkAuthentication(true, !forcePinAuth, forcePinAuth, userInteractor);
-            }
-            updatePanel(wasAuthSuccessful);
-            authenticating = false;
-            return wasAuthSuccessful;
-        }
+		@Override
+		protected Boolean doInBackground() throws Exception {
+			authenticating = true;
+			boolean wasAuthSuccessful;
+			if (onlyAutoAuth) {
+				wasAuthSuccessful = toCheck.checkAutoAuth();
+			} else {
+				JTFAuthUrl.setBackground(Color.WHITE);
+				JCBForcePinAuth.setEnabled(false);
+				wasAuthSuccessful = toCheck.checkAuthentication(true, !forcePinAuth, forcePinAuth, userInteractor);
+			}
+			updatePanel(wasAuthSuccessful);
+			authenticating = false;
+			return wasAuthSuccessful;
+		}
 
-        @Override
-        protected void done() {
-            authCallback.run();
-        }
-    }
+		@Override
+		protected void done() {
+			authCallback.run();
+		}
+	}
 
 }
