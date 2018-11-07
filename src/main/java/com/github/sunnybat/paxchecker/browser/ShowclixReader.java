@@ -21,12 +21,12 @@ import org.json.simple.parser.ParseException;
  */
 public class ShowclixReader {
 
-	private static final String API_LINK_BASE = "http://api.showclix.com/";
+	private static final String API_LINK_BASE = "https://api.showclix.com/";
 	private static final String API_EXTENSION_SELLER = "Seller/";
 	private static final String API_EXTENSION_PARTNER = "Partner/";
 	private static final String API_EXTENSION_VENUE = "Venue/";
 	private static final String API_EXTENSION_EVENT = "Event/";
-	private static final String EVENT_LINK_BASE = "http://www.showclix.com/event/";
+	private static final String EVENT_LINK_BASE = "https://www.showclix.com/event/";
 	private static final String EVENTS_ATTRIBUTE_LINK = "?follow[]=events";
 	private boolean strictFiltering;
 	private Expo expoToCheck;

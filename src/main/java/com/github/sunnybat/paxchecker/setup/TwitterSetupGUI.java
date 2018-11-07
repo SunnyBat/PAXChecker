@@ -50,6 +50,7 @@ public class TwitterSetupGUI extends com.github.sunnybat.commoncode.javax.swing.
 
 	private void customComponents() {
 		waitForAutoAuthentication();
+		disableTwitter = !prefs.getBooleanPreference("CHECK_TWITTER", true);
 		JCBFilterTwitter.setSelected(prefs.getBooleanPreference("FILTER_TWITTER"));
 		JCBTextTweets.setSelected(prefs.getBooleanPreference("TEXT_TWEETS"));
 	}

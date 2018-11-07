@@ -250,7 +250,7 @@ public class SetupGUI extends com.github.sunnybat.commoncode.javax.swing.JFrame 
 
 	@Override
 	public boolean shouldCheckTwitter() {
-		return myTwitterGui.getTwitterAccount() != null;
+		return myTwitterGui.isTwitterEnabled();
 	}
 
 	@Override
