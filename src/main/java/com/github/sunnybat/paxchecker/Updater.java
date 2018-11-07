@@ -82,6 +82,7 @@ public class Updater {
 			notesDownloader.downloadVersionNotes(programVersion);
 			notes = notesDownloader.getVersionNotes();
 			if (notesDownloader.updateAvailable()) {
+				// Prompt for update
 				UpdateDownloader myDownloader = new UpdateDownloader(getUpdateLink(), getBetaUpdateLink());
 				UpdatePrompt myPrompt = null;
 				boolean shouldUpdate;
@@ -106,6 +107,8 @@ public class Updater {
 					Scanner in = new Scanner(System.in);
 					shouldUpdate = in.nextLine().toUpperCase().startsWith("Y");
 				}
+
+				// Update
 				if (shouldUpdate) {
 					if (notesDownloader.getUpdateLevel() == 1) {
 						myDownloader.setUseBeta();
@@ -114,13 +117,7 @@ public class Updater {
 					myDownloader.updateProgram(myPrompt, jarToDownloadTo);
 					if (!headless) { // Don't want to start a new instance on the command-line -- it's harder to access than just manually starting the PAXChecker again
 						myPrompt.setStatusLabelText("Starting new instance of the PAXChecker...");
-						StringBuilder command = new StringBuilder();
-						command.append("java -jar ").append(jarToDownloadTo.getPath());
-						for (String arg : args) {
-							command.append(" ").append(arg);
-						}
-						command.append(" -noupdate"); // Force no rechecking for updates
-						Runtime.getRuntime().exec(command.toString(), args);
+						runNewProgramInstance(args, jarToDownloadTo);
 					}
 					System.exit(0);
 				} else if (startupOutput != null) {
@@ -133,6 +130,20 @@ public class Updater {
 		}
 		patchNotes = notes;
 		return true;
+	}
+
+	private void runNewProgramInstance(String[] args, File jarToRun) {
+		try {
+			StringBuilder command = new StringBuilder();
+			command.append("java -jar ").append(jarToRun.getPath());
+			for (String arg : args) {
+				command.append(" ").append(arg);
+			}
+			command.append(" -noupdate"); // Force no rechecking for updates
+			Runtime.getRuntime().exec(command.toString(), args);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 	}
 
 	private String getPatchNotesLink() {
