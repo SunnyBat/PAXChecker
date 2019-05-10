@@ -65,14 +65,6 @@ public class EmailSetupGUI extends javax.swing.JFrame {
 		String emailString = prefs.getStringPreference("CELLNUM");
 		String emailType = prefs.getStringPreference("EMAILTYPE");
 
-		if (emailString != null) {
-			List<EmailAddress> addresses = EmailAddress.convertToList(emailString);
-			for (EmailAddress address : addresses) {
-				DefaultTableModel table = (DefaultTableModel) JTCellNumbers.getModel();
-				table.addRow(new Object[]{address.getAddressBeginning(), address.getAddressEnding()});
-			}
-		}
-
 		// TODO: we need to initialize everything here, including Send To
 		// addresses and the EmailAccount we're using
 		if (emailType != null && emailType.equalsIgnoreCase("SMTP")) {
@@ -94,6 +86,15 @@ public class EmailSetupGUI extends javax.swing.JFrame {
 			}
 			authGmail.recordCurrentFields();
 		}
+
+		if (emailString != null) {
+			List<EmailAddress> addresses = EmailAddress.convertToList(emailString);
+			for (EmailAddress address : addresses) {
+				DefaultTableModel table = (DefaultTableModel) JTCellNumbers.getModel();
+				table.addRow(new Object[]{address.getCarrierName().equalsIgnoreCase("[Other]") ? address.getCompleteAddress() : address.getAddressBeginning(), address.getCarrierName()});
+			}
+		}
+
 		savedEmailAddresses = getCurrentEmails();
 		savedIsGmail = JRBGmail.isSelected();
 		this.addWindowListener(new WindowAdapter() {
