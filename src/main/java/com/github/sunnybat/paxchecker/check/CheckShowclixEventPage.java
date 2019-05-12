@@ -2,7 +2,10 @@ package com.github.sunnybat.paxchecker.check;
 
 import com.github.sunnybat.paxchecker.browser.Browser;
 import com.github.sunnybat.paxchecker.status.CheckerInfoOutput;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,12 +21,11 @@ public class CheckShowclixEventPage extends Check {
 	private static final String SHOWCLIX_EVENT_BASE_URL = "http://www.showclix.com/event/"; // Would do HTTPS, however I've had issues with this before
 	private List<String> pageCheckList = new ArrayList<>();                                 // and will follow redirects to HTTPS instead
 	private String validPageURL = null;
+	private String originalPageURL = null;
+	private boolean linkIsValid = false;
 
 	public CheckShowclixEventPage() {
-		pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXWest16"); // Thanks for the convenient IDs, Showclix/PA
-		pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXWest2016");
-		pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXPrime16");
-		pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "PAXPrime2016");
+		pageCheckList.add(SHOWCLIX_EVENT_BASE_URL + "w8fhn389fmn30");
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class CheckShowclixEventPage extends Check {
 
 	@Override
 	public synchronized boolean ticketsFound() {
-		return validPageURL != null;
+		return linkIsValid;
 	}
 
 	@Override
@@ -44,6 +46,8 @@ public class CheckShowclixEventPage extends Check {
 			try {
 				URL connectTo = new URL(url);
 				if (testURL(connectTo)) {
+					linkIsValid = true;
+					originalPageURL = url;
 					break; // Found a link, we're done
 				}
 			} catch (MalformedURLException mue) {
@@ -75,7 +79,12 @@ public class CheckShowclixEventPage extends Check {
 			} else if (conn.getResponseCode() >= 200 && conn.getResponseCode() < 300) {
 				System.out.println("CSEP: Found :: URL = " + conn.getURL() + " :: Code = " + conn.getResponseCode());
 				validPageURL = connectTo.toString();
-				return true;
+				if (areTicketsOnSale(conn)) {
+					return true;
+				} else {
+					System.out.println("CSEP: Tickets are not yet on sale");
+					return false;
+				}
 			} else {
 				System.out.println("Unexpected response code " + conn.getResponseCode());
 				return false;
@@ -91,6 +100,17 @@ public class CheckShowclixEventPage extends Check {
 		}
 	}
 
+	private boolean areTicketsOnSale(HttpURLConnection conn) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		String nextLine;
+		while ((nextLine = reader.readLine()) != null) {
+			if (nextLine.contains("Tickets are not yet on sale")) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public synchronized String getLink() {
 		if (validPageURL == null) {
@@ -102,9 +122,11 @@ public class CheckShowclixEventPage extends Check {
 
 	@Override
 	public synchronized void reset() {
-		if (validPageURL != null) {
-			pageCheckList.remove(validPageURL);
+		if (linkIsValid) {
+			pageCheckList.remove(originalPageURL);
 			validPageURL = null;
+			originalPageURL = null;
+			linkIsValid = false;
 		}
 	}
 
