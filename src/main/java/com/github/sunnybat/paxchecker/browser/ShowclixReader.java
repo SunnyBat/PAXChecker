@@ -223,7 +223,11 @@ public class ShowclixReader {
 	private Set<String> getAllSellerEventURLs(int sellerID) {
 		try {
 			String jsonText = readJSONFromURL(new URL(API_LINK_BASE + API_EXTENSION_SELLER + sellerID + EVENTS_ATTRIBUTE_LINK));
-			if (jsonText == null) {
+			// NOTE: Ignoring PAX West failures, since Showclix API currently (intentionally) returns a 404
+			// This means that if Showclix suddenly decides to NOT do this, we will get notified for all the events
+			// under this seller.
+			// This is fine. It's a risk that I believe we should take.
+			if (jsonText == null && sellerID != getSellerID(Expo.WEST)) {
 				return null;
 			}
 			return parseEvents(jsonText);
