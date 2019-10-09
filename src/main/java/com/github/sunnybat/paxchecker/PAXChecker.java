@@ -34,7 +34,7 @@ import twitter4j.Twitter;
  */
 public final class PAXChecker {
 
-	public static final String VERSION = "4.0.0 R3";
+	public static final String VERSION = "4.0.1";
 	private static TwitterStreamer myStreamer; // TODO: Factor elsewhere?
 	private static LinkManager myLinkManager; // TODO: Factor elsewhere?
 
