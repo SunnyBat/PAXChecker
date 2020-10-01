@@ -3,7 +3,7 @@ PAXChecker
 
 Program download is available here: https://www.dropbox.com/s/4rzsmbvtblm8ee9/PAXChecker.jar?dl=1
 
-Save the file to your computer, then run it. If it doesn't run, check to make sure you have Java 7 or above installed. If not, you'll need to install it. Feel free to message or email me if you're having trouble running it.
+Save the file to your computer, then run it. If it doesn't run, check to make sure you have Java 7 or above installed. If not, you'll need to install it. Feel free to message or email me if you're having trouble in executing the program.
 
 Features
 ==========
